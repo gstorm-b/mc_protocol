@@ -36,7 +36,11 @@ Last verified: 2026-09-27 (T-002, T-003, T-004).
    `Launch-VsDevShell.ps1`; `cl`, `cmake`, `ninja` resolve correctly anyway.
    `git add` prints `LF will be replaced by CRLF` warnings — expected
    (`core.autocrlf=true`, `.gitattributes`).
-5. **A Python `ninja` may be on `PATH`** before `vsdev.ps1` runs; `vsdev.ps1`
+5. **Do not merge native stderr in PowerShell 5.1** (`2>&1`, `*>&1`) on
+   `cmake`, `ctest`, `scripts/check.ps1` …: a routine CMake warning on stderr
+   becomes a `NativeCommandError` and a false failure (T-005). stderr is
+   captured anyway.
+6. **A Python `ninja` may be on `PATH`** before `vsdev.ps1` runs; `vsdev.ps1`
    (MSVC) and the MinGW line below both prepend `C:\Qt\Tools\Ninja` so the
    right one wins.
 
