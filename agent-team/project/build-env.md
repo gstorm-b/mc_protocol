@@ -4,7 +4,7 @@ Read this before building or testing. Everything here was run and worked on
 the owner's Windows 11 dev PC; do not rediscover it. If something here turns
 out wrong or you learn a new environment fact, write it under **Env notes** in
 your section of the task file — the leader folds it into this file.
-Last verified: 2026-09-27 (T-002, T-003).
+Last verified: 2026-09-27 (T-002, T-003, T-004).
 
 ## Toolchain
 
@@ -83,6 +83,14 @@ MinGW flavour: MinGW `PATH` line above, `C:\Qt\6.11.1\mingw_64\bin\qmake.exe`,
 - `QT =` in a test `.pro` keeps Qt off the compile and link lines entirely
   (core-only tests).
 - `.pri` include guards: `!defined(MC_X_PRI_INCLUDED, var) { … }`.
+
+## CMake script gotchas
+
+- A `cmake -P` script does not inherit the project's policies: start it with
+  `cmake_minimum_required(VERSION 3.16)`, or `if(… IN_LIST …)` fails with
+  "Unknown arguments specified" (CMP0057, T-004).
+- Build guards `BLD-04` / `BLD-05` read `build/<dir>/mc_sources.txt`, written at
+  configure time; a new source file needs a (re)configure before they see it.
 
 ## Tests
 
