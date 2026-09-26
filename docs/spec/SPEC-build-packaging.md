@@ -137,7 +137,7 @@ mc_protocol/
 ├── scripts/
 │   ├── check.ps1
 │   └── check.sh
-├── docs/                         # intent, ideas, spec, mc_reference, ADRs; docs/hil owned by hil-capture
+├── docs/                         # intent, ideas, spec, rules (doc comment style), mc_reference, ADRs; docs/hil owned by hil-capture
 ├── CHANGELOG.md                  # Keep a Changelog format; Unreleased section on top
 ├── LICENSE                       # open question 1
 └── README.md                     # what it is, the three consumption paths, version policy
@@ -205,7 +205,10 @@ constexpr Version version() noexcept { return {MC_VERSION_MAJOR, MC_VERSION_MINO
 These conventions apply to every module; they are stated once, here.
 
 ```cpp
-// include/mc/core/device.h
+/**
+ * @file device.h
+ * @brief PLC device addresses: the device table, parsing and formatting.
+ */
 #pragma once
 
 #include "mc/core/result.h"      // library headers: always "mc/..." relative to include/
@@ -214,16 +217,26 @@ These conventions apply to every module; they are stated once, here.
 
 namespace mc {
 
-/// One PLC device address: a symbol such as D or X plus its number.
-/// Value type, trivially copyable, no invariants beyond what parseDevice() enforces.
+/**
+ * @struct Device
+ * @brief One PLC device address: a symbol such as D or X plus its number.
+ *
+ * Value type, trivially copyable, no invariants beyond what parseDevice() enforces.
+ */
 struct Device {
     DeviceType type{DeviceType::D};   ///< Symbol, indexes the device table.
     uint32_t number{0};               ///< Device number in the symbol's own radix.
 };
 
-/// Parses "D100", "x1F", "TN10". Longest symbol wins; number radix follows the symbol.
-/// @return the device, or Error{Encode, InvalidDevice} with a static message.
-/// Complexity: O(len), no allocation.
+/**
+ * @brief Parses "D100", "x1F", "TN10". Longest symbol wins; number radix follows the symbol.
+ *
+ * @param[in] text Device text without surrounding spaces.
+ * @return The parsed device.
+ * @retval ErrorCode::InvalidDevice Unknown symbol, no number, or a digit outside the radix.
+ * @par Complexity
+ * O(len); no allocation.
+ */
 Expected<Device> parseDevice(std::string_view text) noexcept;
 
 }  // namespace mc
@@ -233,7 +246,7 @@ Expected<Device> parseDevice(std::string_view text) noexcept;
 - Types `PascalCase`; functions and methods `camelCase`; private data members `m_camelCase`; public struct fields `camelCase`; constants `kPascalCase`; enumerators `PascalCase` inside `enum class`.
 - Namespaces: public API flat in `mc`, internals in `mc::detail`, nothing else public.
 - `#pragma once`; includes ordered: own header, `mc/...`, third-party, standard.
-- Every public class, function, enum and field carries a `///` Doxygen comment; complexity and allocation behaviour stated on every public function of `core-*`.
+- Doc comments follow `docs/rules/doc_comment_style.md` (owner decision 2026-09-27, amending the earlier `///` rule): Doxygen `/** */` with tags, `///<` for fields and enumerators. Every public class, function, enum and field carries one; private members only when not evident from name and type; complexity and allocation behaviour stated in `@par Complexity` on every public function of `core-*`. The `///` comments in the header sketches of `docs/spec/` state contracts, not comment style.
 - No exceptions cross a public boundary; `noexcept` on every public function that cannot throw.
 - No macros in the public API other than `MC_VERSION_*`.
 - `.clang-format` at the root: `BasedOnStyle: LLVM`, `IndentWidth: 4`, `ColumnLimit: 100`, `BreakBeforeBraces: Attach`, `PointerAlignment: Left`. Formatting is enforced by review, not by a build step.
