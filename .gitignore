@@ -6,7 +6,7 @@ temp-docs/
 .claude/
 
 # Build output: build/ at the root only (SPEC-build-packaging)
-build/
+/build/
 
 # IDE and tool state (SPEC-build-packaging open question 2)
 *.user

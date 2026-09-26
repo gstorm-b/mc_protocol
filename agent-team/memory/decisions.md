@@ -3,6 +3,10 @@
 Curated by the team leader. One entry, one decision, newest first.
 Format: `- [T-xxx or date] Decision — why. (supersedes: entry, if any)`
 
+- [2026-09-27] Owner delegates Gate 1 and Gate 2 to the leader for T-003–T-005
+  and Phases 1–2 (todo T05–T16, through Checkpoint B); exclusions and quote in
+  `rules.md` "Version control". `.gitignore` `build/` anchored to `/build/`
+  (owner-approved in T-002) so `tests/build/` is tracked.
 - [2026-09-27] `.claude/` stays fully untracked. Team-relevant material lives
   in `agent-team/project/`: six skills of addyosmani/agent-skills vendored
   unmodified in `skill-pack/` (overrides in `rules.md`), the project's own

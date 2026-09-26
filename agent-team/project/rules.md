@@ -9,7 +9,20 @@ contradict `agent-team/core/`, this file wins.
 - **No AI attribution of any kind** in commits or PRs: no `Co-Authored-By`,
   no "Generated with" lines, no AI trailers.
 - Commits happen **only when the owner says so** (Gate 2 approval is the
-  trigger, given per task). No standing permission.
+  trigger, given per task). No standing permission, except the delegation
+  below.
+- **Delegation, owner 2026-09-27:** for the rest of Phase 0 (T-003–T-005) and
+  all of Phase 1 and Phase 2 of `tasks/plan.md` (todo T05–T16, through
+  Checkpoint B), the leader holds Gate 1 and Gate 2: it plans, approves,
+  orchestrates and commits each task itself once tester and reviewer pass.
+  Owner quote: "Bạn được phép tự commit và được phép lên plan và điều phối cho
+  cả phase 1 và phase 2 mà không cần approve của mình." Each task file records
+  "Gate 1/2: leader, under owner delegation 2026-09-27". Not delegated: any
+  `hil` work, anything the specs list under "Ask first" (third-party code,
+  raising minimums, `.gitignore`, public layout changes), any change to
+  `.claude/settings.json` or the model guard, and Phase 3 onward. Checkpoint
+  owner reviews (A0 layout, B `protocol.h`) are reported to the owner; Phase 3
+  does not start until the owner has seen Checkpoint B.
 - Work on `main` unless the owner says otherwise.
 
 ## Access boundaries
