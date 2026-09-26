@@ -1,0 +1,30 @@
+# Line endings: LF inside the repository, native line endings in the working tree,
+# whatever core.autocrlf says on the machine.
+* text=auto
+
+# Must stay LF everywhere: shell scripts run under Linux and Git Bash (scripts/check.sh).
+*.sh text eol=lf
+
+# Windows-only scripts keep CRLF.
+*.ps1 text eol=crlf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# C++ sources: better diff hunk headers.
+*.h   text diff=cpp
+*.hpp text diff=cpp
+*.cpp text diff=cpp
+
+# Text formats of this project.
+*.md    text diff=markdown
+*.vec   text
+*.json  text
+*.cmake text
+CMakeLists.txt text
+*.pro   text
+*.pri   text
+
+# Binary: never converted, never diffed as text.
+*.pdf binary
+*.png binary
+*.jpg binary

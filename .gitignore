@@ -1,0 +1,22 @@
+# Study material, never built (owner decision)
+reference_source/
+
+# Claude Code: skills, commands, agents, memory copy and local settings (owner decision 2026-09-26)
+.claude/
+
+# Build output: build/ at the root only (SPEC-build-packaging)
+build/
+
+# IDE and tool state (SPEC-build-packaging open question 2)
+*.user
+*.pro.user*
+.vs/
+.idea/
+.cache/
+CMakeUserPresets.json
+compile_commands.json
+*.autosave
+
+# HIL bench profiles: real ones hold IP addresses and COM port names (SPEC-hil-capture)
+tests/hil/profiles/*.json
+!tests/hil/profiles/*.example.json
