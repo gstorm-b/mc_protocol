@@ -43,10 +43,10 @@ Details (acceptance criteria, verification, files) are in `tasks/todo.md`.
 
 ### Phase 0: Build skeleton (`build-packaging`)
 
-- [ ] T01 CMake skeleton with `mc::core`, version header, doctest
-- [ ] T02 qmake mirror
-- [ ] T03 Build guard tests (pri sync, include hygiene, consumer smokes)
-- [ ] T04 `check` scripts, formatting, README, CHANGELOG, LICENSE
+- [x] T01 CMake skeleton with `mc::core`, version header, doctest
+- [x] T02 qmake mirror
+- [x] T03 Build guard tests (pri sync, include hygiene, consumer smokes)
+- [x] T04 `check` scripts, formatting, README, CHANGELOG, LICENSE
 
 **Checkpoint A0:** both build systems and both compilers green on an almost empty library.
 

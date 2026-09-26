@@ -87,7 +87,7 @@
 **Scope:** M. Note: ask the owner for the copyright holder name in `LICENSE`.
 
 ### Checkpoint A0: skeleton
-- [ ] `scripts/check.ps1` green; both compilers; qmake and CMake.
+- [x] `scripts/check.ps1` green; both compilers; qmake and CMake. (T-005, 2026-09-27)
 - [ ] Owner reviews the repository layout before code lands in it.
 
 ---

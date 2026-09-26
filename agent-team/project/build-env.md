@@ -4,7 +4,7 @@ Read this before building or testing. Everything here was run and worked on
 the owner's Windows 11 dev PC; do not rediscover it. If something here turns
 out wrong or you learn a new environment fact, write it under **Env notes** in
 your section of the task file — the leader folds it into this file.
-Last verified: 2026-09-27 (T-002, T-003, T-004).
+Last verified: 2026-09-27 (T-002 … T-006).
 
 ## Toolchain
 
@@ -100,5 +100,10 @@ MinGW flavour: MinGW `PATH` line above, `C:\Qt\6.11.1\mingw_64\bin\qmake.exe`,
 
 - doctest v2.5.3 at `tests/third_party/doctest/doctest.h`; one
   `DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN` per test binary.
+- `mc_doctest` carries `DOCTEST_CONFIG_USE_STD_HEADERS` for every test binary:
+  without it MSVC cannot stringify `std::string_view` in a failed `CHECK`
+  (doctest only forward-declares `std::ostream`) — T-006.
+- Test binaries per module: `mc_core_model_tests` (ctest name
+  `core_model.mc_core_model_tests`), main in `tests/core/model/main.cpp`.
 - ctest labels: `build`, `core_model`, `core_protocol`, `core_session`,
   `mock`, `integration`, `device`, `replay`, `hil_tool`.

@@ -17,3 +17,6 @@ All notable changes to this project are documented in this file. The format foll
 - `scripts/check.ps1` and `scripts/check.sh`: one command that builds and tests both build
   systems, both compilers, and the consumer smoke projects (BLD-01 through BLD-09).
 - `.clang-format`, this changelog, `README.md` and `LICENSE`.
+- `mc/core/types.h` (`ByteView`, `MutableByteView`, `ByteBuf`, `kNoCode`) and `mc/core/result.h`
+  (`ErrorCategory`, `ErrorCode`, `ErrorInfo`, `Error`, `Expected<T>`, `Expected<void>`), the first
+  headers of `core-model`; test binary `mc_core_model_tests` (RES-01 through RES-04).

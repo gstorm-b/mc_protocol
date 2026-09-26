@@ -1,6 +1,8 @@
 add_library(mc_core STATIC
     core/version.cpp
     ${PROJECT_SOURCE_DIR}/include/mc/version.h
+    ${PROJECT_SOURCE_DIR}/include/mc/core/types.h
+    ${PROJECT_SOURCE_DIR}/include/mc/core/result.h
 )
 add_library(mc::core ALIAS mc_core)
 

@@ -10,7 +10,9 @@ INCLUDEPATH += \
     $$PWD/src
 
 HEADERS += \
-    $$PWD/include/mc/version.h
+    $$PWD/include/mc/version.h \
+    $$PWD/include/mc/core/types.h \
+    $$PWD/include/mc/core/result.h
 
 SOURCES += \
     $$PWD/src/core/version.cpp

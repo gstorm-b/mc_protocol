@@ -2,6 +2,12 @@
 # https://github.com/doctest/doctest/releases/tag/v2.5.3 — see third_party/doctest/LICENSE.txt.
 add_library(mc_doctest INTERFACE)
 target_include_directories(mc_doctest INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/third_party)
+# MSVC only forward-declares std::ostream unless told otherwise; doctest's fallback
+# stringification of a type with no StringMaker (e.g. std::string_view, used throughout
+# core-model's public API) then instantiates the standard library's own operator<< against an
+# incomplete std::basic_ostream and fails to compile (T-006). DOCTEST_CONFIG_USE_STD_HEADERS
+# makes doctest include the real standard headers instead of forward-declaring them.
+target_compile_definitions(mc_doctest INTERFACE DOCTEST_CONFIG_USE_STD_HEADERS)
 
 add_executable(mc_build_tests
     build/test_version.cpp
@@ -12,6 +18,18 @@ mc_apply_warnings(mc_build_tests)
 include(CTest)
 add_test(NAME BLD-08.version_agrees COMMAND mc_build_tests)
 set_tests_properties(BLD-08.version_agrees PROPERTIES LABELS "build")
+
+# mc_core_model_tests (SPEC-core-model.md): one binary for the whole core-model module; later
+# tasks (T06 onward) add more test_*.cpp sources here without adding another main.cpp (T-006).
+add_executable(mc_core_model_tests
+    core/model/main.cpp
+    core/model/test_result.cpp
+)
+target_link_libraries(mc_core_model_tests PRIVATE mc::core mc_doctest)
+mc_apply_warnings(mc_core_model_tests)
+
+add_test(NAME core_model.mc_core_model_tests COMMAND mc_core_model_tests)
+set_tests_properties(core_model.mc_core_model_tests PROPERTIES LABELS "core_model")
 
 # BLD-04 pri_sync and BLD-05 include_hygiene: cmake -P guard scripts run as ctest entries so
 # `ctest -L build` alone keeps the two build systems and the public surface honest. Neither
