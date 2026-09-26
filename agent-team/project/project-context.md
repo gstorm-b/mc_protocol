@@ -23,6 +23,11 @@ at the start of implementation (Phase 0 of an 8-phase plan, tasks T01–T56).
 
 ## How to build and test
 
+**Read `agent-team/project/build-env.md` first** — proven commands, paths and
+gotchas for this machine (one PowerShell call per build, reuse the existing
+`build/` folders). Report new environment facts under "Env notes" in your
+section of the task file.
+
 Toolchain: CMake + Ninja from `C:\Qt\Tools`, Qt 6.11.1 kits `msvc2022_64` and
 `mingw_64`, MSVC (VS 2026 developer shell) and MinGW GCC 13.1.
 

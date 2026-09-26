@@ -3,6 +3,10 @@
 Curated by the team leader. One entry, one decision, newest first.
 Format: `- [T-xxx or date] Decision — why. (supersedes: entry, if any)`
 
+- [2026-09-27] Machine-specific build facts live in
+  `agent-team/project/build-env.md` (linked first from project-context);
+  roles report new ones as "Env notes", the leader folds them in — owner asked,
+  so subagents stop re-deriving the environment.
 - [2026-09-27] Owner delegates Gate 1 and Gate 2 to the leader for T-003–T-005
   and Phases 1–2 (todo T05–T16, through Checkpoint B); exclusions and quote in
   `rules.md` "Version control". `.gitignore` `build/` anchored to `/build/`

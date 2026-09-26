@@ -1,0 +1,92 @@
+# Build environment — this machine (proven commands)
+
+Read this before building or testing. Everything here was run and worked on
+the owner's Windows 11 dev PC; do not rediscover it. If something here turns
+out wrong or you learn a new environment fact, write it under **Env notes** in
+your section of the task file — the leader folds it into this file.
+Last verified: 2026-09-27 (T-002, T-003).
+
+## Toolchain
+
+| Tool | Path / version |
+|---|---|
+| CMake | `C:\Qt\Tools\CMake_64\bin\cmake.exe` (3.30.5), `ctest.exe` beside it |
+| Ninja | `C:\Qt\Tools\Ninja\ninja.exe` (1.12.1) |
+| MSVC | VS 2026 Community, `C:\Program Files\Microsoft Visual Studio\18\Community`, cl 19.51 |
+| MinGW | `C:\Qt\Tools\mingw1310_64\bin` (GCC 13.1.0, `mingw32-make`) |
+| Qt (MSVC) | `C:\Qt\6.11.1\msvc2022_64` — `bin\qmake.exe` (qmake 3.1) |
+| Qt (MinGW) | `C:\Qt\6.11.1\mingw_64` — `bin\qmake.exe` |
+| vswhere | `C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe` |
+| Shells | PowerShell 5.1 (primary), Git Bash; Node exists, **no Python** |
+
+## Rules that save time
+
+1. **Every tool call is a fresh shell.** Environment set in one call is gone
+   in the next. Put `. scripts/vsdev.ps1` and the build commands **in the same
+   PowerShell call**.
+2. **Reuse the existing build folders.** `build/cmake-debug` (MSVC),
+   `build/cmake-mingw` (MinGW) and `build/qmake-debug` (qmake/MSVC) are
+   already configured. `cmake --build` re-runs configure by itself when a
+   `CMakeLists.txt` changed; configure from scratch only when the Plan asks for
+   a fresh configure. Never delete these folders.
+3. **Scratch experiments** go to `build/_scratch-<task>/` and are deleted
+   before you finish. Nothing outside `build/` is written by a build.
+4. **Harmless noise:** `. scripts/vsdev.ps1` prints
+   `'vswhere.exe' is not recognized …` — it comes from Microsoft's
+   `Launch-VsDevShell.ps1`; `cl`, `cmake`, `ninja` resolve correctly anyway.
+   `git add` prints `LF will be replaced by CRLF` warnings — expected
+   (`core.autocrlf=true`, `.gitattributes`).
+5. **A Python `ninja` may be on `PATH`** before `vsdev.ps1` runs; `vsdev.ps1`
+   (MSVC) and the MinGW line below both prepend `C:\Qt\Tools\Ninja` so the
+   right one wins.
+
+## MSVC — the daily loop (PowerShell, one call)
+
+```powershell
+. scripts/vsdev.ps1
+cmake --build build/cmake-debug
+ctest --test-dir build/cmake-debug -L <label> --output-on-failure
+```
+
+Fresh configure (only when needed):
+`cmake -S . -B build/cmake-debug -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_PREFIX_PATH=C:/Qt/6.11.1/msvc2022_64`
+
+## MinGW — checkpoints (PowerShell, one call)
+
+```powershell
+$env:PATH = "C:\Qt\Tools\mingw1310_64\bin;C:\Qt\Tools\CMake_64\bin;C:\Qt\Tools\Ninja;$env:PATH"
+cmake --build build/cmake-mingw
+ctest --test-dir build/cmake-mingw -L <label> --output-on-failure
+```
+
+Fresh configure: same as MSVC with `-B build/cmake-mingw
+-DCMAKE_PREFIX_PATH=C:/Qt/6.11.1/mingw_64`.
+
+## qmake (MSVC, one call)
+
+```powershell
+. scripts/vsdev.ps1
+Push-Location build/qmake-debug
+C:\Qt\6.11.1\msvc2022_64\bin\qmake.exe ../../mc_protocol.pro CONFIG+=debug
+nmake; nmake check
+Pop-Location
+```
+
+MinGW flavour: MinGW `PATH` line above, `C:\Qt\6.11.1\mingw_64\bin\qmake.exe`,
+`mingw32-make` / `mingw32-make check`, in `build/qmake-mingw`.
+
+## qmake gotchas
+
+- `SUBDIRS` entries: write `SUBDIRS = foo` plus `foo.file = path/to/real.pro`
+  and **no** `foo.subdir`. A bare entry resolves to `<entry>/<entry>.pro`;
+  `.file` together with `.subdir` gives a qmake warning (T-003).
+- `QT =` in a test `.pro` keeps Qt off the compile and link lines entirely
+  (core-only tests).
+- `.pri` include guards: `!defined(MC_X_PRI_INCLUDED, var) { … }`.
+
+## Tests
+
+- doctest v2.5.3 at `tests/third_party/doctest/doctest.h`; one
+  `DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN` per test binary.
+- ctest labels: `build`, `core_model`, `core_protocol`, `core_session`,
+  `mock`, `integration`, `device`, `replay`, `hil_tool`.
