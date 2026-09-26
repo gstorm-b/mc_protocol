@@ -33,7 +33,7 @@ The folder also carries a version, a changelog, a one-command build-and-test scr
 | Qt | 6.2 LTS minimum | Only `mc::device` and its tests use Qt: `Core`, `Network`, `SerialPort`, `Test` |
 | Test framework | doctest, vendored single header (MIT) at `tests/third_party/doctest/doctest.h` | For every std-only test binary. `qt-device` tests use QtTest |
 | Scripts | PowerShell 5.1 (`scripts/check.ps1`) and POSIX sh (`scripts/check.sh`) | No Python, no CI in v1 |
-| Compilers | MSVC 2019+, MinGW GCC, GCC, Clang | Warnings-as-errors only when the library is the top-level project |
+| Compilers | MSVC 2019+, MinGW GCC, GCC, Clang | Warnings-as-errors only when the library is the top-level project. v1 is verified with MSVC and MinGW GCC on Windows only; GCC/Clang on Linux are not verified. |
 | Library type | Static only | Shared builds and export macros are out of scope; ABI is not promised |
 
 ## Commands
@@ -70,7 +70,7 @@ nmake check      # runs every test target (CONFIG += testcase)
 
 ```powershell
 scripts/check.ps1 -QtDir "C:/Qt/6.7.2/msvc2019_64"      # Windows
-scripts/check.sh /opt/Qt/6.7.2/gcc_64                     # POSIX
+scripts/check.sh C:/Qt/6.7.2/mingw_64                      # Git Bash, MinGW
 ```
 
 The script runs, in order: CMake full build + ctest, CMake core-only configure + build + ctest with Qt removed from the environment, qmake build + `check`, the two consumer smoke projects. It stops at the first failure and prints which stage failed.
@@ -135,6 +135,7 @@ mc_protocol/
 │   ├── CMakeLists.txt            # MC_BUILD_TOOLS only
 │   └── hil_capture/              # owned by hil-capture
 ├── scripts/
+│   ├── vsdev.ps1                 # dot-sourced: loads the VS developer environment
 │   ├── check.ps1
 │   └── check.sh
 ├── docs/                         # intent, ideas, spec, rules (doc comment style), mc_reference, ADRs; docs/hil owned by hil-capture
@@ -296,7 +297,7 @@ No code-coverage target for this module; coverage applies to the core modules.
 
 ## Success Criteria
 
-1. From a clean checkout, `scripts/check.ps1 -QtDir <dir>` completes with exit code 0 on Windows with MSVC, and `scripts/check.sh <dir>` on Linux with GCC.
+1. From a clean checkout, `scripts/check.ps1 -QtDir <dir>` exits 0 on Windows with MSVC; `scripts/check.sh <dir>` exits 0 in Git Bash with MinGW GCC; Linux is not verified in v1 (owner decision 2026-09-27, plan decision 1).
 2. A CMake project outside this folder builds against it with exactly two lines (`add_subdirectory`, `target_link_libraries`) and produces no library test or example target.
 3. A qmake project outside this folder builds against it with exactly one `include(...)` line.
 4. Configuring with `-DMC_BUILD_DEVICE=OFF` on a machine without Qt succeeds and builds `mc::core`, `mc::mock` and their tests.
