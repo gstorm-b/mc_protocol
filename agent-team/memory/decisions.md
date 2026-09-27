@@ -3,6 +3,9 @@
 Curated by the team leader. One entry, one decision, newest first.
 Format: `- [T-xxx or date] Decision — why. (supersedes: entry, if any)`
 
+- [T-007] `deviceInfo()` is not `constexpr`: the device table stays private to
+  `device_table.cpp`; `SPEC-core-model.md` amended — owner decision (the spec
+  contradicted itself: constexpr sketch vs private table).
 - [2026-09-27] Machine-specific build facts live in
   `agent-team/project/build-env.md` (linked first from project-context);
   roles report new ones as "Env notes", the leader folds them in — owner asked,

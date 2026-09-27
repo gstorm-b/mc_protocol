@@ -20,3 +20,6 @@ All notable changes to this project are documented in this file. The format foll
 - `mc/core/types.h` (`ByteView`, `MutableByteView`, `ByteBuf`, `kNoCode`) and `mc/core/result.h`
   (`ErrorCategory`, `ErrorCode`, `ErrorInfo`, `Error`, `Expected<T>`, `Expected<void>`), the first
   headers of `core-model`; test binary `mc_core_model_tests` (RES-01 through RES-04).
+- `mc/core/device.h`: the device model (`DeviceKind`, `Radix`, `DeviceType`, `DeviceInfo`,
+  `deviceInfo()`, `Device`, `parseDevice()`, `formatDevice()`) with the full spec §3.2 device
+  table (DEV-01 through DEV-07-data, DEV-14).

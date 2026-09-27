@@ -154,8 +154,10 @@ struct DeviceInfo {
     char c1Code[3];        ///< "D", "TN"; empty if unsupported.
 };
 
-/// O(1): indexes the constexpr table by enum.
-constexpr const DeviceInfo& deviceInfo(DeviceType t) noexcept;
+/// O(1): indexes the constexpr table by enum. Not constexpr: the table stays private to
+/// src/core/model/device_table.cpp, and a constexpr function would need its body (and the
+/// table) in this header (owner decision 2026-09-27, T-007).
+const DeviceInfo& deviceInfo(DeviceType t) noexcept;
 
 struct Device {
     DeviceType type{DeviceType::D};

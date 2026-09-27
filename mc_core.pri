@@ -12,9 +12,12 @@ INCLUDEPATH += \
 HEADERS += \
     $$PWD/include/mc/version.h \
     $$PWD/include/mc/core/types.h \
-    $$PWD/include/mc/core/result.h
+    $$PWD/include/mc/core/result.h \
+    $$PWD/include/mc/core/device.h
 
 SOURCES += \
-    $$PWD/src/core/version.cpp
+    $$PWD/src/core/version.cpp \
+    $$PWD/src/core/model/device_table.cpp \
+    $$PWD/src/core/model/device_parse.cpp
 
 }

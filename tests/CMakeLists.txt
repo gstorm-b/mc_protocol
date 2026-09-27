@@ -24,6 +24,7 @@ set_tests_properties(BLD-08.version_agrees PROPERTIES LABELS "build")
 add_executable(mc_core_model_tests
     core/model/main.cpp
     core/model/test_result.cpp
+    core/model/test_device.cpp
 )
 target_link_libraries(mc_core_model_tests PRIVATE mc::core mc_doctest)
 mc_apply_warnings(mc_core_model_tests)
