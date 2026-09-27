@@ -20,6 +20,12 @@ HEADERS += \
     $$PWD/include/mc/core/convert.h \
     $$PWD/include/mc/core/log.h \
     $$PWD/include/mc/core/protocol.h \
+    $$PWD/include/mc/core/poll_plan.h \
+    $$PWD/include/mc/core/value_store.h \
+    $$PWD/include/mc/core/session.h \
+    $$PWD/src/core/session/output_ring.h \
+    $$PWD/src/core/session/adhoc_queue.h \
+    $$PWD/src/core/session/drain_violation.h \
     $$PWD/src/core/model/limits_table.h \
     $$PWD/src/core/protocol/hexascii.h \
     $$PWD/src/core/protocol/sumcheck.h \
@@ -43,6 +49,13 @@ SOURCES += \
     $$PWD/src/core/protocol/device_encode.cpp \
     $$PWD/src/core/protocol/command_qna.cpp \
     $$PWD/src/core/protocol/frame_3e.cpp \
-    $$PWD/src/core/protocol/protocol.cpp
+    $$PWD/src/core/protocol/protocol.cpp \
+    $$PWD/src/core/session/range_set.cpp \
+    $$PWD/src/core/session/read_plan.cpp \
+    $$PWD/src/core/session/value_store.cpp \
+    $$PWD/src/core/session/session.cpp \
+    $$PWD/src/core/session/session_rx.cpp \
+    $$PWD/src/core/session/adhoc_queue.cpp \
+    $$PWD/src/core/session/drain_violation.cpp
 
 }

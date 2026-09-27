@@ -65,3 +65,26 @@ All notable changes to this project are documented in this file. The format foll
   The shared `.vec` loader (`tests/common/vectors.h`/`.cpp`) and its own transcription guard
   (VEC-02: every vector's hex byte count matches its own `bytes:` heading) are reused by every
   test file above and will be by `tests/mock` and `tests/replay` later.
+- `mc/core/session.h` and the sans-I/O `core-session` engine (Phase 3, T-020 through T-028;
+  `SPEC-core-session.md`): `RangeSet`/`ReadPlan` (subscription bookkeeping, alignment, gap
+  merging and chunking, `poll_plan.h`; PLN-01 through PLN-10), `ValueStore` (per-device-type
+  segments, `apply()`/`markFailed()` with decision S4's silent baseline, `rebuild()` carry-over on
+  a re-plan, `value_store.h`; STO-01 through STO-04), and `Session` itself — round scheduling
+  (`FixedRate`/`FixedDelay`), the receive path and value publishing (decisions S1–S5, reproducing
+  the spec's own worked timeline), dynamic `subscribe()`/`unsubscribe()` deferred to the next
+  round boundary, ad-hoc requests (a FIFO ring arena and job queue, chunked reads and split
+  writes, `maxAdHocBurst` dispatch priority, exactly-once `RequestDone` including on `linkDown()`
+  — SES-09 through SES-15), the Ethernet column of the fault table (timeout, protocol error,
+  unsolicited bytes, receive-buffer overflow → `LinkFault`, no resend, no auto-reconnect —
+  SES-16, SES-19, SES-20, SES-24), the drain contract (a replaceable, debug-only violation
+  handler behind a private header, `src/core/session/drain_violation.h`, so the spec's own
+  debug-asserts/release-discards split is both real and testable — SES-25), and the optional
+  heartbeat write (SES-21). Zero allocation in the steady state (ALC-01: rounds 3–10, changes
+  every round, heartbeat on) and across 1000 ad-hoc submit/complete cycles including a
+  `linkDown()` with a full queue (ALC-02). `mc_bench_session` (`tests/bench`, `-DMC_BUILD_BENCH`
+  only): per-round cost vs. subscribed points, regression tracking only, no threshold.
+  Checkpoint C: verified on both MSVC and MinGW GCC 13.1 (`scripts/check.ps1`, both kits); line
+  coverage of `src/core/session` 97.77% total (a latent `mc_coverage_report.cmake` bug —
+  `file(STRINGS)` silently merging lines whose own text contained an unescaped `;`, occasionally
+  under-counting a file to as little as 0 lines — found and fixed along the way); `core-model` and
+  `core-protocol` unaffected, still ≥ 95%.

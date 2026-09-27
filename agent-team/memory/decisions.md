@@ -3,6 +3,16 @@
 Curated by the team leader. One entry, one decision, newest first.
 Format: `- [T-xxx or date] Decision — why. (supersedes: entry, if any)`
 
+- [T-026] Drain contract stays as specified: debug asserts through an internal,
+  test-replaceable handler; release discards pending outputs and logs `Error`
+  — owner decision (not "always discard").
+- [T-021] `ValueStore::markStale`/`resetBaselines` are O(P), eager — the spec's O(1)
+  epoch design contradicted `SegmentView::states` being read directly; spec
+  complexity table amended (also `linkUp`/`linkDown`) — owner decision.
+- [T-019] `protocol.h` approved by the owner as committed (`e71c7cc`); the
+  `Parser` default constructor stays private — `Session` holds its parser in a
+  `std::optional<Parser>`. Delegation of Gates 1–2 extended to Phase 3
+  (through Checkpoint C) — owner decision.
 - [2026-09-27] Phase-batched verification from T-008: developer implements a
   whole phase task by task, the leader re-runs each task's checks (no commit);
   tester and reviewer run once, at the phase checkpoint, over the whole phase —

@@ -77,21 +77,21 @@ Baton tasks are created one phase ahead.
 - [x] T15 `McProtocol` and `Parser` facade with 3E Binary → T-017
 - [x] T16 3E ASCII, streaming, sizes, zero allocation → T-018
 
-**Checkpoint B** → T-019: every A.1 / A.2 vector round-trips; owner reviews `protocol.h`, the contract of Phases 3 and 4. Codec part done (commit follows); owner review pending.
+**Checkpoint B** → T-019: every A.1 / A.2 vector round-trips; owner reviews `protocol.h`, the contract of Phases 3 and 4. Done: commit `e71c7cc`; `protocol.h` approved by the owner 2026-09-27.
 
 ### Phase 3: Engine on 3E (`core-session`)
 
-- [ ] T17 `RangeSet` and `ReadPlan`
-- [ ] T18 `ValueStore`
-- [ ] T19 `Session` scheduling skeleton and test harness
-- [ ] T20 Receive path and value publishing
-- [ ] T21 Dynamic subscriptions
-- [ ] T22 Ad-hoc requests (arena, burst cap, exactly-once)
-- [ ] T23 Ethernet faults, drain contract, heartbeat
-- [ ] T24 Steady-state zero allocation and session benchmark
+- [x] T17 `RangeSet` and `ReadPlan` → T-020
+- [x] T18 `ValueStore` → T-021
+- [x] T19 `Session` scheduling skeleton and test harness → T-022
+- [x] T20 Receive path and value publishing → T-023
+- [x] T21 Dynamic subscriptions → T-024
+- [x] T22 Ad-hoc requests (arena, burst cap, exactly-once) → T-025
+- [x] T23 Ethernet faults, drain contract, heartbeat → T-026
+- [x] T24 Steady-state zero allocation and session benchmark → T-027
 
-**Checkpoint C1 (after T20):** polling path works on a fake clock.
-**Checkpoint C (go/no-go):** the sans-I/O engine holds, or fall back to direction B (ideas §3) before anything is built on it.
+**Checkpoint C1 (after T20, inside T-023):** polling path works on a fake clock. Done.
+**Checkpoint C (go/no-go)** → T-028: the sans-I/O engine holds, or fall back to direction B (ideas §3) before anything is built on it.
 
 ### Phase 4: Mock PLC on 3E (`mock-plc`); T25–T27 in parallel with Phase 3
 

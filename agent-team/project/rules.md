@@ -20,9 +20,14 @@ contradict `agent-team/core/`, this file wins.
   "Gate 1/2: leader, under owner delegation 2026-09-27". Not delegated: any
   `hil` work, anything the specs list under "Ask first" (third-party code,
   raising minimums, `.gitignore`, public layout changes), any change to
-  `.claude/settings.json` or the model guard, and Phase 3 onward. Checkpoint
-  owner reviews (A0 layout, B `protocol.h`) are reported to the owner; Phase 3
-  does not start until the owner has seen Checkpoint B.
+  `.claude/settings.json` or the model guard, and Phase 4 onward. Checkpoint
+  owner reviews (A0 layout, B `protocol.h`) are reported to the owner.
+- **Delegation extended, owner 2026-09-27:** "Duyệt protocol.h bạn hãy bắt đầu
+  phase 3, vẫn giao quyền như phase 1-2" — the same delegation covers Phase 3
+  (todo T17–T24, through Checkpoint C), with the same exclusions. Checkpoint C
+  is the go/no-go on the sans-I/O `Session`: a "go" is reported to the owner;
+  a "no-go" (fall back to direction B) is the owner's decision, and Phase 4
+  waits for the owner either way.
 - Work on `main` unless the owner says otherwise.
 
 ## Phase-batched verification (owner decision 2026-09-27)

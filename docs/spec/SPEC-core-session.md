@@ -230,7 +230,8 @@ public:
     /// Marks the chunk's subscribed points Failed (NoValue points stay NoValue). O(n).
     void markFailed(const ReadPlan& plan, size_t chunk) noexcept;
     /// Link down: every Valid/Failed point becomes Stale; the next linkUp clears every baseline
-    /// (all points NoValue), which is what makes round 1 silent. O(1) (epoch counter).
+    /// (all points NoValue), which is what makes round 1 silent. O(P), no allocation: eager,
+    /// because SegmentView::states is read directly (owner decision 2026-09-27, T-021).
     void markStale() noexcept;
     void resetBaselines() noexcept;
 };
@@ -493,11 +494,11 @@ S = subscriptions, G = segments of one type, C = chunks, P = subscribed points, 
 | `ValueStore::state`, `word`, `bit` | O(log G) | none |
 | `ValueStore::words`, `bits` | O(log G + count) | none |
 | `ValueStore::apply`, `markFailed` | O(n) | none |
-| `ValueStore::markStale`, `resetBaselines` | O(1) | none |
+| `ValueStore::markStale`, `resetBaselines` | O(P) (owner decision 2026-09-27; link events only, never in a round) | none |
 | `Session::create` | O(1) + buffer sizing | yes |
 | `subscribe`, `unsubscribe` | as `RangeSet`; re-plan deferred to the round boundary | vector growth only |
-| `linkUp` | O(1) + first dispatch | none |
-| `linkDown` | O(Q) | none |
+| `linkUp` | O(P) baseline reset + first dispatch | none |
+| `linkDown` | O(Q + P) | none |
 | `submit` | O(n) validate + chunk + encode | none (ad-hoc arena) |
 | `bytesIn` | O(k) parse; + O(n) decode and diff when a response completes | none |
 | `tick` | O(1) amortized | none |

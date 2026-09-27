@@ -89,11 +89,25 @@ foreach(_mc_gcda IN LISTS _mc_gcda_files)
     # each line is "<marker>:<lineno>:<source text>"; marker is "-" (non-executable), "#####"
     # (executable, never hit) or an execution count. Lineno 0 marks gcov's own header lines
     # ("-:0:Source:...", "-:0:Graph:...", ...), not source lines, and is skipped.
-    file(STRINGS "${_mc_gcov_file}" _mc_gcov_lines)
+    #
+    # T-028 (Checkpoint C): reading the whole file with file(STRINGS) into one line-per-item list
+    # (as this used to do) is not safe here -- a source file's own gcov annotation carries that
+    # line's full text along with the marker/lineno prefix, and CMake's list representation is
+    # just a semicolon-joined string; an unescaped ';' inside some *other* line's own text can
+    # make file(STRINGS)'s result list silently merge that line with neighbouring ones (observed
+    # on src/core/session/read_plan.cpp.gcov: file(STRINGS) returned 26 "lines" for a 267-line
+    # file, most of it swallowed into one giant merged item, so this whole file's own
+    # total/covered count came out 0/0 -- silently *passing* as "100%" instead of reporting its
+    # real, still-under-95%-for-the-module total). Matching only the short "<marker>:<lineno>:"
+    # prefix directly out of the raw file content (never materializing a line's own free-text
+    # portion as a list item at all) sidesteps the whole class of bug regardless of what any
+    # particular line's own text contains.
+    file(READ "${_mc_gcov_file}" _mc_gcov_content)
+    string(REGEX MATCHALL "\n[ \t]*[^:\n]+:[ \t]*[0-9]+:" _mc_gcov_matches "${_mc_gcov_content}")
     set(_mc_file_covered 0)
     set(_mc_file_total 0)
-    foreach(_mc_line IN LISTS _mc_gcov_lines)
-        if(_mc_line MATCHES "^[ \t]*([^:]+):[ \t]*([0-9]+):")
+    foreach(_mc_match IN LISTS _mc_gcov_matches)
+        if(_mc_match MATCHES "^\n[ \t]*([^:]+):[ \t]*([0-9]+):")
             set(_mc_marker "${CMAKE_MATCH_1}")
             set(_mc_lineno "${CMAKE_MATCH_2}")
             string(STRIP "${_mc_marker}" _mc_marker)

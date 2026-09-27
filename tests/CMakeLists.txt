@@ -134,6 +134,55 @@ if(MC_COVERAGE AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     )
 endif()
 
+# mc_core_session_tests (SPEC-core-session.md): one binary for the whole core-session module;
+# later tasks (T18 onward) add more test_*.cpp sources here without adding another main.cpp,
+# mirroring mc_core_model_tests/mc_core_protocol_tests above.
+add_executable(mc_core_session_tests
+    core/session/main.cpp
+    core/session/harness.h
+    core/session/harness.cpp
+    core/session/test_range_set.cpp
+    core/session/test_value_store.cpp
+    core/session/test_session_poll.cpp
+    core/session/test_session_adhoc.cpp
+    core/session/test_session_fault.cpp
+    core/session/test_session_heartbeat.cpp
+    core/session/test_alloc.cpp
+)
+target_link_libraries(mc_core_session_tests PRIVATE mc::core mc_doctest)
+# test_alloc.cpp (ALC-01/02) includes tests/common/alloc_counter.h as "common/alloc_counter.h";
+# give the binary its own include path to the tests/ root for that, mirroring
+# mc_core_model_tests/mc_core_protocol_tests above.
+target_include_directories(mc_core_session_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+# test_session_fault.cpp (SES-25, T-026 rework) reaches mc::detail's private
+# src/core/session/drain_violation.h to install a recording handler; mc::core only exports
+# include/ publicly (PRIVATE src/), so this binary gets its own PRIVATE include path to src/,
+# mirroring mc_core_model_tests's LIM-03 / mc_core_protocol_tests's PRIM-* include above (T-006).
+# tests/qmake/mc_core_session_tests.pro already has this path (it predates this addition).
+target_include_directories(mc_core_session_tests PRIVATE ${PROJECT_SOURCE_DIR}/src)
+mc_apply_warnings(mc_core_session_tests)
+mc_apply_coverage(mc_core_session_tests)
+
+add_test(NAME core_session.mc_core_session_tests COMMAND mc_core_session_tests)
+set_tests_properties(core_session.mc_core_session_tests PROPERTIES LABELS "core_session")
+
+# mc_coverage_report_session (T-028, Checkpoint C): the same script as mc_coverage_report /
+# mc_coverage_report_protocol above, pointed at src/core/session's own object files instead.
+if(MC_COVERAGE AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    add_custom_target(mc_coverage_report_session
+        COMMAND ${CMAKE_COMMAND}
+            -D MC_SOURCE_DIR=${PROJECT_SOURCE_DIR}
+            -D MC_OBJECT_BASE_DIR=${CMAKE_BINARY_DIR}/src/CMakeFiles/mc_core.dir/core/session
+            -D MC_GCOV_EXECUTABLE=${MC_GCOV_EXECUTABLE}
+            -D MC_MIN_COVERAGE=95
+            -D MC_REPORT_LABEL=src/core/session
+            -P ${PROJECT_SOURCE_DIR}/cmake/mc_coverage_report.cmake
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+        DEPENDS mc_core_session_tests
+        VERBATIM
+    )
+endif()
+
 # BLD-04 pri_sync and BLD-05 include_hygiene: cmake -P guard scripts run as ctest entries so
 # `ctest -L build` alone keeps the two build systems and the public surface honest. Neither
 # depends on a compiled binary, so they run even when nothing else has been built yet.
@@ -152,3 +201,11 @@ add_test(NAME BLD-05.include_hygiene
         -P ${PROJECT_SOURCE_DIR}/cmake/check_include_hygiene.cmake
 )
 set_tests_properties(BLD-05.include_hygiene PROPERTIES LABELS "build")
+
+# tests/bench (T-027, MC_BUILD_BENCH): mc_bench_session is a plain executable, not a ctest test
+# (spec: "no threshold") -- nested here (rather than added directly from the top-level
+# CMakeLists.txt) since it is physically under tests/, and the option's own default (OFF) means
+# this add_subdirectory() is a no-op for every other target/task's own build.
+if(MC_BUILD_BENCH)
+    add_subdirectory(bench)
+endif()

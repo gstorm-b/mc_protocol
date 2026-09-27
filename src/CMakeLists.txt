@@ -21,6 +21,16 @@ add_library(mc_core STATIC
     core/protocol/frame_3e.cpp
     core/protocol/frame_3e.h
     core/protocol/protocol.cpp
+    core/session/range_set.cpp
+    core/session/read_plan.cpp
+    core/session/value_store.cpp
+    core/session/session.cpp
+    core/session/session_rx.cpp
+    core/session/adhoc_queue.cpp
+    core/session/adhoc_queue.h
+    core/session/drain_violation.cpp
+    core/session/drain_violation.h
+    core/session/output_ring.h
     ${PROJECT_SOURCE_DIR}/include/mc/version.h
     ${PROJECT_SOURCE_DIR}/include/mc/core/types.h
     ${PROJECT_SOURCE_DIR}/include/mc/core/result.h
@@ -31,6 +41,9 @@ add_library(mc_core STATIC
     ${PROJECT_SOURCE_DIR}/include/mc/core/convert.h
     ${PROJECT_SOURCE_DIR}/include/mc/core/log.h
     ${PROJECT_SOURCE_DIR}/include/mc/core/protocol.h
+    ${PROJECT_SOURCE_DIR}/include/mc/core/poll_plan.h
+    ${PROJECT_SOURCE_DIR}/include/mc/core/value_store.h
+    ${PROJECT_SOURCE_DIR}/include/mc/core/session.h
 )
 add_library(mc::core ALIAS mc_core)
 

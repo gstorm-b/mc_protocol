@@ -309,13 +309,13 @@
 
 ### Checkpoint B: 3E codec (baton T-019)
 - [x] `ctest -L core_protocol` green with both compilers; BLD-04/05 green. (T-019; coverage 97.03 %)
-- [ ] Owner reviews `protocol.h`: it is the contract Phases 3 and 4 build on.
+- [x] Owner reviews `protocol.h`: it is the contract Phases 3 and 4 build on. (owner approved 2026-09-27, header as committed in `e71c7cc`)
 
 ---
 
 ## Phase 3: Engine on 3E (`SPEC-core-session.md`)
 
-### T17: `RangeSet` and `ReadPlan`
+### T17: `RangeSet` and `ReadPlan` (baton T-020)
 
 **Description:** Subscription bookkeeping and the planner: bits-as-words alignment (incl. M9000 + 16k on 1E/1C), union, gap merge with `autoGap()`, chunking with `chunk()`, per-type contiguous chunk order.
 
@@ -332,7 +332,7 @@
 
 **Scope:** M
 
-### T18: `ValueStore`
+### T18: `ValueStore` (baton T-021)
 
 **Description:** Per-type segments with contiguous value and state arrays, `apply()` with silent baselines, `markFailed`, `markStale`, `resetBaselines`, `rebuild()` carry-over, bulk reads in the normalized layout.
 
@@ -349,7 +349,7 @@
 
 **Scope:** M
 
-### T19: `Session` scheduling skeleton and test harness
+### T19: `Session` scheduling skeleton and test harness (baton T-022)
 
 **Description:** `Session::create`, `linkUp` / `linkDown`, round scheduling (`FixedRate`, `FixedDelay`, interval 0), pre-encoded frames, `nextDeadline`, output ring and `nextOutput`; the harness (`FakeClock`, 3E `ScriptedPeer`, `OutputRecorder`).
 
@@ -366,7 +366,7 @@
 
 **Scope:** M
 
-### T20: Receive path and value publishing
+### T20: Receive path and value publishing (baton T-023)
 
 **Description:** Receive buffer, `Parser` driving, decode into the store, `ValuesChanged` per response from round 2, `Snapshot` per device type (held back to the end of round 1), `CycleDone`.
 
@@ -383,10 +383,10 @@
 
 **Scope:** M
 
-### Checkpoint C1: polling path
-- [ ] The engine polls, publishes and schedules on 3E with a fake clock. Quick owner look at the harness style before the remaining engine tasks.
+### Checkpoint C1: polling path (inside baton T-023)
+- [x] The engine polls, publishes and schedules on 3E with a fake clock. Quick owner look at the harness style before the remaining engine tasks.
 
-### T21: Dynamic subscriptions
+### T21: Dynamic subscriptions (baton T-024)
 
 **Description:** `subscribe` / `unsubscribe` at run time, deferred re-plan at the next round boundary, carry-over of values and baselines.
 
@@ -402,7 +402,7 @@
 
 **Scope:** S
 
-### T22: Ad-hoc requests
+### T22: Ad-hoc requests (baton T-025)
 
 **Description:** Ad-hoc arena (FIFO ring, `adHocArenaBytes`), queue with `adHocCapacity`, `maxAdHocBurst` dispatch, chunked ad-hoc reads and split writes, exactly-once `RequestDone`.
 
@@ -419,7 +419,7 @@
 
 **Scope:** M
 
-### T23: Ethernet faults, drain contract, heartbeat
+### T23: Ethernet faults, drain contract, heartbeat (baton T-026)
 
 **Description:** The Ethernet column of the fault table (timeout, protocol error, unsolicited bytes, overflow → `LinkFault{…, reopen}`), the drain-contract check, the optional heartbeat.
 
@@ -436,7 +436,7 @@
 
 **Scope:** M
 
-### T24: Steady-state zero allocation and session benchmark
+### T24: Steady-state zero allocation and session benchmark (baton T-027)
 
 **Description:** ALC-01 for the engine and the regression benchmark (`MC_BUILD_BENCH`).
 
@@ -453,8 +453,8 @@
 
 **Scope:** S
 
-### Checkpoint C: engine go/no-go (ideas §5)
-- [ ] `ctest -L core_session` green with both compilers; coverage of `src/core/session` ≥ 95 % (MinGW).
+### Checkpoint C: engine go/no-go (ideas §5) (baton T-028)
+- [x] `ctest -L core_session` green with both compilers; coverage of `src/core/session` ≥ 95 % (MinGW). (T-028; 97.77 %)
 - [ ] **Owner decision:** the sans-I/O `Session` holds without contortions → continue; otherwise fall back to direction B (engine moves to the Qt layer, `McProtocol` API unchanged) and re-plan Phases 3–5.
 
 ---

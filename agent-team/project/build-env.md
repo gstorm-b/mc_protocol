@@ -89,6 +89,19 @@ MinGW flavour: MinGW `PATH` line above, `C:\Qt\6.11.1\mingw_64\bin\qmake.exe`,
   After editing `SUBDIRS`, `SOURCES` or `DEFINES`, delete the affected
   `Makefile.<name>*` (and its `debug/` objects) in `build/qmake-*` or rerun
   qmake from a clean folder (T-019).
+- **Adding a test binary to `tests/qmake/tests.pro`:** the tree is two levels
+  of `subdirs` (`mc_protocol.pro` → `tests.pro` → one `.pro` per binary).
+  Rerunning `qmake mc_protocol.pro` regenerates only the top `Makefile`;
+  delete `build/qmake-*/tests/qmake/Makefile.tests*`, then run `nmake` /
+  `mingw32-make` (not just qmake) — the nested Makefile is rebuilt during the
+  build (T-020).
+- **New `SOURCES` in an existing test `.pro`:** its `Makefile.<target>*` is
+  not regenerated — delete those files in `build/qmake-*/tests/qmake/`, then run
+  a plain `nmake` / `mingw32-make` before `check`; otherwise `check` silently
+  runs the old binary (T-022, T-026). Confirm with `--list-test-cases`.
+  A change to `mc_core.pri` itself (new library source) affects every qmake
+  test target — each compiles the library sources directly — so delete all
+  `Makefile.*` under `build/qmake-*/tests/qmake/` (T-026).
 - **Every test `.pro` sets its own intermediate dirs** (`OBJECTS_DIR`,
   `MOC_DIR`, `RCC_DIR`, `UI_DIR` named after `$$TARGET`, split debug/release):
   the `.file`-style `SUBDIRS` builds all test projects in one folder, and a
