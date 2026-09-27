@@ -1,0 +1,97 @@
+# id: V-3E-B-01
+# frame: 3E  code: Binary  op: ReadWords  device: D100  count: 3  series: QL
+# kind: request  bytes: 21
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 03 00
+
+# id: V-3E-B-02
+# frame: 3E  code: Binary  op: ReadWords  device: D100  count: 3  series: QL
+# kind: response  of: V-3E-B-01  expect: 1995,1202,1130  bytes: 17
+D0 00 00 FF FF 03 00 08 00 00 00 95 19 02 12 30 11
+
+# id: V-3E-B-03
+# frame: 3E  code: Binary  op: ReadBits  device: M100  count: 8  series: QL
+# kind: request  bytes: 21
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 01 00 64 00 00 90 08 00
+
+# id: V-3E-B-04
+# frame: 3E  code: Binary  op: ReadBits  device: M100  count: 8  series: QL
+# kind: response  of: V-3E-B-03  expect: 0,0,0,1,0,0,1,1  bytes: 15
+D0 00 00 FF FF 03 00 06 00 00 00 00 01 00 11
+
+# id: V-3E-B-05
+# frame: 3E  code: Binary  op: WriteWords  device: D100  count: 3  series: QL
+# kind: request  write: 1995,1202,1130  bytes: 27
+50 00 00 FF FF 03 00 12 00 10 00 01 14 00 00 64 00 00 A8 03 00 95 19 02 12 30 11
+
+# id: V-3E-B-06
+# frame: 3E  code: Binary  op: WriteWords  device: D100  count: 3  series: QL
+# kind: response  of: V-3E-B-05  expect:  bytes: 11
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: V-3E-B-07
+# frame: 3E  code: Binary  op: WriteBits  device: M100  count: 8  series: QL
+# kind: request  write: 1,1,0,0,1,1,0,0  bytes: 25
+50 00 00 FF FF 03 00 10 00 10 00 01 14 01 00 64 00 00 90 08 00 11 00 11 00
+
+# id: V-3E-B-08
+# frame: 3E  code: Binary  op: ReadBits  device: M100  count: 5  series: QL
+# kind: request  bytes: 21
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 01 00 64 00 00 90 05 00
+
+# id: V-3E-B-09
+# frame: 3E  code: Binary  op: ReadBits  device: M100  count: 5  series: QL
+# kind: response  of: V-3E-B-08  expect: 1,0,1,0,1  bytes: 14
+D0 00 00 FF FF 03 00 05 00 00 00 10 10 10
+
+# id: V-3E-B-10
+# frame: 3E  code: Binary  op: ReadWords  device: D100  count: 3  series: QL
+# kind: response-error  of: V-3E-B-01  error: Plc  plccode: C051
+# errorinfo: 00,FF,03FF,00,0401,0000  bytes: 20
+D0 00 00 FF FF 03 00 0B 00 51 C0 00 FF FF 03 00 01 04 00 00
+
+# id: V-3E-B-11
+# frame: 3E  code: Binary  op: ReadWords  device: D100  count: 3  series: IqR
+# kind: request  bytes: 23
+50 00 00 FF FF 03 00 0E 00 10 00 01 04 02 00 64 00 00 00 A8 00 03 00
+
+# id: V-3E-B-12
+# frame: 3E  code: Binary  op: ReadBits  device: M100  count: 8  series: IqR
+# kind: request  bytes: 23
+50 00 00 FF FF 03 00 0E 00 10 00 01 04 03 00 64 00 00 00 90 00 08 00
+
+# id: V-3E-B-13
+# frame: 3E  code: Binary  op: ReadRandom
+# kind: request  tags: v1.1  bytes: 45
+50 00 00 FF FF 03 00 24 00 10 00 03 04 00 00 04 03 00 00 00 A8 00 00 00 C2 64 00 00 90 20 00 00 9C DC 05 00 A8 60 01 00 9D 57 04 00 90
+
+# id: 3E-08
+# frame: 3E  code: Binary  op: ReadWords  device: D100  count: 3  series: QL
+# kind: response-error  error: FrameMismatch  bytes: 17
+D4 00 00 FF FF 03 00 08 00 00 00 95 19 02 12 30 11
+
+# id: 3E-09
+# frame: 3E  code: Binary  op: ReadWords  device: D100  count: 3  series: QL
+# kind: response-error  error: LengthMismatch  bytes: 10
+D0 00 00 FF FF 03 00 01 00 00
+
+# id: 3E-10
+# frame: 3E  code: Binary  op: ReadWords  device: D100  count: 3  series: QL
+# kind: response-error  error: LengthMismatch  bytes: 15
+D0 00 00 FF FF 03 00 06 00 00 00 95 19 02 12
+
+# id: 3E-11
+# frame: 3E  code: Binary  op: ReadWords  device: D100  count: 3  series: QL
+# kind: response-error  error: Plc  plccode: C051  errorinfo:  bytes: 11
+D0 00 00 FF FF 03 00 02 00 51 C0
+
+# id: 3E-12
+# frame: 3E  code: Binary  op: ReadWords  device: D100  count: 3  series: QL
+# network: 02  pc: 03
+# kind: request  bytes: 21
+50 00 02 03 FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 03 00
+
+# id: 3E-13
+# frame: 3E  code: Binary  op: ReadWords  device: D100  count: 3  series: QL
+# io: 03E1
+# kind: request  bytes: 21
+50 00 00 FF E1 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 03 00

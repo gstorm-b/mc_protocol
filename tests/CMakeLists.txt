@@ -71,6 +71,69 @@ endif()
 add_test(NAME core_model.mc_core_model_tests COMMAND mc_core_model_tests)
 set_tests_properties(core_model.mc_core_model_tests PROPERTIES LABELS "core_model")
 
+# tests/common/vectors.* (T-013, SPEC-core-protocol.md "Golden vector files"): the `.vec` loader,
+# as its own small static library so mc_core_protocol_tests and later tests/mock, tests/replay
+# binaries (SPEC-mock-plc.md) share one parser instead of each compiling its own copy.
+add_library(mc_test_vectors STATIC
+    common/vectors.h
+    common/vectors.cpp
+)
+target_include_directories(mc_test_vectors PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+mc_apply_warnings(mc_test_vectors)
+
+# mc_core_protocol_tests (SPEC-core-protocol.md): one binary for the whole core-protocol module;
+# later tasks (T-014 onward) add more test_*.cpp sources here without adding another main.cpp,
+# mirroring mc_core_model_tests above (T-006).
+add_executable(mc_core_protocol_tests
+    core/protocol/main.cpp
+    core/protocol/test_vectors_format.cpp
+    core/protocol/test_primitives.cpp
+    core/protocol/test_device_encode.cpp
+    core/protocol/test_commands.cpp
+    core/protocol/test_frame_3e.cpp
+    core/protocol/test_parser_stream.cpp
+    core/protocol/test_alloc.cpp
+)
+target_link_libraries(mc_core_protocol_tests PRIVATE mc::core mc_doctest mc_test_vectors)
+# test_vectors_format.cpp (VEC-02) walks tests/vectors/*.vec from the source tree, not the test
+# binary's own working directory: ctest runs each binary from its own build tree, and the MSVC
+# (build/cmake-debug) and MinGW (build/cmake-mingw) trees sit at different depths under the
+# repository root, so a relative path from the executable would not be portable between them.
+target_compile_definitions(mc_core_protocol_tests PRIVATE
+    MC_TESTS_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}"
+)
+# test_primitives.cpp (PRIM-*) reaches mc::detail's private hexascii/sumcheck/field_codec headers
+# under src/core/protocol/; mc::core only exports include/ publicly (PRIVATE src/), so this
+# binary gets its own PRIVATE include path to src/, mirroring mc_core_model_tests's LIM-03 include
+# above (T-006).
+target_include_directories(mc_core_protocol_tests PRIVATE ${PROJECT_SOURCE_DIR}/src)
+mc_apply_warnings(mc_core_protocol_tests)
+# See the matching comment on mc_core_model_tests above: this binary is what runs mc_core's
+# instrumented protocol code once T-014 onward add it.
+mc_apply_coverage(mc_core_protocol_tests)
+
+add_test(NAME core_protocol.mc_core_protocol_tests COMMAND mc_core_protocol_tests)
+set_tests_properties(core_protocol.mc_core_protocol_tests PROPERTIES LABELS "core_protocol")
+
+# mc_coverage_report_protocol (T-019): the same script as mc_coverage_report above, pointed at
+# src/core/protocol's own object files instead (built by this same mc_core target; mc_test_vectors
+# is test-only code under tests/common/, not part of src/core/protocol, so it needs no coverage
+# instrumentation and is not part of this report).
+if(MC_COVERAGE AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    add_custom_target(mc_coverage_report_protocol
+        COMMAND ${CMAKE_COMMAND}
+            -D MC_SOURCE_DIR=${PROJECT_SOURCE_DIR}
+            -D MC_OBJECT_BASE_DIR=${CMAKE_BINARY_DIR}/src/CMakeFiles/mc_core.dir/core/protocol
+            -D MC_GCOV_EXECUTABLE=${MC_GCOV_EXECUTABLE}
+            -D MC_MIN_COVERAGE=95
+            -D MC_REPORT_LABEL=src/core/protocol
+            -P ${PROJECT_SOURCE_DIR}/cmake/mc_coverage_report.cmake
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+        DEPENDS mc_core_protocol_tests
+        VERBATIM
+    )
+endif()
+
 # BLD-04 pri_sync and BLD-05 include_hygiene: cmake -P guard scripts run as ctest entries so
 # `ctest -L build` alone keeps the two build systems and the public surface honest. Neither
 # depends on a compiled binary, so they run even when nothing else has been built yet.

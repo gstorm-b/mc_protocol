@@ -41,36 +41,43 @@ T01–T04 build skeleton ── A0
 
 Details (acceptance criteria, verification, files) are in `tasks/todo.md`.
 
+**Two numberings.** `T01`…`T56` are this plan's items. The agent-team works in
+baton files `tasks/active|done/T-001.md`, `T-002.md`, … numbered in execution order;
+each names its plan item in `Plan ref`, and `→ T-0xx` below shows the mapping. They
+differ because `T-001` was a housekeeping task outside the plan and every checkpoint
+is a baton task of its own (coverage, both compilers, phase tester and reviewer).
+Baton tasks are created one phase ahead.
+
 ### Phase 0: Build skeleton (`build-packaging`)
 
-- [x] T01 CMake skeleton with `mc::core`, version header, doctest
-- [x] T02 qmake mirror
-- [x] T03 Build guard tests (pri sync, include hygiene, consumer smokes)
-- [x] T04 `check` scripts, formatting, README, CHANGELOG, LICENSE
+- [x] T01 CMake skeleton with `mc::core`, version header, doctest → T-002
+- [x] T02 qmake mirror → T-003
+- [x] T03 Build guard tests (pri sync, include hygiene, consumer smokes) → T-004
+- [x] T04 `check` scripts, formatting, README, CHANGELOG, LICENSE → T-005
 
-**Checkpoint A0:** both build systems and both compilers green on an almost empty library.
+**Checkpoint A0** (in T-005): both build systems and both compilers green on an almost empty library. Done.
 
 ### Phase 1: Data layer (`core-model`)
 
-- [x] T05 `Error`, `Expected<T>`, byte views
-- [x] T06 Device table, parsing, formatting, ordering
-- [x] T07 `FrameConfig`, `Request`, `validate()`
-- [x] T08 Limits table and `chunk()`
-- [x] T09 `convert` helpers
-- [x] T10 `LogSink`, `hexDump`, zero-allocation test
+- [x] T05 `Error`, `Expected<T>`, byte views → T-006
+- [x] T06 Device table, parsing, formatting, ordering → T-007
+- [x] T07 `FrameConfig`, `Request`, `validate()` → T-008
+- [x] T08 Limits table and `chunk()` → T-009
+- [x] T09 `convert` helpers → T-010
+- [x] T10 `LogSink`, `hexDump`, zero-allocation test → T-011
 
-**Checkpoint A:** every table row verified; ALC-01; coverage ≥ 95 % (MinGW).
+**Checkpoint A** → T-012: every table row verified; ALC-01; coverage ≥ 95 % (MinGW). Done (97.94 %, commit `b45d704`).
 
 ### Phase 2: Wire codec, 3E first (`core-protocol`)
 
-- [ ] T11 Vector loader and `.vec` format (with the transcription guard)
-- [ ] T12 Primitives
-- [ ] T13 Device encoding for all eight families
-- [ ] T14 QnA batch read/write commands
-- [ ] T15 `McProtocol` and `Parser` facade with 3E Binary
-- [ ] T16 3E ASCII, streaming, sizes, zero allocation
+- [x] T11 Vector loader and `.vec` format (with the transcription guard) → T-013
+- [x] T12 Primitives → T-014
+- [x] T13 Device encoding for all eight families → T-015
+- [x] T14 QnA batch read/write commands → T-016
+- [x] T15 `McProtocol` and `Parser` facade with 3E Binary → T-017
+- [x] T16 3E ASCII, streaming, sizes, zero allocation → T-018
 
-**Checkpoint B:** every A.1 / A.2 vector round-trips; owner reviews `protocol.h`, the contract of Phases 3 and 4.
+**Checkpoint B** → T-019: every A.1 / A.2 vector round-trips; owner reviews `protocol.h`, the contract of Phases 3 and 4. Codec part done (commit follows); owner review pending.
 
 ### Phase 3: Engine on 3E (`core-session`)
 

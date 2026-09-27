@@ -13,7 +13,7 @@
 
 ## Phase 0: Build skeleton (`SPEC-build-packaging.md`)
 
-### T01: CMake skeleton with `mc::core`, version header and doctest
+### T01: CMake skeleton with `mc::core`, version header and doctest (baton T-002)
 
 **Description:** Root and `src/` CMake projects that define `mc_core` / `mc::core` (static, C++17, `include/` public, `src/` private), the option set of the spec (`MC_BUILD_*`, top-level detection for 3.16), warning and version helpers, the vendored doctest header, and the first test binary with the version test. Also `scripts/vsdev.ps1`, dot-sourced to load the VS developer environment (x64) found by `vswhere` into the current PowerShell; it does nothing when `cl.exe` is already on `PATH`.
 
@@ -32,7 +32,7 @@
 
 **Scope:** M (boilerplate)
 
-### T02: qmake mirror
+### T02: qmake mirror (baton T-003)
 
 **Description:** `mc_core.pri`, `mc_device.pri`, `mc_mock.pri`, `mc_protocol.pri` with include guards and `$$PWD` paths, and the dev-only `mc_protocol.pro` (`subdirs`) that builds the test binaries through the `.pri` files.
 
@@ -50,7 +50,7 @@
 
 **Scope:** M (boilerplate)
 
-### T03: Build guard tests
+### T03: Build guard tests (baton T-004)
 
 **Description:** The ctest scripts that keep the build honest: `pri_sync` (BLD-04), `include_hygiene` (BLD-05 a–d), and the two consumer smoke projects (BLD-06 CMake, BLD-07 qmake). The qmake consumer links QtCore, which also proves early that MSVC 2026 links the Qt `msvc2022_64` kit.
 
@@ -68,7 +68,7 @@
 
 **Scope:** M
 
-### T04: `check` scripts, formatting and repository documents
+### T04: `check` scripts, formatting and repository documents (baton T-005)
 
 **Description:** `scripts/check.ps1` and `scripts/check.sh` running every stage in order and stopping at the first failure (full CMake build, core-only build with Qt removed from the environment, qmake build, consumer smokes); `.clang-format`; README (three consumption paths, version policy), CHANGELOG (Keep a Changelog, `Unreleased`), LICENSE (MIT, decided).
 
@@ -86,15 +86,15 @@
 
 **Scope:** M. Note: ask the owner for the copyright holder name in `LICENSE`.
 
-### Checkpoint A0: skeleton
+### Checkpoint A0: skeleton (in baton T-005)
 - [x] `scripts/check.ps1` green; both compilers; qmake and CMake. (T-005, 2026-09-27)
-- [ ] Owner reviews the repository layout before code lands in it.
+- [x] Owner reviews the repository layout before code lands in it.
 
 ---
 
 ## Phase 1: Data layer (`SPEC-core-model.md`)
 
-### T05: `Error`, `Expected<T>`, byte views
+### T05: `Error`, `Expected<T>`, byte views (baton T-006)
 
 **Description:** `types.h` (`ByteView`, `MutableByteView`, `ByteBuf`, `kNoCode`) and `result.h` (`ErrorCategory`, `ErrorCode` including `NotSubscribed`, `ErrorInfo`, `Error`, `Expected<T>` and `Expected<void>`, move-only `T` supported), header-only.
 
@@ -111,7 +111,7 @@
 
 **Scope:** S
 
-### T06: Device table, parsing, formatting, ordering
+### T06: Device table, parsing, formatting, ordering (baton T-007)
 
 **Description:** The constexpr table of all 29 symbols of spec §3.2 with every code column and footnote, `deviceInfo()`, `parseDevice()` (case-insensitive, longest match, radix per symbol), `formatDevice()`, and `Device` `==`/`!=`/`<`.
 
@@ -128,7 +128,7 @@
 
 **Scope:** M
 
-### T07: `FrameConfig`, `Request`, `validate()`
+### T07: `FrameConfig`, `Request`, `validate()` (baton T-008)
 
 **Description:** `FrameConfig` with the named constructors and spec §8.3 defaults (`checkRoute` true for 3C/1C), `validate()` and `effectiveTimeoutMs()`; `Request` with its builders; `validate(Request, FrameConfig)` implementing the seven rules in order.
 
@@ -145,7 +145,7 @@
 
 **Scope:** M
 
-### T08: Limits table and `chunk()`
+### T08: Limits table and `chunk()` (baton T-009)
 
 **Description:** The full constexpr transcription of spec §4.4 (random-access rows included for v1.1), `maxPoints()`, `chunkCount()` and `chunk()` per spec §8.5 (step 16 for word access to bit devices, `splitWrites` policy).
 
@@ -162,7 +162,7 @@
 
 **Scope:** M
 
-### T09: `convert` helpers
+### T09: `convert` helpers (baton T-010)
 
 **Description:** Word/dword/float/string accessors and writers, bit packing, words ↔ bits, owning `from*` builders, all bounds-checked (spec §2.3, §2.4, §8.7).
 
@@ -178,7 +178,7 @@
 
 **Scope:** S
 
-### T10: `LogSink`, `hexDump`, zero-allocation test
+### T10: `LogSink`, `hexDump`, zero-allocation test (baton T-011)
 
 **Description:** `LogSink`, `NullLogSink`, `hexDump` with control-code names; a counting global `operator new` shared by every later allocation test; ALC-01 for core-model.
 
@@ -195,7 +195,7 @@
 
 **Scope:** M
 
-### Checkpoint A: core-model
+### Checkpoint A: core-model (baton T-012)
 - [x] `ctest -L core_model` green with both compilers; BLD-04/05 green. (T-012)
 - [x] MinGW with `-DMC_COVERAGE=ON`: line coverage of `src/core/model` ≥ 95 %; every `ErrorCode` value appears in a test. (97.94 %, T-012)
 
@@ -203,7 +203,7 @@
 
 ## Phase 2: Wire codec, 3E first (`SPEC-core-protocol.md`)
 
-### T11: Vector loader and `.vec` format
+### T11: Vector loader and `.vec` format (baton T-013)
 
 **Description:** `tests/common/vectors.h/.cpp`: parses `# key: value` metadata, one hex line per vector, `<STX>`-style names, tags (`v1.1`, `v2`), and exposes every metadata key as data for the mock and replay tests. Every vector carries `bytes:` transcribed from its reference-spec heading.
 
@@ -220,7 +220,7 @@
 
 **Scope:** M
 
-### T12: Primitives
+### T12: Primitives (baton T-014)
 
 **Description:** Hex-ASCII (upper-case encode, lower-case accepted on decode), 8-bit sum check, `AsciiCodec` / `BinaryCodec` field codecs (byte-wise, no `reinterpret_cast`), with PRIM vectors in `prim.vec`.
 
@@ -237,7 +237,7 @@
 
 **Scope:** M
 
-### T13: Device encoding for all eight families
+### T13: Device encoding for all eight families (baton T-015)
 
 **Description:** `qnaDevice()`, `e1Device()`, `c1Device()` per spec §3.3 (QnA ASCII/Binary × Q/L/iQ-R, 1E ASCII/Binary, 1C ACPU/AnA).
 
@@ -254,7 +254,7 @@
 
 **Scope:** S
 
-### T14: QnA batch read/write commands
+### T14: QnA batch read/write commands (baton T-016)
 
 **Description:** 0401/1401 request data and response decoding written once against the field codec (no ASCII/Binary branches except device encoding); 0403/1402 tables present but unreachable in v1.
 
@@ -271,7 +271,7 @@
 
 **Scope:** M
 
-### T15: `McProtocol` and `Parser` facade with 3E Binary
+### T15: `McProtocol` and `Parser` facade with 3E Binary (baton T-017)
 
 **Description:** The public `protocol.h` (`McProtocol`, `Parser`, `ParseStatus`), dispatch by `FrameType`, and the 3E envelope and response parse for Binary. First end-to-end slice of the codec.
 
@@ -289,7 +289,7 @@
 
 **Scope:** M
 
-### T16: 3E ASCII, streaming, sizes, zero allocation
+### T16: 3E ASCII, streaming, sizes, zero allocation (baton T-018)
 
 **Description:** 3E ASCII, byte-at-a-time and coalesced parsing, `reset()`, the 4E vectors transcribed and tagged `v2`, and ALC-01 for the codec.
 
@@ -307,8 +307,8 @@
 
 **Scope:** M
 
-### Checkpoint B: 3E codec
-- [ ] `ctest -L core_protocol` green with both compilers; BLD-04/05 green.
+### Checkpoint B: 3E codec (baton T-019)
+- [x] `ctest -L core_protocol` green with both compilers; BLD-04/05 green. (T-019; coverage 97.03 %)
 - [ ] Owner reviews `protocol.h`: it is the contract Phases 3 and 4 build on.
 
 ---

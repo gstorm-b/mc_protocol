@@ -19,7 +19,14 @@ HEADERS += \
     $$PWD/include/mc/core/limits.h \
     $$PWD/include/mc/core/convert.h \
     $$PWD/include/mc/core/log.h \
-    $$PWD/src/core/model/limits_table.h
+    $$PWD/include/mc/core/protocol.h \
+    $$PWD/src/core/model/limits_table.h \
+    $$PWD/src/core/protocol/hexascii.h \
+    $$PWD/src/core/protocol/sumcheck.h \
+    $$PWD/src/core/protocol/field_codec.h \
+    $$PWD/src/core/protocol/device_encode.h \
+    $$PWD/src/core/protocol/command_qna.h \
+    $$PWD/src/core/protocol/frame_3e.h
 
 SOURCES += \
     $$PWD/src/core/version.cpp \
@@ -30,6 +37,12 @@ SOURCES += \
     $$PWD/src/core/model/limits_table.cpp \
     $$PWD/src/core/model/chunk.cpp \
     $$PWD/src/core/model/convert.cpp \
-    $$PWD/src/core/model/log.cpp
+    $$PWD/src/core/model/log.cpp \
+    $$PWD/src/core/protocol/hexascii.cpp \
+    $$PWD/src/core/protocol/sumcheck.cpp \
+    $$PWD/src/core/protocol/device_encode.cpp \
+    $$PWD/src/core/protocol/command_qna.cpp \
+    $$PWD/src/core/protocol/frame_3e.cpp \
+    $$PWD/src/core/protocol/protocol.cpp
 
 }

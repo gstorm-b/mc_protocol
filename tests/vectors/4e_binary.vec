@@ -1,0 +1,24 @@
+# id: V-4E-B-01
+# frame: 4E  code: Binary
+# kind: request  tags: v2  bytes: 25
+54 00 34 12 00 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 03 00
+
+# id: V-4E-B-02
+# frame: 4E  code: Binary
+# kind: response  of: V-4E-B-01  tags: v2  bytes: 21
+D4 00 34 12 00 00 00 FF FF 03 00 08 00 00 00 95 19 02 12 30 11
+
+# id: V-4E-B-03
+# frame: 4E  code: Binary
+# kind: request  tags: v2  bytes: 31
+54 00 34 12 00 00 00 FF FF 03 00 12 00 10 00 01 14 00 00 64 00 00 A8 03 00 95 19 02 12 30 11
+
+# id: V-4E-B-04
+# frame: 4E  code: Binary
+# kind: response  of: V-4E-B-03  tags: v2  bytes: 15
+D4 00 34 12 00 00 00 FF FF 03 00 02 00 00 00
+
+# id: V-4E-B-05
+# frame: 4E  code: Binary
+# kind: response-error  of: V-4E-B-01  tags: v2  bytes: 24
+D4 00 34 12 00 00 00 FF FF 03 00 0B 00 51 C0 00 FF FF 03 00 01 04 00 00

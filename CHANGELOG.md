@@ -44,3 +44,24 @@ All notable changes to this project are documented in this file. The format foll
   `src/core/model`'s line coverage per file and in total (no Python on this machine, so no
   `gcovr`). `core-model` verified on MinGW GCC 13.1 for the first time this phase, with coverage
   ≥ 95 %.
+- `mc/core/protocol.h`: `McProtocol` and `Parser` (`ParseStatus`), the codec facade that turns a
+  validated `Request` into one complete frame and a response frame back into a normalized payload
+  or an `Error` — the public contract `core-session` (Phase 3) builds on. 3E is fully implemented,
+  Binary and ASCII (request envelope, response parsing, error mapping per spec §5.1/§7.2);
+  `Parser` is a fixed-size, trivially copyable value type (`sizeof(Parser) == 96`); every other
+  frame family/wire code not implemented yet reports `ErrorCode::UnsupportedCommand` rather than
+  undefined behaviour. Golden-vector round trips: every Appendix A.1/A.2 vector (3E Binary/ASCII);
+  A.3/A.4 (4E) transcribed and tagged `v2`, skipped. Streaming: byte-at-a-time and coalesced-frame
+  parsing, `reset()` recovery (STR-01, STR-02, STR-04); zero allocations across encode, `feed()`
+  and `payload()` (ALC-01).
+- Supporting internal layers under `src/core/protocol/` (`mc::detail`, not part of the public
+  surface): hex-ASCII and 8-bit sum-check primitives (`hexascii.h`, `sumcheck.h`); the
+  `AsciiCodec`/`BinaryCodec` field codec (`field_codec.h`) sharing one code path per field kind,
+  with no ASCII/Binary branch outside device encoding; on-wire device address encoding for all
+  eight device families (`device_encode.h`, DEV-07 wire half); the QnA `0401`/`1401` batch
+  read/write command layer (`command_qna.h`), shared unchanged by 3E and (later) 3C. Golden
+  vectors: `prim.vec`, `cmd.vec`, `cmdd.vec`, `3e_binary.vec`, `3e_ascii.vec`, `4e_binary.vec`,
+  `4e_ascii.vec`, each self-checked against the reference spec's own bytes before being typed in.
+  The shared `.vec` loader (`tests/common/vectors.h`/`.cpp`) and its own transcription guard
+  (VEC-02: every vector's hex byte count matches its own `bytes:` heading) are reused by every
+  test file above and will be by `tests/mock` and `tests/replay` later.

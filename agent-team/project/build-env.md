@@ -84,6 +84,20 @@ MinGW flavour: MinGW `PATH` line above, `C:\Qt\6.11.1\mingw_64\bin\qmake.exe`,
 - `SUBDIRS` entries: write `SUBDIRS = foo` plus `foo.file = path/to/real.pro`
   and **no** `foo.subdir`. A bare entry resolves to `<entry>/<entry>.pro`;
   `.file` together with `.subdir` gives a qmake warning (T-003).
+- **Stale qmake sub-Makefiles:** a `subdirs` build regenerates
+  `Makefile.<name>` only when it is missing, never when the `.pro` changed.
+  After editing `SUBDIRS`, `SOURCES` or `DEFINES`, delete the affected
+  `Makefile.<name>*` (and its `debug/` objects) in `build/qmake-*` or rerun
+  qmake from a clean folder (T-019).
+- **Every test `.pro` sets its own intermediate dirs** (`OBJECTS_DIR`,
+  `MOC_DIR`, `RCC_DIR`, `UI_DIR` named after `$$TARGET`, split debug/release):
+  the `.file`-style `SUBDIRS` builds all test projects in one folder, and a
+  shared `debug/` let `mc_core_protocol_tests` link core-model's
+  `test_alloc.obj` while still reporting green (T-019). Copy the block from an
+  existing test `.pro`. Check a new qmake binary with `--list-test-cases`
+  against its CMake twin.
+- Test `.pro` files need `DEFINES += DOCTEST_CONFIG_USE_STD_HEADERS`, as the
+  CMake `mc_doctest` target does (T-019).
 - `QT =` in a test `.pro` keeps Qt off the compile and link lines entirely
   (core-only tests).
 - `.pri` include guards: `!defined(MC_X_PRI_INCLUDED, var) { … }`.
@@ -122,6 +136,14 @@ the bar (`-D MC_MIN_COVERAGE=<n>`, default 95, total over `src/core/model`).
 - `mc_doctest` carries `DOCTEST_CONFIG_USE_STD_HEADERS` for every test binary:
   without it MSVC cannot stringify `std::string_view` in a failed `CHECK`
   (doctest only forward-declares `std::ostream`) — T-006.
+- A test that reads source-tree files at runtime (e.g. `tests/vectors/`) finds
+  them through the compile definition `MC_TESTS_SOURCE_DIR` set in
+  `tests/CMakeLists.txt` — never through the working directory, which differs
+  between build trees (T-013). Golden-vector loader: `tests/common/vectors.h`
+  (static library `mc_test_vectors`).
+- Long repetitive vector lines (e.g. PRIM-09, 300 × `FF`) are generated with a
+  one-line `perl` command, not copied from a terminal — a copied line was
+  silently truncated once; VEC-02 caught it (T-014). No Python on this machine.
 - Test binaries per module: `mc_core_model_tests` (ctest name
   `core_model.mc_core_model_tests`), main in `tests/core/model/main.cpp`.
 - ctest labels: `build`, `core_model`, `core_protocol`, `core_session`,

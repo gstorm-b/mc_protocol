@@ -9,6 +9,18 @@ add_library(mc_core STATIC
     core/model/chunk.cpp
     core/model/convert.cpp
     core/model/log.cpp
+    core/protocol/hexascii.cpp
+    core/protocol/hexascii.h
+    core/protocol/sumcheck.cpp
+    core/protocol/sumcheck.h
+    core/protocol/field_codec.h
+    core/protocol/device_encode.cpp
+    core/protocol/device_encode.h
+    core/protocol/command_qna.cpp
+    core/protocol/command_qna.h
+    core/protocol/frame_3e.cpp
+    core/protocol/frame_3e.h
+    core/protocol/protocol.cpp
     ${PROJECT_SOURCE_DIR}/include/mc/version.h
     ${PROJECT_SOURCE_DIR}/include/mc/core/types.h
     ${PROJECT_SOURCE_DIR}/include/mc/core/result.h
@@ -18,6 +30,7 @@ add_library(mc_core STATIC
     ${PROJECT_SOURCE_DIR}/include/mc/core/limits.h
     ${PROJECT_SOURCE_DIR}/include/mc/core/convert.h
     ${PROJECT_SOURCE_DIR}/include/mc/core/log.h
+    ${PROJECT_SOURCE_DIR}/include/mc/core/protocol.h
 )
 add_library(mc::core ALIAS mc_core)
 

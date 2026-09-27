@@ -1,15 +1,18 @@
 # mc_coverage_report.cmake — T-012: runs gcov over mc_core's own object files under
-# src/core/model and reports per-file and total line coverage, failing if the total is below
-# MC_MIN_COVERAGE. No Python on this machine (see build-env.md), hence gcov + this script
-# instead of gcovr.
+# MC_OBJECT_BASE_DIR (originally always src/core/model; T-019 reuses the same script for
+# src/core/protocol too, as a second cmake target -- see tests/CMakeLists.txt's
+# mc_coverage_report_protocol) and reports per-file and total line coverage, failing if the
+# total is below MC_MIN_COVERAGE. No Python on this machine (see build-env.md), hence gcov +
+# this script instead of gcovr.
 #
 # Requires .gcda data to already exist next to the .gcno/.obj files under MC_OBJECT_BASE_DIR —
-# i.e. the coverage-instrumented mc_core_model_tests must have already been run once (`ctest`),
-# not just built. Building the target this script is wired to (mc_coverage_report,
-# tests/CMakeLists.txt) does not itself run ctest; that is a separate, explicit step.
+# i.e. the coverage-instrumented test binary for that directory must have already been run once
+# (`ctest`), not just built. Building the target this script is wired to (tests/CMakeLists.txt)
+# does not itself run ctest; that is a separate, explicit step.
 #
 # Run as: cmake -D MC_SOURCE_DIR=<repo root> -D MC_OBJECT_BASE_DIR=<obj dir>
 #               -D MC_GCOV_EXECUTABLE=<path to gcov> [-D MC_MIN_COVERAGE=95]
+#               [-D MC_REPORT_LABEL=<display name, default "src/core/model">]
 #               -P mc_coverage_report.cmake
 
 # cmake -P script mode does not pick up policies from a project()'s cmake_minimum_required(); set
@@ -30,6 +33,14 @@ if(NOT MC_GCOV_EXECUTABLE OR NOT EXISTS "${MC_GCOV_EXECUTABLE}")
 endif()
 if(NOT DEFINED MC_MIN_COVERAGE)
     set(MC_MIN_COVERAGE 95)
+endif()
+# T-019: which source directory MC_OBJECT_BASE_DIR's .gcda files belong to, for the report's own
+# banner line only (MC_OBJECT_BASE_DIR itself already told this script exactly where to find
+# them; this is display text, so a second target -- core-protocol's own coverage, alongside
+# core-model's original one -- prints an accurate label instead of a misleading copy-paste one).
+# Default unchanged: omitting it reproduces exactly T-012's original "src/core/model" banner.
+if(NOT DEFINED MC_REPORT_LABEL)
+    set(MC_REPORT_LABEL "src/core/model")
 endif()
 
 file(GLOB _mc_gcda_files "${MC_OBJECT_BASE_DIR}/*.cpp.gcda")
@@ -127,7 +138,7 @@ if(_mc_total_pct_frac LESS 10)
 endif()
 
 set(_mc_total_pct_text "${_mc_total_pct_int}.${_mc_total_pct_frac}%")
-message(STATUS "mc_coverage_report: src/core/model line coverage")
+message(STATUS "mc_coverage_report: ${MC_REPORT_LABEL} line coverage")
 foreach(_mc_line IN LISTS _mc_report_lines)
     message(STATUS "${_mc_line}")
 endforeach()

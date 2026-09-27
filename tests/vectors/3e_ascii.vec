@@ -1,0 +1,116 @@
+# id: V-3E-A-01
+# frame: 3E  code: Ascii  op: ReadWords  device: D100  count: 3  series: QL
+# kind: request  bytes: 42
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 33
+500000FF03FF000018001004010000D*0001000003
+
+# id: V-3E-A-02
+# frame: 3E  code: Ascii  op: ReadWords  device: D100  count: 3  series: QL
+# kind: response  of: V-3E-A-01  expect: 1995,1202,1130  bytes: 34
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 30 30 30 30 30 31 39 39 35 31 32 30 32 31 31 33 30
+D00000FF03FF0000100000199512021130
+
+# id: V-3E-A-03
+# frame: 3E  code: Ascii  op: ReadBits  device: M100  count: 8  series: QL
+# kind: request  bytes: 42
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 31 4D 2A 30 30 30 31 30 30 30 30 30 38
+500000FF03FF000018001004010001M*0001000008
+
+# id: V-3E-A-04
+# frame: 3E  code: Ascii  op: ReadBits  device: M100  count: 8  series: QL
+# kind: response  of: V-3E-A-03  expect: 0,0,0,1,0,0,1,1  bytes: 30
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 30 30 30 31 30 30 31 31
+D00000FF03FF00000C000000010011
+
+# id: V-3E-A-05
+# frame: 3E  code: Ascii  op: WriteWords  device: D100  count: 3  series: QL
+# kind: request  write: 1995,1202,1130  bytes: 54
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 32 34 30 30 31 30 31 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 33 31 39 39 35 31 32 30 32 31 31 33 30
+500000FF03FF000024001014010000D*0001000003199512021130
+
+# id: V-3E-A-06
+# frame: 3E  code: Ascii  op: WriteWords  device: D100  count: 3  series: QL
+# kind: response  of: V-3E-A-05  expect:  bytes: 22
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+D00000FF03FF0000040000
+
+# id: V-3E-A-07
+# frame: 3E  code: Ascii  op: WriteBits  device: M100  count: 8  series: QL
+# kind: request  write: 1,1,0,0,1,1,0,0  bytes: 50
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 32 30 30 30 31 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 31 30 30 30 30 30 38 31 31 30 30 31 31 30 30
+500000FF03FF000020001014010001M*000100000811001100
+
+# id: V-3E-A-08
+# frame: 3E  code: Ascii  op: ReadBits  device: M100  count: 5  series: QL
+# kind: request  bytes: 42
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 31 4D 2A 30 30 30 31 30 30 30 30 30 35
+500000FF03FF000018001004010001M*0001000005
+
+# id: V-3E-A-09
+# frame: 3E  code: Ascii  op: ReadBits  device: M100  count: 5  series: QL
+# kind: response  of: V-3E-A-08  expect: 1,0,1,0,1  bytes: 27
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 39 30 30 30 30 31 30 31 30 31
+D00000FF03FF000009000010101
+
+# id: V-3E-A-10
+# frame: 3E  code: Ascii  op: ReadWords  device: D100  count: 3  series: QL
+# kind: response-error  of: V-3E-A-01  error: Plc  plccode: C051
+# errorinfo: 00,FF,03FF,00,0401,0000  bytes: 40
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 36 43 30 35 31 30 30 46 46 30 33 46 46 30 30 30 34 30 31 30 30 30 30
+D00000FF03FF000016C05100FF03FF0004010000
+
+# id: V-3E-A-11
+# frame: 3E  code: Ascii  op: ReadWords  device: D100  count: 3  series: IqR
+# kind: request  bytes: 46
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 43 30 30 31 30 30 34 30 31 30 30 30 32 44 2A 2A 2A 30 30 30 30 30 31 30 30 30 30 30 33
+500000FF03FF00001C001004010002D***000001000003
+
+# id: V-3E-A-12
+# frame: 3E  code: Ascii  op: ReadBits  device: M100  count: 8  series: IqR
+# kind: request  bytes: 46
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 43 30 30 31 30 30 34 30 31 30 30 30 33 4D 2A 2A 2A 30 30 30 30 30 31 30 30 30 30 30 38
+500000FF03FF00001C001004010003M***000001000008
+
+# id: V-3E-A-13
+# frame: 3E  code: Ascii  op: ReadRandom
+# kind: request  tags: v1.1  bytes: 90
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 34 38 30 30 31 30 30 34 30 33 30 30 30 30 30 34 30 33 44 2A 30 30 30 30 30 30 54 4E 30 30 30 30 30 30 4D 2A 30 30 30 31 30 30 58 2A 30 30 30 30 32 30 44 2A 30 30 31 35 30 30 59 2A 30 30 30 31 36 30 4D 2A 30 30 31 31 31 31
+500000FF03FF0000480010040300000403D*000000TN000000M*000100X*000020D*001500Y*000160M*001111
+
+# id: 3E-08a
+# frame: 3E  code: Ascii  op: ReadWords  device: D100  count: 3  series: QL
+# kind: response-error  error: FrameMismatch  bytes: 34
+44 34 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 30 30 30 30 30 31 39 39 35 31 32 30 32 31 31 33 30
+D40000FF03FF0000100000199512021130
+
+# id: 3E-09a
+# frame: 3E  code: Ascii  op: ReadWords  device: D100  count: 3  series: QL
+# kind: response-error  error: LengthMismatch  bytes: 20
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 32 30 30
+D00000FF03FF00000200
+
+# id: 3E-10a
+# frame: 3E  code: Ascii  op: ReadWords  device: D100  count: 3  series: QL
+# kind: response-error  error: LengthMismatch  bytes: 30
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 31 39 39 35 31 32 30 32
+D00000FF03FF00000C000019951202
+
+# id: 3E-11a
+# frame: 3E  code: Ascii  op: ReadWords  device: D100  count: 3  series: QL
+# kind: response-error  error: Plc  plccode: C051  errorinfo:  bytes: 22
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 43 30 35 31
+D00000FF03FF000004C051
+
+# id: 3E-12a
+# frame: 3E  code: Ascii  op: ReadWords  device: D100  count: 3  series: QL
+# network: 02  pc: 03
+# kind: request  bytes: 42
+35 30 30 30 30 32 30 33 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 33
+5000020303FF000018001004010000D*0001000003
+
+# id: 3E-13a
+# frame: 3E  code: Ascii  op: ReadWords  device: D100  count: 3  series: QL
+# io: 03E1
+# kind: request  bytes: 42
+35 30 30 30 30 30 46 46 30 33 45 31 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 33
+500000FF03E1000018001004010000D*0001000003

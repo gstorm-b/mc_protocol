@@ -32,6 +32,8 @@ are marked "n/a" with a reason, never silently skipped.
 - [ ] Top-level build is warning-free with `MC_WARNINGS_AS_ERRORS=ON`.
 - [ ] A new source file is added to `CMakeLists.txt` **and** the matching `.pri`
       in the same change; BLD-04 is green (from T03 on).
+- [ ] A new test binary gets its `tests/qmake/*.pro` (built through the `.pri`
+      files, listed in `tests/qmake/tests.pro`) in the same change (BLD-03).
 - [ ] Core and mock headers include nothing from Qt or the OS; BLD-05 is green
       (from T03 on).
 - [ ] Checkpoint tasks only: both compilers (MSVC and MinGW GCC 13.1) green,

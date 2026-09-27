@@ -1,0 +1,84 @@
+# id: PRIM-01-ASCII
+# kind: encode  field: u16  code: Ascii  value: 0018  bytes: 4
+30 30 31 38
+0018
+
+# id: PRIM-01-BINARY
+# kind: encode  field: u16  code: Binary  value: 0018  bytes: 2
+18 00
+
+# id: PRIM-02
+# kind: encode  field: u16  code: Ascii  value: ABCD  bytes: 4
+41 42 43 44
+ABCD
+
+# id: PRIM-03-ASCII
+# kind: encode  field: u32  code: Ascii  value: 12345678  bytes: 8
+31 32 33 34 35 36 37 38
+12345678
+
+# id: PRIM-03-BINARY
+# kind: encode  field: u32  code: Binary  value: 12345678  bytes: 4
+78 56 34 12
+
+# id: PRIM-05
+# kind: decode  field: u16  code: Ascii  expect: ABCD  bytes: 4
+61 62 63 64
+abcd
+
+# id: PRIM-06
+# kind: decode-error  field: u16  code: Ascii  bytes: 4
+31 32 47 34
+12G4
+
+# id: PRIM-07
+# kind: sumcheck  expect: C0  bytes: 12
+30 30 46 46 42 52 33 4D 30 30 30 30
+00FFBR3M0000
+
+# id: PRIM-08
+# kind: sumcheck  expect: 05  bytes: 20
+12 00 F8 05 07 03 04 00 01 00 01 04 01 00 40 00 00 9C 05 00
+
+# id: PRIM-09
+# kind: sumcheck  expect: D4  bytes: 300
+FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF
+
+# id: PRIM-12-EVEN
+# kind: bits-encode  code: Binary  points: 0,0,0,1,0,0,1,1  bytes: 4
+00 01 00 11
+
+# id: PRIM-12-ODD
+# kind: bits-encode  code: Binary  points: 1,0,1,0,1  bytes: 3
+10 10 10
+
+# id: PRIM-13
+# kind: bits-decode-error  code: Binary  count: 2  bytes: 1
+21
+
+# id: PRIM-14-VALID
+# kind: bits-decode  code: Ascii  points: 1,0,1,0,1  bytes: 5
+31 30 31 30 31
+10101
+
+# id: PRIM-14-INVALID
+# kind: bits-decode-error  code: Ascii  count: 4  bytes: 4
+31 30 32 31
+1021
+
+# id: PRIM-16-ASCII
+# kind: encode  field: u32  code: Ascii  value: 170F56AB  bytes: 8
+31 37 30 46 35 36 41 42
+170F56AB
+
+# id: PRIM-16-BINARY
+# kind: encode  field: u32  code: Binary  value: 170F56AB  bytes: 4
+AB 56 0F 17
+
+# id: PRIM-10
+# kind: dle-stuff  tags: v2  input: 01 10 02 10 10  bytes: 8
+01 10 10 02 10 10 10 10
+
+# id: PRIM-11
+# kind: dle-error  tags: v2  bytes: 2
+10 41
