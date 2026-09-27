@@ -25,9 +25,48 @@ add_executable(mc_core_model_tests
     core/model/main.cpp
     core/model/test_result.cpp
     core/model/test_device.cpp
+    core/model/test_frame_config.cpp
+    core/model/test_limits.cpp
+    core/model/test_chunk.cpp
+    core/model/test_convert.cpp
+    core/model/test_log.cpp
+    core/model/test_alloc.cpp
 )
 target_link_libraries(mc_core_model_tests PRIVATE mc::core mc_doctest)
+# LIM-03 (test_limits.cpp) reads mc::detail's random-access limit rows through the private
+# src/core/model/limits_table.h; mc::core only exports include/ publicly (PRIVATE src/), so the
+# test binary gets its own PRIVATE include path to src/ rather than widening mc_core's own.
+target_include_directories(mc_core_model_tests PRIVATE ${PROJECT_SOURCE_DIR}/src)
+# ALC-01 (test_alloc.cpp) includes tests/common/alloc_counter.h as "common/alloc_counter.h"; give
+# the binary its own include path to the tests/ root for that (mirrors the src/ path above).
+target_include_directories(mc_core_model_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 mc_apply_warnings(mc_core_model_tests)
+# Coverage data (.gcda) is only written when the instrumented process exits normally; this
+# binary is what actually runs mc_core's instrumented code, so it needs --coverage at its own
+# link step too (which pulls in libgcov), not just mc_core at its link step.
+mc_apply_coverage(mc_core_model_tests)
+
+# mc_coverage_report (T-012): runs cmake/mc_coverage_report.cmake over mc_core's own object
+# files under src/core/model once MC_COVERAGE has produced .gcda data (i.e. after `ctest` has
+# actually run mc_core_model_tests). Only defined under MC_COVERAGE=ON with GCC (Clang would
+# need llvm-cov's gcov-compatible mode instead; not implemented, since this machine's only
+# GCC/Clang compiler is MinGW GCC 13.1 — see build-env.md).
+if(MC_COVERAGE AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    get_filename_component(_mc_compiler_dir "${CMAKE_CXX_COMPILER}" DIRECTORY)
+    find_program(MC_GCOV_EXECUTABLE NAMES gcov HINTS "${_mc_compiler_dir}")
+
+    add_custom_target(mc_coverage_report
+        COMMAND ${CMAKE_COMMAND}
+            -D MC_SOURCE_DIR=${PROJECT_SOURCE_DIR}
+            -D MC_OBJECT_BASE_DIR=${CMAKE_BINARY_DIR}/src/CMakeFiles/mc_core.dir/core/model
+            -D MC_GCOV_EXECUTABLE=${MC_GCOV_EXECUTABLE}
+            -D MC_MIN_COVERAGE=95
+            -P ${PROJECT_SOURCE_DIR}/cmake/mc_coverage_report.cmake
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+        DEPENDS mc_core_model_tests
+        VERBATIM
+    )
+endif()
 
 add_test(NAME core_model.mc_core_model_tests COMMAND mc_core_model_tests)
 set_tests_properties(core_model.mc_core_model_tests PROPERTIES LABELS "core_model")

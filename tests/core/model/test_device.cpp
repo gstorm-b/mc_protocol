@@ -1,14 +1,19 @@
 #include "doctest/doctest.h"
 
 #include "mc/core/device.h"
+#include "mc/core/frame_config.h"
+#include "mc/core/request.h"
 
 #include <string_view>
 
+using mc::DataCode;
 using mc::Device;
 using mc::DeviceInfo;
 using mc::DeviceKind;
 using mc::DeviceType;
+using mc::FrameConfig;
 using mc::Radix;
+using mc::Request;
 
 namespace {
 
@@ -83,6 +88,15 @@ TEST_CASE("DEV-07-data every row of kDeviceTable equals spec section 3.2") {
             CHECK(std::string_view(info.c1Code) == row.c1Code);
         }
     }
+}
+
+TEST_CASE("formatDevice: number 0 (Checkpoint A coverage gap)") {
+    // formatDevice()'s "n == 0" branch is not exercised by any other test (D100, X1F, ... all
+    // have a nonzero number); D0 is the canonical form with no digits to loop over.
+    char buf[16];
+    size_t n = mc::formatDevice(Device{DeviceType::D, 0}, buf, sizeof(buf));
+    CHECK(n == 2);
+    CHECK(std::string_view(buf, n) == "D0");
 }
 
 TEST_CASE("DEV-01 Basic parse: D100, d100") {
@@ -203,6 +217,120 @@ TEST_CASE("DEV-06 Malformed: empty, D, 100, Q10") {
     auto q10 = mc::parseDevice("Q10");
     CHECK_FALSE(q10.hasValue());
     CHECK(q10.error().code == mc::ErrorCode::InvalidDevice);
+}
+
+TEST_CASE("DEV-08 QnA width overflow") {
+    // D1000000: 7 decimal digits, over the Q/L ASCII limit of 6 digits (999999 max).
+    auto ascii = mc::validate(Request::readWords(Device{DeviceType::D, 1000000}, 1),
+                               FrameConfig::frame3E(DataCode::Ascii));
+    CHECK_FALSE(ascii.hasValue());
+    CHECK(ascii.error().code == mc::ErrorCode::InvalidDevice);
+
+    // X1000000 (hex 0x1000000): over the Q/L Binary limit of 0xFFFFFF.
+    auto binary = mc::validate(Request::readBits(Device{DeviceType::X, 0x1000000}, 1),
+                                FrameConfig::frame3E(DataCode::Binary));
+    CHECK_FALSE(binary.hasValue());
+    CHECK(binary.error().code == mc::ErrorCode::InvalidDevice);
+
+    // iQ-R: the same D1000000 fits comfortably within the 8-digit ASCII limit.
+    FrameConfig iqr = FrameConfig::frame3E(DataCode::Ascii);
+    iqr.series = mc::PlcSeries::IqR;
+    auto validIqr = mc::validate(Request::readWords(Device{DeviceType::D, 1000000}, 1), iqr);
+    CHECK(validIqr.hasValue());
+}
+
+TEST_CASE("DEV-08 iQ-R width boundary at 8 hex digits (Checkpoint A review, T-008)") {
+    // iQ-R + Binary always uses an 8-hex-digit limit regardless of the device's own radix (rule 4
+    // forces Radix::Hex for Binary), i.e. 16^8 - 1 == 0xFFFFFFFF -- exactly uint32_t's own
+    // maximum. That makes this the one width limit in the whole module where "one past the
+    // limit" cannot be constructed at all (there is no uint32_t value greater than 0xFFFFFFFF):
+    // the meaningful check here is that the true maximum still validates correctly under the
+    // digitLimit() fix (a naive fix could easily clamp to 0 instead of 0xFFFFFFFF).
+    FrameConfig iqrBinary = FrameConfig::frame3E(DataCode::Binary);
+    iqrBinary.series = mc::PlcSeries::IqR;
+    auto atMax = mc::validate(Request::readBits(Device{DeviceType::X, 0xFFFFFFFFu}, 1), iqrBinary);
+    CHECK(atMax.hasValue());
+
+    // A genuinely two-sided boundary at the same 8-digit width, using the same digitLimit() code
+    // path: iQ-R + ASCII + a decimal-radix device gives an 8-*decimal*-digit limit (99999999),
+    // which — unlike the hex/Binary case above — has a representable "one past" value.
+    FrameConfig iqrAscii = FrameConfig::frame3E(DataCode::Ascii);
+    iqrAscii.series = mc::PlcSeries::IqR;
+    auto decimalAtMax =
+        mc::validate(Request::readWords(Device{DeviceType::D, 99999999}, 1), iqrAscii);
+    CHECK(decimalAtMax.hasValue());
+    auto decimalOnePast =
+        mc::validate(Request::readWords(Device{DeviceType::D, 100000000}, 1), iqrAscii);
+    CHECK_FALSE(decimalOnePast.hasValue());
+    CHECK(decimalOnePast.error().code == mc::ErrorCode::InvalidDevice);
+}
+
+TEST_CASE("DEV-09 1C width overflow") {
+    FrameConfig acpu = FrameConfig::frame1C(); // commandSet defaults to ACPU.
+
+    // M10000: 5 decimal digits, over ACPU's 4-digit limit (9999 max) for a non-T/C device.
+    auto m = mc::validate(Request::readBits(Device{DeviceType::M, 10000}, 1), acpu);
+    CHECK_FALSE(m.hasValue());
+    CHECK(m.error().code == mc::ErrorCode::InvalidDevice);
+
+    // TN1000: TN is a Timer/Counter device, ACPU's limit for those is 3 digits (999 max).
+    auto tnAcpu = mc::validate(Request::readWords(Device{DeviceType::TN, 1000}, 1), acpu);
+    CHECK_FALSE(tnAcpu.hasValue());
+    CHECK(tnAcpu.error().code == mc::ErrorCode::InvalidDevice);
+
+    // AnA/AnU's Timer/Counter limit is 5 digits (99999 max): 1000 fits.
+    FrameConfig anA = FrameConfig::frame1C();
+    anA.commandSet = mc::C1CommandSet::AnA;
+    auto tnAnA = mc::validate(Request::readWords(Device{DeviceType::TN, 1000}, 1), anA);
+    CHECK(tnAnA.hasValue());
+}
+
+TEST_CASE("DEV-10 Device not supported by the family") {
+    FrameConfig e1 = FrameConfig::frame1E();
+    CHECK_FALSE(mc::validate(Request::readBits(Device{DeviceType::SM, 0}, 1), e1).hasValue());
+    CHECK_FALSE(mc::validate(Request::readWords(Device{DeviceType::SD, 0}, 1), e1).hasValue());
+    CHECK_FALSE(mc::validate(Request::readWords(Device{DeviceType::ZR, 0}, 1), e1).hasValue());
+
+    FrameConfig c1 = FrameConfig::frame1C();
+    auto v0 = mc::validate(Request::readBits(Device{DeviceType::V, 0}, 1), c1);
+    CHECK_FALSE(v0.hasValue());
+    CHECK(v0.error().code == mc::ErrorCode::InvalidDevice);
+
+    FrameConfig ql = FrameConfig::frame3E(); // series defaults to QL.
+    auto rd0 = mc::validate(Request::readWords(Device{DeviceType::RD, 0}, 1), ql);
+    CHECK_FALSE(rd0.hasValue());
+    CHECK(rd0.error().code == mc::ErrorCode::InvalidDevice);
+}
+
+TEST_CASE("DEV-11 L/S with 1E: accepted and aliased to M only when e1AliasLS is enabled") {
+    FrameConfig withAlias = FrameConfig::frame1E();
+    withAlias.e1AliasLS = true;
+    auto accepted = mc::validate(Request::readBits(Device{DeviceType::L, 100}, 1), withAlias);
+    CHECK(accepted.hasValue());
+
+    FrameConfig withoutAlias = FrameConfig::frame1E(); // e1AliasLS defaults to false.
+    auto rejected = mc::validate(Request::readBits(Device{DeviceType::L, 100}, 1), withoutAlias);
+    CHECK_FALSE(rejected.hasValue());
+    CHECK(rejected.error().code == mc::ErrorCode::InvalidDevice);
+}
+
+TEST_CASE("DEV-12 Alignment to 16 for word-unit access to a bit device (1E, 1C)") {
+    for (const FrameConfig& cfg : {FrameConfig::frame1E(), FrameConfig::frame1C()}) {
+        CHECK(mc::validate(Request::readWords(Device{DeviceType::X, 0x40}, 1), cfg).hasValue());
+        CHECK_FALSE(
+            mc::validate(Request::readWords(Device{DeviceType::X, 0x41}, 1), cfg).hasValue());
+        CHECK(mc::validate(Request::readWords(Device{DeviceType::M, 9000}, 1), cfg).hasValue());
+        CHECK_FALSE(
+            mc::validate(Request::readWords(Device{DeviceType::M, 9008}, 1), cfg).hasValue());
+        CHECK(mc::validate(Request::readWords(Device{DeviceType::M, 9016}, 1), cfg).hasValue());
+    }
+}
+
+TEST_CASE("DEV-13 Bit command on a word device") {
+    auto result = mc::validate(Request::readBits(Device{DeviceType::D, 0}, 1),
+                                FrameConfig::frame3E());
+    CHECK_FALSE(result.hasValue());
+    CHECK(result.error().code == mc::ErrorCode::InvalidDevice);
 }
 
 TEST_CASE("DEV-14 Device ==, !=, < order by table order then number") {

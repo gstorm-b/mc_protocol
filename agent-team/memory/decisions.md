@@ -3,6 +3,12 @@
 Curated by the team leader. One entry, one decision, newest first.
 Format: `- [T-xxx or date] Decision — why. (supersedes: entry, if any)`
 
+- [2026-09-27] Phase-batched verification from T-008: developer implements a
+  whole phase task by task, the leader re-runs each task's checks (no commit);
+  tester and reviewer run once, at the phase checkpoint, over the whole phase —
+  owner decision, to cut per-task overhead. One commit per phase, after the
+  checkpoint passes — owner decision. Fresh developer, tester and reviewer
+  per phase, re-used within it (one role each) — owner request. Details in `rules.md`.
 - [T-007] `deviceInfo()` is not `constexpr`: the device table stays private to
   `device_table.cpp`; `SPEC-core-model.md` amended — owner decision (the spec
   contradicted itself: constexpr sketch vs private table).

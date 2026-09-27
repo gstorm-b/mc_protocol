@@ -25,6 +25,42 @@ contradict `agent-team/core/`, this file wins.
   does not start until the owner has seen Checkpoint B.
 - Work on `main` unless the owner says otherwise.
 
+## Phase-batched verification (owner decision 2026-09-27)
+
+Owner quote: "bạn hãy để developer implement hết các task cả một phase, đến
+checkpoint của phase mới gọi tester và reviewer chứ không gọi ở từng task
+nữa." From T-008 on, this overrides the per-task flow of
+`agent-team/core/WORKFLOW.md` and the tester/reviewer columns of
+`task-classification.md`:
+
+- **Fresh agents per phase** (owner decision 2026-09-27: "hãy gọi subagent
+  developer, tester, reviewer mới ở mỗi phase"): each phase spawns a new
+  developer, a new tester and a new reviewer; within the phase each one is
+  re-used (resumed) for all its work. No agent carries over into the next
+  phase, and no agent ever holds two roles.
+- **Within a phase**, one developer implements the tasks one after another
+  (kept alive and re-used between tasks). Each task still has its own task
+  file, Plan and Dev notes, and must build and pass its own tests.
+- **Per task, the leader** checks the developer's evidence by re-running the
+  task's verification command itself (build + `ctest`) and marks the task
+  `implemented`. **No commit per task** — the work stays in the working tree.
+  Test report and Review verdict of the task say "deferred to the checkpoint
+  task".
+- **At the phase checkpoint task**, the tester verifies every acceptance
+  criterion of every task in the phase, and the reviewer reviews the whole
+  phase diff (from the last commit, i.e. the working tree against it),
+  including the `protocol-core` reference diffs those tasks call for.
+  Findings go back to the developer as rework; the checkpoint closes only
+  when both pass.
+- **One commit per phase** (owner decision 2026-09-27: "thay vì commit theo
+  từng task bạn hãy commit theo khi hoàn thành một phase"): after the
+  checkpoint passes, the leader commits the whole phase at once (Gate 2 under
+  the delegation), fills every task's Commit record with that commit and
+  moves all the phase's task files to `tasks/done/`. The commit body lists the
+  tasks it contains.
+- Tasks already reviewed and committed individually (T-001…T-007) are not
+  re-reviewed.
+
 ## Access boundaries
 
 - Never read or write **outside `C:\DGB\Project\mc_protocol`** without asking

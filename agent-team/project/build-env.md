@@ -4,7 +4,7 @@ Read this before building or testing. Everything here was run and worked on
 the owner's Windows 11 dev PC; do not rediscover it. If something here turns
 out wrong or you learn a new environment fact, write it under **Env notes** in
 your section of the task file — the leader folds it into this file.
-Last verified: 2026-09-27 (T-002 … T-006).
+Last verified: 2026-09-27 (T-002 … T-012; first MinGW build of core-model: zero warnings).
 
 ## Toolchain
 
@@ -88,7 +88,26 @@ MinGW flavour: MinGW `PATH` line above, `C:\Qt\6.11.1\mingw_64\bin\qmake.exe`,
   (core-only tests).
 - `.pri` include guards: `!defined(MC_X_PRI_INCLUDED, var) { … }`.
 
+## Coverage (MinGW only)
+
+```powershell
+$env:PATH = "C:\Qt\Tools\mingw1310_64\bin;C:\Qt\Tools\CMake_64\bin;C:\Qt\Tools\Ninja;$env:PATH"
+cmake --build build/cmake-coverage
+ctest --test-dir build/cmake-coverage -L "core_model|build"   # produces the .gcda data
+cmake --build build/cmake-coverage --target mc_coverage_report
+```
+
+`build/cmake-coverage` is configured with `-DMC_COVERAGE=ON` (T-012). The report
+is `cmake/mc_coverage_report.cmake` (plain `gcov`, no Python); it fails below
+the bar (`-D MC_MIN_COVERAGE=<n>`, default 95, total over `src/core/model`).
+
 ## CMake script gotchas
+
+- Never run two `scripts/check.ps1` (or `check.sh`) at the same time: every run
+  recreates the same `build/check-*` folders, so parallel runs corrupt each
+  other and fail falsely (T-012 tester). Run the kits one after another.
+- Harmless: `check.ps1` with the MinGW kit prints CMake developer warnings
+  "Policy CMP0156 / CMP0128 is not set" in the `cmake-core` stage (T-012).
 
 - A `cmake -P` script does not inherit the project's policies: start it with
   `cmake_minimum_required(VERSION 3.16)`, or `if(… IN_LIST …)` fails with

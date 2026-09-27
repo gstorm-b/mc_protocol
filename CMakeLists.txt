@@ -5,6 +5,7 @@ include(cmake/mc_version.cmake)
 project(mc_protocol VERSION ${MC_VERSION} LANGUAGES CXX)
 
 include(cmake/mc_warnings.cmake)
+include(cmake/mc_coverage.cmake)
 
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
     set(MC_IS_TOP_LEVEL ON)

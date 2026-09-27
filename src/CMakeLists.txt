@@ -2,10 +2,22 @@ add_library(mc_core STATIC
     core/version.cpp
     core/model/device_table.cpp
     core/model/device_parse.cpp
+    core/model/frame_config.cpp
+    core/model/validate.cpp
+    core/model/limits_table.cpp
+    core/model/limits_table.h
+    core/model/chunk.cpp
+    core/model/convert.cpp
+    core/model/log.cpp
     ${PROJECT_SOURCE_DIR}/include/mc/version.h
     ${PROJECT_SOURCE_DIR}/include/mc/core/types.h
     ${PROJECT_SOURCE_DIR}/include/mc/core/result.h
     ${PROJECT_SOURCE_DIR}/include/mc/core/device.h
+    ${PROJECT_SOURCE_DIR}/include/mc/core/frame_config.h
+    ${PROJECT_SOURCE_DIR}/include/mc/core/request.h
+    ${PROJECT_SOURCE_DIR}/include/mc/core/limits.h
+    ${PROJECT_SOURCE_DIR}/include/mc/core/convert.h
+    ${PROJECT_SOURCE_DIR}/include/mc/core/log.h
 )
 add_library(mc::core ALIAS mc_core)
 
@@ -15,6 +27,7 @@ target_include_directories(mc_core
 )
 
 mc_apply_warnings(mc_core)
+mc_apply_coverage(mc_core)
 
 # ---- BLD-04 pri_sync: export each library target's own source list, one "TARGET path" line
 # per file, to ${CMAKE_BINARY_DIR}/mc_sources.txt. cmake/check_pri_sync.cmake compares this

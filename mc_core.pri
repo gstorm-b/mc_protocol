@@ -13,11 +13,23 @@ HEADERS += \
     $$PWD/include/mc/version.h \
     $$PWD/include/mc/core/types.h \
     $$PWD/include/mc/core/result.h \
-    $$PWD/include/mc/core/device.h
+    $$PWD/include/mc/core/device.h \
+    $$PWD/include/mc/core/frame_config.h \
+    $$PWD/include/mc/core/request.h \
+    $$PWD/include/mc/core/limits.h \
+    $$PWD/include/mc/core/convert.h \
+    $$PWD/include/mc/core/log.h \
+    $$PWD/src/core/model/limits_table.h
 
 SOURCES += \
     $$PWD/src/core/version.cpp \
     $$PWD/src/core/model/device_table.cpp \
-    $$PWD/src/core/model/device_parse.cpp
+    $$PWD/src/core/model/device_parse.cpp \
+    $$PWD/src/core/model/frame_config.cpp \
+    $$PWD/src/core/model/validate.cpp \
+    $$PWD/src/core/model/limits_table.cpp \
+    $$PWD/src/core/model/chunk.cpp \
+    $$PWD/src/core/model/convert.cpp \
+    $$PWD/src/core/model/log.cpp
 
 }

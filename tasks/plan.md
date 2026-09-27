@@ -52,12 +52,12 @@ Details (acceptance criteria, verification, files) are in `tasks/todo.md`.
 
 ### Phase 1: Data layer (`core-model`)
 
-- [ ] T05 `Error`, `Expected<T>`, byte views
-- [ ] T06 Device table, parsing, formatting, ordering
-- [ ] T07 `FrameConfig`, `Request`, `validate()`
-- [ ] T08 Limits table and `chunk()`
-- [ ] T09 `convert` helpers
-- [ ] T10 `LogSink`, `hexDump`, zero-allocation test
+- [x] T05 `Error`, `Expected<T>`, byte views
+- [x] T06 Device table, parsing, formatting, ordering
+- [x] T07 `FrameConfig`, `Request`, `validate()`
+- [x] T08 Limits table and `chunk()`
+- [x] T09 `convert` helpers
+- [x] T10 `LogSink`, `hexDump`, zero-allocation test
 
 **Checkpoint A:** every table row verified; ALC-01; coverage ≥ 95 % (MinGW).
 

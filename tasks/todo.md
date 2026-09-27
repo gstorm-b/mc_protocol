@@ -196,8 +196,8 @@
 **Scope:** M
 
 ### Checkpoint A: core-model
-- [ ] `ctest -L core_model` green with both compilers; BLD-04/05 green.
-- [ ] MinGW with `-DMC_COVERAGE=ON`: line coverage of `src/core/model` ≥ 95 %; every `ErrorCode` value appears in a test.
+- [x] `ctest -L core_model` green with both compilers; BLD-04/05 green. (T-012)
+- [x] MinGW with `-DMC_COVERAGE=ON`: line coverage of `src/core/model` ≥ 95 %; every `ErrorCode` value appears in a test. (97.94 %, T-012)
 
 ---
 
