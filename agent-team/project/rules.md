@@ -36,6 +36,12 @@ contradict `agent-team/core/`, this file wins.
   with the same exclusions. In Phase 4 only, the leader decides how many
   developers to spawn and when (e.g. one per group of tasks); tester and
   reviewer stay one fresh agent each for the phase. Phase 5 waits for the owner.
+- **Delegation extended to Phase 5, owner 2026-09-30:** "Tiếp tục phase 5,
+  vẫn giao quyền cho bạn như phase 4." Same terms as Phase 4 (todo T30–T34
+  plus Checkpoint D, leader chooses how many developers and when), same
+  exclusions. The Checkpoint D demo (`virtual_plc` ↔ `qt_console_poller`) is
+  run by the owner; the leader commits Phase 5 once tester and reviewer pass
+  and reports the demo steps. Phase 6 waits for the owner.
 - Work on `main` unless the owner says otherwise.
 
 ## Phase-batched verification (owner decision 2026-09-27)

@@ -273,6 +273,127 @@ if(MC_BUILD_MOCK)
     endif()
 endif()
 
+# Device layer tests (SPEC-qt-device.md, label `device`): QtTest binaries, one per tests/device/
+# tst_*.cpp (each has its own QTEST_GUILESS_MAIN), all loopback on 127.0.0.1. Built only when the
+# device layer is, so a core-only configure (-DMC_BUILD_DEVICE=OFF) never searches for Qt.
+if(MC_BUILD_DEVICE)
+    find_package(Qt6 6.2 REQUIRED COMPONENTS Test Network)
+
+    # A QtTest binary links the Qt DLLs; ctest runs it from the build tree, where the loader finds
+    # them only through PATH. Prepend the directory of the Qt kit's own DLLs (the one the imported
+    # Qt6::Core points at) to the test's PATH, so ctest works from any shell with no Qt on PATH.
+    # ENVIRONMENT_MODIFICATION needs CMake 3.22; an older CMake leaves PATH untouched (the
+    # developer then has the kit's bin directory on PATH, as before).
+    function(mc_add_qt_test target)
+        add_executable(${target} ${ARGN})
+        set_target_properties(${target} PROPERTIES AUTOMOC ON)
+        target_link_libraries(${target} PRIVATE mc::device Qt6::Test)
+        mc_apply_warnings(${target})
+        mc_apply_coverage(${target})
+
+        add_test(NAME device.${target} COMMAND ${target})
+        set_tests_properties(device.${target} PROPERTIES LABELS "device" TIMEOUT 120)
+        # QT_ASSUME_STDERR_HAS_CONSOLE: without it QtTest prints nothing when its output is a
+        # pipe (ctest, an IDE, an agent shell) on Windows, so a failing test would say nothing.
+        if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.22)
+            set_tests_properties(device.${target} PROPERTIES ENVIRONMENT_MODIFICATION
+                "PATH=path_list_prepend:$<TARGET_FILE_DIR:Qt6::Core>;QT_ASSUME_STDERR_HAS_CONSOLE=set:1")
+        else()
+            set_tests_properties(device.${target} PROPERTIES
+                ENVIRONMENT "QT_ASSUME_STDERR_HAS_CONSOLE=1")
+        endif()
+    endfunction()
+
+    # T-035: TcpTransport contract, QDV-06 / QDV-12 at transport level, meta-type registration.
+    mc_add_qt_test(mc_tcp_transport_tests device/tst_tcp_transport.cpp)
+
+    # T-036: McDeviceConfig validate() and its JSON mapping (QDV-10, QDV-16 at validate level).
+    mc_add_qt_test(mc_config_json_tests device/tst_config_json.cpp)
+
+    # T-037/T-038: McDevice against a loopback MockPlcServer. These binaries need the mock, so
+    # they exist only when MC_BUILD_MOCK is on as well; mc_device itself never links mc::mock.
+    if(MC_BUILD_MOCK)
+        mc_add_qt_test(mc_device_tests
+            device/tst_mc_device.cpp
+            device/mock_plc_server.cpp
+            device/mock_plc_server.h
+            device/device_recorder.h
+            device/device_test_support.h
+            device/fake_transport.h)
+        target_link_libraries(mc_device_tests PRIVATE mc::mock)
+
+        # QDV-09: the device on a QThread the test owns (the library starts none).
+        mc_add_qt_test(mc_device_thread_tests
+            device/tst_mc_device_thread.cpp
+            device/mock_plc_server.cpp
+            device/mock_plc_server.h
+            device/device_recorder.h
+            device/device_test_support.h
+            device/fake_transport.h)
+        target_link_libraries(mc_device_thread_tests PRIVATE mc::mock)
+    endif()
+
+    # mc_coverage_report_device (T-040, Checkpoint D): the same script as the reports above,
+    # pointed at src/device's own object files. REPORT ONLY: the spec sets no bar for the device
+    # layer, so MC_MIN_COVERAGE is 0 and the target never fails on the figure; it prints every
+    # file and the total. Needs .gcda data, i.e. `ctest -L device` must have run in the
+    # MC_COVERAGE=ON tree first (the QtTest binaries are instrumented through mc_add_qt_test).
+    if(MC_COVERAGE AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+        set(_mc_device_coverage_deps mc_tcp_transport_tests mc_config_json_tests)
+        if(MC_BUILD_MOCK)
+            list(APPEND _mc_device_coverage_deps mc_device_tests mc_device_thread_tests)
+        endif()
+        add_custom_target(mc_coverage_report_device
+            COMMAND ${CMAKE_COMMAND}
+                -D MC_SOURCE_DIR=${PROJECT_SOURCE_DIR}
+                -D MC_OBJECT_BASE_DIR=${CMAKE_BINARY_DIR}/src/CMakeFiles/mc_device.dir/device
+                -D MC_GCOV_EXECUTABLE=${MC_GCOV_EXECUTABLE}
+                -D MC_MIN_COVERAGE=0
+                -D MC_REPORT_LABEL=src/device
+                -P ${PROJECT_SOURCE_DIR}/cmake/mc_coverage_report.cmake
+            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+            DEPENDS ${_mc_device_coverage_deps}
+            VERBATIM
+        )
+    endif()
+
+    # QDV-HYG (SPEC-qt-device.md, success criterion 2): src/device holds no blocking wait, nested
+    # event loop, thread or mutex token. Negative controls run the same script over
+    # tests/device/hyg_fixture/, one file per kind of violation (never compiled), so the check is
+    # proved to bite without editing the real sources; same pattern as MCK-HYG.
+    set(_mc_qdv_hyg_script ${CMAKE_CURRENT_SOURCE_DIR}/device/check_device_tokens.cmake)
+    add_test(NAME QDV-HYG.device_tokens
+        COMMAND ${CMAKE_COMMAND} -D MC_DEVICE_DIR=${PROJECT_SOURCE_DIR}/src/device
+            -P ${_mc_qdv_hyg_script})
+    set_tests_properties(QDV-HYG.device_tokens PROPERTIES LABELS "device"
+        PASS_REGULAR_EXPRESSION "QDV-HYG: OK")
+    # The public headers are scanned too: an inline wait in a header would run in the consumer.
+    add_test(NAME QDV-HYG.device_tokens_headers
+        COMMAND ${CMAKE_COMMAND} -D MC_DEVICE_DIR=${PROJECT_SOURCE_DIR}/include/mc/device
+            -P ${_mc_qdv_hyg_script})
+    set_tests_properties(QDV-HYG.device_tokens_headers PROPERTIES LABELS "device"
+        PASS_REGULAR_EXPRESSION "QDV-HYG: OK")
+    add_test(NAME QDV-HYG.negative_control_exit_status
+        COMMAND ${CMAKE_COMMAND} -D MC_DEVICE_DIR=${CMAKE_CURRENT_SOURCE_DIR}/device/hyg_fixture
+            -P ${_mc_qdv_hyg_script})
+    set_tests_properties(QDV-HYG.negative_control_exit_status PROPERTIES LABELS "device"
+        WILL_FAIL TRUE)
+    foreach(_mc_case IN ITEMS
+            "wait_for:bad_wait_for\\.cpp:[0-9]+: uses waitFor"
+            "event_loop:bad_event_loop\\.cpp:[0-9]+: uses QEventLoop"
+            "thread:bad_thread\\.cpp:[0-9]+: uses QThread"
+            "mutex:bad_mutex\\.cpp:[0-9]+: uses QMutex")
+        string(REGEX MATCH "^([^:]+):(.*)$" _mc_unused "${_mc_case}")
+        set(_mc_case_name "${CMAKE_MATCH_1}")
+        set(_mc_case_regex "QDV-HYG ${CMAKE_MATCH_2}")
+        add_test(NAME QDV-HYG.negative_control_${_mc_case_name}
+            COMMAND ${CMAKE_COMMAND} -D MC_DEVICE_DIR=${CMAKE_CURRENT_SOURCE_DIR}/device/hyg_fixture
+                -P ${_mc_qdv_hyg_script})
+        set_tests_properties(QDV-HYG.negative_control_${_mc_case_name} PROPERTIES LABELS "device"
+            PASS_REGULAR_EXPRESSION "${_mc_case_regex}")
+    endforeach()
+endif()
+
 # BLD-04 pri_sync and BLD-05 include_hygiene: cmake -P guard scripts run as ctest entries so
 # `ctest -L build` alone keeps the two build systems and the public surface honest. Neither
 # depends on a compiled binary, so they run even when nothing else has been built yet.
@@ -291,6 +412,28 @@ add_test(NAME BLD-05.include_hygiene
         -P ${PROJECT_SOURCE_DIR}/cmake/check_include_hygiene.cmake
 )
 set_tests_properties(BLD-05.include_hygiene PROPERTIES LABELS "build")
+
+# BLD-05 rule (d), link side: the same script fed a fixture mc_device_link_libraries.txt instead of
+# the real one (MC_BINARY_DIR points at tests/build/link_fixture/<case>), so the guard is proved to
+# bite without editing the real mc_device link line. The alias spelling (mc::mock) is the one this
+# project uses; a guard that matched only the target name once let it through (T-040 rework).
+foreach(_mc_case IN ITEMS alias plain)
+    add_test(NAME BLD-05.negative_control_link_${_mc_case}
+        COMMAND ${CMAKE_COMMAND}
+            -D MC_SOURCE_DIR=${PROJECT_SOURCE_DIR}
+            -D MC_BINARY_DIR=${CMAKE_CURRENT_SOURCE_DIR}/build/link_fixture/${_mc_case}
+            -P ${PROJECT_SOURCE_DIR}/cmake/check_include_hygiene.cmake)
+    set_tests_properties(BLD-05.negative_control_link_${_mc_case} PROPERTIES LABELS "build"
+        PASS_REGULAR_EXPRESSION "rule \\(d\\): mc_device LINK_LIBRARIES contains mc(_|::)mock")
+endforeach()
+# ... and a link list without the mock passes (the fixture is not what makes the others fail).
+add_test(NAME BLD-05.positive_control_link_clean
+    COMMAND ${CMAKE_COMMAND}
+        -D MC_SOURCE_DIR=${PROJECT_SOURCE_DIR}
+        -D MC_BINARY_DIR=${CMAKE_CURRENT_SOURCE_DIR}/build/link_fixture/clean
+        -P ${PROJECT_SOURCE_DIR}/cmake/check_include_hygiene.cmake)
+set_tests_properties(BLD-05.positive_control_link_clean PROPERTIES LABELS "build"
+    PASS_REGULAR_EXPRESSION "check_include_hygiene: OK")
 
 # tests/bench (T-027, MC_BUILD_BENCH): mc_bench_session is a plain executable, not a ctest test
 # (spec: "no threshold") -- nested here (rather than added directly from the top-level

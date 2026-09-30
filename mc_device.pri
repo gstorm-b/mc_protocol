@@ -7,6 +7,18 @@ include($$PWD/mc_core.pri)
 
 QT += core network serialport
 
-# src/device arrives with T30; no HEADERS/SOURCES yet.
+HEADERS += \
+    $$PWD/include/mc/device/transport.h \
+    $$PWD/include/mc/device/tcp_transport.h \
+    $$PWD/include/mc/device/serial_transport.h \
+    $$PWD/include/mc/device/mc_device_config.h \
+    $$PWD/include/mc/device/mc_device.h \
+    $$PWD/include/mc/device/meta_types.h
+
+SOURCES += \
+    $$PWD/src/device/tcp_transport.cpp \
+    $$PWD/src/device/meta_types.cpp \
+    $$PWD/src/device/mc_device_config.cpp \
+    $$PWD/src/device/mc_device.cpp
 
 }

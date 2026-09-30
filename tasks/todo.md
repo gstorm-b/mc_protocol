@@ -88,7 +88,7 @@
 
 ### Checkpoint A0: skeleton (in baton T-005)
 - [x] `scripts/check.ps1` green; both compilers; qmake and CMake. (T-005, 2026-09-27)
-- [x] Owner reviews the repository layout before code lands in it.
+- [x] Owner reviews the repository layout before code lands in it. (Owner confirmed 2026-09-30.)
 
 ---
 
@@ -552,16 +552,16 @@
 
 ## Phase 5: Qt device over TCP (`SPEC-qt-device.md`)
 
-### T30: `Transport`, `TcpTransport`, meta types
+### T30: `Transport`, `TcpTransport`, meta types (baton T-035)
 
 **Description:** `mc_device` target (CMake + `mc_device.pri`, `AUTOMOC`), the abstract `Transport`, `TcpTransport` (async connect with timeout timer, `LowDelayOption`, `KeepAliveOption`, `lost()`), `meta_types.h` with `registerMetaTypes()`.
 
 **Acceptance criteria:**
-- [ ] QDV-12 passes; connect to a closed port reports `openFailed` within `connectTimeoutMs + 500 ms`.
-- [ ] No `waitFor*`, `QEventLoop`, `QThread` or `QMutex` in `src/device`.
+- [x] QDV-12 passes; connect to a closed port reports `openFailed` within `connectTimeoutMs + 500 ms`.
+- [x] No `waitFor*`, `QEventLoop`, `QThread` or `QMutex` in `src/device`.
 
 **Verification:**
-- [ ] `ctest -L device` (MSVC and MinGW Qt kits).
+- [x] `ctest -L device` (MSVC and MinGW Qt kits).
 
 **Dependencies:** T24
 
@@ -569,16 +569,16 @@
 
 **Scope:** M
 
-### T31: `McDeviceConfig` and JSON
+### T31: `McDeviceConfig` and JSON (baton T-036)
 
 **Description:** The plain config struct, `validate(where)`, `toJson` / `fromJson` with `"schema": 1`, every `FrameConfig` and `SessionConfig` key, `QSerialPort` enums as strings.
 
 **Acceptance criteria:**
-- [ ] QDV-10 passes (round trip, defaults, error path, schema 2 rejected).
-- [ ] An invalid subscription reports `subscriptions[i].device` as its path.
+- [x] QDV-10 passes (round trip, defaults, error path, schema 2 rejected).
+- [x] An invalid subscription reports `subscriptions[i].device` as its path.
 
 **Verification:**
-- [ ] `ctest -L device`.
+- [x] `ctest -L device`.
 
 **Dependencies:** T30
 
@@ -586,16 +586,16 @@
 
 **Scope:** M
 
-### T32: `McDevice` link state, pump and signal queue
+### T32: `McDevice` link state, pump and signal queue (baton T-037)
 
 **Description:** The link state machine, drain → FIFO signal queue → emit at the outermost call, single-shot deadline timer on `QElapsedTimer`, conversion of outputs to Qt value types; the `MockPlcServer` test helper.
 
 **Acceptance criteria:**
-- [ ] QDV-01…04, QDV-07, QDV-15 pass over loopback TCP on 3E Binary.
-- [ ] Every `connectToPlc()` ends in at least one `linkStateChanged`.
+- [x] QDV-01…04, QDV-07, QDV-15 pass over loopback TCP on 3E Binary.
+- [x] Every `connectToPlc()` ends in at least one `linkStateChanged`.
 
 **Verification:**
-- [ ] `ctest -L device` (both kits).
+- [x] `ctest -L device` (both kits).
 
 **Dependencies:** T31, T28
 
@@ -603,15 +603,15 @@
 
 **Scope:** M
 
-### T33: `McDevice` faults, re-entrancy, threads, destructor
+### T33: `McDevice` faults, re-entrancy, threads, destructor (baton T-038)
 
 **Description:** `linkFault` without auto-reconnect, reconnect from `Faulted`, re-entrant slots, `moveToThread`, destructor warning log.
 
 **Acceptance criteria:**
-- [ ] QDV-05, 06, 08, 09, 11, 16, 17 pass; QDV-13 passes for 3E ASCII.
+- [x] QDV-05, 06, 08, 09, 11, 16, 17 pass; QDV-13 passes for 3E ASCII.
 
 **Verification:**
-- [ ] `ctest -L device` (both kits).
+- [x] `ctest -L device` (both kits).
 
 **Dependencies:** T32
 
@@ -619,15 +619,15 @@
 
 **Scope:** M
 
-### T34: Examples `qt_console_poller` and `virtual_plc`
+### T34: Examples `qt_console_poller` and `virtual_plc` (baton T-039)
 
 **Description:** The Qt console poller (host, port, frame, subscriptions from arguments) and the virtual PLC (`QTcpServer` in front of `MockPlc`, `--set`, `--wiggle`).
 
 **Acceptance criteria:**
-- [ ] On one machine `virtual_plc --frame 3E --port 5000 --wiggle D105` and `qt_console_poller --host 127.0.0.1 --port 5000 --sub D100:64` show round-1 snapshots, then a change every second.
+- [x] On one machine `virtual_plc --frame 3E --port 5000 --wiggle D105` and `qt_console_poller --host 127.0.0.1 --port 5000 --sub D100:64` show round-1 snapshots, then a change every second.
 
 **Verification:**
-- [ ] Manual run of both programs (MSVC build); both also build through qmake.
+- [x] Manual run of both programs (MSVC build); both also build through qmake.
 
 **Dependencies:** T33
 
@@ -635,8 +635,8 @@
 
 **Scope:** M
 
-### Checkpoint D: 3E through the whole stack
-- [ ] `scripts/check.ps1` green (both compilers, qmake, consumers); BLD-05(d) proves `mc_device` does not link `mc_mock`.
+### Checkpoint D: 3E through the whole stack (baton T-040)
+- [x] `scripts/check.ps1` green (both compilers, qmake, consumers); BLD-05(d) proves `mc_device` does not link `mc_mock`. (T-040)
 - [ ] Owner runs the Checkpoint D demo (`virtual_plc` ↔ `qt_console_poller`).
 
 ---

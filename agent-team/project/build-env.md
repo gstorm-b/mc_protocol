@@ -125,7 +125,7 @@ cmake --build build/cmake-coverage --target mc_coverage_report
 ```
 
 Per-directory reports: `mc_coverage_report` (model), `mc_coverage_report_protocol`,
-`…_session`, `…_mock` (bar 90); run `ctest -L "core_model|core_protocol|core_session|mock|integration|build"`
+`…_session`, `…_mock` (bar 90), `…_device` (report only, no bar); run `ctest -L "core_model|core_protocol|core_session|mock|integration|device|build"`
 first so every binary contributes `.gcda` data.
 **Every executable that links an instrumented library needs `mc_apply_coverage(<target>)`**,
 examples included — otherwise the coverage build fails to link with `__gcov_init` undefined (T-034).
@@ -167,6 +167,25 @@ the bar (`-D MC_MIN_COVERAGE=<n>`, default 95, total over `src/core/model`).
   `const Vector& v = byId(vectors, std::string("V-…"))` — a reference-returning
   call with a temporary argument. Bind the id to a named `const std::string`
   first (T-030).
+- **Qt test binaries** (label `device`) are added with `mc_add_qt_test()` in
+  `tests/CMakeLists.txt`: it prepends the kit's Qt `bin` to PATH through
+  `ENVIRONMENT_MODIFICATION` (CMake ≥ 3.22) and sets
+  `QT_ASSUME_STDERR_HAS_CONSOLE=1` — without it QtTest prints **nothing** on
+  Windows when its output is a pipe, so a failure is silent under ctest or an
+  agent shell. Running a Qt binary by hand needs the Qt `bin` on PATH yourself (T-035).
+- Windows reports a refused **loopback** connect only after 2–4 s; a test
+  against a closed port ends on its own connect timer instead (T-035).
+- After restoring a mutated source with `Copy-Item`, touch it
+  (`(Get-Item f).LastWriteTime = Get-Date`): the copy keeps the old timestamp,
+  ninja sees no work and the test still runs the mutant (T-036).
+- `Start-Process -PassThru` returns an empty `ExitCode` unless `$p.Handle` is
+  read right after starting (T-040). `Stop-Process -Force` ends `virtual_plc`.
+- A scratch copy of the tree must keep `tests/build/test_version.cpp`;
+  excluding every `build` folder breaks configure (T-040).
+- `nmake` and `cmake --build` banners go to stderr: redirect stdout to a file
+  and filter it, never merge stderr (T-040).
+- Deleting qmake `Makefile.*` files or a relative `build/_scratch-*` folder: use Git Bash `rm -f …`; a PowerShell
+  `Get-ChildItem | Remove-Item` pipeline was blocked by the tool guard (T-036).
 - Test binaries per module: `mc_core_model_tests` (ctest name
   `core_model.mc_core_model_tests`), main in `tests/core/model/main.cpp`.
 - ctest labels: `build`, `core_model`, `core_protocol`, `core_session`,

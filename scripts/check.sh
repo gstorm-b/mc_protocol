@@ -163,7 +163,12 @@ consumer_exe="$dir/consumer.exe"
 if [ ! -f "$consumer_exe" ]; then
     fail_stage consumer-cmake "consumer.exe not found at $consumer_exe"
 fi
+# The consumer links mc::device, so it needs the kit's Qt DLLs at run time (T-040): the kit's bin
+# goes in front of PATH for this one run, as check.ps1 does.
+path_before_consumer=$PATH
+PATH="$(to_posix_path "$QT_DIR/bin"):$PATH"
 run consumer-cmake "$consumer_exe"
+PATH=$path_before_consumer
 
 # ---- stage 5: consumer-qmake (BLD-07) ----
 print_stage 5 consumer-qmake
@@ -177,7 +182,10 @@ app_exe=$(find "$dir" -iname 'app.exe' | head -n 1)
 if [ -z "$app_exe" ]; then
     fail_stage consumer-qmake "app.exe not found under $dir"
 fi
+path_before_consumer=$PATH
+PATH="$(to_posix_path "$QT_DIR/bin"):$PATH"
 run consumer-qmake "$app_exe"
+PATH=$path_before_consumer
 
 echo "== check: all $TOTAL_STAGES stages passed =="
 exit 0

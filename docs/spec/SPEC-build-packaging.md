@@ -165,7 +165,8 @@ Every target gets `target_compile_features(... PUBLIC cxx_std_17)`, `target_incl
 | `mc_core_model_tests`, `mc_core_protocol_tests`, `mc_core_session_tests` | `core_model`, `core_protocol`, `core_session` | `MC_BUILD_TESTS` |
 | `mc_mock_tests` | `mock` | `MC_BUILD_TESTS` and `MC_BUILD_MOCK` |
 | `mc_integration_tests` | `integration` | `MC_BUILD_TESTS` and `MC_BUILD_MOCK` |
-| `mc_device_tests` | `device` | `MC_BUILD_TESTS`, `MC_BUILD_MOCK` and `MC_BUILD_DEVICE` |
+| `mc_tcp_transport_tests`, `mc_config_json_tests` (one QtTest binary per `tst_*.cpp`; amended 2026-09-30, owner decision) | `device` | `MC_BUILD_TESTS` and `MC_BUILD_DEVICE` |
+| `mc_device_tests`, `mc_device_thread_tests` (link `mc::mock`) | `device` | `MC_BUILD_TESTS`, `MC_BUILD_MOCK` and `MC_BUILD_DEVICE` |
 | `mc_replay_tests` (std-only; skips cleanly when no capture exists) | `replay` | `MC_BUILD_TESTS` and `MC_BUILD_MOCK` |
 | `mc_hil_tool_tests` | `hil_tool` | `MC_BUILD_TESTS`, `MC_BUILD_MOCK`, `MC_BUILD_DEVICE` and `MC_BUILD_TOOLS` |
 

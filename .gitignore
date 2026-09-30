@@ -13,6 +13,7 @@ temp-docs/
 *.pro.user*
 .vs/
 .idea/
+.qtcreator/
 .cache/
 CMakeUserPresets.json
 compile_commands.json

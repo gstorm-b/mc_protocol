@@ -211,7 +211,16 @@ $consumerExe = Get-ChildItem -Path $dir -Filter 'consumer.exe' -Recurse | Select
 if (-not $consumerExe) {
     Stop-Stage -Name 'consumer-cmake' -Detail "consumer.exe not found under $dir"
 }
-Invoke-Checked -StageName 'consumer-cmake' -Exe $consumerExe.FullName -Arguments @()
+# The consumer links mc::device, so it needs the kit's Qt DLLs at run time; a shell may have none
+# on PATH (T-040), so the kit's bin directory goes in front for this one run.
+$pathBeforeConsumer = $env:PATH
+$env:PATH = (Join-Path $QtDir 'bin') + ';' + $env:PATH
+try {
+    Invoke-Checked -StageName 'consumer-cmake' -Exe $consumerExe.FullName -Arguments @()
+}
+finally {
+    $env:PATH = $pathBeforeConsumer
+}
 
 # ---- stage 5: consumer-qmake (BLD-07) ----
 Write-Stage -Index 5 -Name 'consumer-qmake'
@@ -231,7 +240,14 @@ $appExe = Get-ChildItem -Path $dir -Filter 'app.exe' -Recurse | Select-Object -F
 if (-not $appExe) {
     Stop-Stage -Name 'consumer-qmake' -Detail "app.exe not found under $dir"
 }
-Invoke-Checked -StageName 'consumer-qmake' -Exe $appExe.FullName -Arguments @()
+$pathBeforeConsumer = $env:PATH
+$env:PATH = (Join-Path $QtDir 'bin') + ';' + $env:PATH
+try {
+    Invoke-Checked -StageName 'consumer-qmake' -Exe $appExe.FullName -Arguments @()
+}
+finally {
+    $env:PATH = $pathBeforeConsumer
+}
 
 Write-Host "== check: all $totalStages stages passed =="
 exit 0

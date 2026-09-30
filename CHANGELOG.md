@@ -118,3 +118,32 @@ All notable changes to this project are documented in this file. The format foll
   MinGW GCC 13.1 (`scripts/check.ps1`, both kits; the qmake binaries list the same test cases as
   their CMake twins); line coverage of `src/mock` 96.74% total, `core-model`, `core-protocol`
   and `core-session` still ≥ 95%.
+- `mc::device`, the Qt device layer (Phase 5, T-035 to T-040; `SPEC-qt-device.md`; the `mc_device`
+  static library, `AUTOMOC`, Qt 6.2 API only, links `mc::core` and Qt only, never `mc::mock`):
+  `Transport` (the abstract byte transport with its `opened`, `openFailed`, `readyRead`, `lost`
+  signals), `TcpTransport` (`QTcpSocket` with `LowDelayOption` and `KeepAliveOption`, connect
+  timeout as a single-shot `QTimer`, no signal after `close()`), `registerMetaTypes()`,
+  `SerialSettings`, and `McDeviceConfig` (`TransportKind`, `SubscriptionSpec`, `validate()` naming
+  the offending JSON path, `toJson()` / `fromJson()` for schema 1: every `FrameConfig` and
+  `SessionConfig` field has a key). `mc_device.pri` mirrors the CMake target; QtTest binaries
+  `mc_tcp_transport_tests` and `mc_config_json_tests` (label `device`; QDV-06 and QDV-12 at
+  transport level, QDV-10, QDV-16 at validate level) have qmake twins, and `QDV-HYG` (with
+  negative controls) keeps blocking waits, nested event loops, threads and mutexes out of
+  `src/device` and `include/mc/device`. With `-DMC_BUILD_DEVICE=OFF` CMake still never searches for Qt and BLD-04 still
+  compares `mc_device.pri`. `McDevice` (`mc/device/mc_device.h`): a thin Qt adapter that drives a
+  `Session` over a `Transport` (link state machine `LinkState` / `LinkReason`, a FIFO signal queue
+  flushed only by the outermost call so slots may call back into the device, one single-shot
+  deadline timer, `linkStateChanged` / `linkFault` / `valuesChanged` / `snapshotReady` /
+  `cycleDone` / `requestFinished` carrying Qt value types, `setConfig()` / `subscribe()` /
+  `submit()` and the `writeWords` / `readWords` family). It never blocks, starts no thread,
+  takes no mutex and never reconnects by itself; `Transport::lastLossWasPeerClose()` tells a peer
+  close from an I/O error. Test binaries `mc_device_tests` (QDV-01 to 08, 11, 13 (3E ASCII), 15 to 17 on
+  loopback TCP against a `MockPlc` server, plus fault, config and log tests on a fake transport)
+  and `mc_device_thread_tests` (QDV-09) have qmake twins. Examples `virtual_plc` (a TCP server in
+  front of `MockPlc`, `--set` / `--wiggle`) and `qt_console_poller` (an `McDevice` printing
+  round-1 snapshots and each change) run against each other on one machine.
+  Checkpoint D: `mc_coverage_report_device` prints line coverage of `src/device` per file (report only,
+  no bar; 91.68% total on MinGW), the CMake and qmake consumer projects (BLD-06, BLD-07) now build an
+  `McDevice` and link `mc::device` / `mc_protocol.pri`, and `scripts/check.ps1` puts the kit's Qt
+  `bin` on PATH when it runs them; the device tests, both examples, the qmake twins and
+  `scripts/check.ps1` pass with MSVC and MinGW GCC 13.1.

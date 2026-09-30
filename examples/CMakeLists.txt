@@ -22,3 +22,22 @@ if(MC_BUILD_MOCK)
             TIMEOUT 30)
     endif()
 endif()
+
+# Qt console demo (SPEC-qt-device.md success criterion 4): virtual_plc serves a MockPlc over TCP and
+# qt_console_poller drives an McDevice against it. Both link mc::device and mc::mock (the demo PLC
+# is the mock); mc_device itself never links mc::mock. Built only when both layers are on; the
+# executables land in this directory (build/<dir>/examples/), as the spec's commands show.
+if(MC_BUILD_DEVICE AND MC_BUILD_MOCK)
+    # Imported Qt targets are directory-scoped, so this directory finds Qt itself.
+    find_package(Qt6 6.2 REQUIRED COMPONENTS Core Network SerialPort)
+
+    add_executable(virtual_plc virtual_plc/main.cpp)
+    target_link_libraries(virtual_plc PRIVATE mc::device mc::mock)
+    mc_apply_warnings(virtual_plc)
+    mc_apply_coverage(virtual_plc)
+
+    add_executable(qt_console_poller qt_console_poller/main.cpp)
+    target_link_libraries(qt_console_poller PRIVATE mc::device mc::mock)
+    mc_apply_warnings(qt_console_poller)
+    mc_apply_coverage(qt_console_poller)
+endif()

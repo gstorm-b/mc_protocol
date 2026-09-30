@@ -109,6 +109,12 @@ public:
     /// Speaks exactly the frame, code, format, sum-check and station settings of `cfg`
     /// (the same FrameConfig the client uses). Precondition: cfg.validate() is Ok.
     explicit MockPlc(const FrameConfig& cfg, const MockOptions& opt = {});
+    /// Pimpl: movable, not copyable (amended 2026-09-30, owner decision).
+    ~MockPlc();
+    MockPlc(MockPlc&&) noexcept;
+    MockPlc& operator=(MockPlc&&) noexcept;
+    MockPlc(const MockPlc&) = delete;
+    MockPlc& operator=(const MockPlc&) = delete;
 
     // ---- bytes (sans-I/O) --------------------------------------------------------------
     /// Request bytes from the client, any fragmentation. Complete requests are executed at once.
@@ -212,7 +218,7 @@ The rig connects `Session::nextOutput(Send)` → pipe → `MockPlc::bytesIn` and
 | INT-03 | Odd count: write 5 bits, read 5 bits | same values (nibble padding, 1E dummy) |
 | INT-07 | Ad-hoc read D0×2000 | the mock logs `chunkCount()` requests for the frame (3E Binary: 3; 1E Binary: 8); payload concatenated in order |
 | INT-08 | `failRange(D, 100, 100, code)` then read D100×1 | `RequestDone` with `{Plc, PlcError, plcCode = code}` (u8 for 1E/1C) |
-| INT-10 | Subscribe D100×64, M0×64, X0×32; round 1; change D105 and M5 in the mock; round 2 | round 1: no `ValuesChanged`, then snapshots D, M, X (enum order) and `CycleDone`; round 2: `ValuesChanged` for D105 and M5 only, a snapshot per type |
+| INT-10 | Subscribe D100×64, M0×64, X0×32; round 1; change D105 and M5 in the mock; round 2 | round 1: no `ValuesChanged`, then snapshots X, M, D (`DeviceType` enum order) and `CycleDone`; round 2: `ValuesChanged` for D105 and M5 only, a snapshot per type |
 | INT-11 | `mute(true)` during polling | 3E/1E: `LinkFault{Timeout, reopen}`; 3C/1C: `eotCount()` grows, the read is repeated `readRetries` times (visible in the request log), then `LinkFault{Timeout, reopen=false}` after `maxConsecutiveLinkErrors` |
 | INT-12 | `corruptNext(WrongSumCheck)` (serial) / `corruptNext(WrongSubheader)` (Ethernet) | serial: EOT, retry succeeds, values correct; Ethernet: `LinkFault{ProtocolError, reopen}` |
 | INT-13 | Same memory evolution with `bitsAsWords` on and off | identical `ValueStore` contents and identical change events |

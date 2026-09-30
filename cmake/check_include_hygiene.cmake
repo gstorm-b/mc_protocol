@@ -13,7 +13,7 @@
 #   (d) nothing under include/mc/device or src/device includes mc/mock/...; and the
 #       LINK_LIBRARIES of the mc_device CMake target (exported next to mc_sources.txt as
 #       mc_device_link_libraries.txt, only once that target exists) must not contain mc_mock.
-#       Reported as "not applicable yet" while mc_device is not yet defined.
+#       Reported as "not applicable" when mc_device is not defined (MC_BUILD_DEVICE=OFF).
 #
 # Run as: cmake -D MC_SOURCE_DIR=<repo root> -D MC_BINARY_DIR=<build dir> -P check_include_hygiene.cmake
 
@@ -131,12 +131,14 @@ endforeach()
 set(_mc_link_file "${MC_BINARY_DIR}/mc_device_link_libraries.txt")
 if(EXISTS "${_mc_link_file}")
     file(READ "${_mc_link_file}" _mc_device_links)
-    if(_mc_device_links MATCHES "mc_mock")
-        message(STATUS "check_include_hygiene: rule (d): mc_device LINK_LIBRARIES contains mc_mock")
+    # LINK_LIBRARIES keeps a target as it was written: the target name (mc_mock) or the alias
+    # this project uses everywhere (mc::mock). Both must be caught.
+    if(_mc_device_links MATCHES "mc(_|::)mock")
+        message(STATUS "check_include_hygiene: rule (d): mc_device LINK_LIBRARIES contains ${CMAKE_MATCH_0}")
         set(_mc_ok FALSE)
     endif()
 else()
-    message(STATUS "check_include_hygiene: rule (d) LINK_LIBRARIES check: not applicable yet (mc_device target does not exist)")
+    message(STATUS "check_include_hygiene: rule (d) LINK_LIBRARIES check: not applicable (mc_device target does not exist)")
 endif()
 
 if(NOT _mc_ok)

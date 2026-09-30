@@ -105,13 +105,13 @@ Baton tasks are created one phase ahead.
 
 ### Phase 5: Qt device over TCP (`qt-device`)
 
-- [ ] T30 `Transport`, `TcpTransport`, meta types
-- [ ] T31 `McDeviceConfig` and JSON
-- [ ] T32 `McDevice` link state, pump and signal queue
-- [ ] T33 `McDevice` faults, re-entrancy, threads, destructor
-- [ ] T34 Examples `qt_console_poller` and `virtual_plc`
+- [x] T30 `Transport`, `TcpTransport`, meta types → T-035
+- [x] T31 `McDeviceConfig` and JSON → T-036
+- [x] T32 `McDevice` link state, pump and signal queue → T-037
+- [x] T33 `McDevice` faults, re-entrancy, threads, destructor → T-038
+- [x] T34 Examples `qt_console_poller` and `virtual_plc` → T-039
 
-**Checkpoint D:** 3E through the whole stack; demo `virtual_plc` ↔ `qt_console_poller`. No real PLC here (owner decision 5); real hardware waits for Phase 8.
+**Checkpoint D** → T-040: 3E through the whole stack; demo `virtual_plc` ↔ `qt_console_poller`. No real PLC here (owner decision 5); real hardware waits for Phase 8.
 
 ### Phase 6: Frames 1E, 3C, 1C through every layer
 

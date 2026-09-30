@@ -85,19 +85,55 @@ if(MC_BUILD_MOCK)
     mc_apply_coverage(mc_mock)
 endif()
 
+# mc_device (SPEC-qt-device.md): the Qt device layer. It links mc_core and Qt only, never mc_mock
+# (BLD-05 rule d). The source list is a variable, defined whether or not the target is built, so
+# BLD-04 can compare mc_device.pri with it under -DMC_BUILD_DEVICE=OFF too; find_package(Qt6) is
+# called only inside the option, so a core-only configure never searches for Qt (BLD-02).
+set(_mc_device_sources
+    device/tcp_transport.cpp
+    device/meta_types.cpp
+    device/mc_device_config.cpp
+    device/mc_device.cpp
+    ${PROJECT_SOURCE_DIR}/include/mc/device/transport.h
+    ${PROJECT_SOURCE_DIR}/include/mc/device/tcp_transport.h
+    ${PROJECT_SOURCE_DIR}/include/mc/device/serial_transport.h
+    ${PROJECT_SOURCE_DIR}/include/mc/device/mc_device_config.h
+    ${PROJECT_SOURCE_DIR}/include/mc/device/mc_device.h
+    ${PROJECT_SOURCE_DIR}/include/mc/device/meta_types.h
+)
+
+if(MC_BUILD_DEVICE)
+    # Qt 6.2 LTS is the minimum (SPEC-build-packaging.md); only that API surface is used.
+    find_package(Qt6 6.2 REQUIRED COMPONENTS Core Network SerialPort)
+
+    add_library(mc_device STATIC ${_mc_device_sources})
+    add_library(mc::device ALIAS mc_device)
+    set_target_properties(mc_device PROPERTIES AUTOMOC ON)
+
+    target_include_directories(mc_device
+        PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
+    )
+    target_link_libraries(mc_device PUBLIC mc::core Qt6::Core Qt6::Network Qt6::SerialPort)
+
+    mc_apply_warnings(mc_device)
+    mc_apply_coverage(mc_device)
+endif()
+
 # ---- BLD-04 pri_sync: export each library target's own source list, one "TARGET path" line
 # per file, to ${CMAKE_BINARY_DIR}/mc_sources.txt. cmake/check_pri_sync.cmake compares this
 # against the HEADERS/SOURCES each mc_*.pri lists for the matching target. A layer that is
 # switched off (-DMC_BUILD_MOCK=OFF) has no target but still exports its source list, taken from
 # the variable its target is built from, so its .pri is still compared and BLD-04 stays green.
-# Extend this with mc_device (T30) the same way: a source-list variable, exported always.
-set(_mc_pri_sync_targets mc_core mc_mock)
+set(_mc_pri_sync_targets mc_core mc_mock mc_device)
 set(_mc_sources_lines "")
 foreach(_mc_target IN LISTS _mc_pri_sync_targets)
     if(TARGET ${_mc_target})
         get_target_property(_mc_target_sources ${_mc_target} SOURCES)
     elseif(_mc_target STREQUAL "mc_mock")
         set(_mc_target_sources ${_mc_mock_sources})
+    elseif(_mc_target STREQUAL "mc_device")
+        set(_mc_target_sources ${_mc_device_sources})
     else()
         set(_mc_target_sources "")
     endif()
@@ -113,9 +149,9 @@ foreach(_mc_target IN LISTS _mc_pri_sync_targets)
 endforeach()
 file(GENERATE OUTPUT "${CMAKE_BINARY_DIR}/mc_sources.txt" CONTENT "${_mc_sources_lines}")
 
-# ---- BLD-05 rule (d), link side: export mc_device's LINK_LIBRARIES once that target exists
-# (T30) so cmake/check_include_hygiene.cmake can assert it never contains mc_mock. No file at
-# all == "not applicable yet", which the check script reports rather than failing on.
+# ---- BLD-05 rule (d), link side: export mc_device's LINK_LIBRARIES when that target exists so
+# cmake/check_include_hygiene.cmake can assert it never contains mc_mock. No file at all (device
+# layer switched off) == "not applicable", which the check script reports rather than failing on.
 if(TARGET mc_device)
     get_target_property(_mc_device_links mc_device LINK_LIBRARIES)
     if(NOT _mc_device_links)

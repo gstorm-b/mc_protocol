@@ -1,9 +1,9 @@
 # check_pri_sync.cmake — BLD-04: compares each mc_*.pri file's own HEADERS/SOURCES entries
 # with the CMake source list of the matching target, exported at configure time to
 # ${MC_SOURCES_FILE} by src/CMakeLists.txt (one "TARGET path" line per file, path
-# repo-relative with forward slashes). A .pri whose target has no CMake definition yet
-# (mc_device, until T30) must list no files of its own; a layer that is switched off but has a
-# source-list variable (mc_mock under -DMC_BUILD_MOCK=OFF) is still exported and compared. Any other
+# repo-relative with forward slashes). A .pri whose target is absent from that file must list no
+# files of its own; a layer that is switched off (mc_mock under -DMC_BUILD_MOCK=OFF, mc_device
+# under -DMC_BUILD_DEVICE=OFF) still exports its source-list variable and is compared. Any other
 # difference is reported by file name, .pri and target, and fails the check.
 #
 # Run as: cmake -D MC_SOURCE_DIR=<repo root> -D MC_SOURCES_FILE=<path> -P check_pri_sync.cmake

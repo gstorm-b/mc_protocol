@@ -3,6 +3,16 @@
 Curated by the team leader. One entry, one decision, newest first.
 Format: `- [T-xxx or date] Decision — why. (supersedes: entry, if any)`
 
+- [2026-09-30] `.gitignore` ignores `.qtcreator/` (any level) — owner request.
+- [T-040] `Transport::lastLossWasPeerClose()` kept as public API (virtual, default
+  false) so `lost()` maps to `PeerClosed` or `TransportError`; `SPEC-qt-device.md`
+  amended (Transport sketch, link table, Connecting re-publish, JSON value spellings,
+  missing `schema` = 1) and `SPEC-build-packaging.md` (four QtTest binaries, one per
+  `tst_*.cpp`) — owner decisions 2026-09-30.
+- [2026-09-30] Delegation of Gates 1–2 extended to Phase 5 on Phase 4's terms;
+  the Checkpoint D demo stays with the owner. `SPEC-mock-plc.md` amended: INT-10
+  snapshots in `DeviceType` order (X, M, D); `MockPlc` is pimpl, movable, not
+  copyable — owner decisions. Checkpoint A0 layout review confirmed by the owner.
 - [T-028] Checkpoint C: **go** — direction C kept, the sans-I/O `Session`
   stays in `mc_core`; no fallback to direction B — owner decision 2026-09-30.
   Delegation of Gates 1–2 extended to Phase 4; in Phase 4 the leader chooses

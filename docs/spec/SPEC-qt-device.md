@@ -103,6 +103,10 @@ public:
     virtual State state() const = 0;
     /// For logs and signals: "192.168.0.10:5000", "COM3 9600 7E1".
     virtual QString describe() const = 0;
+    /// Why the last lost() happened: true = the peer closed or reset the link (PeerClosed),
+    /// false = a local I/O error (TransportError). Default false. (Amended 2026-09-30, owner
+    /// decision: lost() carries no cause, and the link table needs one.)
+    virtual bool lastLossWasPeerClose() const { return false; }
 signals:
     void opened();
     void openFailed(const QString& reason);
@@ -190,6 +194,30 @@ JSON shape (every `FrameConfig` and `SessionConfig` field has a key of the same 
   "subscriptions": [ { "device": "D2000", "count": 64 }, { "device": "M2000", "count": 64 } ]
 }
 ```
+
+**Value spellings** (amended 2026-09-30, owner decision; matched case-sensitively):
+
+| Key | Values |
+|---|---|
+| `frame.frame` | `"3E"`, `"1E"`, `"3C"`, `"1C"`, `"4E"`, `"4C"` |
+| `frame.code` | `"Binary"`, `"Ascii"` |
+| `frame.series` | `"QL"`, `"IqR"` |
+| `frame.format` | `"Format1"` … `"Format5"` |
+| `frame.targetFamily` | `"IqR_Q_L"`, `"QnA"`, `"A"` |
+| `frame.commandSet` | `"ACPU"`, `"AnA"` |
+| `session.cycleMode` | `"FixedRate"`, `"FixedDelay"` |
+| `session.maxGap` | `"auto"` or a number (the sentinel value itself is refused; `"auto"` is its only spelling) |
+| `session.heartbeat.device` | device text in canonical `formatDevice()` spelling |
+| `transport.kind` | `"Tcp"`, `"Serial"` |
+| `transport.serial.dataBits` | a number, 5 … 8 |
+| `transport.serial.parity` | `"None"`, `"Even"`, `"Odd"`, `"Space"`, `"Mark"` |
+| `transport.serial.stopBits` | `"1"`, `"1.5"`, `"2"` |
+| `transport.serial.flowControl` | `"None"`, `"Hardware"`, `"Software"` |
+
+**`"schema"`:** a missing key counts as 1 (so `{}` is the default config); any other value
+(`2`, `0`, `"1"`, `1.5`) fails with path `schema` (amended 2026-09-30, owner decision).
+`fromJson` checks JSON shape, types and value ranges only; whether a subscription's device text
+parses and fits the frame is `validate()`'s job (path `subscriptions[i].device`).
 
 ### `mc_device.h`
 
@@ -285,10 +313,10 @@ signals:
 | Disconnected | `connectToPlc()` | build transport from config (unless injected), `open()` | Connecting, `(Connecting, Requested)` |
 | Connecting | `opened()` | `session.linkUp(now)` | Connected, `(Connected, Requested)` |
 | Connecting | `openFailed(r)` | none | Disconnected, `(Disconnected, OpenFailed, r)` |
-| Connecting | `connectToPlc()` | none | Connecting |
+| Connecting | `connectToPlc()` | none (no second socket) | Connecting, `(Connecting, Requested)` re-published (amended 2026-09-30) |
 | Connected | `connectToPlc()` | none | Connected, `(Connected, Requested)` re-published |
 | Connected | Session `LinkFault` | none: transport stays open, Session discards bytes | Faulted, `linkFault(info)` then `(Faulted, Fault, text)` |
-| Connected, Faulted | `lost(r)` | `session.linkDown(now)` | Disconnected, `(Disconnected, PeerClosed or TransportError, r)` |
+| Connected, Faulted | `lost(r)` | `session.linkDown(now)` | Disconnected, `(Disconnected, PeerClosed or TransportError, r)` — chosen by `Transport::lastLossWasPeerClose()` |
 | Faulted | `connectToPlc()` | `session.linkDown`, `close()`, `open()` | Connecting |
 | any but Disconnected | `disconnectFromPlc()` | `session.linkDown`, `close()` | Disconnected, `(Disconnected, Requested)` |
 
