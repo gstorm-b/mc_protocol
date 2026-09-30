@@ -6,6 +6,7 @@ add_library(mc_core STATIC
     core/model/validate.cpp
     core/model/limits_table.cpp
     core/model/limits_table.h
+    core/model/validate_internal.h
     core/model/chunk.cpp
     core/model/convert.cpp
     core/model/log.cpp
@@ -18,6 +19,11 @@ add_library(mc_core STATIC
     core/protocol/device_encode.h
     core/protocol/command_qna.cpp
     core/protocol/command_qna.h
+    core/protocol/bit_payload.h
+    core/protocol/command_a1e.cpp
+    core/protocol/command_a1e.h
+    core/protocol/frame_1e.cpp
+    core/protocol/frame_1e.h
     core/protocol/frame_3e.cpp
     core/protocol/frame_3e.h
     core/protocol/protocol.cpp
@@ -31,6 +37,7 @@ add_library(mc_core STATIC
     core/session/drain_violation.cpp
     core/session/drain_violation.h
     core/session/output_ring.h
+    core/session/word_align.h
     ${PROJECT_SOURCE_DIR}/include/mc/version.h
     ${PROJECT_SOURCE_DIR}/include/mc/core/types.h
     ${PROJECT_SOURCE_DIR}/include/mc/core/result.h

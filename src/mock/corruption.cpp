@@ -69,4 +69,13 @@ void corrupt3eResponse(Corruption mode, DataCode code, ByteBuf& response) {
     }
 }
 
+void corrupt1eResponse(Corruption mode, DataCode code, ByteBuf& response) {
+    // A 1E response has no network, PC or station field, so WrongRoute has nothing to change. The
+    // other modes act on the frame as a whole (its first byte, its end, both ends) and are the same
+    // as on 3E; the first byte XOR 01H is never the subheader the client expects.
+    if (mode != Corruption::WrongRoute) {
+        corrupt3eResponse(mode, code, response);
+    }
+}
+
 } // namespace mc::detail::mock

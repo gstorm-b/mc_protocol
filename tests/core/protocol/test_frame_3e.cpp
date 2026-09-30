@@ -281,8 +281,8 @@ TEST_CASE("3E checkRoute: a response route that disagrees with the request is Fr
 }
 
 TEST_CASE("3E UnsupportedCommand: frame types/codes not implemented yet never UB") {
-    SUBCASE("F1E is not implemented") {
-        FrameConfig cfg = FrameConfig::frame1E();
+    SUBCASE("F1C is not implemented") {
+        FrameConfig cfg = FrameConfig::frame1C();
         McProtocol proto(cfg);
         Request r = Request::readWords(Device{mc::DeviceType::D, 100}, 1);
 
@@ -309,7 +309,7 @@ TEST_CASE("3E UnsupportedCommand: frame types/codes not implemented yet never UB
         CHECK(encodeResult.error().code == ErrorCode::UnsupportedCommand);
     }
     SUBCASE("payloadSize() is frame-independent: still correct for an unimplemented frame") {
-        FrameConfig cfg = FrameConfig::frame1E();
+        FrameConfig cfg = FrameConfig::frame1C();
         McProtocol proto(cfg);
         Request r = Request::readWords(Device{mc::DeviceType::D, 100}, 3);
         CHECK(proto.payloadSize(r) == 6);
@@ -450,7 +450,7 @@ TEST_CASE("McProtocol/Parser: Checkpoint B coverage gaps (T-019) beyond the Erro
         CHECK(parser.feed(ByteView{wire.data(), 1}) == ParseStatus::Done); // buffer size ignored.
     }
     SUBCASE("payload(): UnsupportedCommand for a frame this module does not implement") {
-        FrameConfig cfg = FrameConfig::frame1E();
+        FrameConfig cfg = FrameConfig::frame1C();
         McProtocol proto(cfg);
         Request r = Request::readWords(Device{mc::DeviceType::D, 100}, 1);
         Parser parser = proto.parser(r);

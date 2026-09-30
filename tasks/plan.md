@@ -115,20 +115,20 @@ Baton tasks are created one phase ahead.
 
 ### Phase 6: Frames 1E, 3C, 1C through every layer
 
-- [ ] T35 1E commands (A1E)
-- [ ] T36 1E frame and vectors
-- [ ] T37 1E in the mock, integration, planner and device
-- [ ] T38 Serial receive state machine
-- [ ] T39 3C formats 1 and 4
-- [ ] T40 3C formats 2 and 3, serial options, 4C vectors (tagged v2)
-- [ ] T41 1C commands, formats 1 and 4
-- [ ] T42 1C formats 2 and 3, AnA command set, message wait
-- [ ] T43 Session serial behaviour (EOT, flush, inter-character timeout, retries)
-- [ ] T44 Mock serial server direction
-- [ ] T45 Integration matrix complete (12 combinations)
-- [ ] T46 `SerialTransport` and serial loopback
+- [x] T35 1E commands (A1E) → T-041
+- [x] T36 1E frame and vectors → T-042
+- [x] T37 1E in the mock, integration, planner and device → T-043
+- [ ] T38 Serial receive state machine → T-045
+- [ ] T39 3C formats 1 and 4 → T-046
+- [ ] T40 3C formats 2 and 3, serial options, 4C vectors (tagged v2) → T-047
+- [ ] T41 1C commands, formats 1 and 4 → T-048
+- [ ] T42 1C formats 2 and 3, AnA command set, message wait → T-049
+- [ ] T43 Session serial behaviour (EOT, flush, inter-character timeout, retries) → T-051
+- [ ] T44 Mock serial server direction → T-052
+- [ ] T45 Integration matrix complete (12 combinations) → T-053
+- [ ] T46 `SerialTransport` and serial loopback → T-054
 
-**Checkpoint E1 (after T37):** 1E complete. **Checkpoint E2 (after T42):** codec complete. **Checkpoint E:** all four frames through every layer.
+**Checkpoint E1** → T-044 (after T37): 1E complete. **Checkpoint E2** → T-050 (after T42): codec complete. **Checkpoint E** → T-055: all four frames through every layer. Run as three batches 6a/6b/6c, one commit each (owner decision 2026-10-01).
 
 ### Phase 7: Hardware capture tooling (`hil-capture`)
 

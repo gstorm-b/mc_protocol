@@ -43,6 +43,7 @@
 #include "adhoc_queue.h"
 #include "drain_violation.h"
 #include "output_ring.h"
+#include "word_align.h"
 
 #include <algorithm>
 #include <utility>
@@ -191,7 +192,16 @@ Expected<SubscriptionId> Session::subscribe(Device head, uint32_t count) {
     const DeviceInfo& info = deviceInfo(head.type);
     bool bitsAsWords = m_config.plan.bitsAsWords && info.kind == DeviceKind::Bit;
     Op op = (info.kind == DeviceKind::Bit && !bitsAsWords) ? Op::ReadBits : Op::ReadWords;
-    uint16_t checkCount = static_cast<uint16_t>(count > 0xFFFFu ? 0xFFFFu : count);
+    // With bitsAsWords the plan reads the 16-point-aligned word range that covers the subscription
+    // (ReadPlan::build), so that is what is checked, not the raw bit head and count.
+    uint64_t checkUnits = count;
+    if (bitsAsWords) {
+        const detail::Interval aligned =
+            detail::alignToWordBoundary(head.type, head.number, count, m_frameConfig);
+        head.number = static_cast<uint32_t>(aligned.start);
+        checkUnits = (aligned.end - aligned.start) / 16;
+    }
+    uint16_t checkCount = static_cast<uint16_t>(checkUnits > 0xFFFFu ? 0xFFFFu : checkUnits);
     Request checkReq = (op == Op::ReadWords) ? Request::readWords(head, checkCount)
                                               : Request::readBits(head, checkCount);
     auto checked = chunkCount(checkReq, m_frameConfig);

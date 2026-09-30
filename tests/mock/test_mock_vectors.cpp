@@ -1,8 +1,9 @@
-// MCK-01, MCK-02, MCK-03, MCK-12 (end to end) and the 3E parts of MCK-05, MCK-07 and MCK-10:
-// MockPlc's 3E server direction against the golden vectors of tests/vectors/3e_binary.vec and
-// 3e_ascii.vec (spec Appendix A.1 / A.2 and section 9.6), read in the reverse direction: the
-// request vectors go into MockPlc::bytesIn, the response vectors are what nextResponse must give.
-// Frames that the vectors do not have are built here by hand from the tables of spec section 5.1.
+// MCK-01, MCK-02, MCK-03, MCK-10, MCK-12 (end to end) and the 3E and 1E parts of MCK-05 and
+// the 3E part of MCK-07: MockPlc's 3E and 1E server directions against the golden vectors of
+// tests/vectors/3e_*.vec and 1e_*.vec (spec Appendix A.1, A.2, A.5, A.6 and sections 9.6, 9.7),
+// read in the reverse direction: the request vectors go into MockPlc::bytesIn, the response
+// vectors are what nextResponse must give. Frames that the vectors do not have are built here by
+// hand from the tables of spec sections 5.1, 5.3 and 4.2.
 #include "doctest/doctest.h"
 
 #include "common/vectors.h"
@@ -36,6 +37,9 @@ namespace {
 using Bytes = std::vector<uint8_t>;
 
 const char* const kVectorFiles[] = {"3e_binary.vec", "3e_ascii.vec"};
+const char* const k1eVectorFiles[] = {"1e_binary.vec", "1e_ascii.vec"};
+const char* const kAllVectorFiles[] = {"3e_binary.vec", "3e_ascii.vec", "1e_binary.vec",
+                                       "1e_ascii.vec"};
 
 std::filesystem::path vectorsRoot() {
     return std::filesystem::path(MC_TESTS_SOURCE_DIR) / "vectors";
@@ -83,9 +87,11 @@ std::vector<uint32_t> parseCsvHex(const std::string& s) {
     return values;
 }
 
+bool is1e(const Vector& v) { return v.field("frame") == "1E"; }
+
 FrameConfig configFor(const Vector& v) {
-    FrameConfig cfg =
-        FrameConfig::frame3E(v.field("code") == "Ascii" ? DataCode::Ascii : DataCode::Binary);
+    const DataCode code = v.field("code") == "Ascii" ? DataCode::Ascii : DataCode::Binary;
+    FrameConfig cfg = is1e(v) ? FrameConfig::frame1E(code) : FrameConfig::frame3E(code);
     cfg.series = v.field("series") == "IqR" ? PlcSeries::IqR : PlcSeries::QL;
     cfg.network = static_cast<uint8_t>(parseHexOr(v.field("network"), cfg.network));
     cfg.pc = static_cast<uint8_t>(parseHexOr(v.field("pc"), cfg.pc));
@@ -255,11 +261,45 @@ const Bytes kM100Bin = {0x64, 0x00, 0x00, 0x90};
 // The 11-byte / 22-character "no data" success response with the default route (V-3E-B-06/A-06).
 const Bytes kAckBin = {0xD0, 0x00, 0x00, 0xFF, 0xFF, 0x03, 0x00, 0x02, 0x00, 0x00, 0x00};
 
+// ---- hand-built 1E frames, from spec sections 5.3, 4.2 and 3.3 (never from the client encoder) ---
+
+// Binary 1E request: command, PC, timer 000A (LE), device (number LE 4 + code LE 2), points, 00,
+// then the write data.
+Bytes bin1e(uint8_t cmd, const Bytes& device, uint8_t points, const Bytes& payload = {},
+            uint8_t pc = 0xFF) {
+    Bytes frame = {cmd, pc, 0x0A, 0x00};
+    append(frame, device);
+    frame.push_back(points);
+    frame.push_back(0x00);
+    append(frame, payload);
+    return frame;
+}
+
+// ASCII 1E request: command (2 characters), PC (2), timer "000A", device (code 4 + number 8),
+// points (2), "00", then the write data.
+Bytes asc1e(uint8_t cmd, const char* device, uint8_t points, const char* payload = "",
+            const char* pc = "FF") {
+    Bytes frame;
+    append(frame, hexText(cmd, 2));
+    appendText(frame, pc);
+    appendText(frame, "000A");
+    appendText(frame, device);
+    append(frame, hexText(points, 2));
+    appendText(frame, "00");
+    appendText(frame, payload);
+    return frame;
+}
+
+const Bytes kD100Bin1e = {0x64, 0x00, 0x00, 0x00, 0x20, 0x44};
+const Bytes kM100Bin1e = {0x64, 0x00, 0x00, 0x00, 0x20, 0x4D};
+
+std::string asText(const Bytes& b) { return std::string(b.begin(), b.end()); }
+
 } // namespace
 
-TEST_CASE("MCK-01 every 3E request vector decodes to the op, head, count, series and write data "
-          "of its metadata") {
-    for (const char* file : kVectorFiles) {
+TEST_CASE("MCK-01 every 3E and 1E request vector decodes to the op, head, count, series and write "
+          "data of its metadata") {
+    for (const char* file : kAllVectorFiles) {
         for (const Vector& v : loadFile(file)) {
             if (v.field("kind") != "request" || isTaggedLater(v)) {
                 continue;
@@ -271,7 +311,7 @@ TEST_CASE("MCK-01 every 3E request vector decodes to the op, head, count, series
             REQUIRE(plc.requests().size() == 1);
             const Meta m = metaOf(v);
             const MockRequestRecord& rec = plc.requests().front();
-            CHECK(rec.frame == mc::FrameType::F3E);
+            CHECK(rec.frame == (is1e(v) ? mc::FrameType::F1E : mc::FrameType::F3E));
             CHECK(rec.op == m.op);
             CHECK(rec.head == m.head);
             CHECK(rec.count == m.count);
@@ -289,9 +329,9 @@ TEST_CASE("MCK-01 every 3E request vector decodes to the op, head, count, series
     }
 }
 
-TEST_CASE("MCK-02 with memory seeded from the metadata, every 3E success response vector is "
-          "reproduced byte for byte") {
-    for (const char* file : kVectorFiles) {
+TEST_CASE("MCK-02 with memory seeded from the metadata, every 3E and 1E success response vector "
+          "is reproduced byte for byte") {
+    for (const char* file : kAllVectorFiles) {
         std::vector<Vector> vectors = loadFile(file);
         for (const Vector& v : vectors) {
             if (v.field("kind") != "response" || isTaggedLater(v)) {
@@ -491,9 +531,9 @@ TEST_CASE("MCK-12 a word read of a bit device counts 16 points per word against 
     CHECK(plc.requests().back().answeredWith.ok());
 }
 
-TEST_CASE("MCK-05 3E: every request vector fed one byte at a time, in 3-byte pieces, or twice in "
-          "one buffer decodes identically") {
-    for (const char* file : kVectorFiles) {
+TEST_CASE("MCK-05 3E and 1E: every request vector fed one byte at a time, in 3-byte pieces, or "
+          "twice in one buffer decodes identically") {
+    for (const char* file : kAllVectorFiles) {
         for (const Vector& v : loadFile(file)) {
             if (v.field("kind") != "request" || isTaggedLater(v)) {
                 continue;
@@ -817,3 +857,358 @@ TEST_CASE("MCK-01 a response longer than the u16 length field is refused") {
     CHECK(plc.requests().back().answeredWith.ok());
 }
 
+
+// ---- 1E (spec sections 5.3, 4.2, appendix A.5 / A.6) ------------------------------------------
+
+TEST_CASE("MCK-03 the 1E error vectors are reproduced with failRange") {
+    int reproduced = 0;
+    for (const char* file : k1eVectorFiles) {
+        std::vector<Vector> vectors = loadFile(file);
+        for (const Vector& v : vectors) {
+            // Only errors the mock itself produces: a PLC end code. 1E-07 is a malformed response
+            // for the client's parser.
+            if (v.field("kind") != "response-error" || v.field("error") != "Plc" ||
+                isTaggedLater(v)) {
+                continue;
+            }
+            INFO("vector ", v.id, " (", v.file, ":", v.line, ")");
+            const std::string requestId = v.field("of");
+            const Vector& request = byId(vectors, requestId);
+            const Meta m = metaOf(request);
+            const uint16_t code = static_cast<uint16_t>(parseHexOr(v.field("plccode"), 0));
+            const uint8_t abnormal = static_cast<uint8_t>(parseHexOr(v.field("abnormal"), 0));
+
+            MockPlc plc(configFor(request));
+            plc.failRange(m.head.type, m.head.number, m.head.number, code, abnormal);
+            feed(plc, request.bytes);
+
+            CHECK(drain(plc) == v.bytes);
+            REQUIRE(plc.requests().size() == 1);
+            const mc::Error& err = plc.requests().front().answeredWith;
+            CHECK(plc.requests().front().answered);
+            CHECK(err.category == mc::ErrorCategory::Plc);
+            CHECK(err.code == mc::ErrorCode::PlcError);
+            CHECK(err.plcCode == code);
+            CHECK(err.abnormalCode == abnormal);
+            ++reproduced;
+        }
+    }
+    CHECK(reproduced == 4); // V-1E-B-11, V-1E-B-12 and their ASCII twins
+}
+
+TEST_CASE("MCK-03 1E: an abnormal code follows the end code 5BH only, and a fault changes no "
+          "memory") {
+    for (DataCode code : {DataCode::Binary, DataCode::Ascii}) {
+        const bool ascii = code == DataCode::Ascii;
+        INFO((ascii ? "1E ASCII" : "1E Binary"));
+        MockPlc plc(FrameConfig::frame1E(code));
+        plc.failRange(DeviceType::D, 100, 100, 0x5B, 0x22);
+        plc.failRange(DeviceType::D, 200, 200, 0x60, 0x22); // the abnormal code is not sent
+        plc.failRange(DeviceType::D, 300, 300, 0xC051, 0x22); // the end code of 1E is a u8: 51H
+
+        feed(plc, ascii ? asc1e(0x03, "442000000064", 1, "1234")
+                        : bin1e(0x03, kD100Bin1e, 1, {0x34, 0x12}));
+        Bytes got = drain(plc);
+        CHECK((ascii ? asText(got) == "835B22" : got == Bytes{0x83, 0x5B, 0x22}));
+        CHECK(plc.word(Device{DeviceType::D, 100}) == 0);
+        CHECK(plc.requests().back().answeredWith.abnormalCode == 0x22);
+
+        feed(plc, ascii ? asc1e(0x01, "4420000000C8", 1)
+                        : bin1e(0x01, {0xC8, 0x00, 0x00, 0x00, 0x20, 0x44}, 1));
+        got = drain(plc);
+        CHECK((ascii ? asText(got) == "8160" : got == Bytes{0x81, 0x60}));
+        CHECK(plc.requests().back().answeredWith.plcCode == 0x60);
+        CHECK(plc.requests().back().answeredWith.abnormalCode == 0); // not on the wire
+
+        // A code that does not fit the u8 end code is sent as its low byte.
+        feed(plc, ascii ? asc1e(0x01, "44200000012C", 1)
+                        : bin1e(0x01, {0x2C, 0x01, 0x00, 0x00, 0x20, 0x44}, 1));
+        got = drain(plc);
+        CHECK((ascii ? asText(got) == "8151" : got == Bytes{0x81, 0x51}));
+        CHECK(plc.requests().back().answeredWith.plcCode == 0x51);
+    }
+}
+
+TEST_CASE("MCK-12 1E: a request reaching the device limit gets outOfRange1e + abnormal code, one "
+          "below it succeeds") {
+    for (const char* file : k1eVectorFiles) {
+        std::vector<Vector> vectors = loadFile(file);
+        const bool ascii = std::string(file) == "1e_ascii.vec";
+        const std::string readDId = ascii ? "V-1E-A-01" : "V-1E-B-01"; // D100 x 3
+        const std::string readMId = ascii ? "V-1E-A-03" : "V-1E-B-03"; // M100 x 8 bits
+        const std::string errorId = ascii ? "V-1E-A-11" : "V-1E-B-11"; // 5BH + 10H
+        const Vector& readD = byId(vectors, readDId);
+        const Vector& readM = byId(vectors, readMId);
+        const Vector& error = byId(vectors, errorId);
+        INFO(file);
+
+        MockPlc plc(configFor(readD));
+        plc.setDeviceLimit(DeviceType::D, 102); // D100..D102 reaches D102
+        feed(plc, readD.bytes);
+        REQUIRE(plc.requests().size() == 1);
+        CHECK(plc.requests().back().answeredWith.plcCode == 0x5B);
+        CHECK(plc.requests().back().answeredWith.abnormalCode == 0x10);
+        CHECK(plc.requests().back().answeredWith.category == mc::ErrorCategory::Plc);
+        CHECK(drain(plc) == error.bytes);
+
+        plc.setDeviceLimit(DeviceType::D, 103); // D100..D102 ends below D103
+        feed(plc, readD.bytes);
+        CHECK(plc.requests().back().answeredWith.ok());
+        CHECK_FALSE(drain(plc).empty());
+
+        plc.setDeviceLimit(DeviceType::M, 107); // M100..M107 reaches M107
+        feed(plc, readM.bytes);
+        CHECK(plc.requests().back().answeredWith.plcCode == 0x5B);
+        drain(plc);
+        plc.setDeviceLimit(DeviceType::M, 108);
+        feed(plc, readM.bytes);
+        CHECK(plc.requests().back().answeredWith.ok());
+    }
+}
+
+TEST_CASE("MCK-12 1E: a limit-stopped write changes no memory, and a word read of a bit device "
+          "counts 16 points per word against the limit") {
+    MockPlc plc(FrameConfig::frame1E());
+    plc.setDeviceLimit(DeviceType::D, 101);
+    feed(plc, bin1e(0x03, kD100Bin1e, 2, {0x01, 0x00, 0x02, 0x00}));
+    CHECK(drain(plc) == Bytes{0x83, 0x5B, 0x10});
+    CHECK(plc.word(Device{DeviceType::D, 100}) == 0);
+
+    plc.setDeviceLimit(DeviceType::M, 8190);
+    // M8180 x 1 word covers M8180..M8195: reaches the limit. As bits x 10 it ends at M8189.
+    const Bytes m8180 = {0xF4, 0x1F, 0x00, 0x00, 0x20, 0x4D};
+    feed(plc, bin1e(0x01, m8180, 1));
+    CHECK(drain(plc) == Bytes{0x81, 0x5B, 0x10});
+    feed(plc, bin1e(0x00, m8180, 10));
+    CHECK(plc.requests().back().answeredWith.ok());
+}
+
+TEST_CASE("MCK-10 1E odd bit read: binary pads the low nibble with zero, ASCII ends in a dummy "
+          "character") {
+    // The point after the five read is set, so a padding taken from memory would show.
+    {
+        std::vector<Vector> vectors = loadFile("1e_binary.vec");
+        MockPlc plc(configFor(byId(vectors, "V-1E-B-09")));
+        plc.setBits(Device{DeviceType::M, 100}, {true, false, true, false, true, true});
+        feed(plc, byId(vectors, "V-1E-B-09").bytes);
+        Bytes got = drain(plc);
+        REQUIRE(got.size() == 5); // V-1E-B-10
+        CHECK((got.back() & 0x0F) == 0);
+        CHECK(got == byId(vectors, "V-1E-B-10").bytes);
+    }
+    {
+        std::vector<Vector> vectors = loadFile("1e_ascii.vec");
+        MockPlc plc(configFor(byId(vectors, "V-1E-A-09")));
+        plc.setBits(Device{DeviceType::M, 100}, {true, false, true, false, true, true});
+        feed(plc, byId(vectors, "V-1E-A-09").bytes);
+        Bytes got = drain(plc);
+        REQUIRE(got.size() == 10); // V-1E-A-10: "80" + "00" + 5 points + the dummy
+        CHECK(std::string(got.end() - 6, got.end()) == "101010");
+        CHECK(got == byId(vectors, "V-1E-A-10").bytes);
+    }
+}
+
+TEST_CASE("MCK-01 1E: devices are decoded from the 1E codes and 8-digit hex numbers of spec 3.3") {
+    struct Case {
+        const char* name;
+        uint8_t cmd;
+        Bytes binary;
+        const char* ascii;
+        Device head;
+    };
+    const std::vector<Case> cases = {
+        {"X1F", 0x00, {0x1F, 0x00, 0x00, 0x00, 0x20, 0x58}, "58200000001F",
+         Device{DeviceType::X, 0x1F}},
+        {"TN10", 0x01, {0x0A, 0x00, 0x00, 0x00, 0x4E, 0x54}, "544E0000000A",
+         Device{DeviceType::TN, 10}},
+        {"M1234", 0x00, {0xD2, 0x04, 0x00, 0x00, 0x20, 0x4D}, "4D20000004D2",
+         Device{DeviceType::M, 1234}},
+        {"M9000", 0x00, {0x28, 0x23, 0x00, 0x00, 0x20, 0x4D}, "4D2000002328",
+         Device{DeviceType::M, 9000}},
+        {"D100", 0x01, kD100Bin1e, "442000000064", Device{DeviceType::D, 100}},
+    };
+    for (const Case& c : cases) {
+        INFO(c.name);
+        MockPlc bin(FrameConfig::frame1E(DataCode::Binary));
+        feed(bin, bin1e(c.cmd, c.binary, 1));
+        REQUIRE(bin.requests().size() == 1);
+        CHECK(bin.requests()[0].head == c.head);
+        CHECK(bin.requests()[0].answeredWith.ok());
+
+        MockPlc ascii(FrameConfig::frame1E(DataCode::Ascii));
+        feed(ascii, asc1e(c.cmd, c.ascii, 1));
+        REQUIRE(ascii.requests().size() == 1);
+        CHECK(ascii.requests()[0].head == c.head);
+        CHECK(ascii.requests()[0].answeredWith.ok());
+    }
+}
+
+TEST_CASE("MCK-01 1E: word access to a bit device, points 00 = 256, and the PC number is not "
+          "checked") {
+    // Spec section 2.4: M100 read as 2 words returns 1234H, 0002H.
+    MockPlc plc(FrameConfig::frame1E(DataCode::Binary));
+    plc.setWords(Device{DeviceType::M, 100}, {0x1234, 0x0002});
+    feed(plc, bin1e(0x01, kM100Bin1e, 2));
+    CHECK(drain(plc) == Bytes{0x81, 0x00, 0x34, 0x12, 0x02, 0x00});
+    feed(plc, bin1e(0x03, kM100Bin1e, 1, {0x01, 0x80}));
+    CHECK(drain(plc) == Bytes{0x83, 0x00});
+    CHECK(plc.bit(Device{DeviceType::M, 100}));
+    CHECK(plc.bit(Device{DeviceType::M, 115}));
+    CHECK_FALSE(plc.bit(Device{DeviceType::M, 101}));
+    CHECK(plc.word(Device{DeviceType::M, 116}) == 0x0002); // the second word is untouched
+
+    // Points 00 is 256 bits: 128 data bytes in Binary, 256 characters in ASCII.
+    plc.setBit(Device{DeviceType::M, 355}, true);
+    feed(plc, bin1e(0x00, kM100Bin1e, 0));
+    REQUIRE(plc.requests().back().count == 256);
+    Bytes bits = drain(plc);
+    REQUIRE(bits.size() == 2 + 128);
+    CHECK(bits[2] == 0x10);     // M100 = 1, M101 = 0
+    CHECK(bits.back() == 0x01); // M354 = 0, M355 = 1
+
+    MockPlc ascii(FrameConfig::frame1E(DataCode::Ascii));
+    ascii.setBit(Device{DeviceType::M, 355}, true);
+    feed(ascii, asc1e(0x00, "4D2000000064", 0));
+    REQUIRE(ascii.requests().back().count == 256);
+    Bytes text = drain(ascii);
+    REQUIRE(text.size() == 4 + 256);
+    CHECK(asText(Bytes(text.begin(), text.begin() + 4)) == "8000");
+    CHECK(text.back() == '1');
+
+    // Another PC number than the configured one is answered all the same.
+    MockPlc other(FrameConfig::frame1E(DataCode::Binary));
+    other.setWord(Device{DeviceType::D, 100}, 0x1995);
+    feed(other, bin1e(0x01, kD100Bin1e, 1, {}, 0x03));
+    CHECK(drain(other) == Bytes{0x81, 0x00, 0x95, 0x19});
+}
+
+TEST_CASE("MCK-01 1E: request data the mock cannot execute is answered with unsupported1e") {
+    struct Case {
+        const char* name;
+        uint8_t cmd;
+        Bytes binary;
+        Bytes ascii;
+    };
+    Bytes fixedNotZeroBin = bin1e(0x01, kD100Bin1e, 1);
+    fixedNotZeroBin.back() = 0x01;
+    Bytes fixedNotZeroAscii = asc1e(0x01, "442000000064", 1);
+    fixedNotZeroAscii.back() = '1';
+    const std::vector<Case> cases = {
+        {"bit read of a word device", 0x00, bin1e(0x00, kD100Bin1e, 1),
+         asc1e(0x00, "442000000064", 1)},
+        {"bit write to a word device", 0x02, bin1e(0x02, kD100Bin1e, 1, {0x10}),
+         asc1e(0x02, "442000000064", 1, "1")},
+        {"unknown device code", 0x01, bin1e(0x01, {0x64, 0x00, 0x00, 0x00, 0x01, 0x00}, 1),
+         asc1e(0x01, "000100000064", 1)},
+        {"fixed field not 00", 0x01, fixedNotZeroBin, fixedNotZeroAscii},
+        {"bit write with a nibble of 2", 0x02, bin1e(0x02, kM100Bin1e, 2, {0x21}),
+         asc1e(0x02, "4D2000000064", 2, "12")},
+    };
+    for (const Case& c : cases) {
+        for (DataCode code : {DataCode::Binary, DataCode::Ascii}) {
+            const bool ascii = code == DataCode::Ascii;
+            INFO(c.name, ascii ? " (ASCII)" : " (Binary)");
+            MockPlc plc(FrameConfig::frame1E(code));
+            plc.setWord(Device{DeviceType::D, 100}, 7);
+            feed(plc, ascii ? c.ascii : c.binary);
+            REQUIRE(plc.requests().size() == 1);
+            CHECK(plc.requests()[0].answered);
+            CHECK(plc.requests()[0].answeredWith.plcCode == 0x50);
+            CHECK(plc.requests()[0].answeredWith.abnormalCode == 0);
+            Bytes got = drain(plc);
+            if (ascii) {
+                CHECK(asText(got) == "8" + std::to_string(c.cmd) + "50");
+            } else {
+                CHECK(got == Bytes{static_cast<uint8_t>(0x80 | c.cmd), 0x50});
+            }
+            CHECK(plc.word(Device{DeviceType::D, 100}) == 7);
+            CHECK_FALSE(plc.bit(Device{DeviceType::M, 100}));
+        }
+    }
+
+    // ASCII only: a character outside the field's alphabet.
+    MockPlc plc(FrameConfig::frame1E(DataCode::Ascii));
+    plc.setWord(Device{DeviceType::D, 100}, 5);
+    feed(plc, asc1e(0x03, "442000000064", 1, "12G4"));
+    CHECK(asText(drain(plc)) == "8350");
+    CHECK(plc.word(Device{DeviceType::D, 100}) == 5);
+    feed(plc, asc1e(0x02, "4D2000000064", 2, "12")); // bit characters must be 0 or 1
+    CHECK(asText(drain(plc)) == "8250");
+    feed(plc, asc1e(0x01, "44200000G064", 1)); // a digit outside hexadecimal
+    CHECK(asText(drain(plc)) == "8150");
+    CHECK(plc.requests().size() == 3);
+}
+
+TEST_CASE("MCK-05 1E: bytes that cannot start a request are dropped and logged once as "
+          "unanswered") {
+    for (DataCode code : {DataCode::Binary, DataCode::Ascii}) {
+        const bool ascii = code == DataCode::Ascii;
+        INFO((ascii ? "ASCII" : "Binary"));
+        const Bytes good = ascii ? asc1e(0x01, "442000000064", 1) : bin1e(0x01, kD100Bin1e, 1);
+        // A command above 05H cannot start a frame (ASCII: "X", "Y" and "06").
+        const Bytes junk = ascii ? Bytes{'X', 'Y', '0', '6'} : Bytes{0x06, 0x80, 0xFF};
+        for (size_t chunk : {size_t{64}, size_t{1}}) {
+            MockPlc plc(FrameConfig::frame1E(code));
+            Bytes stream = junk;
+            append(stream, good);
+            feedInChunks(plc, stream, chunk);
+            REQUIRE(plc.requests().size() == 2);
+            CHECK_FALSE(plc.requests()[0].answered);
+            CHECK(plc.requests()[0].answeredWith.ok());
+            CHECK(plc.requests()[1].answered);
+            size_t responses = 0;
+            drain(plc, &responses);
+            CHECK(responses == 1);
+        }
+    }
+
+    // A half subheader waits: "0" alone is a frame still being received.
+    MockPlc plc(FrameConfig::frame1E(DataCode::Ascii));
+    feed(plc, Bytes{'0'});
+    CHECK(plc.requests().empty());
+    feed(plc, Bytes{'1', 'F', 'F'});
+    CHECK(plc.requests().empty());
+
+    // A wrong subheader is decided at once, never waiting for the rest of a header (Binary: a
+    // command above 05H is one byte; ASCII: "06" is two characters, the header is eight).
+    MockPlc binary(FrameConfig::frame1E(DataCode::Binary));
+    feed(binary, Bytes{0x06});
+    CHECK(binary.requests().size() == 1);
+    MockPlc ascii(FrameConfig::frame1E(DataCode::Ascii));
+    feed(ascii, Bytes{'0', '6'});
+    CHECK(ascii.requests().size() == 1);
+}
+
+TEST_CASE("MCK-05 1E: a request split anywhere is not executed before it is complete") {
+    for (DataCode code : {DataCode::Binary, DataCode::Ascii}) {
+        const bool ascii = code == DataCode::Ascii;
+        INFO((ascii ? "ASCII" : "Binary"));
+        MockPlc plc(FrameConfig::frame1E(code));
+        const Bytes frame = ascii ? asc1e(0x03, "442000000064", 1, "1234")
+                                  : bin1e(0x03, kD100Bin1e, 1, {0x34, 0x12});
+        plc.bytesIn(ByteView{frame.data(), frame.size() - 1});
+        CHECK(plc.requests().empty());
+        CHECK(plc.word(Device{DeviceType::D, 100}) == 0);
+        ByteView view;
+        CHECK_FALSE(plc.nextResponse(view));
+        plc.bytesIn(ByteView{frame.data() + frame.size() - 1, 1});
+        CHECK(plc.requests().size() == 1);
+        CHECK(plc.word(Device{DeviceType::D, 100}) == 0x1234);
+    }
+}
+
+TEST_CASE("MCK-05 1E: responses come out in request order, one per request") {
+    MockPlc plc(FrameConfig::frame1E(DataCode::Binary));
+    plc.setWords(Device{DeviceType::D, 100}, {0x1111, 0x2222});
+    Bytes stream = bin1e(0x01, kD100Bin1e, 1);
+    append(stream, bin1e(0x01, {0x65, 0x00, 0x00, 0x00, 0x20, 0x44}, 1));
+    feed(plc, stream);
+
+    ByteView view;
+    REQUIRE(plc.nextResponse(view));
+    REQUIRE(view.size == 4);
+    CHECK(view.data[2] == 0x11);
+    REQUIRE(plc.nextResponse(view));
+    CHECK(view.data[2] == 0x22);
+    CHECK_FALSE(plc.nextResponse(view));
+}

@@ -11,6 +11,8 @@
 #include "mc/core/limits.h"
 #include "mc/core/protocol.h"
 
+#include "core/session/word_align.h"
+
 #include <algorithm>
 #include <cstdint>
 #include <utility>
@@ -19,40 +21,10 @@
 namespace mc {
 namespace {
 
-/// Half-open interval [start, end) in native device-number units.
-struct Interval {
-    uint64_t start;
-    uint64_t end;
-};
+using detail::alignToWordBoundary;
+using detail::Interval;
 
 bool intervalStartLess(const Interval& a, const Interval& b) noexcept { return a.start < b.start; }
-
-/// Whether word access to a bit device on `cfg` must land on a 16-point boundary (spec §3.5).
-/// Mirrors the condition src/core/model/validate.cpp checks before rejecting an unaligned
-/// request (that file's own needsWordAlignmentCheck(), private to it) -- kept in sync by hand
-/// since neither module exposes it to the other; SPEC-core-session.md ties the two together
-/// explicitly ("M9000-M9255 on 1E/1C").
-bool needsWordAlignment(const FrameConfig& cfg) noexcept {
-    return cfg.frame == FrameType::F1E || cfg.frame == FrameType::F1C || cfg.aSeriesTarget;
-}
-
-/// Aligns one subscription's native point range down/up to a 16-point (word) boundary for
-/// `PlanOptions::bitsAsWords` planning. The M9000-M9255 special case (spec §10 Q8: boundaries at
-/// 9000 + 16k, since 9000 itself is not a multiple of 16) applies only where `needsWordAlignment`
-/// would also enforce it on send; every other bit device, and M outside that range, aligns to a
-/// plain multiple of 16.
-Interval alignToWordBoundary(DeviceType type, uint32_t start, uint32_t count,
-                              const FrameConfig& cfg) noexcept {
-    uint64_t origin = 0;
-    if (type == DeviceType::M && needsWordAlignment(cfg) && start >= 9000 && start <= 9255) {
-        origin = 9000;
-    }
-    uint64_t s = start;
-    uint64_t last = s + count - 1; // count >= 1: RangeSet::add() already rejects count == 0.
-    uint64_t alignedStart = origin + ((s - origin) / 16) * 16;
-    uint64_t alignedEnd = origin + (((last - origin) / 16) + 1) * 16;
-    return Interval{alignedStart, alignedEnd};
-}
 
 /// Sorts `intervals` and merges overlapping, adjacent, or gap-separated-by-at-most-`gapNative`
 /// neighbours into the smallest possible set of disjoint intervals (spec "Algorithm", the union
@@ -106,50 +78,44 @@ uint32_t autoGap(const FrameConfig& cfg, Op readOp) noexcept {
     // for word reads.
     Device device = isBitOp ? Device{DeviceType::M, 0} : Device{DeviceType::D, 0};
 
-    constexpr uint16_t kSmallCount = 1;
-    // Large enough that its response wire data dominates maxResponseSize()'s own max(wireData,
-    // errorInfo) for every implemented frame, so the difference between kBigCount and
-    // kBigCount + 1 below isolates the marginal per-unit wire cost rather than being swamped by
-    // the (fixed-size) PLC error-information block.
-    constexpr uint16_t kBigCount = 100;
-
-    Request small = isBitOp ? Request::readBits(device, kSmallCount)
-                             : Request::readWords(device, kSmallCount);
-    Request big = isBitOp ? Request::readBits(device, kBigCount)
-                           : Request::readWords(device, kBigCount);
-    Request bigPlusOne = isBitOp
-                              ? Request::readBits(device, static_cast<uint16_t>(kBigCount + 1))
-                              : Request::readWords(device, static_cast<uint16_t>(kBigCount + 1));
-
     McProtocol proto(cfg);
-    auto requestSizeResult = proto.encodedSize(small);
+    auto sizeFor = [&](uint16_t count) -> size_t {
+        Request r = isBitOp ? Request::readBits(device, count) : Request::readWords(device, count);
+        return proto.maxResponseSize(r);
+    };
+    auto requestSizeResult = proto.encodedSize(isBitOp ? Request::readBits(device, 1)
+                                                        : Request::readWords(device, 1));
     if (!requestSizeResult.hasValue()) {
         return 0; // Frame not implemented yet, or this device kind unsupported by it.
     }
 
     // maxResponseSize() is header + end code + max(wire data size, PLC error-information size)
-    // (protocol.h); at kBigCount/kBigCount + 1 the wire data term dominates for every implemented
-    // frame, so the envelope (header + end code, constant across count) cancels out of the
-    // difference, leaving exactly the marginal wire bytes one more read unit costs.
-    size_t respBig = proto.maxResponseSize(big);
-    size_t respBigPlusOne = proto.maxResponseSize(bigPlusOne);
-    if (respBig == 0 || respBigPlusOne <= respBig) {
+    // (protocol.h). At 100 and 200 units the wire data term dominates for every implemented frame
+    // (no error-information block is as large), so the envelope (header + end code) cancels out of
+    // r200 - r100, which is the wire size of exactly 100 more units: `hundredUnits` bytes or
+    // characters. A bit read is not a whole number of bytes per unit (Binary packs two points per
+    // byte), so the per-unit cost is the fraction hundredUnits / 100, never rounded.
+    const size_t r100 = sizeFor(100);
+    const size_t r200 = sizeFor(200);
+    const size_t r101 = sizeFor(101); // odd count: includes the pad nibble / dummy character
+    if (r100 == 0 || r200 <= r100 || r101 == 0) {
         return 0;
     }
-    size_t unitWireSize = respBigPlusOne - respBig;
-
-    // Extrapolated back down to kSmallCount units, still with the envelope included (respBig
-    // already is envelope + wireData(kBigCount); removing (kBigCount - kSmallCount) marginal
-    // units' worth of wire data leaves envelope + wireData(kSmallCount)).
-    size_t successResponseSmall =
-        respBig - static_cast<size_t>(kBigCount - kSmallCount) * unitWireSize;
-    size_t requestSizeSmall = requestSizeResult.value();
-
-    size_t numerator = requestSizeSmall + successResponseSmall;
-    if (numerator < unitWireSize) {
+    const size_t hundredUnits = r200 - r100;
+    // The real success response to one unit: the 101-unit response minus 100 units of data.
+    if (r101 <= hundredUnits) {
         return 0;
     }
-    return static_cast<uint32_t>((numerator - unitWireSize) / unitWireSize);
+    const size_t responseSmall = r101 - hundredUnits;
+    const size_t requestSmall = requestSizeResult.value();
+
+    // Spec formula: floor((request(1) + response(1) - unit) / unit) with unit = hundredUnits / 100,
+    // in integers: floor((100 * (request(1) + response(1)) - hundredUnits) / hundredUnits).
+    const size_t scaled = 100 * (requestSmall + responseSmall);
+    if (scaled < hundredUnits) {
+        return 0;
+    }
+    return static_cast<uint32_t>((scaled - hundredUnits) / hundredUnits);
 }
 
 Expected<ReadPlan> ReadPlan::build(const RangeSet& subs, const FrameConfig& cfg,

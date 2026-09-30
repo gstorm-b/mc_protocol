@@ -72,3 +72,63 @@
 # kind: request  tags: v1.1  bytes: 30
 31 34 30 32 30 30 30 31 30 32 4D 2A 30 30 30 30 35 30 30 30 59 2A 30 30 30 30 32 46 30 31
 1402000102M*00005000Y*00002F01
+
+# id: CMD-15
+# frame: 1e  op: ReadBits  code: Ascii  device: M100  count: 12
+# kind: request  bytes: 16
+34 44 32 30 30 30 30 30 30 30 36 34 30 43 30 30
+4D20000000640C00
+
+# id: CMD-16
+# frame: 1e  op: ReadBits  code: Binary  device: M100  count: 12
+# kind: request  bytes: 8
+64 00 00 00 20 4D 0C 00
+
+# id: CMD-17
+# frame: 1e  op: ReadWords  code: Ascii  device: Y40  count: 2
+# kind: request  bytes: 16
+35 39 32 30 30 30 30 30 30 30 34 30 30 32 30 30
+5920000000400200
+
+# id: CMD-18
+# frame: 1e  op: ReadWords  code: Binary  device: Y40  count: 2
+# kind: request  bytes: 8
+40 00 00 00 20 59 02 00
+
+# id: CMD-19
+# frame: 1e  op: WriteBits  code: Binary  device: M50  count: 12
+# kind: request  write: 0,1,1,1,0,1,0,0,0,0,0,1  bytes: 14
+32 00 00 00 20 4D 0C 00 01 11 01 00 00 01
+
+# id: CMD-20
+# frame: 1e  op: WriteWords  code: Ascii  device: D100  count: 3
+# kind: request  write: 1234,9876,0109  bytes: 28
+34 34 32 30 30 30 30 30 30 30 36 34 30 33 30 30 31 32 33 34 39 38 37 36 30 31 30 39
+4420000000640300123498760109
+
+# id: CMD-21
+# frame: 1e  op: WriteWords  code: Binary  device: D100  count: 3
+# kind: request  write: 1234,9876,0109  bytes: 14
+64 00 00 00 20 44 03 00 34 12 76 98 09 01
+
+# id: CMD-22
+# frame: 1e  op: WriteRandomBits  code: Binary
+# kind: request  tags: v1.1  bytes: 23
+03 00 94 00 00 00 20 59 01 3C 00 00 00 20 4D 00 26 00 00 00 20 42 01
+
+# id: CMD-23
+# frame: 1e  op: WriteRandomBits  code: Ascii
+# kind: request  tags: v1.1  bytes: 46
+30 33 30 30 35 39 32 30 30 30 30 30 30 30 39 34 30 31 34 44 32 30 30 30 30 30 30 30 33 43 30 30 34 32 32 30 30 30 30 30 30 30 32 36 30 31
+0300592000000094014D200000003C0042200000002601
+
+# id: CMD-24
+# frame: 1e  op: WriteRandomWords  code: Binary
+# kind: request  tags: v1.1  bytes: 26
+03 00 80 00 00 00 20 59 29 7B 26 00 00 00 20 57 34 12 12 00 00 00 4E 43 50 00
+
+# id: CMD-37
+# frame: 1e  op: WriteRandomWords  code: Ascii
+# kind: request  tags: v1.1  bytes: 52
+30 33 30 30 35 39 32 30 30 30 30 30 30 30 38 30 37 42 32 39 35 37 32 30 30 30 30 30 30 30 32 36 31 32 33 34 34 33 34 45 30 30 30 30 30 30 31 32 30 30 35 30
+03005920000000807B295720000000261234434E000000120050

@@ -1,8 +1,11 @@
-// Batch read and write of a decoded QnA request on the memory image, with the fault and limit
-// lookups that turn a request into a PLC error.
+// Batch read and write of a decoded request on the memory image, with the fault and limit lookups
+// that turn a request into a PLC error. One routine serves 3E and 1E: they differ only in the
+// error codes and in the size a response may have.
 #include "mock/mock_internal.h"
 
 #include "core/protocol/field_codec.h"
+
+#include <cstddef>
 
 namespace mc::detail::mock {
 
@@ -32,18 +35,28 @@ size_t endCodeSize(DataCode code) {
     return code == DataCode::Ascii ? AsciiCodec::u16Size() : BinaryCodec::u16Size();
 }
 
-} // namespace
+// The error codes of one frame family (MockOptions) and the most response data one response can
+// carry.
+struct Failures {
+    uint16_t unsupported;
+    uint16_t outOfRange;
+    uint8_t outOfRangeAbnormal;
+    bool truncateFaultCodeToByte; ///< 1E: the end code is a u8.
+    size_t maxWireData;
+};
 
-Outcome executeQna(const QnaRequest& req, DataCode code, MemoryImage& memory,
-                   const std::vector<Fault>& faults, const MockOptions& options) {
+// Checks, in order: executable, bit op on a bit device, failRange faults, device limits, response
+// size. A failed request changes no memory.
+Outcome execute(const Access& req, DataCode code, MemoryImage& memory,
+                const std::vector<Fault>& faults, const Failures& fail) {
     if (!req.executable) {
-        return failure(options.unsupportedQna);
+        return failure(fail.unsupported);
     }
 
     // A bit-unit command needs a bit device; word devices have no bit view (memory_image.h).
     const bool bitDevice = deviceInfo(req.head.type).kind == DeviceKind::Bit;
     if (isBitOp(req.op) && !bitDevice) {
-        return failure(options.unsupportedQna);
+        return failure(fail.unsupported);
     }
 
     // Points the request touches: one per bit, one per word, or 16 per word on a bit device.
@@ -53,15 +66,16 @@ Outcome executeQna(const QnaRequest& req, DataCode code, MemoryImage& memory,
 
     for (const Fault& f : faults) {
         if (f.type == req.head.type && f.first <= last && f.last >= first) {
-            return failure(f.code, f.abnormal);
+            return failure(fail.truncateFaultCodeToByte ? static_cast<uint16_t>(f.code & 0xFFu)
+                                                        : f.code,
+                           f.abnormal);
         }
     }
     if (memory.outOfRange(req.head.type, first, points)) {
-        return failure(options.outOfRangeQna);
+        return failure(fail.outOfRange, fail.outOfRangeAbnormal);
     }
-    if (!isWrite(req.op) &&
-        endCodeSize(code) + wireDataSize(code, req.op, req.count) > 0xFFFFu) {
-        return failure(options.unsupportedQna); // the response length field is a u16
+    if (!isWrite(req.op) && wireDataSize(code, req.op, req.count) > fail.maxWireData) {
+        return failure(fail.unsupported); // the response length field cannot describe it
     }
 
     Outcome out;
@@ -93,6 +107,24 @@ Outcome executeQna(const QnaRequest& req, DataCode code, MemoryImage& memory,
         break;
     }
     return out;
+}
+
+} // namespace
+
+Outcome executeQna(const QnaRequest& req, DataCode code, MemoryImage& memory,
+                   const std::vector<Fault>& faults, const MockOptions& options) {
+    // The 3E response length field is a u16 and counts the end code as well.
+    const Failures fail{options.unsupportedQna, options.outOfRangeQna, 0, false,
+                        size_t{0xFFFFu} - endCodeSize(code)};
+    return execute(req, code, memory, faults, fail);
+}
+
+Outcome executeE1(const E1Request& req, MemoryImage& memory, const std::vector<Fault>& faults,
+                  const MockOptions& options) {
+    // A 1E response has no length field; the wire code is irrelevant to the size check.
+    const Failures fail{options.unsupported1e, options.outOfRange1e, options.outOfRange1eAbnormal,
+                        true, SIZE_MAX};
+    return execute(req, DataCode::Binary, memory, faults, fail);
 }
 
 } // namespace mc::detail::mock

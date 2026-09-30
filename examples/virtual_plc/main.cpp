@@ -10,7 +10,8 @@
 //   * --wiggle DEV (repeatable) changes DEV once a second (a word counts up, a bit toggles), in
 //     every live connection, so a poller sees a change each second. It starts from the value
 //     --set gave the same device (0 when there is none), so --set keeps its meaning.
-//   * Only the 3E frame is answered by the mock in this version. Serial options are refused.
+//   * The 3E and 1E frames are answered by the mock in this version (--frame 3E, --frame 1E, each
+//     with --code Binary or ASCII). Serial options are refused.
 //
 // The mock is a sans-I/O object: this file is the only place that touches a socket. Bytes that
 // arrive go in with bytesIn(); whatever nextResponse() hands back is written to the socket.
@@ -171,10 +172,10 @@ int main(int argc, char** argv) {
 
     QCommandLineParser parser;
     parser.setApplicationDescription(
-        QStringLiteral("A virtual PLC: a TCP server in front of mc::MockPlc (3E frame)."));
+        QStringLiteral("A virtual PLC: a TCP server in front of mc::MockPlc (3E or 1E frame)."));
     parser.addHelpOption();
-    parser.addOption({QStringLiteral("frame"), QStringLiteral("Frame family; only 3E is answered."),
-                      QStringLiteral("3E"), QStringLiteral("3E")});
+    parser.addOption({QStringLiteral("frame"), QStringLiteral("Frame family: 3E or 1E."),
+                      QStringLiteral("3E|1E"), QStringLiteral("3E")});
     parser.addOption({QStringLiteral("code"), QStringLiteral("Binary or ASCII."),
                       QStringLiteral("Binary|ASCII"), QStringLiteral("Binary")});
     parser.addOption({QStringLiteral("port"), QStringLiteral("TCP port on 127.0.0.1."),
@@ -202,8 +203,12 @@ int main(int argc, char** argv) {
         return 2;
     }
 
-    if (parser.value(QStringLiteral("frame")).compare(QLatin1String("3E"), Qt::CaseInsensitive) != 0) {
-        std::fprintf(stderr, "virtual_plc: only --frame 3E is answered by the mock in this version.\n");
+    const QString frameText = parser.value(QStringLiteral("frame"));
+    const bool is1e = frameText.compare(QLatin1String("1E"), Qt::CaseInsensitive) == 0;
+    if (!is1e && frameText.compare(QLatin1String("3E"), Qt::CaseInsensitive) != 0) {
+        std::fprintf(stderr,
+                     "virtual_plc: only --frame 3E and --frame 1E are answered by the mock in this "
+                     "version.\n");
         return 2;
     }
     const QString codeText = parser.value(QStringLiteral("code"));
@@ -249,14 +254,16 @@ int main(int argc, char** argv) {
         wiggles.push_back(Point{device.value(), start});
     }
 
-    VirtualPlc plc(mc::FrameConfig::frame3E(code), image, wiggles);
+    VirtualPlc plc(is1e ? mc::FrameConfig::frame1E(code) : mc::FrameConfig::frame3E(code), image,
+                   wiggles);
     if (!plc.listen(static_cast<quint16>(port))) {
         std::fprintf(stderr, "virtual_plc: cannot listen on 127.0.0.1:%d: %s\n", port,
                      qPrintable(plc.errorText()));
         return 1;
     }
-    say(QStringLiteral("virtual_plc listening on 127.0.0.1:%1 (3E %2)")
+    say(QStringLiteral("virtual_plc listening on 127.0.0.1:%1 (%2 %3)")
             .arg(plc.port())
+            .arg(is1e ? QLatin1String("1E") : QLatin1String("3E"))
             .arg(code == mc::DataCode::Binary ? QLatin1String("Binary") : QLatin1String("ASCII")));
     return app.exec();
 }

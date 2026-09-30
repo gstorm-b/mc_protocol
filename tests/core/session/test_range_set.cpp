@@ -73,16 +73,68 @@ TEST_CASE("PLN-02 ReadPlan::build(): overlapping subscriptions union; remove() k
     CHECK(plan2.chunk(range2.first).request.count == 20);
 }
 
-TEST_CASE("PLN-03 autoGap(): 3E Binary and 3E ASCII words = 16 (1E value added in T37)") {
+TEST_CASE("PLN-03 autoGap(): 3E Binary and 3E ASCII words = 16, 1E Binary words = 7") {
     CHECK(mc::autoGap(FrameConfig::frame3E(DataCode::Binary), Op::ReadWords) == 16);
     CHECK(mc::autoGap(FrameConfig::frame3E(DataCode::Ascii), Op::ReadWords) == 16);
+    // 1E Binary, one word: request 4 (head) + 6 (device) + 2 (points, 00) = 12 bytes, response
+    // 2 + 2 = 4 bytes, 2 bytes per further word: (12 + 4 - 2) / 2 = 7, the spec's PLN-03 value.
+    CHECK(mc::autoGap(FrameConfig::frame1E(DataCode::Binary), Op::ReadWords) == 7);
+    // 1E ASCII: request 8 + 12 + 4 = 24 characters, response 4 + 4 = 8, 4 per further word:
+    // (24 + 8 - 4) / 4 = 7 (the same formula on the wire sizes of spec 5.3 and 4.2).
+    CHECK(mc::autoGap(FrameConfig::frame1E(DataCode::Ascii), Op::ReadWords) == 7);
 }
 
-TEST_CASE("PLN-03 ReadPlan::build(): a gap of autoGap() merges, autoGap() + 1 splits") {
-    FrameConfig cfg = FrameConfig::frame3E();
-    uint32_t gap = mc::autoGap(cfg, Op::ReadWords);
-    REQUIRE(gap == 16);
+TEST_CASE("PLN-03 autoGap(): ReadBits, by hand from the spec formula and the frame sizes") {
+    // Formula (SPEC-core-session.md): floor((request(1 unit) + response(1 unit) - unit) / unit),
+    // a unit being one point of a bit read. Binary packs two points per byte, so its unit is half
+    // a byte: floor((R + S - 1/2) / (1/2)) = 2 * (R + S) - 1. Sizes from the vectors of spec
+    // appendix A: request(1) = the 1-point read request (A.1 V-3E-B-03 is 21 bytes, A.2 42
+    // characters, A.5 12 bytes, A.6 24 characters; the point count does not change the size);
+    // response(1) = response header + the data of one point.
+    //
+    // 3E Binary: R = 21; S = 11 (header, route, length, end code: V-3E-B-06 is 11 bytes with no
+    //   data) + 1 data byte (one point still takes a byte, nibble padded) = 12;
+    //   2 * (21 + 12) - 1 = 65.
+    CHECK(mc::autoGap(FrameConfig::frame3E(DataCode::Binary), Op::ReadBits) == 65);
+    // 3E ASCII: R = 42; S = 22 (V-3E-A-06) + 1 character = 23; unit = 1 character;
+    //   (42 + 23 - 1) / 1 = 64.
+    CHECK(mc::autoGap(FrameConfig::frame3E(DataCode::Ascii), Op::ReadBits) == 64);
+    // 1E Binary: R = 12; S = 2 (V-1E-B-06: subheader + end code) + 1 data byte = 3;
+    //   2 * (12 + 3) - 1 = 29.
+    CHECK(mc::autoGap(FrameConfig::frame1E(DataCode::Binary), Op::ReadBits) == 29);
+    // 1E ASCII: R = 24; S = 4 (V-1E-A-06) + 2 characters (one point, padded with the dummy
+    //   character of an odd count: N + N mod 2) = 6; unit = 1 character (two points cost two);
+    //   (24 + 6 - 1) / 1 = 29.
+    CHECK(mc::autoGap(FrameConfig::frame1E(DataCode::Ascii), Op::ReadBits) == 29);
+}
 
+TEST_CASE("PLN-03 ReadPlan::build(): with bitsAsWords off, two far bit subscriptions stay two "
+          "chunks (the ReadBits gap is a few dozen points, not billions)") {
+    // M0 x 8 and M8000 x 8 are 7992 points apart, far above any of the gaps above (65, 64, 29, 29).
+    const FrameConfig cells[] = {FrameConfig::frame3E(DataCode::Binary),
+                                 FrameConfig::frame3E(DataCode::Ascii),
+                                 FrameConfig::frame1E(DataCode::Binary),
+                                 FrameConfig::frame1E(DataCode::Ascii)};
+    for (const FrameConfig& cfg : cells) {
+        RangeSet subs;
+        REQUIRE(subs.add(Device{DeviceType::M, 0}, 8).hasValue());
+        REQUIRE(subs.add(Device{DeviceType::M, 8000}, 8).hasValue());
+        PlanOptions opt;
+        opt.bitsAsWords = false;
+        auto planResult = ReadPlan::build(subs, cfg, opt);
+        REQUIRE(planResult.hasValue());
+        const auto range = planResult.value().chunksOf(DeviceType::M);
+        REQUIRE(range.second - range.first == 2);
+        CHECK(planResult.value().chunk(range.first).request.count == 8);
+        CHECK(planResult.value().chunk(range.first + 1).request.head.number == 8000);
+    }
+}
+
+
+namespace {
+
+// Two D subscriptions `gap` read units apart merge into one chunk; one unit wider they do not.
+void checkGapMergesAndSplits(const FrameConfig& cfg, uint32_t gap) {
     {
         RangeSet subs;
         REQUIRE(subs.add(Device{DeviceType::D, 100}, 10).hasValue());       // D100..D109
@@ -100,6 +152,25 @@ TEST_CASE("PLN-03 ReadPlan::build(): a gap of autoGap() merges, autoGap() + 1 sp
         REQUIRE(planResult.hasValue());
         auto range = planResult.value().chunksOf(DeviceType::D);
         CHECK(range.second - range.first == 2);
+    }
+}
+
+} // namespace
+
+TEST_CASE("PLN-03 ReadPlan::build(): a gap of autoGap() merges, autoGap() + 1 splits") {
+    const struct {
+        const char* name;
+        FrameConfig cfg;
+        uint32_t expectedGap;
+    } cells[] = {{"3E Binary", FrameConfig::frame3E(DataCode::Binary), 16},
+                 {"3E ASCII", FrameConfig::frame3E(DataCode::Ascii), 16},
+                 {"1E Binary", FrameConfig::frame1E(DataCode::Binary), 7},
+                 {"1E ASCII", FrameConfig::frame1E(DataCode::Ascii), 7}};
+    for (const auto& cell : cells) {
+        INFO(cell.name);
+        const uint32_t gap = mc::autoGap(cell.cfg, Op::ReadWords);
+        REQUIRE(gap == cell.expectedGap);
+        checkGapMergesAndSplits(cell.cfg, gap);
     }
 }
 

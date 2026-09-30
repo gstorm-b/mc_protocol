@@ -1,8 +1,9 @@
 // STR-01, STR-02, STR-04 (docs/spec/SPEC-core-protocol.md Testing Strategy), reusing
-// tests/vectors/3e_binary.vec and 3e_ascii.vec's own response vectors rather than inventing new
-// byte sequences: every one of them is already independently proven correct by
-// test_frame_3e.cpp's own vector-driven test, so streaming the very same bytes here isolates
-// exactly the incremental/coalesced-frame behaviour these three IDs are about.
+// tests/vectors/3e_binary.vec, 3e_ascii.vec, 1e_binary.vec and 1e_ascii.vec's own response vectors
+// rather than inventing new byte sequences: every one of them is already independently proven
+// correct by test_frame_3e.cpp's / test_frame_1e.cpp's own vector-driven test, so streaming the
+// very same bytes here isolates exactly the incremental/coalesced-frame behaviour these three IDs
+// are about.
 #include "doctest/doctest.h"
 
 #include "common/vectors.h"
@@ -44,7 +45,8 @@ Device parseDeviceField(const std::string& text) {
 
 FrameConfig buildConfig(const Vector& v) {
     mc::DataCode code = (v.field("code") == "Ascii") ? mc::DataCode::Ascii : mc::DataCode::Binary;
-    FrameConfig cfg = FrameConfig::frame3E(code);
+    FrameConfig cfg = (v.field("frame") == "1E") ? FrameConfig::frame1E(code)
+                                                 : FrameConfig::frame3E(code);
     cfg.series = (v.field("series") == "IqR") ? PlcSeries::IqR : PlcSeries::QL;
     return cfg;
 }
@@ -77,12 +79,12 @@ void checkPayloadMatchesExpect(const Request& r, Parser& parser, ByteView wire) 
     CHECK(payloadResult.value() == payloadSize);
 }
 
-// Every non-`v1.1`, `kind: response` vector of both 3E vector files (STR-01/02 draw from this
+// Every non-`v1.1`, `kind: response` vector of the 3E and 1E vector files (STR-01/02 draw from this
 // same pool; the "expect" values are already proven correct by test_frame_3e.cpp, so nothing
 // here re-checks them beyond confirming payload() still succeeds and returns the right size).
 std::vector<Vector> allSuccessResponseVectors() {
     std::vector<Vector> result;
-    for (const char* fileName : {"3e_binary.vec", "3e_ascii.vec"}) {
+    for (const char* fileName : {"3e_binary.vec", "3e_ascii.vec", "1e_binary.vec", "1e_ascii.vec"}) {
         for (auto& v : loadVectors(vectorsRoot() / fileName)) {
             if (!v.hasTag("v1.1") && v.field("kind") == "response") {
                 result.push_back(std::move(v));
@@ -116,19 +118,26 @@ TEST_CASE("STR-01: every response vector fed one byte at a time reaches Done wit
     }
 }
 
-TEST_CASE("STR-02: two 3E response frames in one buffer; frameLength() points at the second") {
+TEST_CASE("STR-02: two response frames (3E and 1E) in one buffer; frameLength() points at the second") {
     std::vector<Vector> responses = allSuccessResponseVectors();
-    // Two distinct-content response vectors of the same code, so the boundary between them is
-    // unambiguous: the first two Binary and first two ASCII responses in file order
-    // (V-3E-B-02/V-3E-B-04, V-3E-A-02/V-3E-A-04 -- both "response" vectors of G1 and G2).
-    for (const char* code : {"Binary", "Ascii"}) {
+    // Two distinct-content response vectors of the same frame and code, so the boundary between
+    // them is unambiguous: the first two Binary and first two ASCII responses of each frame in file
+    // order (V-3E-B-02/V-3E-B-04, V-3E-A-02/V-3E-A-04, V-1E-B-02/V-1E-B-04, V-1E-A-02/V-1E-A-04 --
+    // the "response" vectors of G1 and G2).
+    struct FrameCode {
+        const char* frame;
+        const char* code;
+    };
+    for (const FrameCode& fc : {FrameCode{"3E", "Binary"}, FrameCode{"3E", "Ascii"},
+                                FrameCode{"1E", "Binary"}, FrameCode{"1E", "Ascii"}}) {
+        const char* code = fc.code;
         std::vector<const Vector*> matching;
         for (const auto& v : responses) {
-            if (v.field("code") == code) {
+            if (v.field("code") == code && v.field("frame") == fc.frame) {
                 matching.push_back(&v);
             }
         }
-        INFO("code ", code);
+        INFO("frame ", fc.frame, " code ", code);
         REQUIRE(matching.size() >= 2);
         const Vector& first = *matching[0];
         const Vector& second = *matching[1];

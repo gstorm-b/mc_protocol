@@ -27,6 +27,8 @@ const std::vector<Combo>& combos() {
     static const std::vector<Combo> list = {
         {"3E Binary", FrameConfig::frame3E(DataCode::Binary)},
         {"3E ASCII", FrameConfig::frame3E(DataCode::Ascii)},
+        {"1E Binary", FrameConfig::frame1E(DataCode::Binary)},
+        {"1E ASCII", FrameConfig::frame1E(DataCode::Ascii)},
     };
     return list;
 }

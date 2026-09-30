@@ -168,3 +168,98 @@ TEST_CASE("chunk(): WriteBits/PackedLsbFirst dataOffset in bytes, across chunks 
     CHECK(chunks[1].count == 10);
     CHECK(chunks[1].dataOffset == 20); // 160 packed points / 8 = 20 bytes in.
 }
+
+TEST_CASE("CHK-07 chunkCount()/chunk(): a 1E or 1C read above the 256-unit field maximum splits "
+          "by maxPoints() (spec section 8.5), it is not refused as PointCount") {
+    SUBCASE("1E word read of a word device: 256 per command, 2000 words = 7 x 256 + 208") {
+        Request r = Request::readWords(Device{DeviceType::D, 0}, 2000);
+        FrameConfig cfg = FrameConfig::frame1E();
+        auto count = mc::chunkCount(r, cfg);
+        REQUIRE(count.hasValue());
+        CHECK(count.value() == 8);
+
+        Chunk chunks[8];
+        auto written = mc::chunk(r, cfg, chunks, 8);
+        REQUIRE(written.hasValue());
+        CHECK(written.value() == 8);
+        for (uint32_t i = 0; i < 7; ++i) {
+            CHECK(chunks[i].headNumber == i * 256);
+            CHECK(chunks[i].count == 256);
+        }
+        CHECK(chunks[7].headNumber == 1792);
+        CHECK(chunks[7].count == 208);
+    }
+    SUBCASE("1E word read of a bit device: 128 words per command, step 16 per word") {
+        Request r = Request::readWords(Device{DeviceType::M, 0}, 300);
+        FrameConfig cfg = FrameConfig::frame1E();
+        auto count = mc::chunkCount(r, cfg);
+        REQUIRE(count.hasValue());
+        CHECK(count.value() == 3);
+        Chunk chunks[3];
+        REQUIRE(mc::chunk(r, cfg, chunks, 3).hasValue());
+        CHECK(chunks[1].headNumber == 128 * 16);
+        CHECK(chunks[2].headNumber == 256 * 16);
+        CHECK(chunks[2].count == 44);
+    }
+    SUBCASE("1C word read of a word device: 64 per command, 300 words = 5 chunks") {
+        Request r = Request::readWords(Device{DeviceType::D, 0}, 300);
+        auto count = mc::chunkCount(r, FrameConfig::frame1C());
+        REQUIRE(count.hasValue());
+        CHECK(count.value() == 5);
+    }
+}
+
+TEST_CASE("CHK-08 chunkCount()/chunk(): a 1E write above 256 units is PointCount without "
+          "splitWrites and splits with it, rule 7 (payload size) still applies") {
+    std::vector<uint8_t> payload(300 * 2, 0);
+    ByteView data{payload.data(), payload.size()};
+    Request r = Request::writeWords(Device{DeviceType::D, 0}, data);
+
+    FrameConfig cfg = FrameConfig::frame1E(); // splitWrites defaults to false.
+    auto refused = mc::chunkCount(r, cfg);
+    CHECK_FALSE(refused.hasValue());
+    CHECK(refused.error().code == ErrorCode::PointCount);
+
+    cfg.splitWrites = true;
+    auto count = mc::chunkCount(r, cfg);
+    REQUIRE(count.hasValue());
+    CHECK(count.value() == 2);
+    Chunk chunks[2];
+    REQUIRE(mc::chunk(r, cfg, chunks, 2).hasValue());
+    CHECK(chunks[0].count == 256);
+    CHECK(chunks[0].dataOffset == 0);
+    CHECK(chunks[1].headNumber == 256);
+    CHECK(chunks[1].count == 44);
+    CHECK(chunks[1].dataOffset == 256 * 2);
+
+    // A payload that does not match the count is DataSizeMismatch, whatever the count.
+    Request bad = r;
+    bad.data = ByteView{payload.data(), payload.size() - 2};
+    auto mismatch = mc::chunkCount(bad, cfg);
+    CHECK_FALSE(mismatch.hasValue());
+    CHECK(mismatch.error().code == ErrorCode::DataSizeMismatch);
+}
+
+TEST_CASE("CHK-09 chunkCount(): the other validate() rules still apply to a request above the "
+          "field maximum, and the encode-path rule 6 is unchanged") {
+    FrameConfig cfg = FrameConfig::frame1E();
+
+    // Device without a 1E code (SM): rule 3, whatever the count.
+    auto noCode = mc::chunkCount(Request::readWords(Device{DeviceType::SM, 0}, 300), cfg);
+    CHECK_FALSE(noCode.hasValue());
+    CHECK(noCode.error().code == ErrorCode::InvalidDevice);
+
+    // Word access to a bit device off a 16-point boundary: rule 5.
+    auto unaligned = mc::chunkCount(Request::readWords(Device{DeviceType::M, 5}, 300), cfg);
+    CHECK_FALSE(unaligned.hasValue());
+    CHECK(unaligned.error().code == ErrorCode::InvalidDevice);
+
+    // Rule 6 stays in validate(), which the encode path uses (1E-14): 257 points is PointCount,
+    // 256 is fine, for 1E and 1C.
+    for (const FrameConfig& frame : {FrameConfig::frame1E(), FrameConfig::frame1C()}) {
+        auto over = mc::validate(Request::readWords(Device{DeviceType::D, 0}, 257), frame);
+        CHECK_FALSE(over.hasValue());
+        CHECK(over.error().code == ErrorCode::PointCount);
+        CHECK(mc::validate(Request::readWords(Device{DeviceType::D, 0}, 256), frame).hasValue());
+    }
+}

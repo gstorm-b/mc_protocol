@@ -3,6 +3,8 @@
 // own (SPEC-core-model.md's Project Structure assigns only this file to it).
 #include "mc/core/request.h"
 
+#include "core/model/validate_internal.h"
+
 namespace mc {
 
 Request Request::readBits(Device head, uint16_t count) noexcept {
@@ -158,6 +160,13 @@ bool needsWordAlignmentCheck(const FrameConfig& cfg) noexcept {
 } // namespace
 
 Expected<void> validate(const Request& r, const FrameConfig& cfg) noexcept {
+    return detail::validateRequest(r, cfg, true);
+}
+
+namespace detail {
+
+Expected<void> validateRequest(const Request& r, const FrameConfig& cfg,
+                               bool checkFieldMaximum) noexcept {
     // Rule 1.
     if (r.count == 0) {
         return Expected<void>(pointCountError("count must be at least 1"));
@@ -200,7 +209,8 @@ Expected<void> validate(const Request& r, const FrameConfig& cfg) noexcept {
     }
 
     // Rule 6. QnA's u16 field maximum is never exceeded: count is itself a uint16_t.
-    if ((cfg.frame == FrameType::F1E || cfg.frame == FrameType::F1C) && r.count > 256) {
+    if (checkFieldMaximum && (cfg.frame == FrameType::F1E || cfg.frame == FrameType::F1C) &&
+        r.count > 256) {
         return Expected<void>(pointCountError("count exceeds the frame family's field maximum"));
     }
 
@@ -222,5 +232,7 @@ Expected<void> validate(const Request& r, const FrameConfig& cfg) noexcept {
 
     return Expected<void>();
 }
+
+} // namespace detail
 
 } // namespace mc

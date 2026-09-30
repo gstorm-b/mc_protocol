@@ -62,9 +62,14 @@ struct Chunk {
  * @param[in] r Request that would be split.
  * @param[in] cfg Frame @p r would be encoded for.
  * @return The chunk count chunk() would produce.
- * @retval ErrorCode::InvalidDevice Any failure of `validate(r, cfg)` (request.h).
- * @retval ErrorCode::PointCount No spec §4.4 cell applies to this operation/device kind
- * combination, or @p r is a write that needs more than one chunk and `cfg.splitWrites` is false.
+ * @retval ErrorCode::InvalidDevice Any failure of `validate(r, cfg)` (request.h) except its field
+ * maximum rule 6, which does not apply here: splitting is what brings a 1E or 1C request above
+ * 256 units within it.
+ * @retval ErrorCode::DataSizeMismatch @p r is a write whose payload size does not match its
+ * count.
+ * @retval ErrorCode::PointCount @p r has no points, no spec §4.4 cell applies to this
+ * operation/device kind combination, or @p r is a write that needs more than one chunk and
+ * `cfg.splitWrites` is false.
  * @par Complexity
  * O(1); no allocation.
  * @see chunk
@@ -86,9 +91,14 @@ Expected<size_t> chunkCount(const Request& r, const FrameConfig& cfg) noexcept;
  * @param[in] capacity Number of Chunk slots available at @p out.
  * @return The number of chunks written to @p out; always equal to chunkCount(r, cfg)'s value on
  * success.
- * @retval ErrorCode::InvalidDevice Any failure of `validate(r, cfg)` (request.h).
- * @retval ErrorCode::PointCount No spec §4.4 cell applies to this operation/device kind
- * combination, or @p r is a write that needs more than one chunk and `cfg.splitWrites` is false.
+ * @retval ErrorCode::InvalidDevice Any failure of `validate(r, cfg)` (request.h) except its field
+ * maximum rule 6, which does not apply here: splitting is what brings a 1E or 1C request above
+ * 256 units within it.
+ * @retval ErrorCode::DataSizeMismatch @p r is a write whose payload size does not match its
+ * count.
+ * @retval ErrorCode::PointCount @p r has no points, no spec §4.4 cell applies to this
+ * operation/device kind combination, or @p r is a write that needs more than one chunk and
+ * `cfg.splitWrites` is false.
  * @retval ErrorCode::BufferTooSmall `capacity` is smaller than the number of chunks needed.
  * @par Complexity
  * O(C) in the number of chunks produced; no allocation.

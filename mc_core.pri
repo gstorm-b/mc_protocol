@@ -24,14 +24,19 @@ HEADERS += \
     $$PWD/include/mc/core/value_store.h \
     $$PWD/include/mc/core/session.h \
     $$PWD/src/core/session/output_ring.h \
+    $$PWD/src/core/session/word_align.h \
     $$PWD/src/core/session/adhoc_queue.h \
     $$PWD/src/core/session/drain_violation.h \
     $$PWD/src/core/model/limits_table.h \
+    $$PWD/src/core/model/validate_internal.h \
     $$PWD/src/core/protocol/hexascii.h \
     $$PWD/src/core/protocol/sumcheck.h \
     $$PWD/src/core/protocol/field_codec.h \
     $$PWD/src/core/protocol/device_encode.h \
     $$PWD/src/core/protocol/command_qna.h \
+    $$PWD/src/core/protocol/bit_payload.h \
+    $$PWD/src/core/protocol/command_a1e.h \
+    $$PWD/src/core/protocol/frame_1e.h \
     $$PWD/src/core/protocol/frame_3e.h
 
 SOURCES += \
@@ -48,6 +53,8 @@ SOURCES += \
     $$PWD/src/core/protocol/sumcheck.cpp \
     $$PWD/src/core/protocol/device_encode.cpp \
     $$PWD/src/core/protocol/command_qna.cpp \
+    $$PWD/src/core/protocol/command_a1e.cpp \
+    $$PWD/src/core/protocol/frame_1e.cpp \
     $$PWD/src/core/protocol/frame_3e.cpp \
     $$PWD/src/core/protocol/protocol.cpp \
     $$PWD/src/core/session/range_set.cpp \

@@ -42,6 +42,14 @@ contradict `agent-team/core/`, this file wins.
   exclusions. The Checkpoint D demo (`virtual_plc` ↔ `qt_console_poller`) is
   run by the owner; the leader commits Phase 5 once tester and reviewer pass
   and reports the demo steps. Phase 6 waits for the owner.
+- **Delegation extended to Phase 6, owner 2026-10-01:** "Bạn hãy tiếp tục
+  implement phase 6, vẫn giao quyền như phase 4-5." Same terms and
+  exclusions. **Phase 6 runs as three batches** (owner decision): 6a = T35–T37
+  → Checkpoint E1, 6b = T38–T42 → Checkpoint E2, 6c = T43–T46 → Checkpoint E.
+  Each batch is treated as a phase for "Phase-batched verification": fresh
+  tester and reviewer per batch, one commit per batch after its checkpoint
+  passes. The "owner review before the tooling phase" item of Checkpoint E
+  stays the owner's. Phase 7 waits for the owner.
 - Work on `main` unless the owner says otherwise.
 
 ## Phase-batched verification (owner decision 2026-09-27)

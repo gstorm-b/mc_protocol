@@ -3,6 +3,17 @@
 Curated by the team leader. One entry, one decision, newest first.
 Format: `- [T-xxx or date] Decision — why. (supersedes: entry, if any)`
 
+- [T-044] Batch 6a leader decisions: a non-hex 1E ASCII subheader → `FrameMismatch`
+  (as 3E); `bit_payload.h` shared by QnA and A1E; `WrongRoute` leaves a 1E response
+  unchanged (no route field); `chunkCount()`/`chunk()` skip rule 6 on the unsplit request
+  (rule 6 per chunk / on encode); `subscribe()` checks the word-aligned range;
+  `autoGap(ReadBits)` uses the fractional per-point wire cost (0.5 byte for packed Binary
+  bits) — 65/64/29/29. Spec wording for the validate() callers (SPEC-core-model:284) and
+  the bit-unit reading of autoGap are proposed to the owner.
+- [2026-10-01] Checkpoint D demo run and confirmed by the owner. Delegation
+  extended to Phase 6, run as three batches (6a → E1, 6b → E2, 6c → E), each
+  with its own tester, reviewer and commit. The owner installed virtual COM
+  pairs COM50–COM51 and COM52–COM53 for QDV-14 — owner decisions.
 - [2026-09-30] `.gitignore` ignores `.qtcreator/` (any level) — owner request.
 - [T-040] `Transport::lastLossWasPeerClose()` kept as public API (virtual, default
   false) so `lost()` maps to `PeerClosed` or `TransportError`; `SPEC-qt-device.md`

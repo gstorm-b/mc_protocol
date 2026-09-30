@@ -50,3 +50,52 @@
 # frame: qna  op: ReadBits  code: Binary  device: M0  count: 2
 # kind: response-error  error: InvalidCharacter  bytes: 1
 21
+
+# id: CMDD-09
+# frame: 1e  op: ReadBits  code: Ascii  device: M100  count: 12
+# kind: response  expect: 1,0,1,0,1,0,1,0,1,0,1,0  bytes: 12
+31 30 31 30 31 30 31 30 31 30 31 30
+101010101010
+
+# id: CMDD-10
+# frame: 1e  op: ReadBits  code: Binary  device: M100  count: 12
+# kind: response  expect: 1,0,1,0,1,0,1,0,1,0,1,0  bytes: 6
+10 10 10 10 10 10
+
+# id: CMDD-11
+# frame: 1e  op: ReadWords  code: Ascii  device: Y40  count: 2
+# kind: response  expect: 829D,553E  bytes: 8
+38 32 39 44 35 35 33 45
+829D553E
+
+# id: CMDD-12
+# frame: 1e  op: ReadWords  code: Binary  device: Y40  count: 2
+# kind: response  expect: 829D,553E  bytes: 4
+9D 82 3E 55
+
+# id: CMDD-13
+# frame: 1e  op: ReadBits  code: Ascii  device: M100  count: 3
+# kind: response  expect: 1,0,1  bytes: 4
+31 30 31 30
+1010
+
+# id: CMDD-13a
+# frame: 1e  op: ReadBits  code: Ascii  device: M100  count: 3
+# kind: response-error  error: LengthMismatch  bytes: 3
+31 30 31
+101
+
+# id: CMDD-10a
+# frame: 1e  op: ReadBits  code: Binary  device: M100  count: 5
+# kind: response  expect: 1,0,1,0,1  bytes: 3
+10 10 10
+
+# id: CMDD-17e
+# frame: 1e  op: ReadWords  code: Binary  device: Y40  count: 3
+# kind: response-error  error: LengthMismatch  bytes: 5
+34 12 02 00 EF
+
+# id: CMDD-18e
+# frame: 1e  op: ReadBits  code: Binary  device: M100  count: 2
+# kind: response-error  error: InvalidCharacter  bytes: 1
+21

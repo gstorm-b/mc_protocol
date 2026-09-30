@@ -1,4 +1,4 @@
-// Server direction of 3E (spec §5.1 "Response"): build the response frame of a request.
+// Server direction of 3E and 1E (spec §5.1, §5.3 "Response"): build the response frame of a request.
 #include "mock/mock_internal.h"
 
 #include "core/protocol/field_codec.h"
@@ -93,11 +93,45 @@ ByteBuf buildResponse(const QnaRequest& req, const Outcome& outcome) {
     return frame;
 }
 
+template <class Codec>
+ByteBuf buildResponse1e(const E1Request& req, const Outcome& outcome) {
+    ByteBuf frame;
+    Writer<Codec> writer(frame);
+    // Spec §5.3: the response subheader is the command code OR 80H.
+    writer.u8(static_cast<uint8_t>(req.command | 0x80u));
+    if (!outcome.ok) {
+        const uint8_t endCode = static_cast<uint8_t>(outcome.plcCode & 0xFFu);
+        writer.u8(endCode);
+        if (endCode == kE1EndCodeWithAbnormal) {
+            writer.u8(outcome.abnormal);
+        }
+        return frame;
+    }
+    writer.u8(0x00);
+    if (req.op == Op::ReadWords) {
+        writer.words(ByteView{outcome.data.data(), outcome.data.size()});
+    } else if (req.op == Op::ReadBits) {
+        // Spec §4.2: an odd point count is padded to a whole byte (Binary, low nibble 0) or with
+        // one dummy character (ASCII); both are one more zero point before the codec packs them.
+        ByteBuf padded = outcome.data;
+        if (padded.size() % 2 != 0) {
+            padded.push_back(0);
+        }
+        writer.bits(ByteView{padded.data(), padded.size()});
+    }
+    return frame;
+}
+
 } // namespace
 
 ByteBuf build3eResponse(DataCode code, const QnaRequest& request, const Outcome& outcome) {
     return code == DataCode::Ascii ? buildResponse<AsciiCodec>(request, outcome)
                                    : buildResponse<BinaryCodec>(request, outcome);
+}
+
+ByteBuf build1eResponse(DataCode code, const E1Request& request, const Outcome& outcome) {
+    return code == DataCode::Ascii ? buildResponse1e<AsciiCodec>(request, outcome)
+                                   : buildResponse1e<BinaryCodec>(request, outcome);
 }
 
 } // namespace mc::detail::mock

@@ -791,6 +791,46 @@ TEST_CASE("Session::subscribe()/unsubscribe(): own error paths (Checkpoint C cov
     CHECK(unknownId.error().code == ErrorCode::NotSubscribed);
 }
 
+TEST_CASE("SUB-1E-01 Session::subscribe() on 1E: the immediate check is on the word-aligned "
+          "range the plan reads, not the raw subscription (bitsAsWords on)") {
+    FrameConfig frame = FrameConfig::frame1E();
+    Session s = makeSession(frame);
+
+    // Unaligned bit heads: the plan reads ReadWords M8176 x 1 / M9000 x 1 / X10 x 1 (PLN-04).
+    CHECK(s.subscribe(Device{DeviceType::M, 8180}, 10).hasValue());
+    CHECK(s.subscribe(Device{DeviceType::M, 9005}, 4).hasValue()); // M9000 + 16k origin
+    CHECK(s.subscribe(Device{DeviceType::X, 0x1A}, 4).hasValue());
+    // More than 256 units: chunked by the plan, not refused.
+    CHECK(s.subscribe(Device{DeviceType::D, 0}, 300).hasValue());
+    CHECK(s.subscribe(Device{DeviceType::M, 0}, 6000).hasValue()); // 375 words
+
+    // A truly invalid head still fails at once, and atomically.
+    auto noCode = s.subscribe(Device{DeviceType::SM, 0}, 16);
+    CHECK_FALSE(noCode.hasValue());
+    CHECK(noCode.error().code == ErrorCode::InvalidDevice);
+    auto noCodeWord = s.subscribe(Device{DeviceType::SD, 0}, 1);
+    CHECK_FALSE(noCodeWord.hasValue());
+    CHECK(noCodeWord.error().code == ErrorCode::InvalidDevice);
+
+    // The plan the accepted subscriptions build reads whole words for the bit ones.
+    FakeClock clock;
+    s.linkUp(clock.now());
+    const auto range = s.plan().chunksOf(DeviceType::M);
+    REQUIRE(range.second > range.first);
+    CHECK(s.plan().chunk(range.first).request.op == mc::Op::ReadWords);
+
+    // bitsAsWords off: the raw bit range is what is read and checked.
+    SessionConfig cfg;
+    cfg.plan.bitsAsWords = false;
+    Session bits = makeSession(frame, cfg);
+    CHECK(bits.subscribe(Device{DeviceType::M, 8180}, 10).hasValue());
+    CHECK_FALSE(bits.subscribe(Device{DeviceType::SM, 0}, 16).hasValue());
+
+    // 3E is not affected (no alignment rule there).
+    Session e3 = makeSession(FrameConfig::frame3E());
+    CHECK(e3.subscribe(Device{DeviceType::M, 8180}, 10).hasValue());
+}
+
 TEST_CASE("Session::linkUp(): ignored (logged Warn) when already up; Session move-assignment "
           "(Checkpoint C coverage gap, T-028)") {
     FrameConfig frame = FrameConfig::frame3E();

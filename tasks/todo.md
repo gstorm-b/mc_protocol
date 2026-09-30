@@ -637,21 +637,21 @@
 
 ### Checkpoint D: 3E through the whole stack (baton T-040)
 - [x] `scripts/check.ps1` green (both compilers, qmake, consumers); BLD-05(d) proves `mc_device` does not link `mc_mock`. (T-040)
-- [ ] Owner runs the Checkpoint D demo (`virtual_plc` ↔ `qt_console_poller`).
+- [x] Owner runs the Checkpoint D demo (`virtual_plc` ↔ `qt_console_poller`). (Owner confirmed 2026-10-01.)
 
 ---
 
 ## Phase 6: Frames 1E, 3C, 1C through every layer
 
-### T35: 1E commands (A1E)
+### T35: 1E commands (A1E) (baton T-041)
 
 **Description:** 00H–03H request data (command code goes to the subheader), response sizes computed from the request, dummy character and padding rules; 04H/05H tables present, unreachable.
 
 **Acceptance criteria:**
-- [ ] CMD-15…21 byte-for-byte; 1E rows of CMDD pass (odd count dummy, zero nibble).
+- [x] CMD-15…21 byte-for-byte; 1E rows of CMDD pass (odd count dummy, zero nibble).
 
 **Verification:**
-- [ ] `ctest -L core_protocol`.
+- [x] `ctest -L core_protocol`.
 
 **Dependencies:** Checkpoint D
 
@@ -659,15 +659,15 @@
 
 **Scope:** M
 
-### T36: 1E frame and vectors
+### T36: 1E frame and vectors (baton T-042)
 
 **Description:** 1E envelope and response parse (5BH + abnormal code; other end codes stop after 2 bytes / 4 characters).
 
 **Acceptance criteria:**
-- [ ] Every A.5 and A.6 vector round-trips; 1E-01…11, 13, 14 pass; STR-02 passes with 1E; ALC-01 extended to 1E.
+- [x] Every A.5 and A.6 vector round-trips; 1E-01…11, 13, 14 pass; STR-02 passes with 1E; ALC-01 extended to 1E.
 
 **Verification:**
-- [ ] `ctest -L core_protocol` (both compilers).
+- [x] `ctest -L core_protocol` (both compilers).
 
 **Dependencies:** T35
 
@@ -675,16 +675,16 @@
 
 **Scope:** M
 
-### T37: 1E in the mock, integration, planner and device
+### T37: 1E in the mock, integration, planner and device (baton T-043)
 
 **Description:** 1E server direction in the mock; 1E Binary/ASCII rows of the integration matrix; PLN-03's 1E `autoGap` value; QDV-13's 1E cases.
 
 **Acceptance criteria:**
-- [ ] MCK-01…03 and MCK-10 pass for A.5/A.6; INT scenarios pass for 1E Binary and 1E ASCII.
-- [ ] PLN-03 (1E Binary words = 7) and QDV-13 (1E Binary, 1E ASCII over TCP) pass.
+- [x] MCK-01…03 and MCK-10 pass for A.5/A.6; INT scenarios pass for 1E Binary and 1E ASCII.
+- [x] PLN-03 (1E Binary words = 7) and QDV-13 (1E Binary, 1E ASCII over TCP) pass.
 
 **Verification:**
-- [ ] `ctest -L "mock|integration|core_session|device"`.
+- [x] `ctest -L "mock|integration|core_session|device"`.
 
 **Dependencies:** T36
 
@@ -692,10 +692,10 @@
 
 **Scope:** M
 
-### Checkpoint E1: 1E complete
-- [ ] Both Ethernet frames through every layer; `scripts/check.ps1` green.
+### Checkpoint E1: 1E complete (baton T-044; batch 6a)
+- [x] Both Ethernet frames through every layer; `scripts/check.ps1` green. (T-044)
 
-### T38: Serial receive state machine
+### T38: Serial receive state machine (baton T-045)
 
 **Description:** The incremental F1–F4 receive parser of spec §6.3 (STX/ACK/NAK start, junk skipping, ETX scan over new bytes only, SUM, CR LF), shared by 3C and 1C.
 
@@ -711,7 +711,7 @@
 
 **Scope:** S
 
-### T39: 3C formats 1 and 4
+### T39: 3C formats 1 and 4 (baton T-046)
 
 **Description:** 3C envelopes (frame ID F9, route, sum-check ranges of spec §2.5) for formats 1 and 4 over the shared QnA commands.
 
@@ -727,7 +727,7 @@
 
 **Scope:** M
 
-### T40: 3C formats 2 and 3, serial options, 4C vectors
+### T40: 3C formats 2 and 3, serial options, 4C vectors (baton T-047)
 
 **Description:** Format 2 (block number, `checkBlockNo`), format 3 (`QACK`/`QNAK`, `f3ShortResponseHasSum`), format 5 rejected (3C-03), 4C vectors transcribed and tagged `v2`.
 
@@ -743,7 +743,7 @@
 
 **Scope:** M (data-heavy)
 
-### T41: 1C commands, formats 1 and 4
+### T41: 1C commands, formats 1 and 4 (baton T-048)
 
 **Description:** BR/WR/BW/WW over ASCII with message wait, 1C envelopes for F1 and F4 (2-character NAK codes).
 
@@ -759,7 +759,7 @@
 
 **Scope:** M
 
-### T42: 1C formats 2 and 3, AnA command set, message wait
+### T42: 1C formats 2 and 3, AnA command set, message wait (baton T-049)
 
 **Description:** 1C F2/F3 (`GG`/`NN`), JR/QR/JW/QW, message-wait character, 256 points as `"00"`, ALC-01 over every family.
 
@@ -775,10 +775,10 @@
 
 **Scope:** M
 
-### Checkpoint E2: codec complete
+### Checkpoint E2: codec complete (baton T-050; batch 6b)
 - [ ] Every enabled Appendix A vector round-trips (core-protocol success criteria 1–5).
 
-### T43: Session serial behaviour
+### T43: Session serial behaviour (baton T-051)
 
 **Description:** The serial column of the fault table: EOT (F4: EOT CR LF), silence-based flush capped at `effectiveTimeoutMs()`, first-byte + inter-character deadlines, read retries, never retried writes, `maxConsecutiveLinkErrors`.
 
@@ -794,7 +794,7 @@
 
 **Scope:** M
 
-### T44: Mock serial server direction
+### T44: Mock serial server direction (baton T-052)
 
 **Description:** 3C and 1C request decoding for F1–F4 (command-aware length for F1/F2/F4, ETX for F3), station filtering, EOT reset, junk skipping, SUM verification, serial corruption modes.
 
@@ -810,7 +810,7 @@
 
 **Scope:** M
 
-### T45: Integration matrix complete
+### T45: Integration matrix complete (baton T-053)
 
 **Description:** Add 3C F1–F4 and 1C F1–F4 to the matrix, with the serial variants of INT-11 (EOT, retries) and INT-12 (sum-check corruption retried).
 
@@ -826,7 +826,7 @@
 
 **Scope:** S
 
-### T46: `SerialTransport` and serial loopback
+### T46: `SerialTransport` and serial loopback (baton T-054)
 
 **Description:** `SerialTransport` (open completes on the next event-loop turn, `lost()` on port errors), `virtual_plc --serial`, the serial bridge helper, QDV-13 for 3C F1 over TCP, QDV-14.
 
@@ -843,7 +843,7 @@
 
 **Scope:** M
 
-### Checkpoint E: all four frames through every layer
+### Checkpoint E: all four frames through every layer (baton T-055; batch 6c)
 - [ ] `scripts/check.ps1` green with both compilers; `check.sh` in Git Bash; coverage targets of every std module met.
 - [ ] Owner review before the tooling phase.
 

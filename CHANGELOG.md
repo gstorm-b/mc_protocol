@@ -147,3 +147,20 @@ All notable changes to this project are documented in this file. The format foll
   `McDevice` and link `mc::device` / `mc_protocol.pri`, and `scripts/check.ps1` puts the kit's Qt
   `bin` on PATH when it runs them; the device tests, both examples, the qmake twins and
   `scripts/check.ps1` pass with MSVC and MinGW GCC 13.1.
+- The 1E frame (Binary and ASCII) through every layer (batch 6a). Core protocol: 1E commands 00H to
+  03H and the 1E envelope in `McProtocol` / `Parser` (the command code travels in the subheader,
+  the response length follows from the request, end code 5BH is followed by an abnormal code, any
+  other end code ends the frame after two bytes or four characters), pinned to the Appendix A.5 and
+  A.6 vectors (`1e_binary.vec`, `1e_ascii.vec`) and the 1E rows of the CMD and CMDD vectors; the
+  04H and 05H encoders exist but are not reachable through `Op`. `MockPlc` answers 1E (00H to 03H
+  executed, 04H and 05H answered with `unsupported1e`; the abnormal code only after 5BH; the
+  trailing dummy character or zero nibble of an odd bit read) and every `Corruption` mode except
+  `WrongRoute`, which leaves a 1E response unchanged because it has no route field.
+  `virtual_plc --frame 1E` and `qt_console_poller --frame 1E` run against each other; the
+  integration matrix (INT-01 to INT-16) runs on 3E and 1E, Binary and ASCII, and QDV-13 covers 1E
+  Binary and 1E ASCII over TCP. Two defects that only a 1E or 1C frame reached are fixed:
+  `chunkCount()` and `chunk()` no longer refuse a request above the 256-unit field maximum (they
+  split it by `maxPoints()`; the encode path still rejects 257 points), and
+  `Session::subscribe()` checks the word-aligned range the plan will read, so a bit subscription
+  such as `M8180 x 10` is accepted on 1E and 1C. `autoGap()` gives 7 for 1E words. MSVC and MinGW
+  GCC 13.1, both qmake kits and `scripts/check.ps1` / `check.sh` pass.

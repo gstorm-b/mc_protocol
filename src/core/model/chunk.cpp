@@ -1,8 +1,11 @@
 // chunkCount() and chunk() (spec §8.5): splitting a Request into commands that each fit within
-// maxPoints(). Both call validate(Request, FrameConfig) (request.h) first, so an already-invalid
-// request is rejected the same way whether the caller calls validate() itself or goes straight to
-// chunking.
+// maxPoints(). Both call detail::validateRequest(r, cfg, false) (validate_internal.h) first:
+// validate() (request.h) without its rule 6, the field maximum, because splitting is what brings a
+// request above it within it. So an already-invalid request (rules 1-5 and 7) is rejected the
+// same way whether the caller calls validate() itself or goes straight to chunking.
 #include "mc/core/limits.h"
+
+#include "core/model/validate_internal.h"
 
 namespace mc {
 namespace {
@@ -26,7 +29,9 @@ Error bufferTooSmallError(const char* message) noexcept {
 } // namespace
 
 Expected<size_t> chunkCount(const Request& r, const FrameConfig& cfg) noexcept {
-    Expected<void> validation = validate(r, cfg);
+    // Rule 6 (field maximum) is for the encode path: here the request is about to be split into
+    // chunks of at most maxPoints(), each within it.
+    Expected<void> validation = detail::validateRequest(r, cfg, false);
     if (!validation.hasValue()) {
         return Expected<size_t>(validation.error());
     }

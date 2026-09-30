@@ -1,11 +1,12 @@
-// McProtocol dispatch by FrameType, and Parser's own state machine (spec sections 5, 7.2). Only
-// F3E (both DataCode::Binary and, since T-018, DataCode::Ascii) is implemented; every other
-// frame family fails with UnsupportedCommand rather than reaching any frame-specific code, so
-// extending isImplemented() and each dispatch site below is what later tasks (1E, 3C, 1C) do;
-// nothing here needs to change shape to add a branch.
+// McProtocol dispatch by FrameType, and Parser's own state machine (spec sections 5, 7.2). F3E
+// and F1E (both DataCode::Binary and DataCode::Ascii) are implemented; every other frame family
+// fails with UnsupportedCommand rather than reaching any frame-specific code, so extending
+// isImplemented() and the per-frame helpers below is what later tasks (3C, 1C) do; nothing here
+// needs to change shape to add a branch.
 #include "mc/core/protocol.h"
 
 #include "field_codec.h"
+#include "frame_1e.h"
 #include "frame_3e.h"
 
 #include <utility>
@@ -21,7 +22,52 @@ Error unsupportedCommandError() noexcept {
     return e;
 }
 
-bool isImplemented(const FrameConfig& cfg) noexcept { return cfg.frame == FrameType::F3E; }
+bool isImplemented(const FrameConfig& cfg) noexcept {
+    return cfg.frame == FrameType::F3E || cfg.frame == FrameType::F1E;
+}
+
+// Per-frame dispatch, one helper per operation, templated on the wire code. Only called once
+// isImplemented(cfg) holds, so the two-way choice on cfg.frame is exhaustive.
+template <class Codec> size_t frameEncodedSize(const Request& r, const FrameConfig& cfg) noexcept {
+    return cfg.frame == FrameType::F1E ? detail::frame1eEncodedSize<Codec>(r)
+                                       : detail::frame3eEncodedSize<Codec>(r, cfg.series);
+}
+
+template <class Codec>
+Expected<size_t> frameEncode(const Request& r, const FrameConfig& cfg,
+                             MutableByteView out) noexcept {
+    return cfg.frame == FrameType::F1E ? detail::frame1eEncode<Codec>(r, cfg, out)
+                                       : detail::frame3eEncode<Codec>(r, cfg, out);
+}
+
+template <class Codec>
+size_t frameMaxResponseSize(const Request& r, const FrameConfig& cfg) noexcept {
+    return cfg.frame == FrameType::F1E ? detail::frame1eMaxResponseSize<Codec>(r)
+                                       : detail::frame3eMaxResponseSize<Codec>(r);
+}
+
+template <class Codec>
+ParseStatus frameTryParse(ByteView buffer, const Request& r, const FrameConfig& cfg,
+                          size_t& frameLength, Error& error) noexcept {
+    return cfg.frame == FrameType::F1E
+               ? detail::frame1eTryParse<Codec>(buffer, r, frameLength, error)
+               : detail::frame3eTryParse<Codec>(buffer, r, cfg, frameLength, error);
+}
+
+// Decodes the response data of a frame that already parsed as Done: skips the frame's own head
+// (3E: header + end code; 1E: subheader + end code) and hands the wire data to the command layer.
+template <class Codec>
+Expected<size_t> frameResponsePayload(ByteView buffer, const Request& r, const FrameConfig& cfg,
+                                      MutableByteView out) noexcept {
+    if (cfg.frame == FrameType::F1E) {
+        size_t headSize = detail::frame1eResponseHeadSize<Codec>();
+        ByteView wireData{buffer.data + headSize, detail::a1eResponseDataSize<Codec>(r)};
+        return detail::a1eResponseData<Codec>(r, wireData, out);
+    }
+    size_t headSize = detail::frame3eHeaderSize<Codec>() + Codec::u16Size();
+    ByteView wireData{buffer.data + headSize, detail::qnaResponseDataSize<Codec>(r)};
+    return detail::qnaResponseData<Codec>(r, wireData, out);
+}
 
 // Frame-independent (module spec "Payload contract"): every frame family normalizes a response
 // the same way, so this is not part of the FrameType dispatch below.
@@ -53,10 +99,9 @@ Expected<size_t> McProtocol::encodedSize(const Request& r) const noexcept {
         return Expected<size_t>(unsupportedCommandError());
     }
     if (m_config.code == DataCode::Binary) {
-        return Expected<size_t>(
-            detail::frame3eEncodedSize<detail::BinaryCodec>(r, m_config.series));
+        return Expected<size_t>(frameEncodedSize<detail::BinaryCodec>(r, m_config));
     }
-    return Expected<size_t>(detail::frame3eEncodedSize<detail::AsciiCodec>(r, m_config.series));
+    return Expected<size_t>(frameEncodedSize<detail::AsciiCodec>(r, m_config));
 }
 
 Expected<size_t> McProtocol::encode(const Request& r, MutableByteView out) const noexcept {
@@ -68,9 +113,9 @@ Expected<size_t> McProtocol::encode(const Request& r, MutableByteView out) const
         return Expected<size_t>(unsupportedCommandError());
     }
     if (m_config.code == DataCode::Binary) {
-        return detail::frame3eEncode<detail::BinaryCodec>(r, m_config, out);
+        return frameEncode<detail::BinaryCodec>(r, m_config, out);
     }
-    return detail::frame3eEncode<detail::AsciiCodec>(r, m_config, out);
+    return frameEncode<detail::AsciiCodec>(r, m_config, out);
 }
 
 Expected<ByteBuf> McProtocol::encode(const Request& r) const {
@@ -91,9 +136,9 @@ size_t McProtocol::maxResponseSize(const Request& r) const noexcept {
         return 0;
     }
     if (m_config.code == DataCode::Binary) {
-        return detail::frame3eMaxResponseSize<detail::BinaryCodec>(r);
+        return frameMaxResponseSize<detail::BinaryCodec>(r, m_config);
     }
-    return detail::frame3eMaxResponseSize<detail::AsciiCodec>(r);
+    return frameMaxResponseSize<detail::AsciiCodec>(r, m_config);
 }
 
 size_t McProtocol::payloadSize(const Request& r) const noexcept { return normalizedPayloadSize(r); }
@@ -131,8 +176,8 @@ ParseStatus Parser::feed(ByteView buffer) noexcept {
     Error err{};
     ParseStatus status =
         (m_cfg.code == DataCode::Binary)
-            ? detail::frame3eTryParse<detail::BinaryCodec>(buffer, r, m_cfg, frameLength, err)
-            : detail::frame3eTryParse<detail::AsciiCodec>(buffer, r, m_cfg, frameLength, err);
+            ? frameTryParse<detail::BinaryCodec>(buffer, r, m_cfg, frameLength, err)
+            : frameTryParse<detail::AsciiCodec>(buffer, r, m_cfg, frameLength, err);
     if (status == ParseStatus::NeedMore) {
         return ParseStatus::NeedMore; // Nothing cached; a later, longer buffer starts over.
     }
@@ -162,17 +207,9 @@ Expected<size_t> Parser::payload(ByteView buffer, MutableByteView out) const noe
     }
 
     if (m_cfg.code == DataCode::Binary) {
-        size_t headerSize = detail::frame3eHeaderSize<detail::BinaryCodec>();
-        size_t endCodeSize = detail::BinaryCodec::u16Size();
-        size_t wireSize = detail::qnaResponseDataSize<detail::BinaryCodec>(r);
-        ByteView wireData{buffer.data + headerSize + endCodeSize, wireSize};
-        return detail::qnaResponseData<detail::BinaryCodec>(r, wireData, out);
+        return frameResponsePayload<detail::BinaryCodec>(buffer, r, m_cfg, out);
     }
-    size_t headerSize = detail::frame3eHeaderSize<detail::AsciiCodec>();
-    size_t endCodeSize = detail::AsciiCodec::u16Size();
-    size_t wireSize = detail::qnaResponseDataSize<detail::AsciiCodec>(r);
-    ByteView wireData{buffer.data + headerSize + endCodeSize, wireSize};
-    return detail::qnaResponseData<detail::AsciiCodec>(r, wireData, out);
+    return frameResponsePayload<detail::AsciiCodec>(buffer, r, m_cfg, out);
 }
 
 const Error& Parser::error() const noexcept { return m_error; }

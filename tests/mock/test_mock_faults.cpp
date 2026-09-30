@@ -1,5 +1,5 @@
-// MCK-09 (3E: unsupported commands) and the Ethernet cases of MCK-11 (mute, muteNext and every
-// Corruption mode) on 3E Binary and 3E ASCII, asserted byte for byte against a clean response;
+// MCK-09 (3E and 1E: unsupported commands) and the Ethernet cases of MCK-11 (mute, muteNext and
+// every Corruption mode) on 3E and 1E, Binary and ASCII, asserted byte for byte against a clean response;
 // plus clearFaults(). The expected bytes are derived here from the documented rule of each mode
 // (mc/mock/mock_plc.h) applied to a clean response, never by calling the mock a second time for
 // the damage itself.
@@ -53,14 +53,21 @@ std::vector<Vector> loadFile(const char* name) {
     return vectors;
 }
 
-// One wire representation under test: its code, a request for D100 x 3 words (the vector of the
-// spec's example G1), and the same request with a route that carries hex digits (0F, FE, 1F).
+// One wire representation under test: its frame family and code, a request for D100 x 3 words (the
+// vector of the spec's example G1), the same request with a route that carries hex digits (3E: 0F,
+// FE, 1F; 1E has only the PC number: 03), and a write of D100 = 1234H.
 struct Wire {
     const char* name;
+    bool is1e;
     DataCode code;
     Bytes read;
     Bytes readOtherRoute;
+    Bytes write;
 };
+
+FrameConfig configOf(const Wire& w) {
+    return w.is1e ? FrameConfig::frame1E(w.code) : FrameConfig::frame3E(w.code);
+}
 
 std::vector<Wire> wires() {
     const Bytes binRead = byId(loadFile("3e_binary.vec"), "V-3E-B-01").bytes;
@@ -74,14 +81,35 @@ std::vector<Wire> wires() {
     const std::string ascRoute = "0FFE03FF1F";
     std::copy(ascRoute.begin(), ascRoute.end(), ascOther.begin() + 4);
 
+    // D100 = 1234H, written by hand from the tables of spec 5.1 / 5.3 and 4.1.2 / 4.2.
+    const Bytes binWrite3e = {0x50, 0x00, 0x00, 0xFF, 0xFF, 0x03, 0x00, 0x0E, 0x00, 0x10, 0x00,
+                              0x01, 0x14, 0x00, 0x00, 0x64, 0x00, 0x00, 0xA8, 0x01, 0x00, 0x34, 0x12};
+    const std::string ascWrite3eText = "500000FF03FF00" "001C" "0010" "14010000" "D*000100" "0001" "1234";
+    const Bytes binWrite1e = {0x03, 0xFF, 0x0A, 0x00, 0x64, 0x00, 0x00, 0x00,
+                              0x20, 0x44, 0x01, 0x00, 0x34, 0x12};
+    const std::string ascWrite1eText = "03FF000A" "442000000064" "0100" "1234";
+
+    // 1E: the PC number (byte 1, characters 2-3) is the only route field of the request.
+    const Bytes bin1eRead = byId(loadFile("1e_binary.vec"), "V-1E-B-01").bytes;
+    const Bytes asc1eRead = byId(loadFile("1e_ascii.vec"), "V-1E-A-01").bytes;
+    Bytes bin1eOther = bin1eRead;
+    bin1eOther[1] = 0x03;
+    Bytes asc1eOther = asc1eRead;
+    asc1eOther[2] = '0';
+    asc1eOther[3] = '3';
+
     return {
-        {"3E Binary", DataCode::Binary, binRead, binOther},
-        {"3E ASCII", DataCode::Ascii, ascRead, ascOther},
+        {"3E Binary", false, DataCode::Binary, binRead, binOther, binWrite3e},
+        {"3E ASCII", false, DataCode::Ascii, ascRead, ascOther,
+         Bytes(ascWrite3eText.begin(), ascWrite3eText.end())},
+        {"1E Binary", true, DataCode::Binary, bin1eRead, bin1eOther, binWrite1e},
+        {"1E ASCII", true, DataCode::Ascii, asc1eRead, asc1eOther,
+         Bytes(ascWrite1eText.begin(), ascWrite1eText.end())},
     };
 }
 
 MockPlc seeded(const Wire& w) {
-    MockPlc plc(FrameConfig::frame3E(w.code));
+    MockPlc plc(configOf(w));
     plc.setWords(Device{DeviceType::D, 100}, {0x1995, 0x1202, 0x1130});
     return plc;
 }
@@ -106,7 +134,7 @@ Bytes cleanResponse(const Wire& w, const Bytes& request) {
     return all[0];
 }
 
-// The documented damage of `mode` on a clean 3E response, written out by hand.
+// The documented damage of `mode` on a clean 3E or 1E response, written out by hand.
 Bytes expectedDamage(Corruption mode, const Wire& w, const Bytes& clean) {
     const bool ascii = w.code == DataCode::Ascii;
     Bytes out = clean;
@@ -115,6 +143,9 @@ Bytes expectedDamage(Corruption mode, const Wire& w, const Bytes& clean) {
         out[0] = ascii ? uint8_t{'E'} : static_cast<uint8_t>(clean[0] ^ 0x01);
         return out;
     case Corruption::WrongRoute: {
+        if (w.is1e) {
+            return out; // a 1E response has no route fields
+        }
         // network, PC and station + 1 (wrapping); the I/O number is not touched.
         const size_t net = ascii ? 4 : 2;
         const size_t pc = ascii ? 6 : 3;
@@ -266,7 +297,7 @@ TEST_CASE("MCK-09 3E: the error codes follow MockOptions, and the defaults are p
     CHECK(defaults.outOfRange1c == 0x06);
 }
 
-TEST_CASE("MCK-11 3E: mute swallows every request until it is turned off") {
+TEST_CASE("MCK-11 3E and 1E: mute swallows every request until it is turned off") {
     for (const Wire& w : wires()) {
         INFO(w.name);
         const Bytes clean = cleanResponse(w, w.read);
@@ -293,15 +324,11 @@ TEST_CASE("MCK-11 3E: mute swallows every request until it is turned off") {
     }
 }
 
-TEST_CASE("MCK-11 3E: a swallowed request is not executed") {
+TEST_CASE("MCK-11 3E and 1E: a swallowed request is not executed") {
     for (const Wire& w : wires()) {
         INFO(w.name);
-        MockPlc plc(FrameConfig::frame3E(w.code));
-        const Bytes write =
-            w.code == DataCode::Ascii
-                ? asciiRequest("14010000" "D*000100" "0001" "1234")
-                : binaryRequest(0x1401, 0x0000,
-                                {0x64, 0x00, 0x00, 0xA8, 0x01, 0x00, 0x34, 0x12});
+        MockPlc plc(configOf(w));
+        const Bytes& write = w.write;
         plc.mute(true);
         feed(plc, write);
         CHECK(drainAll(plc).empty());
@@ -317,7 +344,7 @@ TEST_CASE("MCK-11 3E: a swallowed request is not executed") {
     }
 }
 
-TEST_CASE("MCK-11 3E: muteNext(n) swallows exactly n requests, then answers cleanly") {
+TEST_CASE("MCK-11 3E and 1E: muteNext(n) swallows exactly n requests, then answers cleanly") {
     for (const Wire& w : wires()) {
         INFO(w.name);
         const Bytes clean = cleanResponse(w, w.read);
@@ -338,7 +365,7 @@ TEST_CASE("MCK-11 3E: muteNext(n) swallows exactly n requests, then answers clea
     }
 }
 
-TEST_CASE("MCK-11 3E: each Corruption mode damages exactly n responses as documented") {
+TEST_CASE("MCK-11 3E and 1E: each Corruption mode damages exactly n responses as documented") {
     for (const Wire& w : wires()) {
         for (Corruption mode : kAllModes) {
             INFO(w.name, " mode ", static_cast<int>(mode));
@@ -412,7 +439,7 @@ TEST_CASE("MCK-11 3E ASCII: the documented text of the subheader and route modes
     CHECK(asText(drainAll(plc)[0]) == "D000010003FF0100100000199512021130");
 }
 
-TEST_CASE("MCK-11 3E: error responses can be corrupted too") {
+TEST_CASE("MCK-11 3E and 1E: error responses can be corrupted too") {
     for (const Wire& w : wires()) {
         INFO(w.name);
         MockPlc reference = seeded(w);
@@ -430,7 +457,7 @@ TEST_CASE("MCK-11 3E: error responses can be corrupted too") {
     }
 }
 
-TEST_CASE("MCK-11 3E: corruptNext calls queue in order, n = 0 does nothing, and a swallowed "
+TEST_CASE("MCK-11 3E and 1E: corruptNext calls queue in order, n = 0 does nothing, and a swallowed "
           "request does not use a corruption up") {
     for (const Wire& w : wires()) {
         INFO(w.name);
@@ -459,7 +486,7 @@ TEST_CASE("MCK-11 3E: corruptNext calls queue in order, n = 0 does nothing, and 
     }
 }
 
-TEST_CASE("MCK-11 3E: clearFaults restores clean answers") {
+TEST_CASE("MCK-11 3E and 1E: clearFaults restores clean answers") {
     for (const Wire& w : wires()) {
         INFO(w.name);
         const Bytes clean = cleanResponse(w, w.read);
@@ -480,4 +507,135 @@ TEST_CASE("MCK-11 3E: clearFaults restores clean answers") {
         CHECK(plc.requests().back().answered);
         CHECK(plc.requests().back().answeredWith.ok());
     }
+}
+
+TEST_CASE("MCK-09 1E: 04H and 05H are answered with unsupported1e, and the next request is not "
+          "confused") {
+    // 1E-12a..d: the 04H / 05H requests of the manual (tagged v1.1, so the client skips them).
+    const std::vector<Vector> binVectors = loadFile("1e_binary.vec");
+    const std::vector<Vector> ascVectors = loadFile("1e_ascii.vec");
+    const Bytes test04Binary = byId(binVectors, "1E-12a").bytes;
+    const Bytes test05Binary = byId(binVectors, "1E-12b").bytes;
+    const Bytes test04Ascii = byId(ascVectors, "1E-12c").bytes;
+    const Bytes test05Ascii = byId(ascVectors, "1E-12d").bytes;
+    const Bytes readBinary = byId(binVectors, "V-1E-B-01").bytes;
+    const Bytes readAscii = byId(ascVectors, "V-1E-A-01").bytes;
+
+    SUBCASE("1E Binary") {
+        MockPlc plc(FrameConfig::frame1E(DataCode::Binary));
+        plc.setWords(Device{DeviceType::D, 100}, {0x1995, 0x1202, 0x1130});
+        // Both frames and a good read in one buffer: 04H and 05H end where their n x item layout
+        // says, so the read after them is decoded from its own first byte.
+        Bytes stream = test04Binary;
+        stream.insert(stream.end(), test05Binary.begin(), test05Binary.end());
+        stream.insert(stream.end(), readBinary.begin(), readBinary.end());
+        feed(plc, stream);
+        std::vector<Bytes> got = drainAll(plc);
+        REQUIRE(got.size() == 3);
+        CHECK(got[0] == Bytes{0x84, 0x50});
+        CHECK(got[1] == Bytes{0x85, 0x50});
+        CHECK(got[2] == Bytes{0x81, 0x00, 0x95, 0x19, 0x02, 0x12, 0x30, 0x11});
+        REQUIRE(plc.requests().size() == 3);
+        CHECK(plc.requests()[0].answered);
+        CHECK(plc.requests()[0].answeredWith.plcCode == 0x50);
+        CHECK(plc.requests()[1].answeredWith.plcCode == 0x50);
+        CHECK(plc.requests()[2].answeredWith.ok());
+        CHECK_FALSE(plc.bit(Device{DeviceType::Y, 0x94}));  // nothing of 04H was executed
+        CHECK(plc.word(Device{DeviceType::W, 0x26}) == 0); // nor of 05H
+    }
+    SUBCASE("1E ASCII") {
+        Bytes stream = test04Ascii;
+        stream.insert(stream.end(), test05Ascii.begin(), test05Ascii.end());
+        stream.insert(stream.end(), readAscii.begin(), readAscii.end());
+        // Byte by byte as well: the frame end is found from the item count only.
+        for (size_t chunk : {stream.size(), size_t{1}}) {
+            MockPlc each(FrameConfig::frame1E(DataCode::Ascii));
+            each.setWords(Device{DeviceType::D, 100}, {0x1995, 0x1202, 0x1130});
+            for (size_t pos = 0; pos < stream.size(); pos += chunk) {
+                each.bytesIn(ByteView{stream.data() + pos, std::min(chunk, stream.size() - pos)});
+            }
+            std::vector<Bytes> got = drainAll(each);
+            REQUIRE(got.size() == 3);
+            CHECK(asText(got[0]) == "8450");
+            CHECK(asText(got[1]) == "8550");
+            CHECK(asText(got[2]) == "8100199512021130");
+        }
+    }
+}
+
+TEST_CASE("MCK-09 1E: the error codes follow MockOptions") {
+    MockOptions opt;
+    opt.unsupported1e = 0x51;
+    opt.outOfRange1e = 0x5B;
+    opt.outOfRange1eAbnormal = 0x11;
+    MockPlc plc(FrameConfig::frame1E(DataCode::Binary), opt);
+    plc.setDeviceLimit(DeviceType::D, 10);
+    feed(plc, Bytes{0x04, 0xFF, 0x0A, 0x00, 0x00, 0x00}); // 04H with n = 0: a complete frame
+    feed(plc, byId(loadFile("1e_binary.vec"), "V-1E-B-01").bytes);
+    std::vector<Bytes> got = drainAll(plc);
+    REQUIRE(got.size() == 2);
+    CHECK(got[0] == Bytes{0x84, 0x51});
+    CHECK(got[1] == Bytes{0x81, 0x5B, 0x11});
+
+    // An end code other than 5BH is sent without an abnormal code, whatever the option says.
+    MockOptions other;
+    other.outOfRange1e = 0x60;
+    MockPlc plc2(FrameConfig::frame1E(DataCode::Ascii), other);
+    plc2.setDeviceLimit(DeviceType::D, 10);
+    feed(plc2, byId(loadFile("1e_ascii.vec"), "V-1E-A-01").bytes);
+    got = drainAll(plc2);
+    REQUIRE(got.size() == 1);
+    CHECK(asText(got[0]) == "8160");
+}
+
+TEST_CASE("MCK-11 1E Binary: the documented bytes of each mode, spelled out") {
+    // Clean: 81 00 | 95 19 02 12 30 11
+    MockPlc plc(FrameConfig::frame1E(DataCode::Binary));
+    plc.setWords(Device{DeviceType::D, 100}, {0x1995, 0x1202, 0x1130});
+    const Bytes request = byId(loadFile("1e_binary.vec"), "V-1E-B-01").bytes;
+
+    plc.corruptNext(Corruption::WrongSubheader);
+    feed(plc, request);
+    CHECK(drainAll(plc)[0] == Bytes{0x80, 0x00, 0x95, 0x19, 0x02, 0x12, 0x30, 0x11});
+    plc.corruptNext(Corruption::WrongRoute); // no route fields in a 1E response: unchanged
+    feed(plc, request);
+    CHECK(drainAll(plc)[0] == Bytes{0x81, 0x00, 0x95, 0x19, 0x02, 0x12, 0x30, 0x11});
+    plc.corruptNext(Corruption::Truncate);
+    feed(plc, request);
+    CHECK(drainAll(plc)[0] == Bytes{0x81, 0x00, 0x95, 0x19, 0x02, 0x12, 0x30});
+    plc.corruptNext(Corruption::JunkPrefix);
+    feed(plc, request);
+    CHECK(drainAll(plc)[0] ==
+          Bytes{0x55, 0x55, 0x55, 0x81, 0x00, 0x95, 0x19, 0x02, 0x12, 0x30, 0x11});
+    plc.corruptNext(Corruption::ExtraByte);
+    feed(plc, request);
+    CHECK(drainAll(plc)[0] == Bytes{0x81, 0x00, 0x95, 0x19, 0x02, 0x12, 0x30, 0x11, 0x00});
+    plc.corruptNext(Corruption::WrongSumCheck);
+    plc.corruptNext(Corruption::WrongBlockNo);
+    feed(plc, request);
+    feed(plc, request);
+    std::vector<Bytes> got = drainAll(plc);
+    REQUIRE(got.size() == 2);
+    CHECK(got[0] == Bytes{0x81, 0x00, 0x95, 0x19, 0x02, 0x12, 0x30, 0x11});
+    CHECK(got[1] == got[0]);
+}
+
+TEST_CASE("MCK-11 1E ASCII: the documented text of the subheader and route modes, and the error "
+          "responses") {
+    MockPlc plc(FrameConfig::frame1E(DataCode::Ascii));
+    plc.setWords(Device{DeviceType::D, 100}, {0x1995, 0x1202, 0x1130});
+    const Bytes request = byId(loadFile("1e_ascii.vec"), "V-1E-A-01").bytes;
+
+    plc.corruptNext(Corruption::WrongSubheader);
+    feed(plc, request);
+    CHECK(asText(drainAll(plc)[0]) == "E100199512021130");
+    plc.corruptNext(Corruption::WrongRoute);
+    feed(plc, request);
+    CHECK(asText(drainAll(plc)[0]) == "8100199512021130");
+
+    // An error response is damaged like any other: "81" "5B" "10" -> "E1" "5B" "10".
+    plc.failRange(DeviceType::D, 100, 100, 0x5B, 0x10);
+    plc.corruptNext(Corruption::WrongSubheader);
+    feed(plc, request);
+    CHECK(asText(drainAll(plc)[0]) == "E15B10");
 }

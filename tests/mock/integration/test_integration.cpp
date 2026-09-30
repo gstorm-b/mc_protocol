@@ -1,11 +1,15 @@
 // INT-xx of SPEC-mock-plc.md "Integration: Session <-> MockPlc": the engine against the mock, in
 // one process, over seeded fragmenting pipes and a fake clock. Every scenario runs once per cell of
-// combos() (v1 so far: 3E Binary and 3E ASCII); a doctest subcase per cell names the combination
-// when something fails.
+// combos() (v1 so far: 3E and 1E, each Binary and ASCII); a doctest subcase per cell names the
+// combination when something fails.
 //
 // Skipped on purpose: INT-04, INT-05 and INT-06 (random access, tagged v1.1) and INT-09 (4C
 // format 5, tagged v2) -- the spec keeps them out of v1, so there is no test body for them. The
 // serial halves of INT-11 and INT-12 (EOT, retries, reopen=false) join with the 3C/1C cells.
+//
+// Numbers that depend on the frame (INT-07 request counts, the PLC error codes of INT-08 and INT-16)
+// are literals of the reference spec or of MockOptions, chosen per family below, never read back
+// from the code under test.
 #include "doctest/doctest.h"
 
 #include "rig.h"
@@ -37,6 +41,8 @@ namespace {
     }
 
 Device dn(DeviceType type, uint32_t number) { return Device{type, number}; }
+
+bool is1e(const Combo& combo) { return combo.frame.frame == FrameType::F1E; }
 
 // ---- INT-01 -----------------------------------------------------------------------------------
 
@@ -136,10 +142,24 @@ void int07(const Combo& combo) {
     const Request read = Request::readWords(dev("D0"), 2000);
     const Expected<size_t> chunks = chunkCount(read, rig.frame());
     REQUIRE(chunks.hasValue());
-    // Spec §4.4 (0401 word, word device, iQ-R/Q/L): 960 points for Binary and ASCII alike (only
-    // the 0401 bit rows differ by code), so 2000 words are 960 + 960 + 80 in both cells. Pinned
-    // here by the reference spec, not derived from chunkCount().
-    CHECK(chunks.value() == 3);
+    // Spec §4.4, pinned here by the reference spec and not derived from chunkCount(). 3E (0401
+    // word, word device, iQ-R/Q/L): 960 points for Binary and ASCII alike, so 2000 words are
+    // 960 + 960 + 80. 1E (01H, word device): 256 points for both codes, so 2000 words are
+    // 7 x 256 + 208 = 8 requests.
+    std::vector<uint32_t> specHeads;
+    std::vector<uint16_t> specCounts;
+    if (is1e(combo)) {
+        for (uint32_t i = 0; i < 7; ++i) {
+            specHeads.push_back(i * 256);
+            specCounts.push_back(256);
+        }
+        specHeads.push_back(1792);
+        specCounts.push_back(208);
+    } else {
+        specHeads = {0, 960, 1920};
+        specCounts = {960, 960, 80};
+    }
+    CHECK(chunks.value() == specHeads.size());
     std::vector<Chunk> expected(chunks.value());
     REQUIRE(chunk(read, rig.frame(), expected.data(), expected.size()).hasValue());
 
@@ -152,9 +172,7 @@ void int07(const Combo& combo) {
 
     const std::vector<MockRequestRecord>& log = rig.mock().requests();
     REQUIRE(log.size() == expected.size());
-    REQUIRE(log.size() == 3);
-    const uint32_t specHeads[3] = {0, 960, 1920};
-    const uint16_t specCounts[3] = {960, 960, 80};
+    REQUIRE(log.size() == specHeads.size());
     for (size_t i = 0; i < log.size(); ++i) {
         CHECK(log[i].head.number == specHeads[i]);
         CHECK(log[i].count == specCounts[i]);
@@ -170,7 +188,8 @@ void int07(const Combo& combo) {
 // ---- INT-08 -----------------------------------------------------------------------------------
 
 void int08(const Combo& combo) {
-    constexpr uint16_t kCode = 0xC051;
+    // 3E: end code C051H (V-3E-B-10). 1E: 50H (V-1E-B-12), a u8 end code with no abnormal code.
+    const uint16_t kCode = is1e(combo) ? 0x50 : 0xC051;
     Rig rig(combo);
     rig.linkUp();
     rig.mock().failRange(DeviceType::D, 100, 100, kCode);
@@ -186,6 +205,7 @@ void int08(const Combo& combo) {
     REQUIRE(rig.mock().requests().size() == 1);
     CHECK(rig.mock().requests()[0].answered);
     CHECK(rig.mock().requests()[0].answeredWith.plcCode == kCode);
+    CHECK(done[0].error.abnormalCode == 0);
 
     // A PLC error is not a link fault: the link stays usable, outside the range too.
     CHECK_FALSE(rig.session().isFaulted());
@@ -194,6 +214,19 @@ void int08(const Combo& combo) {
     const std::vector<Event> nextDone = rig.requestDones(next.value());
     REQUIRE(nextDone.size() == 1);
     CHECK(nextDone[0].error.ok());
+
+    // 1E only: end code 5BH is followed by an abnormal code (V-1E-B-11), and both reach the caller.
+    if (is1e(combo)) {
+        rig.mock().failRange(DeviceType::D, 200, 200, 0x5B, 0x10);
+        Expected<RequestId> abnormal = rig.submit(Request::readWords(dev("D200"), 1));
+        REQUIRE(abnormal.hasValue());
+        const std::vector<Event> abnormalDone = rig.requestDones(abnormal.value());
+        REQUIRE(abnormalDone.size() == 1);
+        CHECK(abnormalDone[0].error.category == ErrorCategory::Plc);
+        CHECK(abnormalDone[0].error.plcCode == 0x5B);
+        CHECK(abnormalDone[0].error.abnormalCode == 0x10);
+        CHECK_FALSE(rig.session().isFaulted());
+    }
 }
 
 // ---- INT-10 and INT-15 ------------------------------------------------------------------------
@@ -591,7 +624,8 @@ void int15(const Combo& combo) {
 // ---- INT-16 -----------------------------------------------------------------------------------
 
 void int16Case(const Combo& combo, bool bitsAsWords) {
-    constexpr uint16_t kOutOfRange = 0xC051;
+    // 3E: C051H (V-3E-B-10). 1E: end code 5BH with abnormal code 10H (V-1E-B-11).
+    const uint16_t kOutOfRange = is1e(combo) ? 0x5B : 0xC051;
     SessionConfig cfg;
     cfg.plan.bitsAsWords = bitsAsWords;
     Rig rig(combo, cfg);
@@ -627,6 +661,7 @@ void int16Case(const Combo& combo, bool bitsAsWords) {
             CHECK(c.state == ChunkState::Failed);
             CHECK(c.lastError.category == ErrorCategory::Plc);
             CHECK(c.lastError.plcCode == kOutOfRange);
+            CHECK(c.lastError.abnormalCode == (is1e(combo) ? 0x10 : 0));
             CHECK(events[1].cycle.failedChunks == 1);
         } else {
             CHECK(c.state == ChunkState::Ok);

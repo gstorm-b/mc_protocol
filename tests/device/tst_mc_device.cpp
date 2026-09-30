@@ -65,6 +65,43 @@ class TstMcDevice : public QObject {
         }
     };
 
+    // QDV-13: one polling round and one write of each kind over loopback TCP on `frame`. The
+    // expected values come from the seeded image and the requests, not from the frame.
+    void smokeOverTcp(const mc::FrameConfig& frame) {
+        Rig rig(frame);
+        QVERIFY(rig.ok());
+        rig.device->connectToPlc();
+        QTRY_VERIFY_WITH_TIMEOUT(rig.recorder->hasCycle(1), kWaitMs);
+
+        // Round 1: the M snapshot (bits, one byte per point, M3 set) then the D snapshot.
+        const QVector<Event> snapshots = rig.recorder->of(Event::Kind::Snapshot);
+        QVERIFY(snapshots.size() >= 2);
+        const mc::SnapshotSegment& bits = snapshots.at(0).snapshot.segments.at(0);
+        QCOMPARE(bits.count, 16u);
+        QCOMPARE(int(bits.values.at(3)), 1);
+        QCOMPARE(int(bits.values.at(2)), 0);
+        const Event snapshotD = snapshots.at(1);
+        QCOMPARE(snapshotD.snapshot.segments.at(0).values, wordsLe({10, 20, 30, 40}));
+        QCOMPARE(int(snapshotD.snapshot.chunks.at(0).state), int(mc::ChunkState::Ok));
+
+        // A word write and an odd-count bit write (a padded last nibble on 1E Binary), each
+        // finishing once without error.
+        const mc::Expected<mc::RequestId> w = rig.device->writeWords(u"D200", {0x1234});
+        QVERIFY(w);
+        QTRY_VERIFY_WITH_TIMEOUT(rig.recorder->count(Event::Kind::Finished) == 1, kWaitMs);
+        QVERIFY(rig.recorder->of(Event::Kind::Finished).at(0).error.ok());
+        QCOMPARE(rig.server.plc()->word(dev("D200")), uint16_t{0x1234});
+
+        const mc::Expected<mc::RequestId> wb = rig.device->writeBits(u"M100", {true, false, true});
+        QVERIFY(wb);
+        QTRY_VERIFY_WITH_TIMEOUT(rig.recorder->count(Event::Kind::Finished) == 2, kWaitMs);
+        QVERIFY(rig.recorder->of(Event::Kind::Finished).at(1).error.ok());
+        QVERIFY(rig.server.plc()->bit(dev("M100")));
+        QVERIFY(!rig.server.plc()->bit(dev("M101")));
+        QVERIFY(rig.server.plc()->bit(dev("M102")));
+        QVERIFY(!rig.server.plc()->bit(dev("M103")));
+    }
+
   private slots:
     void QDV_01_connectThenRoundOneSnapshotsInTypeOrderThenCycle() {
         Rig rig;
@@ -518,21 +555,11 @@ class TstMcDevice : public QObject {
                                     "fault(Timeout,reopen=1)", "link(Faulted,Fault)"}));
     }
 
-    void QDV_13_threeEAsciiSmoke() {
-        Rig rig(mc::FrameConfig::frame3E(mc::DataCode::Ascii));
-        QVERIFY(rig.ok());
-        rig.device->connectToPlc();
-        QTRY_VERIFY_WITH_TIMEOUT(rig.recorder->hasCycle(1), kWaitMs);
-        const Event snapshotD = rig.recorder->of(Event::Kind::Snapshot).at(1);
-        QCOMPARE(snapshotD.snapshot.segments.at(0).values, wordsLe({10, 20, 30, 40}));
-        QCOMPARE(int(snapshotD.snapshot.chunks.at(0).state), int(mc::ChunkState::Ok));
+    void QDV_13_threeEAsciiSmoke() { smokeOverTcp(mc::FrameConfig::frame3E(mc::DataCode::Ascii)); }
 
-        const mc::Expected<mc::RequestId> w = rig.device->writeWords(u"D200", {0x1234});
-        QVERIFY(w);
-        QTRY_VERIFY_WITH_TIMEOUT(rig.recorder->count(Event::Kind::Finished) == 1, kWaitMs);
-        QVERIFY(rig.recorder->of(Event::Kind::Finished).at(0).error.ok());
-        QCOMPARE(rig.server.plc()->word(dev("D200")), uint16_t{0x1234});
-    }
+    void QDV_13_oneEBinarySmoke() { smokeOverTcp(mc::FrameConfig::frame1E(mc::DataCode::Binary)); }
+
+    void QDV_13_oneEAsciiSmoke() { smokeOverTcp(mc::FrameConfig::frame1E(mc::DataCode::Ascii)); }
 
     void QDV_16_invalidConfigPublishesOpenFailedNamingTheFieldAndOpensNoSocket() {
         MockPlcServer server;

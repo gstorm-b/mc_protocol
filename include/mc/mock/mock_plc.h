@@ -47,7 +47,9 @@ struct MockOptions {
  * On an Ethernet frame the modes act as follows. WrongRoute adds 1 to the network, PC and station
  * fields of the response header (wrapping at FFH), not to the route echoed in error information.
  * WrongSumCheck and WrongBlockNo are serial-only: on an Ethernet frame they leave the response
- * unchanged. The ASCII code changes the same fields, in their text form.
+ * unchanged. The ASCII code changes the same fields, in their text form. A 1E response has no
+ * network, PC or station field, so WrongRoute leaves it unchanged; the other modes act on a 1E
+ * response as they do on a 3E one.
  *
  * @see MockPlc::corruptNext
  */
@@ -87,9 +89,11 @@ struct MockRequestRecord {
  * throws nothing; the same inputs always produce the same bytes. It is test and demo
  * infrastructure and may allocate freely.
  *
- * In this version only FrameType::F3E (Binary and ASCII) is answered. The constructor accepts
- * the other frame families, but bytesIn() then recognises no request: nothing is queued for
- * nextResponse() and nothing is added to requests().
+ * In this version FrameType::F3E and FrameType::F1E (Binary and ASCII each) are answered. A 1E
+ * request is framed by its command's fixed layout plus the point count (reference spec §4.2,
+ * §5.3); commands 00H to 03H are executed, 04H and 05H are answered with
+ * MockOptions::unsupported1e. The constructor accepts the other frame families, but bytesIn() then
+ * recognises no request: nothing is queued for nextResponse() and nothing is added to requests().
  *
  * Bit devices hold single bits. Word access to a bit device sees bit i of word k at
  * head + 16k + i (spec §2.4). Unwritten memory reads as 0. Device numbers are not aliased
@@ -220,8 +224,8 @@ public:
      * @brief Answers every request touching [@p first, @p last] of @p t with a PLC error.
      *
      * The answer is an end code plus error information on 3E, an end code (plus the abnormal
-     * code when it is 5BH) on 1E, and NAK / QNAK / NN with the code on 3C and 1C. A faulted
-     * request changes no memory.
+     * code when it is 5BH) on 1E, and NAK / QNAK / NN with the code on 3C and 1C. The 1E end code
+     * is one byte: a larger @p code is sent as its low byte. A faulted request changes no memory.
      *
      * @param[in] t Device type the fault applies to.
      * @param[in] first First device number of the faulted range.

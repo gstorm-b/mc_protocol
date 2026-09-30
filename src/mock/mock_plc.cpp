@@ -9,6 +9,8 @@
 namespace mc {
 
 using detail::mock::DecodeResult;
+using detail::mock::DecodeResult1e;
+using detail::mock::E1Request;
 using detail::mock::Fault;
 using detail::mock::FrameStatus;
 using detail::mock::Outcome;
@@ -24,6 +26,7 @@ struct MockPlc::Impl {
 
     void receive(ByteView bytes);
     void handle3e(const QnaRequest& request);
+    void handle1e(const E1Request& request);
     bool swallowsRequest();
     void queueResponse(ByteBuf response);
     void logJunk();
@@ -44,27 +47,42 @@ struct MockPlc::Impl {
 };
 
 void MockPlc::Impl::receive(ByteView bytes) {
-    // Only the 3E server direction exists: for any other frame family no request is recognised,
-    // so nothing is logged and nothing is answered.
-    if (cfg.frame != FrameType::F3E) {
+    // Only the Ethernet server directions (3E, 1E) exist: for any other frame family no request is
+    // recognised, so nothing is logged and nothing is answered.
+    if (cfg.frame != FrameType::F3E && cfg.frame != FrameType::F1E) {
         return;
     }
 
     rx.insert(rx.end(), bytes.data, bytes.data + bytes.size);
     size_t pos = 0;
     while (pos < rx.size()) {
-        DecodeResult r = detail::mock::decode3eRequest(cfg.code, ByteView{rx.data() + pos,
-                                                                          rx.size() - pos});
-        if (r.status == FrameStatus::NeedMore) {
+        const ByteView pending{rx.data() + pos, rx.size() - pos};
+        FrameStatus status = FrameStatus::NeedMore;
+        size_t consumed = 0;
+        if (cfg.frame == FrameType::F3E) {
+            DecodeResult r = detail::mock::decode3eRequest(cfg.code, pending);
+            status = r.status;
+            consumed = r.consumed;
+            if (status == FrameStatus::Complete) {
+                inJunk = false;
+                handle3e(r.request);
+            }
+        } else {
+            DecodeResult1e r = detail::mock::decode1eRequest(cfg.code, pending);
+            status = r.status;
+            consumed = r.consumed;
+            if (status == FrameStatus::Complete) {
+                inJunk = false;
+                handle1e(r.request);
+            }
+        }
+        if (status == FrameStatus::NeedMore) {
             break;
         }
-        pos += r.consumed;
-        if (r.status == FrameStatus::Junk) {
+        pos += consumed;
+        if (status == FrameStatus::Junk) {
             logJunk();
-            continue;
         }
-        inJunk = false;
-        handle3e(r.request);
     }
     rx.erase(rx.begin(), rx.begin() + static_cast<std::ptrdiff_t>(pos));
 }
@@ -95,7 +113,11 @@ bool MockPlc::Impl::swallowsRequest() {
 void MockPlc::Impl::queueResponse(ByteBuf response) {
     if (!corruptions.empty()) {
         PendingCorruption& next = corruptions.front();
-        detail::mock::corrupt3eResponse(next.mode, cfg.code, response);
+        if (cfg.frame == FrameType::F1E) {
+            detail::mock::corrupt1eResponse(next.mode, cfg.code, response);
+        } else {
+            detail::mock::corrupt3eResponse(next.mode, cfg.code, response);
+        }
         if (--next.remaining == 0) {
             corruptions.pop_front();
         }
@@ -134,6 +156,35 @@ void MockPlc::Impl::handle3e(const QnaRequest& request) {
     log.push_back(rec);
 
     queueResponse(detail::mock::build3eResponse(cfg.code, request, outcome));
+}
+
+void MockPlc::Impl::handle1e(const E1Request& request) {
+    MockRequestRecord rec;
+    rec.frame = cfg.frame;
+    rec.op = request.op;
+    rec.head = request.head;
+    rec.count = request.count;
+    if (swallowsRequest()) {
+        log.push_back(rec);
+        return;
+    }
+
+    Outcome outcome = detail::mock::executeE1(request, memory, faults, opt);
+    rec.answered = true;
+    if (!outcome.ok) {
+        Error e;
+        e.category = ErrorCategory::Plc;
+        e.code = ErrorCode::PlcError;
+        e.plcCode = outcome.plcCode;
+        if (outcome.plcCode == detail::mock::kE1EndCodeWithAbnormal) {
+            e.abnormalCode = outcome.abnormal; // only this end code carries one on the wire
+        }
+        e.message = "mock PLC error response";
+        rec.answeredWith = e;
+    }
+    log.push_back(rec);
+
+    queueResponse(detail::mock::build1eResponse(cfg.code, request, outcome));
 }
 
 MockPlc::MockPlc(const FrameConfig& cfg, const MockOptions& opt)

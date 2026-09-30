@@ -1,10 +1,13 @@
-// CMD-01..14, CMDD-01..08/17/18 (docs/mc_reference/mc-protocol-frame-spec.md sections 9.4/9.5),
-// driven by tests/vectors/cmd.vec and cmdd.vec, plus two standalone TEST_CASEs for behaviour the
-// reference's own CMD/CMDD examples never exercise (PackedLsbFirst, the iQ-R series) -- see their
-// own comments for why they still belong here.
+// CMD-01..21, CMDD-01..18 (docs/mc_reference/mc-protocol-frame-spec.md sections 9.4/9.5; the
+// QnA rows since T-016, the 1E rows CMD-15..21 / CMDD-09..13 since T-041), driven by
+// tests/vectors/cmd.vec and cmdd.vec (`frame: qna` / `frame: 1e` picks the command layer), plus
+// standalone TEST_CASEs for behaviour the reference's own CMD/CMDD examples never exercise
+// (PackedLsbFirst, the iQ-R series, the 1E test commands 04H/05H, error paths) -- see their own
+// comments for why they still belong here.
 #include "doctest/doctest.h"
 
 #include "common/vectors.h"
+#include "core/protocol/command_a1e.h"
 #include "core/protocol/command_qna.h"
 #include "core/protocol/field_codec.h"
 
@@ -27,6 +30,17 @@ using mc::ErrorCode;
 using mc::MutableByteView;
 using mc::PlcSeries;
 using mc::Request;
+using mc::detail::A1eTestBit;
+using mc::detail::A1eTestWord;
+using mc::detail::a1eCommandCode;
+using mc::detail::a1eRequestData;
+using mc::detail::a1eRequestDataSize;
+using mc::detail::a1eResponseData;
+using mc::detail::a1eResponseDataSize;
+using mc::detail::a1eTestBitsRequestData;
+using mc::detail::a1eTestBitsRequestDataSize;
+using mc::detail::a1eTestWordsRequestData;
+using mc::detail::a1eTestWordsRequestDataSize;
 using mc::detail::AsciiCodec;
 using mc::detail::BinaryCodec;
 using mc::detail::qnaRequestData;
@@ -107,19 +121,49 @@ Request buildRequest(const Vector& v, std::vector<uint8_t>& writeStorage) {
     return Request::readWords(head, count);
 }
 
-template <class Codec> void checkCmdRequest(const Vector& v) {
+// The command layer under test: the QnA one (Q/L series, as every CMD-01..10 vector) or the 1E
+// one. Each wraps the three functions the checks below need behind one shape.
+struct QnaCommands {
+    template <class Codec> static size_t requestDataSize(const Request& r) {
+        return qnaRequestDataSize<Codec>(r, PlcSeries::QL);
+    }
+    template <class Codec> static mc::Expected<size_t> requestData(const Request& r,
+                                                                    MutableByteView out) {
+        return qnaRequestData<Codec>(r, PlcSeries::QL, out);
+    }
+    template <class Codec> static mc::Expected<size_t> responseData(const Request& r, ByteView in,
+                                                                     MutableByteView out) {
+        return qnaResponseData<Codec>(r, in, out);
+    }
+};
+
+struct A1eCommands {
+    template <class Codec> static size_t requestDataSize(const Request& r) {
+        return a1eRequestDataSize<Codec>(r);
+    }
+    template <class Codec> static mc::Expected<size_t> requestData(const Request& r,
+                                                                    MutableByteView out) {
+        return a1eRequestData<Codec>(r, out);
+    }
+    template <class Codec> static mc::Expected<size_t> responseData(const Request& r, ByteView in,
+                                                                     MutableByteView out) {
+        return a1eResponseData<Codec>(r, in, out);
+    }
+};
+
+template <class Cmds, class Codec> void checkCmdRequest(const Vector& v) {
     std::vector<uint8_t> writeStorage;
     Request r = buildRequest(v, writeStorage);
 
-    size_t needed = qnaRequestDataSize<Codec>(r, PlcSeries::QL);
+    size_t needed = Cmds::template requestDataSize<Codec>(r);
     std::vector<uint8_t> out(needed, 0xCC);
-    auto result = qnaRequestData<Codec>(r, PlcSeries::QL, MutableByteView{out.data(), out.size()});
+    auto result = Cmds::template requestData<Codec>(r, MutableByteView{out.data(), out.size()});
     REQUIRE(result.hasValue());
     CHECK(result.value() == needed);
     CHECK(out == v.bytes);
 }
 
-template <class Codec> void checkCmddResponse(const Vector& v) {
+template <class Cmds, class Codec> void checkCmddResponse(const Vector& v) {
     std::vector<uint8_t> writeStorage; // unused (reads only), buildRequest() still wants it
     Request r = buildRequest(v, writeStorage);
 
@@ -129,8 +173,9 @@ template <class Codec> void checkCmddResponse(const Vector& v) {
     // none of the reference's CMDD examples set PackedLsbFirst -- see QNA-BITS-PACKED below).
     size_t payloadSize = r.isBitOp() ? r.count : static_cast<size_t>(r.count) * 2;
     std::vector<uint8_t> payloadOut(payloadSize, 0xFF);
-    auto result = qnaResponseData<Codec>(r, ByteView{v.bytes.data(), v.bytes.size()},
-                                          MutableByteView{payloadOut.data(), payloadOut.size()});
+    auto result = Cmds::template responseData<Codec>(
+        r, ByteView{v.bytes.data(), v.bytes.size()},
+        MutableByteView{payloadOut.data(), payloadOut.size()});
     REQUIRE(result.hasValue());
     CHECK(result.value() == payloadSize);
 
@@ -150,13 +195,14 @@ template <class Codec> void checkCmddResponse(const Vector& v) {
     }
 }
 
-template <class Codec> void checkCmddError(const Vector& v) {
+template <class Cmds, class Codec> void checkCmddError(const Vector& v) {
     std::vector<uint8_t> writeStorage;
     Request r = buildRequest(v, writeStorage);
 
     std::vector<uint8_t> payloadOut(64, 0); // generous scratch; every error path returns first.
-    auto result = qnaResponseData<Codec>(r, ByteView{v.bytes.data(), v.bytes.size()},
-                                          MutableByteView{payloadOut.data(), payloadOut.size()});
+    auto result = Cmds::template responseData<Codec>(
+        r, ByteView{v.bytes.data(), v.bytes.size()},
+        MutableByteView{payloadOut.data(), payloadOut.size()});
     REQUIRE_FALSE(result.hasValue());
     CHECK(result.error().category == ErrorCategory::Protocol);
 
@@ -170,6 +216,44 @@ template <class Codec> void checkCmddError(const Vector& v) {
     }
 }
 
+// Which command layer a vector belongs to; an unknown `frame:` fails instead of being skipped, so
+// a mistyped vector cannot silently drop out of every runner.
+bool isFrame(const Vector& v, const char* frame) {
+    std::string f = v.field("frame");
+    if (f != "qna" && f != "1e") {
+        FAIL("cmd.vec/cmdd.vec: vector ", v.id, " has unrecognized frame '", f, "'");
+    }
+    return f == frame;
+}
+
+template <class Cmds> void runCmdRequestVector(const Vector& v) {
+    if (v.field("code") == "Ascii") {
+        checkCmdRequest<Cmds, AsciiCodec>(v);
+    } else {
+        checkCmdRequest<Cmds, BinaryCodec>(v);
+    }
+}
+
+template <class Cmds> void runCmddVector(const Vector& v) {
+    std::string kind = v.field("kind");
+    bool ascii = v.field("code") == "Ascii";
+    if (kind == "response") {
+        if (ascii) {
+            checkCmddResponse<Cmds, AsciiCodec>(v);
+        } else {
+            checkCmddResponse<Cmds, BinaryCodec>(v);
+        }
+    } else if (kind == "response-error") {
+        if (ascii) {
+            checkCmddError<Cmds, AsciiCodec>(v);
+        } else {
+            checkCmddError<Cmds, BinaryCodec>(v);
+        }
+    } else {
+        FAIL("cmdd.vec: vector ", v.id, " has unknown kind '", kind, "'");
+    }
+}
+
 } // namespace
 
 TEST_CASE("CMD-01..10 (0401/1401 request data): driven by cmd.vec; CMD-11..14 (v1.1) skipped") {
@@ -178,15 +262,14 @@ TEST_CASE("CMD-01..10 (0401/1401 request data): driven by cmd.vec; CMD-11..14 (v
 
     for (const auto& v : vectors) {
         INFO("vector ", v.id, " (", v.file, ":", v.line, ")");
+        if (!isFrame(v, "qna")) {
+            continue; // 1E rows: the CMD-15..21 TEST_CASE below.
+        }
         if (v.hasTag("v1.1")) {
             continue; // 0403/1402: transcribed for the vector file only (VEC-02 still covers
                        // them); not reachable through Op in v1, so nothing to encode here.
         }
-        if (v.field("code") == "Ascii") {
-            checkCmdRequest<AsciiCodec>(v);
-        } else {
-            checkCmdRequest<BinaryCodec>(v);
-        }
+        runCmdRequestVector<QnaCommands>(v);
     }
 }
 
@@ -197,27 +280,54 @@ TEST_CASE("CMDD-01..06, 17, 18 (0401/1401 response data): driven by cmdd.vec; "
 
     for (const auto& v : vectors) {
         INFO("vector ", v.id, " (", v.file, ":", v.line, ")");
+        if (!isFrame(v, "qna")) {
+            continue; // 1E rows: the CMDD-09..13 TEST_CASE below.
+        }
         if (v.hasTag("v1.1")) {
             continue;
         }
-        std::string kind = v.field("kind");
-        bool ascii = v.field("code") == "Ascii";
-        if (kind == "response") {
-            if (ascii) {
-                checkCmddResponse<AsciiCodec>(v);
-            } else {
-                checkCmddResponse<BinaryCodec>(v);
-            }
-        } else if (kind == "response-error") {
-            if (ascii) {
-                checkCmddError<AsciiCodec>(v);
-            } else {
-                checkCmddError<BinaryCodec>(v);
-            }
-        } else {
-            FAIL("cmdd.vec: vector ", v.id, " has unknown kind '", kind, "'");
-        }
+        runCmddVector<QnaCommands>(v);
     }
+}
+
+TEST_CASE("CMD-15..21 (1E 00H-03H request data): driven by cmd.vec; CMD-22..24, 37 (v1.1) "
+          "skipped") {
+    std::vector<Vector> vectors = loadVectors(vectorsRoot() / "cmd.vec");
+    REQUIRE_FALSE(vectors.empty());
+
+    size_t checked = 0;
+    for (const auto& v : vectors) {
+        INFO("vector ", v.id, " (", v.file, ":", v.line, ")");
+        if (!isFrame(v, "1e")) {
+            continue;
+        }
+        if (v.hasTag("v1.1")) {
+            continue; // 04H/05H: not reachable through Op in v1; their encoders are proved by
+                       // "CMD-22..24, 37" below.
+        }
+        runCmdRequestVector<A1eCommands>(v);
+        ++checked;
+    }
+    CHECK(checked == 7); // CMD-15..21: a vector that silently left the file would fail here.
+}
+
+TEST_CASE("CMDD-09..13 (1E 00H/01H response data): driven by cmdd.vec, plus the 1E length and "
+          "nibble rows") {
+    std::vector<Vector> vectors = loadVectors(vectorsRoot() / "cmdd.vec");
+    REQUIRE_FALSE(vectors.empty());
+
+    size_t checked = 0;
+    for (const auto& v : vectors) {
+        INFO("vector ", v.id, " (", v.file, ":", v.line, ")");
+        if (!isFrame(v, "1e")) {
+            continue;
+        }
+        runCmddVector<A1eCommands>(v);
+        ++checked;
+    }
+    // CMDD-09..13 (5), CMDD-13a (wrong length), CMDD-10a (Binary odd count, zero last nibble),
+    // CMDD-17e / CMDD-18e (the 1E twins of CMDD-17 / CMDD-18).
+    CHECK(checked == 9);
 }
 
 TEST_CASE("QNA-BITS-PACKED: ReadBits/WriteBits in BitLayout::PackedLsbFirst") {
@@ -343,4 +453,177 @@ TEST_CASE("QNA-IQR: subcommand and device code use the iQ-R column when series i
     std::vector<uint8_t> expected = {0x01, 0x04, 0x02, 0x00, 0x64, 0x00,
                                       0x00, 0x00, 0xA8, 0x00, 0x03, 0x00};
     CHECK(out == expected);
+}
+
+TEST_CASE("A1E-CODE: 1E command code per operation is the frame subheader (spec 4.2)") {
+    Device d{DeviceType::M, 100};
+    uint8_t one[1] = {1};
+    CHECK(a1eCommandCode(Request::readBits(d, 1)) == 0x00);
+    CHECK(a1eCommandCode(Request::readWords(d, 1)) == 0x01);
+    CHECK(a1eCommandCode(Request::writeBits(d, ByteView{one, 1})) == 0x02);
+    uint8_t word[2] = {0, 0};
+    CHECK(a1eCommandCode(Request::writeWords(d, ByteView{word, 2})) == 0x03);
+}
+
+TEST_CASE("CMD-22..24, 37 (1E 04H/05H test commands, v1.1): encoders match the tagged vectors") {
+    // The vector-driven CMD-15..21 case skips these rows because no Op reaches 04H/05H in v1; the
+    // encoders still exist (module spec "Commands"), so they are proved here directly against the
+    // transcribed bytes, which are looked up by id, not retyped.
+    std::vector<Vector> vectors = loadVectors(vectorsRoot() / "cmd.vec");
+    auto bytesOf = [&](const char* id) -> const std::vector<uint8_t>& {
+        for (const auto& v : vectors) {
+            if (v.id == id) {
+                REQUIRE(v.hasTag("v1.1"));
+                return v.bytes;
+            }
+        }
+        FAIL("no vector with id ", id);
+        static std::vector<uint8_t> none;
+        return none;
+    };
+
+    // CMD-22 / CMD-23: Y94 ON, M60 OFF, B26 ON.
+    const A1eTestBit bits[] = {{Device{DeviceType::Y, 0x94}, true},
+                                {Device{DeviceType::M, 60}, false},
+                                {Device{DeviceType::B, 0x26}, true}};
+    // CMD-24 / CMD-37: Y80 = 7B29H, W26 = 1234H, CN18 = 0050H.
+    const A1eTestWord words[] = {{Device{DeviceType::Y, 0x80}, 0x7B29},
+                                  {Device{DeviceType::W, 0x26}, 0x1234},
+                                  {Device{DeviceType::CN, 18}, 0x0050}};
+
+    auto checkBits = [&](const char* id, auto encode, auto size) {
+        const std::vector<uint8_t>& expected = bytesOf(id);
+        CHECK(size(3) == expected.size());
+        std::vector<uint8_t> out(expected.size(), 0xCC);
+        auto result = encode(bits, 3, MutableByteView{out.data(), out.size()});
+        REQUIRE(result.hasValue());
+        CHECK(result.value() == expected.size());
+        CHECK(out == expected);
+    };
+    auto checkWords = [&](const char* id, auto encode, auto size) {
+        const std::vector<uint8_t>& expected = bytesOf(id);
+        CHECK(size(3) == expected.size());
+        std::vector<uint8_t> out(expected.size(), 0xCC);
+        auto result = encode(words, 3, MutableByteView{out.data(), out.size()});
+        REQUIRE(result.hasValue());
+        CHECK(result.value() == expected.size());
+        CHECK(out == expected);
+    };
+
+    checkBits("CMD-22", a1eTestBitsRequestData<BinaryCodec>,
+              a1eTestBitsRequestDataSize<BinaryCodec>);
+    checkBits("CMD-23", a1eTestBitsRequestData<AsciiCodec>,
+              a1eTestBitsRequestDataSize<AsciiCodec>);
+    checkWords("CMD-24", a1eTestWordsRequestData<BinaryCodec>,
+               a1eTestWordsRequestDataSize<BinaryCodec>);
+    checkWords("CMD-37", a1eTestWordsRequestData<AsciiCodec>,
+               a1eTestWordsRequestDataSize<AsciiCodec>);
+}
+
+TEST_CASE("A1E-REQUEST-ERRORS: 256 points wrap to 00; BufferTooSmall and InvalidDevice") {
+    SUBCASE("256 points are written as 00 (spec E8), Binary and ASCII") {
+        Request r = Request::readWords(Device{DeviceType::D, 0}, 256);
+        std::vector<uint8_t> bin(a1eRequestDataSize<BinaryCodec>(r), 0xCC);
+        REQUIRE(a1eRequestData<BinaryCodec>(r, MutableByteView{bin.data(), bin.size()}).hasValue());
+        CHECK(bin == std::vector<uint8_t>{0x00, 0x00, 0x00, 0x00, 0x20, 0x44, 0x00, 0x00});
+
+        std::vector<uint8_t> asc(a1eRequestDataSize<AsciiCodec>(r), 0xCC);
+        REQUIRE(a1eRequestData<AsciiCodec>(r, MutableByteView{asc.data(), asc.size()}).hasValue());
+        CHECK(std::string(asc.begin(), asc.end()) == "4420" "00000000" "00" "00");
+    }
+    SUBCASE("BufferTooSmall") {
+        Request r = Request::readWords(Device{DeviceType::D, 100}, 3);
+        uint8_t out[1];
+        auto result = a1eRequestData<BinaryCodec>(r, MutableByteView{out, 1});
+        REQUIRE_FALSE(result.hasValue());
+        CHECK(result.error().category == ErrorCategory::Encode);
+        CHECK(result.error().code == ErrorCode::BufferTooSmall);
+    }
+    SUBCASE("InvalidDevice propagates from e1Device() (SM has no 1E code)") {
+        Request r = Request::readBits(Device{DeviceType::SM, 0}, 1);
+        uint8_t out[32];
+        auto result = a1eRequestData<AsciiCodec>(r, MutableByteView{out, sizeof(out)});
+        REQUIRE_FALSE(result.hasValue());
+        CHECK(result.error().category == ErrorCategory::Encode);
+        CHECK(result.error().code == ErrorCode::InvalidDevice);
+    }
+    SUBCASE("test commands: BufferTooSmall and InvalidDevice") {
+        const A1eTestBit bit[] = {{Device{DeviceType::SM, 0}, true}};
+        const A1eTestWord word[] = {{Device{DeviceType::SM, 0}, 1}};
+        uint8_t small[1];
+        uint8_t big[64];
+
+        auto tooSmallBits = a1eTestBitsRequestData<BinaryCodec>(bit, 1, MutableByteView{small, 1});
+        REQUIRE_FALSE(tooSmallBits.hasValue());
+        CHECK(tooSmallBits.error().code == ErrorCode::BufferTooSmall);
+        auto tooSmallWords =
+            a1eTestWordsRequestData<AsciiCodec>(word, 1, MutableByteView{small, 1});
+        REQUIRE_FALSE(tooSmallWords.hasValue());
+        CHECK(tooSmallWords.error().code == ErrorCode::BufferTooSmall);
+
+        auto badBits =
+            a1eTestBitsRequestData<AsciiCodec>(bit, 1, MutableByteView{big, sizeof(big)});
+        REQUIRE_FALSE(badBits.hasValue());
+        CHECK(badBits.error().code == ErrorCode::InvalidDevice);
+        auto badWords =
+            a1eTestWordsRequestData<BinaryCodec>(word, 1, MutableByteView{big, sizeof(big)});
+        REQUIRE_FALSE(badWords.hasValue());
+        CHECK(badWords.error().code == ErrorCode::InvalidDevice);
+    }
+}
+
+TEST_CASE("A1E-BITS: odd counts pad the Binary write with a zero nibble; ASCII sends N "
+          "characters (1E-11, spec Q3); PackedLsbFirst goes through the same packing") {
+    uint8_t three[3] = {1, 1, 1};
+    Request r = Request::writeBits(Device{DeviceType::M, 100}, ByteView{three, 3});
+
+    std::vector<uint8_t> bin(a1eRequestDataSize<BinaryCodec>(r), 0xCC);
+    REQUIRE(a1eRequestData<BinaryCodec>(r, MutableByteView{bin.data(), bin.size()}).hasValue());
+    // device M100 (64 00 00 00 20 4D), points 3, fixed 00, write data 11 10.
+    CHECK(bin == std::vector<uint8_t>{0x64, 0x00, 0x00, 0x00, 0x20, 0x4D, 0x03, 0x00, 0x11, 0x10});
+
+    std::vector<uint8_t> asc(a1eRequestDataSize<AsciiCodec>(r), 0xCC);
+    REQUIRE(a1eRequestData<AsciiCodec>(r, MutableByteView{asc.data(), asc.size()}).hasValue());
+    CHECK(std::string(asc.begin(), asc.end()) == "4D20" "00000064" "03" "00" "111");
+
+    // 9 points packed LSB first (0xFF, 0x01): all nine ON.
+    uint8_t packed[2] = {0xFF, 0x01};
+    Request nine = Request::writeBits(Device{DeviceType::M, 100}, ByteView{packed, 2},
+                                       BitLayout::PackedLsbFirst);
+    REQUIRE(nine.count == 16); // count derives from the packed size (2 bytes = 16 points).
+    nine.count = 9;
+    std::vector<uint8_t> out(a1eRequestDataSize<BinaryCodec>(nine), 0xCC);
+    REQUIRE(a1eRequestData<BinaryCodec>(nine, MutableByteView{out.data(), out.size()}).hasValue());
+    CHECK(out == std::vector<uint8_t>{0x64, 0x00, 0x00, 0x00, 0x20, 0x4D, 0x09, 0x00, 0x11, 0x11,
+                                       0x11, 0x11, 0x10});
+
+    // Response side, Binary 5 points PackedLsbFirst: 10 10 10 -> 0x15 (points 0, 2, 4 ON).
+    Request read = Request::readBits(Device{DeviceType::M, 100}, 5);
+    read.bitLayout = BitLayout::PackedLsbFirst;
+    std::vector<uint8_t> wire = {0x10, 0x10, 0x10};
+    std::vector<uint8_t> payload(1, 0xFF);
+    auto result = a1eResponseData<BinaryCodec>(read, ByteView{wire.data(), wire.size()},
+                                                MutableByteView{payload.data(), 1});
+    REQUIRE(result.hasValue());
+    CHECK(payload[0] == 0x15);
+    CHECK(a1eResponseDataSize<BinaryCodec>(read) == 3);
+    CHECK(a1eResponseDataSize<AsciiCodec>(read) == 6); // N + (N mod 2): 5 points + 1 dummy.
+}
+
+TEST_CASE("A1E-WRITE-RESPONSE: a write response carries no data; a non-empty one is "
+          "LengthMismatch") {
+    uint8_t word[2] = {0x34, 0x12};
+    Request w = Request::writeWords(Device{DeviceType::D, 100}, ByteView{word, 2});
+    CHECK(a1eResponseDataSize<BinaryCodec>(w) == 0);
+    CHECK(a1eResponseDataSize<AsciiCodec>(w) == 0);
+    uint8_t out[2] = {0xAA, 0xAA};
+    auto ok = a1eResponseData<BinaryCodec>(w, ByteView{}, MutableByteView{out, 2});
+    REQUIRE(ok.hasValue());
+    CHECK(ok.value() == 0);
+    CHECK(out[0] == 0xAA); // untouched.
+
+    uint8_t extra[1] = {0};
+    auto bad = a1eResponseData<BinaryCodec>(w, ByteView{extra, 1}, MutableByteView{out, 2});
+    REQUIRE_FALSE(bad.hasValue());
+    CHECK(bad.error().code == ErrorCode::LengthMismatch);
 }

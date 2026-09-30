@@ -1,0 +1,108 @@
+# id: V-1E-A-01
+# frame: 1E  code: Ascii  op: ReadWords  device: D100  count: 3
+# kind: request  bytes: 24
+30 31 46 46 30 30 30 41 34 34 32 30 30 30 30 30 30 30 36 34 30 33 30 30
+01FF000A4420000000640300
+
+# id: V-1E-A-02
+# frame: 1E  code: Ascii  op: ReadWords  device: D100  count: 3
+# kind: response  of: V-1E-A-01  expect: 1995,1202,1130  bytes: 16
+38 31 30 30 31 39 39 35 31 32 30 32 31 31 33 30
+8100199512021130
+
+# id: V-1E-A-03
+# frame: 1E  code: Ascii  op: ReadBits  device: M100  count: 8
+# kind: request  bytes: 24
+30 30 46 46 30 30 30 41 34 44 32 30 30 30 30 30 30 30 36 34 30 38 30 30
+00FF000A4D20000000640800
+
+# id: V-1E-A-04
+# frame: 1E  code: Ascii  op: ReadBits  device: M100  count: 8
+# kind: response  of: V-1E-A-03  expect: 0,0,0,1,0,0,1,1  bytes: 12
+38 30 30 30 30 30 30 31 30 30 31 31
+800000010011
+
+# id: V-1E-A-05
+# frame: 1E  code: Ascii  op: WriteWords  device: D100  count: 3
+# kind: request  write: 1995,1202,1130  bytes: 36
+30 33 46 46 30 30 30 41 34 34 32 30 30 30 30 30 30 30 36 34 30 33 30 30 31 39 39 35 31 32 30 32 31 31 33 30
+03FF000A4420000000640300199512021130
+
+# id: V-1E-A-06
+# frame: 1E  code: Ascii  op: WriteWords  device: D100  count: 3
+# kind: response  of: V-1E-A-05  expect:   bytes: 4
+38 33 30 30
+8300
+
+# id: V-1E-A-07
+# frame: 1E  code: Ascii  op: WriteBits  device: M100  count: 8
+# kind: request  write: 1,1,0,0,1,1,0,0  bytes: 32
+30 32 46 46 30 30 30 41 34 44 32 30 30 30 30 30 30 30 36 34 30 38 30 30 31 31 30 30 31 31 30 30
+02FF000A4D2000000064080011001100
+
+# id: V-1E-A-08
+# frame: 1E  code: Ascii  op: WriteBits  device: M100  count: 8
+# kind: response  of: V-1E-A-07  expect:   bytes: 4
+38 32 30 30
+8200
+
+# id: V-1E-A-09
+# frame: 1E  code: Ascii  op: ReadBits  device: M100  count: 5
+# kind: request  bytes: 24
+30 30 46 46 30 30 30 41 34 44 32 30 30 30 30 30 30 30 36 34 30 35 30 30
+00FF000A4D20000000640500
+
+# id: V-1E-A-10
+# frame: 1E  code: Ascii  op: ReadBits  device: M100  count: 5
+# kind: response  of: V-1E-A-09  expect: 1,0,1,0,1  bytes: 10
+38 30 30 30 31 30 31 30 31 30
+8000101010
+
+# id: V-1E-A-11
+# frame: 1E  code: Ascii  op: ReadWords  device: D100  count: 3
+# kind: response-error  of: V-1E-A-01  error: Plc  plccode: 5B  abnormal: 10  bytes: 6
+38 31 35 42 31 30
+815B10
+
+# id: V-1E-A-12
+# frame: 1E  code: Ascii  op: ReadWords  device: D100  count: 3
+# kind: response-error  of: V-1E-A-01  error: Plc  plccode: 50  abnormal: 00  bytes: 4
+38 31 35 30
+8150
+
+# id: V-1E-A-13
+# frame: 1E  code: Ascii  op: ReadWords  device: D0  count: 256
+# kind: request  bytes: 24
+30 31 46 46 30 30 30 41 34 34 32 30 30 30 30 30 30 30 30 30 30 30 30 30
+01FF000A4420000000000000
+
+# id: 1E-07a
+# frame: 1E  code: Ascii  op: ReadWords  device: D100  count: 3
+# kind: response-error  error: FrameMismatch  bytes: 16
+38 30 30 30 31 39 39 35 31 32 30 32 31 31 33 30
+8000199512021130
+
+# id: 1E-11a
+# frame: 1E  code: Ascii  op: WriteBits  device: M100  count: 3
+# kind: request  write: 1,1,1  bytes: 27
+30 32 46 46 30 30 30 41 34 44 32 30 30 30 30 30 30 30 36 34 30 33 30 30 31 31 31
+02FF000A4D20000000640300111
+
+# id: 1E-13a
+# frame: 1E  code: Ascii  op: ReadWords  device: D100  count: 3
+# pc: 03
+# kind: request  bytes: 24
+30 31 30 33 30 30 30 41 34 34 32 30 30 30 30 30 30 30 36 34 30 33 30 30
+0103000A4420000000640300
+
+# id: 1E-12c
+# frame: 1E  code: Ascii  op: WriteRandomBits
+# kind: request  tags: v1.1  bytes: 54
+30 34 46 46 30 30 30 41 30 33 30 30 35 39 32 30 30 30 30 30 30 30 39 34 30 31 34 44 32 30 30 30 30 30 30 30 33 43 30 30 34 32 32 30 30 30 30 30 30 30 32 36 30 31
+04FF000A0300592000000094014D200000003C0042200000002601
+
+# id: 1E-12d
+# frame: 1E  code: Ascii  op: WriteRandomWords
+# kind: request  tags: v1.1  bytes: 60
+30 35 46 46 30 30 30 41 30 33 30 30 35 39 32 30 30 30 30 30 30 30 38 30 37 42 32 39 35 37 32 30 30 30 30 30 30 30 32 36 31 32 33 34 34 33 34 45 30 30 30 30 30 30 31 32 30 30 35 30
+05FF000A03005920000000807B295720000000261234434E000000120050

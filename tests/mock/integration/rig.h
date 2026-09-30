@@ -22,14 +22,14 @@
 namespace mc::test {
 
 /// One cell of the integration matrix: a name for failure messages and the frame the client and
-/// the mock both speak. Later phases add 1E, 3C and 1C cells by extending combos(), not by
-/// copying scenarios.
+/// the mock both speak. Later phases add 3C and 1C cells by extending combos(), not by copying
+/// scenarios.
 struct Combo {
     std::string name;
     FrameConfig frame;
 };
 
-/// The combinations every scenario runs on (v1 so far: 3E Binary and 3E ASCII).
+/// The combinations every scenario runs on (v1 so far: 3E and 1E, Binary and ASCII).
 const std::vector<Combo>& combos();
 
 /// One Session output, with every view copied into owned storage so it outlives the input call

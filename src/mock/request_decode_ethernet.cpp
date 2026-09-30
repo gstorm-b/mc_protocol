@@ -1,5 +1,5 @@
-// Server direction of 3E (spec §5.1, §4.1.1, §4.1.2): frame and decode a request. Written from
-// the tables of the reference spec; the golden vectors check it in the reverse direction
+// Server direction of 3E and 1E (spec §5.1, §5.3, §4.1, §4.2): frame and decode a request. Written
+// from the tables of the reference spec; the golden vectors check it in the reverse direction
 // (MCK-01).
 #include "mock/mock_internal.h"
 
@@ -287,10 +287,161 @@ template <class Codec> DecodeResult decodeFrame(ByteView rx) {
     return result;
 }
 
+// ---- 1E (spec §5.3, §4.2) ------------------------------------------------------------------
+
+// Command codes of the 1E request subheader (spec §4.2).
+constexpr uint8_t kE1BitRead = 0x00;
+constexpr uint8_t kE1WordRead = 0x01;
+constexpr uint8_t kE1BitWrite = 0x02;
+constexpr uint8_t kE1WordWrite = 0x03;
+constexpr uint8_t kE1TestBits = 0x04;  // random write, bit units: not executed (v1.1)
+constexpr uint8_t kE1TestWords = 0x05; // random write, word units: not executed (v1.1)
+
+// Spec §3.3: 1E Binary is number (LE 4) + code (LE 2); 1E ASCII is code (4 hex characters) +
+// number (8 hex characters), whatever the device's own radix. Spec §3.2 footnote 2: L and S have
+// no code of their own and are reached as M, so a code never decodes to L or S.
+size_t e1DeviceFieldSize(DataCode code) { return code == DataCode::Ascii ? 12 : 6; }
+
+template <class Codec> bool decodeE1Device(ByteView field, Device& out) {
+    constexpr bool ascii = Codec::kDataCode == DataCode::Ascii;
+    const ByteView numberField = ascii ? ByteView{field.data + 4, 8} : ByteView{field.data, 4};
+    const ByteView codeField = ascii ? ByteView{field.data, 4} : ByteView{field.data + 4, 2};
+    auto number = Codec::getU32(numberField);
+    auto code = Codec::getU16(codeField);
+    if (!number.hasValue() || !code.hasValue()) {
+        return false;
+    }
+    for (uint8_t i = 0; i < static_cast<uint8_t>(DeviceType::Count); ++i) {
+        const DeviceInfo& info = deviceInfo(static_cast<DeviceType>(i));
+        if (info.type == DeviceType::L || info.type == DeviceType::S) {
+            continue;
+        }
+        if (info.e1Code != kNoCode && info.e1Code == code.value()) {
+            out = Device{info.type, number.value()};
+            return true;
+        }
+    }
+    return false;
+}
+
+// Frames one 1E request from the start of `rx`. There is no length field: the frame ends where the
+// command's fixed layout says, given its point count (00H-03H) or its item count (04H, 05H).
+template <class Codec> DecodeResult1e decodeFrame1e(ByteView rx) {
+    constexpr bool ascii = Codec::kDataCode == DataCode::Ascii;
+    // Subheader (command), PC No., monitoring timer (spec §5.3 fields 1-3).
+    constexpr size_t headSize = Codec::u8Size() + Codec::u8Size() + Codec::u16Size();
+    const size_t deviceSize = e1DeviceFieldSize(Codec::kDataCode);
+
+    DecodeResult1e result;
+    if (rx.size == 0) {
+        return result;
+    }
+
+    // A first byte that cannot start a request is decided at once (Binary: a command above 05H;
+    // ASCII: the two characters must read "00".."05"), so a wrong subheader never waits for more.
+    const bool junk = ascii ? (rx.data[0] != '0' ||
+                               (rx.size >= 2 && (rx.data[1] < '0' || rx.data[1] > '5')))
+                            : rx.data[0] > kE1TestWords;
+    if (junk) {
+        result.status = FrameStatus::Junk;
+        result.consumed = 1;
+        return result;
+    }
+    if (rx.size < headSize) {
+        return result;
+    }
+
+    Reader<Codec> head(ByteView{rx.data, headSize});
+    uint8_t command = 0;
+    uint8_t pc = 0;
+    uint16_t timer = 0;
+    if (!head.u8(command) || !head.u8(pc) || !head.u16(timer) || command > kE1TestWords) {
+        result.status = FrameStatus::Junk;
+        result.consumed = 1;
+        return result;
+    }
+
+    // Points (or the item count n of 04H/05H) and the fixed 00: two u8 fields after the device
+    // field (batch access) or at the start of the request data (04H, 05H).
+    const bool batch = command <= kE1WordWrite;
+    const size_t countAt = headSize + (batch ? deviceSize : 0);
+    const size_t bodyHead = countAt + 2 * Codec::u8Size();
+    if (rx.size < bodyHead) {
+        return result;
+    }
+    Reader<Codec> counts(ByteView{rx.data + countAt, 2 * Codec::u8Size()});
+    uint8_t points = 0;
+    uint8_t fixed = 0;
+    if (!counts.u8(points) || !counts.u8(fixed)) {
+        result.status = FrameStatus::Junk;
+        result.consumed = 1;
+        return result;
+    }
+
+    E1Request req;
+    req.pc = pc;
+    req.command = command;
+
+    if (!batch) {
+        // 04H: n x (device + u8); 05H: n x (device + u16). Framed, never executed.
+        const size_t itemSize =
+            deviceSize + (command == kE1TestBits ? Codec::u8Size() : Codec::u16Size());
+        const size_t total = bodyHead + size_t{points} * itemSize;
+        if (rx.size < total) {
+            return result;
+        }
+        result.status = FrameStatus::Complete;
+        result.consumed = total;
+        result.request = std::move(req);
+        return result;
+    }
+
+    // Spec E8: 256 points travel as 00.
+    const uint16_t count = points == 0 ? uint16_t{256} : uint16_t{points};
+    const bool bitUnit = command == kE1BitRead || command == kE1BitWrite;
+    const bool write = command == kE1BitWrite || command == kE1WordWrite;
+    const size_t dataSize =
+        !write ? 0 : (bitUnit ? Codec::bitsSize(count) : Codec::wordsSize(count));
+    const size_t total = bodyHead + dataSize;
+    if (rx.size < total) {
+        return result;
+    }
+
+    result.status = FrameStatus::Complete;
+    result.consumed = total;
+
+    Device dev;
+    bool executable = fixed == 0 &&
+                      decodeE1Device<Codec>(ByteView{rx.data + headSize, deviceSize}, dev);
+    ByteBuf data;
+    if (executable && write) {
+        data.resize(bitUnit ? count : size_t{count} * 2);
+        const MutableByteView dst{data.data(), data.size()};
+        const ByteView wire{rx.data + bodyHead, dataSize};
+        auto decoded =
+            bitUnit ? Codec::getBits(wire, count, dst) : Codec::getWords(wire, count, dst);
+        executable = decoded.hasValue();
+    }
+    if (executable) {
+        req.executable = true;
+        req.op = write ? (bitUnit ? Op::WriteBits : Op::WriteWords)
+                       : (bitUnit ? Op::ReadBits : Op::ReadWords);
+        req.head = dev;
+        req.count = count;
+        req.data = std::move(data);
+    }
+    result.request = std::move(req);
+    return result;
+}
+
 } // namespace
 
 DecodeResult decode3eRequest(DataCode code, ByteView rx) {
     return code == DataCode::Ascii ? decodeFrame<AsciiCodec>(rx) : decodeFrame<BinaryCodec>(rx);
+}
+
+DecodeResult1e decode1eRequest(DataCode code, ByteView rx) {
+    return code == DataCode::Ascii ? decodeFrame1e<AsciiCodec>(rx) : decodeFrame1e<BinaryCodec>(rx);
 }
 
 } // namespace mc::detail::mock

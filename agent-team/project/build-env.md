@@ -173,6 +173,9 @@ the bar (`-D MC_MIN_COVERAGE=<n>`, default 95, total over `src/core/model`).
   `QT_ASSUME_STDERR_HAS_CONSOLE=1` — without it QtTest prints **nothing** on
   Windows when its output is a pipe, so a failure is silent under ctest or an
   agent shell. Running a Qt binary by hand needs the Qt `bin` on PATH yourself (T-035).
+- **Virtual COM pairs** (installed by the owner, 2026-10-01): `COM50`↔`COM51`
+  and `COM52`↔`COM53`. QDV-14 runs with `$env:MC_TEST_SERIAL_PAIR = "COM50,COM51"`
+  and skips without it. Do not install or reconfigure serial software.
 - Windows reports a refused **loopback** connect only after 2–4 s; a test
   against a closed port ends on its own connect timer instead (T-035).
 - After restoring a mutated source with `Copy-Item`, touch it
@@ -184,6 +187,10 @@ the bar (`-D MC_MIN_COVERAGE=<n>`, default 95, total over `src/core/model`).
   excluding every `build` folder breaks configure (T-040).
 - `nmake` and `cmake --build` banners go to stderr: redirect stdout to a file
   and filter it, never merge stderr (T-040).
+- `mc_core.pri` has CRLF line endings: a `perl -0pi` substitution silently
+  matched nothing on it; edit `.pri` files with the Edit tool (T-041).
+- A Bash heredoc containing an apostrophe can break the tool's command
+  parsing; write such files with the Write tool (T-041).
 - Deleting qmake `Makefile.*` files or a relative `build/_scratch-*` folder: use Git Bash `rm -f …`; a PowerShell
   `Get-ChildItem | Remove-Item` pipeline was blocked by the tool guard (T-036).
 - Test binaries per module: `mc_core_model_tests` (ctest name

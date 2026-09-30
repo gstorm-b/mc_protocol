@@ -1,6 +1,6 @@
 // ALC-01 for the codec (spec "Complexity and allocation"; SPEC-core-protocol.md
 // test_alloc.cpp): zero allocations across encode-into-buffer, a full byte-at-a-time feed(), and
-// payload(), on 3E Binary and ASCII.
+// payload(), on 3E and 1E, Binary and ASCII.
 //
 // This is the one .cpp in mc_core_protocol_tests that includes tests/common/alloc_counter.h (see
 // that file's banner: a second .cpp in this binary including it too would fail to link with a
@@ -41,9 +41,8 @@ TEST_CASE("ALC-01 positive control: the counter is live") {
     CHECK(count >= 1);
 }
 
-TEST_CASE("ALC-01 encode-into-buffer: zero allocations (3E Binary and ASCII)") {
-    auto checkEncode = [](mc::DataCode code, const Request& r) {
-        FrameConfig cfg = FrameConfig::frame3E(code);
+TEST_CASE("ALC-01 encode-into-buffer: zero allocations (3E and 1E, Binary and ASCII)") {
+    auto checkEncode = [](const FrameConfig& cfg, const Request& r) {
         McProtocol proto(cfg);
 
         // Warm-up outside the measured window, in case anything is lazily initialized only on
@@ -66,26 +65,46 @@ TEST_CASE("ALC-01 encode-into-buffer: zero allocations (3E Binary and ASCII)") {
     };
 
     SUBCASE("Binary ReadWords") {
-        checkEncode(mc::DataCode::Binary, Request::readWords(Device{DeviceType::D, 100}, 3));
+        checkEncode(FrameConfig::frame3E(mc::DataCode::Binary),
+                    Request::readWords(Device{DeviceType::D, 100}, 3));
     }
     SUBCASE("Binary WriteBits") {
         uint8_t data[8] = {1, 1, 0, 0, 1, 1, 0, 0};
-        checkEncode(mc::DataCode::Binary,
+        checkEncode(FrameConfig::frame3E(mc::DataCode::Binary),
                     Request::writeBits(Device{DeviceType::M, 100}, ByteView{data, 8}));
     }
     SUBCASE("Ascii ReadWords") {
-        checkEncode(mc::DataCode::Ascii, Request::readWords(Device{DeviceType::D, 100}, 3));
+        checkEncode(FrameConfig::frame3E(mc::DataCode::Ascii),
+                    Request::readWords(Device{DeviceType::D, 100}, 3));
     }
     SUBCASE("Ascii WriteBits") {
         uint8_t data[8] = {1, 1, 0, 0, 1, 1, 0, 0};
-        checkEncode(mc::DataCode::Ascii,
+        checkEncode(FrameConfig::frame3E(mc::DataCode::Ascii),
                     Request::writeBits(Device{DeviceType::M, 100}, ByteView{data, 8}));
+    }
+    SUBCASE("1E Binary ReadWords") {
+        checkEncode(FrameConfig::frame1E(mc::DataCode::Binary),
+                    Request::readWords(Device{DeviceType::D, 100}, 3));
+    }
+    SUBCASE("1E Binary WriteBits (odd count)") {
+        uint8_t data[3] = {1, 1, 1};
+        checkEncode(FrameConfig::frame1E(mc::DataCode::Binary),
+                    Request::writeBits(Device{DeviceType::M, 100}, ByteView{data, 3}));
+    }
+    SUBCASE("1E Ascii ReadWords") {
+        checkEncode(FrameConfig::frame1E(mc::DataCode::Ascii),
+                    Request::readWords(Device{DeviceType::D, 100}, 3));
+    }
+    SUBCASE("1E Ascii WriteWords") {
+        uint8_t data[6] = {0x95, 0x19, 0x02, 0x12, 0x30, 0x11};
+        checkEncode(FrameConfig::frame1E(mc::DataCode::Ascii),
+                    Request::writeWords(Device{DeviceType::D, 100}, ByteView{data, 6}));
     }
 }
 
-TEST_CASE("ALC-01 byte-at-a-time feed() and payload(): zero allocations (3E Binary and ASCII)") {
-    auto checkParse = [](mc::DataCode code, const Request& r, ByteView wire) {
-        FrameConfig cfg = FrameConfig::frame3E(code);
+TEST_CASE("ALC-01 byte-at-a-time feed() and payload(): zero allocations (3E and 1E, Binary and "
+          "ASCII)") {
+    auto checkParse = [](const FrameConfig& cfg, const Request& r, ByteView wire) {
         McProtocol proto(cfg);
         size_t payloadSize = proto.payloadSize(r);
         std::vector<uint8_t> payloadOut(payloadSize);
@@ -115,13 +134,53 @@ TEST_CASE("ALC-01 byte-at-a-time feed() and payload(): zero allocations (3E Bina
     SUBCASE("Binary ReadWords response (V-3E-B-02)") {
         std::vector<uint8_t> wire = {0xD0, 0x00, 0x00, 0xFF, 0xFF, 0x03, 0x00, 0x08,
                                       0x00, 0x00, 0x00, 0x95, 0x19, 0x02, 0x12, 0x30, 0x11};
-        checkParse(mc::DataCode::Binary, Request::readWords(Device{DeviceType::D, 100}, 3),
+        checkParse(FrameConfig::frame3E(mc::DataCode::Binary),
+                   Request::readWords(Device{DeviceType::D, 100}, 3),
                    ByteView{wire.data(), wire.size()});
     }
     SUBCASE("Ascii ReadWords response (V-3E-A-02)") {
         std::string text = "D00000FF03FF0000100000199512021130";
         std::vector<uint8_t> wire(text.begin(), text.end());
-        checkParse(mc::DataCode::Ascii, Request::readWords(Device{DeviceType::D, 100}, 3),
+        checkParse(FrameConfig::frame3E(mc::DataCode::Ascii),
+                   Request::readWords(Device{DeviceType::D, 100}, 3),
                    ByteView{wire.data(), wire.size()});
+    }
+    SUBCASE("1E Binary ReadWords response (V-1E-B-02)") {
+        std::vector<uint8_t> wire = {0x81, 0x00, 0x95, 0x19, 0x02, 0x12, 0x30, 0x11};
+        checkParse(FrameConfig::frame1E(mc::DataCode::Binary),
+                   Request::readWords(Device{DeviceType::D, 100}, 3),
+                   ByteView{wire.data(), wire.size()});
+    }
+    SUBCASE("1E Ascii ReadWords response (V-1E-A-02)") {
+        std::string text = "8100199512021130";
+        std::vector<uint8_t> wire(text.begin(), text.end());
+        checkParse(FrameConfig::frame1E(mc::DataCode::Ascii),
+                   Request::readWords(Device{DeviceType::D, 100}, 3),
+                   ByteView{wire.data(), wire.size()});
+    }
+    SUBCASE("1E Ascii odd bit read response with the dummy character (V-1E-A-10)") {
+        std::string text = "8000101010";
+        std::vector<uint8_t> wire(text.begin(), text.end());
+        checkParse(FrameConfig::frame1E(mc::DataCode::Ascii),
+                   Request::readBits(Device{DeviceType::M, 100}, 5),
+                   ByteView{wire.data(), wire.size()});
+    }
+    SUBCASE("1E Binary end code 5BH + abnormal code (V-1E-B-11): the error path allocates "
+            "nothing either") {
+        // payload() is not called for a Failed frame, so this one only measures feed().
+        std::vector<uint8_t> wire = {0x81, 0x5B, 0x10};
+        McProtocol proto(FrameConfig::frame1E(mc::DataCode::Binary));
+        Request r = Request::readWords(Device{DeviceType::D, 100}, 3);
+        Parser warm = proto.parser(r);
+        (void)warm.feed(ByteView{wire.data(), wire.size()});
+
+        Parser parser = proto.parser(r);
+        mc::test::resetAllocCount();
+        for (size_t n = 1; n <= wire.size(); ++n) {
+            (void)parser.feed(ByteView{wire.data(), n});
+        }
+        size_t count = mc::test::allocCount();
+        CHECK(parser.error().abnormalCode == 0x10);
+        CHECK(count == 0);
     }
 }

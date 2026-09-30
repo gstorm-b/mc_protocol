@@ -1,0 +1,90 @@
+# id: V-1E-B-01
+# frame: 1E  code: Binary  op: ReadWords  device: D100  count: 3
+# kind: request  bytes: 12
+01 FF 0A 00 64 00 00 00 20 44 03 00
+
+# id: V-1E-B-02
+# frame: 1E  code: Binary  op: ReadWords  device: D100  count: 3
+# kind: response  of: V-1E-B-01  expect: 1995,1202,1130  bytes: 8
+81 00 95 19 02 12 30 11
+
+# id: V-1E-B-03
+# frame: 1E  code: Binary  op: ReadBits  device: M100  count: 8
+# kind: request  bytes: 12
+00 FF 0A 00 64 00 00 00 20 4D 08 00
+
+# id: V-1E-B-04
+# frame: 1E  code: Binary  op: ReadBits  device: M100  count: 8
+# kind: response  of: V-1E-B-03  expect: 0,0,0,1,0,0,1,1  bytes: 6
+80 00 00 01 00 11
+
+# id: V-1E-B-05
+# frame: 1E  code: Binary  op: WriteWords  device: D100  count: 3
+# kind: request  write: 1995,1202,1130  bytes: 18
+03 FF 0A 00 64 00 00 00 20 44 03 00 95 19 02 12 30 11
+
+# id: V-1E-B-06
+# frame: 1E  code: Binary  op: WriteWords  device: D100  count: 3
+# kind: response  of: V-1E-B-05  expect:   bytes: 2
+83 00
+
+# id: V-1E-B-07
+# frame: 1E  code: Binary  op: WriteBits  device: M100  count: 8
+# kind: request  write: 1,1,0,0,1,1,0,0  bytes: 16
+02 FF 0A 00 64 00 00 00 20 4D 08 00 11 00 11 00
+
+# id: V-1E-B-08
+# frame: 1E  code: Binary  op: WriteBits  device: M100  count: 8
+# kind: response  of: V-1E-B-07  expect:   bytes: 2
+82 00
+
+# id: V-1E-B-09
+# frame: 1E  code: Binary  op: ReadBits  device: M100  count: 5
+# kind: request  bytes: 12
+00 FF 0A 00 64 00 00 00 20 4D 05 00
+
+# id: V-1E-B-10
+# frame: 1E  code: Binary  op: ReadBits  device: M100  count: 5
+# kind: response  of: V-1E-B-09  expect: 1,0,1,0,1  bytes: 5
+80 00 10 10 10
+
+# id: V-1E-B-11
+# frame: 1E  code: Binary  op: ReadWords  device: D100  count: 3
+# kind: response-error  of: V-1E-B-01  error: Plc  plccode: 5B  abnormal: 10  bytes: 3
+81 5B 10
+
+# id: V-1E-B-12
+# frame: 1E  code: Binary  op: ReadWords  device: D100  count: 3
+# kind: response-error  of: V-1E-B-01  error: Plc  plccode: 50  abnormal: 00  bytes: 2
+81 50
+
+# id: V-1E-B-13
+# frame: 1E  code: Binary  op: ReadWords  device: D0  count: 256
+# kind: request  bytes: 12
+01 FF 0A 00 00 00 00 00 20 44 00 00
+
+# id: 1E-07
+# frame: 1E  code: Binary  op: ReadWords  device: D100  count: 3
+# kind: response-error  error: FrameMismatch  bytes: 8
+80 00 95 19 02 12 30 11
+
+# id: 1E-11
+# frame: 1E  code: Binary  op: WriteBits  device: M100  count: 3
+# kind: request  write: 1,1,1  bytes: 14
+02 FF 0A 00 64 00 00 00 20 4D 03 00 11 10
+
+# id: 1E-13
+# frame: 1E  code: Binary  op: ReadWords  device: D100  count: 3
+# pc: 03
+# kind: request  bytes: 12
+01 03 0A 00 64 00 00 00 20 44 03 00
+
+# id: 1E-12a
+# frame: 1E  code: Binary  op: WriteRandomBits
+# kind: request  tags: v1.1  bytes: 27
+04 FF 0A 00 03 00 94 00 00 00 20 59 01 3C 00 00 00 20 4D 00 26 00 00 00 20 42 01
+
+# id: 1E-12b
+# frame: 1E  code: Binary  op: WriteRandomWords
+# kind: request  tags: v1.1  bytes: 30
+05 FF 0A 00 03 00 80 00 00 00 20 59 29 7B 26 00 00 00 20 57 34 12 12 00 00 00 4E 43 50 00
