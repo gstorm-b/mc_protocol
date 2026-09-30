@@ -124,6 +124,12 @@ ctest --test-dir build/cmake-coverage -L "core_model|build"   # produces the .gc
 cmake --build build/cmake-coverage --target mc_coverage_report
 ```
 
+Per-directory reports: `mc_coverage_report` (model), `mc_coverage_report_protocol`,
+`…_session`, `…_mock` (bar 90); run `ctest -L "core_model|core_protocol|core_session|mock|integration|build"`
+first so every binary contributes `.gcda` data.
+**Every executable that links an instrumented library needs `mc_apply_coverage(<target>)`**,
+examples included — otherwise the coverage build fails to link with `__gcov_init` undefined (T-034).
+
 `build/cmake-coverage` is configured with `-DMC_COVERAGE=ON` (T-012). The report
 is `cmake/mc_coverage_report.cmake` (plain `gcov`, no Python); it fails below
 the bar (`-D MC_MIN_COVERAGE=<n>`, default 95, total over `src/core/model`).
@@ -157,6 +163,10 @@ the bar (`-D MC_MIN_COVERAGE=<n>`, default 95, total over `src/core/model`).
 - Long repetitive vector lines (e.g. PRIM-09, 300 × `FF`) are generated with a
   one-line `perl` command, not copied from a terminal — a copied line was
   silently truncated once; VEC-02 caught it (T-014). No Python on this machine.
+- GCC 13 `-Wdangling-reference` (an error under `-Werror`, MinGW only) fires on
+  `const Vector& v = byId(vectors, std::string("V-…"))` — a reference-returning
+  call with a temporary argument. Bind the id to a named `const std::string`
+  first (T-030).
 - Test binaries per module: `mc_core_model_tests` (ctest name
   `core_model.mc_core_model_tests`), main in `tests/core/model/main.cpp`.
 - ctest labels: `build`, `core_model`, `core_protocol`, `core_session`,

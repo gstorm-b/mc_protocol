@@ -88,3 +88,33 @@ All notable changes to this project are documented in this file. The format foll
   `file(STRINGS)` silently merging lines whose own text contained an unescaped `;`, occasionally
   under-counting a file to as little as 0 lines — found and fixed along the way); `core-model` and
   `core-protocol` unaffected, still ≥ 95%.
+- `mc/mock/mock_plc.h` and the sans-I/O `mock-plc` module (Phase 4, T-029 through T-034;
+  `SPEC-mock-plc.md`; the `mc::mock` static library, std-only, no Qt): `MockPlc`, a PLC responder
+  with request bytes in and response bytes out, a sparse per-device-type memory image (bit and
+  word views of one memory, unwritten memory reads 0, no aliasing, per-type `setDeviceLimit()`;
+  MCK-04, MCK-12), the request log (`requests()`, `eotCount()`, `clearLog()`), and the 3E server
+  direction in Binary and ASCII, the only frame answered in this version, written from the
+  reference spec's tables rather than by calling the client (MCK-01 through MCK-03, MCK-05,
+  MCK-07, MCK-10: the golden vectors are reproduced byte for byte in the reverse direction,
+  fragmented one byte at a time and coalesced). Fault injection: `failRange()`,
+  `mute()`/`muteNext()`, `corruptNext()` with the Ethernet `Corruption` modes, unsupported
+  commands answered with the configured error code (MCK-09, MCK-11). The independence rule
+  (`src/mock` includes only the four allowed private primitive headers and never the client
+  codec) is enforced by the `MCK-HYG` ctest script, with negative controls that prove it bites.
+  The integration matrix `mc_integration_tests` (`tests/mock/integration`; label `integration`)
+  runs `Session` against `MockPlc` in one process, over an in-memory pipe with seeded random
+  fragmentation and a fake clock (no sleeps, no threads, no sockets), on 3E Binary and 3E ASCII:
+  ad-hoc writes and reads, odd bit counts, `chunkCount()` splitting, PLC errors, a polling round
+  with change events, timeout and protocol-error link faults, `bitsAsWords` on and off, the
+  heartbeat, 20 fragmentation seeds and `bitsAsWords` past a device limit (INT-01, 02, 03, 07,
+  08, 10 through 16); the 1E, 3C and 1C cells join the matrix with Phase 6.
+  `examples/session_loop` (`MC_BUILD_EXAMPLES`, built when `MC_BUILD_MOCK`; no Qt, no header from
+  `tests/`) is the non-Qt usage of `Session` against `MockPlc` through an in-memory pipe and
+  `std::chrono::steady_clock`, printing round-1 snapshots and then the changes made in the mock,
+  registered as the `examples.session_loop` smoke test and built through qmake too
+  (`examples/qmake`, `mc_protocol.pro`). `mc_mock.pri` mirrors the CMake target. BLD-04 also
+  holds with a layer switched off (`-DMC_BUILD_MOCK=OFF`): the source list of a disabled layer is
+  exported from a variable, so its `.pri` is still compared. Checkpoint C4: verified on MSVC and
+  MinGW GCC 13.1 (`scripts/check.ps1`, both kits; the qmake binaries list the same test cases as
+  their CMake twins); line coverage of `src/mock` 96.74% total, `core-model`, `core-protocol`
+  and `core-session` still ≥ 95%.

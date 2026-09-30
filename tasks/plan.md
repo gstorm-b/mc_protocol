@@ -95,11 +95,13 @@ Baton tasks are created one phase ahead.
 
 ### Phase 4: Mock PLC on 3E (`mock-plc`); T25–T27 in parallel with Phase 3
 
-- [ ] T25 `MockPlc` facade and memory image
-- [ ] T26 3E server direction against the vectors
-- [ ] T27 Fault injection and corruption (Ethernet)
-- [ ] T28 Integration rig and the 3E part of the matrix
-- [ ] T29 `examples/session_loop`
+- [x] T25 `MockPlc` facade and memory image → T-029
+- [x] T26 3E server direction against the vectors → T-030
+- [x] T27 Fault injection and corruption (Ethernet) → T-031
+- [x] T28 Integration rig and the 3E part of the matrix → T-032
+- [x] T29 `examples/session_loop` → T-033
+
+**Checkpoint C4** → T-034 (added 2026-09-30 for phase-batched verification): mock and integration green on both compilers and qmake, `src/mock` coverage ≥ 90 %, one commit for Phase 4. Checkpoint C was passed as **go** (owner, 2026-09-30). Done: `src/mock` 96.74 %, one Phase 4 commit.
 
 ### Phase 5: Qt device over TCP (`qt-device`)
 

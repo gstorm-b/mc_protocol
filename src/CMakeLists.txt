@@ -55,14 +55,52 @@ target_include_directories(mc_core
 mc_apply_warnings(mc_core)
 mc_apply_coverage(mc_core)
 
+# mc_mock (SPEC-mock-plc.md): the sans-I/O PLC responder. std-only, no Qt; it links mc_core's
+# public surface and reaches only the private primitives its independence rule allows (MCK-HYG).
+# The source list is a variable, defined whether or not the target is built, so BLD-04 (below) can
+# compare mc_mock.pri with it even under -DMC_BUILD_MOCK=OFF.
+set(_mc_mock_sources
+    mock/memory_image.cpp
+    mock/memory_image.h
+    mock/mock_internal.h
+    mock/request_decode_ethernet.cpp
+    mock/command_exec.cpp
+    mock/response_build.cpp
+    mock/corruption.cpp
+    mock/mock_plc.cpp
+    ${PROJECT_SOURCE_DIR}/include/mc/mock/mock_plc.h
+)
+
+if(MC_BUILD_MOCK)
+    add_library(mc_mock STATIC ${_mc_mock_sources})
+    add_library(mc::mock ALIAS mc_mock)
+
+    target_include_directories(mc_mock
+        PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
+    )
+    target_link_libraries(mc_mock PUBLIC mc::core)
+
+    mc_apply_warnings(mc_mock)
+    mc_apply_coverage(mc_mock)
+endif()
+
 # ---- BLD-04 pri_sync: export each library target's own source list, one "TARGET path" line
 # per file, to ${CMAKE_BINARY_DIR}/mc_sources.txt. cmake/check_pri_sync.cmake compares this
-# against the HEADERS/SOURCES each mc_*.pri lists for the matching target. Extend
-# _mc_pri_sync_targets with mc_mock (T25) and mc_device (T30) as those targets are added below.
-set(_mc_pri_sync_targets mc_core)
+# against the HEADERS/SOURCES each mc_*.pri lists for the matching target. A layer that is
+# switched off (-DMC_BUILD_MOCK=OFF) has no target but still exports its source list, taken from
+# the variable its target is built from, so its .pri is still compared and BLD-04 stays green.
+# Extend this with mc_device (T30) the same way: a source-list variable, exported always.
+set(_mc_pri_sync_targets mc_core mc_mock)
 set(_mc_sources_lines "")
 foreach(_mc_target IN LISTS _mc_pri_sync_targets)
-    get_target_property(_mc_target_sources ${_mc_target} SOURCES)
+    if(TARGET ${_mc_target})
+        get_target_property(_mc_target_sources ${_mc_target} SOURCES)
+    elseif(_mc_target STREQUAL "mc_mock")
+        set(_mc_target_sources ${_mc_mock_sources})
+    else()
+        set(_mc_target_sources "")
+    endif()
     foreach(_mc_src IN LISTS _mc_target_sources)
         if(IS_ABSOLUTE "${_mc_src}")
             set(_mc_src_abs "${_mc_src}")

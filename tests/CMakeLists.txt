@@ -183,6 +183,96 @@ if(MC_COVERAGE AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     )
 endif()
 
+# mc_mock_tests (SPEC-mock-plc.md, label `mock`): one binary for the whole mock-plc module; a new
+# test_*.cpp source of the module is added here without another main.cpp, mirroring
+# mc_core_model_tests / mc_core_protocol_tests / mc_core_session_tests above.
+if(MC_BUILD_MOCK)
+    add_executable(mc_mock_tests
+        mock/main.cpp
+        mock/test_mock_memory.cpp
+        mock/test_mock_vectors.cpp
+        mock/test_mock_faults.cpp
+    )
+    target_link_libraries(mc_mock_tests PRIVATE mc::mock mc_doctest mc_test_vectors)
+    # test_mock_memory.cpp reaches the private src/mock/memory_image.h; mc::mock only exports
+    # include/ publicly (PRIVATE src/), so this binary gets its own PRIVATE include path to src/,
+    # mirroring the other test binaries above (T-006).
+    target_include_directories(mc_mock_tests PRIVATE ${PROJECT_SOURCE_DIR}/src)
+    # The vector-driven tests (T-030) read tests/vectors from the source tree, exactly like
+    # mc_core_protocol_tests (T-013): never through the working directory.
+    target_compile_definitions(mc_mock_tests PRIVATE
+        MC_TESTS_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}"
+    )
+    mc_apply_warnings(mc_mock_tests)
+    mc_apply_coverage(mc_mock_tests)
+
+    add_test(NAME mock.mc_mock_tests COMMAND mc_mock_tests)
+    set_tests_properties(mock.mc_mock_tests PROPERTIES LABELS "mock")
+
+    # mc_integration_tests (SPEC-mock-plc.md "Integration", T-032, label `integration`): Session
+    # against MockPlc over seeded fragmenting pipes and a fake clock. Built here because both
+    # MC_BUILD_MOCK and MC_BUILD_TESTS are on (this directory is only added under MC_BUILD_TESTS).
+    # Public headers only: no private src/ path. The doctest main is the one mc_mock_tests uses.
+    add_executable(mc_integration_tests
+        mock/main.cpp
+        mock/integration/pipe.h
+        mock/integration/rig.h
+        mock/integration/rig.cpp
+        mock/integration/test_integration.cpp
+    )
+    target_link_libraries(mc_integration_tests PRIVATE mc::mock mc::core mc_doctest)
+    mc_apply_warnings(mc_integration_tests)
+    mc_apply_coverage(mc_integration_tests)
+
+    add_test(NAME integration.mc_integration_tests COMMAND mc_integration_tests)
+    set_tests_properties(integration.mc_integration_tests PROPERTIES LABELS "integration")
+
+    # MCK-HYG (SPEC-mock-plc.md "Independence rule"): src/mock includes only what the rule allows.
+    # The negative controls run the same script over tests/mock/hyg_fixture/, which holds one file
+    # per kind of violation, so the check is proved to bite without editing the real sources.
+    set(_mc_hyg_script ${CMAKE_CURRENT_SOURCE_DIR}/mock/check_mock_includes.cmake)
+    add_test(NAME MCK-HYG.mock_includes
+        COMMAND ${CMAKE_COMMAND} -D MC_MOCK_DIR=${PROJECT_SOURCE_DIR}/src/mock -P ${_mc_hyg_script})
+    set_tests_properties(MCK-HYG.mock_includes PROPERTIES LABELS "mock"
+        PASS_REGULAR_EXPRESSION "MCK-HYG: OK")
+    add_test(NAME MCK-HYG.negative_control_exit_status
+        COMMAND ${CMAKE_COMMAND} -D MC_MOCK_DIR=${CMAKE_CURRENT_SOURCE_DIR}/mock/hyg_fixture
+            -P ${_mc_hyg_script})
+    set_tests_properties(MCK-HYG.negative_control_exit_status PROPERTIES LABELS "mock" WILL_FAIL TRUE)
+    foreach(_mc_case IN ITEMS
+            "frame_include:bad_frame_include\\.cpp:[0-9]+: include"
+            "command_include:bad_command_include\\.cpp:[0-9]+: include"
+            "serial_parser_include:bad_serial_parser_include\\.cpp:[0-9]+: include"
+            "angle_include:bad_angle_include\\.cpp:[0-9]+: include <core/protocol/frame_3e\\.h>"
+            "client_use:bad_client_use\\.cpp:[0-9]+: uses McProtocol")
+        string(REGEX MATCH "^([^:]+):(.*)$" _mc_unused "${_mc_case}")
+        set(_mc_case_name "${CMAKE_MATCH_1}")
+        set(_mc_case_regex "MCK-HYG ${CMAKE_MATCH_2}")
+        add_test(NAME MCK-HYG.negative_control_${_mc_case_name}
+            COMMAND ${CMAKE_COMMAND} -D MC_MOCK_DIR=${CMAKE_CURRENT_SOURCE_DIR}/mock/hyg_fixture
+                -P ${_mc_hyg_script})
+        set_tests_properties(MCK-HYG.negative_control_${_mc_case_name} PROPERTIES LABELS "mock"
+            PASS_REGULAR_EXPRESSION "${_mc_case_regex}")
+    endforeach()
+
+    # mc_coverage_report_mock (T-029): the same script as the reports above, pointed at
+    # src/mock's own object files (built by the mc_mock target), bar 90 % (SPEC-mock-plc.md).
+    if(MC_COVERAGE AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+        add_custom_target(mc_coverage_report_mock
+            COMMAND ${CMAKE_COMMAND}
+                -D MC_SOURCE_DIR=${PROJECT_SOURCE_DIR}
+                -D MC_OBJECT_BASE_DIR=${CMAKE_BINARY_DIR}/src/CMakeFiles/mc_mock.dir/mock
+                -D MC_GCOV_EXECUTABLE=${MC_GCOV_EXECUTABLE}
+                -D MC_MIN_COVERAGE=90
+                -D MC_REPORT_LABEL=src/mock
+                -P ${PROJECT_SOURCE_DIR}/cmake/mc_coverage_report.cmake
+            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+            DEPENDS mc_mock_tests
+            VERBATIM
+        )
+    endif()
+endif()
+
 # BLD-04 pri_sync and BLD-05 include_hygiene: cmake -P guard scripts run as ctest entries so
 # `ctest -L build` alone keeps the two build systems and the public surface honest. Neither
 # depends on a compiled binary, so they run even when nothing else has been built yet.

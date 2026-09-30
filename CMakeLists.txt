@@ -37,3 +37,7 @@ if(MC_BUILD_TESTS)
     add_subdirectory(tests)
 endif()
 
+if(MC_BUILD_EXAMPLES)
+    add_subdirectory(examples)
+endif()
+

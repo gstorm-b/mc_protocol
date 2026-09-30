@@ -28,6 +28,14 @@ contradict `agent-team/core/`, this file wins.
   is the go/no-go on the sans-I/O `Session`: a "go" is reported to the owner;
   a "no-go" (fall back to direction B) is the owner's decision, and Phase 4
   waits for the owner either way.
+- **Checkpoint C: go; delegation extended to Phase 4, owner 2026-09-30:**
+  "hãy đi hướng go, và giao quyền cho bạn như phase 4, trong phase này bạn có
+  thể tự quyết định khi nào thì spawn sub agent developer để đạt hiệu quả
+  implement cao nhất." Direction C stays (sans-I/O `Session` in core). The
+  same delegation covers Phase 4 (todo T25–T29 plus the phase checkpoint),
+  with the same exclusions. In Phase 4 only, the leader decides how many
+  developers to spawn and when (e.g. one per group of tasks); tester and
+  reviewer stay one fresh agent each for the phase. Phase 5 waits for the owner.
 - Work on `main` unless the owner says otherwise.
 
 ## Phase-batched verification (owner decision 2026-09-27)

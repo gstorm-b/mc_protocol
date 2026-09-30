@@ -2,7 +2,8 @@
 # with the CMake source list of the matching target, exported at configure time to
 # ${MC_SOURCES_FILE} by src/CMakeLists.txt (one "TARGET path" line per file, path
 # repo-relative with forward slashes). A .pri whose target has no CMake definition yet
-# (mc_mock before T25, mc_device before T30) must list no files of its own; any other
+# (mc_device, until T30) must list no files of its own; a layer that is switched off but has a
+# source-list variable (mc_mock under -DMC_BUILD_MOCK=OFF) is still exported and compared. Any other
 # difference is reported by file name, .pri and target, and fails the check.
 #
 # Run as: cmake -D MC_SOURCE_DIR=<repo root> -D MC_SOURCES_FILE=<path> -P check_pri_sync.cmake

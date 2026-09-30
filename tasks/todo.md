@@ -455,22 +455,22 @@
 
 ### Checkpoint C: engine go/no-go (ideas §5) (baton T-028)
 - [x] `ctest -L core_session` green with both compilers; coverage of `src/core/session` ≥ 95 % (MinGW). (T-028; 97.77 %)
-- [ ] **Owner decision:** the sans-I/O `Session` holds without contortions → continue; otherwise fall back to direction B (engine moves to the Qt layer, `McProtocol` API unchanged) and re-plan Phases 3–5.
+- [x] **Owner decision:** the sans-I/O `Session` holds without contortions → continue; otherwise fall back to direction B (engine moves to the Qt layer, `McProtocol` API unchanged) and re-plan Phases 3–5. (Owner 2026-09-30: **go**, direction C kept.)
 
 ---
 
 ## Phase 4: Mock PLC on 3E (`SPEC-mock-plc.md`). T25–T27 can run in parallel with Phase 3.
 
-### T25: `MockPlc` facade and memory image
+### T25: `MockPlc` facade and memory image (baton T-029)
 
 **Description:** `mc_mock` target (CMake + `mc_mock.pri`), public `mock_plc.h`, sparse per-type memory where word access to a bit device sees 16 points per word, device limits, request log.
 
 **Acceptance criteria:**
-- [ ] MCK-04 (writes change memory, bit/word views agree) and MCK-12 (device limit → out-of-range error) pass.
-- [ ] `mc_mock` builds without Qt; BLD-04/05 green.
+- [x] MCK-04 (writes change memory, bit/word views agree) and MCK-12 (device limit → out-of-range error) pass.
+- [x] `mc_mock` builds without Qt; BLD-04/05 green.
 
 **Verification:**
-- [ ] `ctest -L mock`.
+- [x] `ctest -L mock`.
 
 **Dependencies:** T16
 
@@ -478,16 +478,16 @@
 
 **Scope:** M
 
-### T26: 3E server direction against the vectors
+### T26: 3E server direction against the vectors (baton T-030)
 
 **Description:** 3E request decoding and response building from the spec tables, reusing only the allowed primitives (independence rule), echoing the request route.
 
 **Acceptance criteria:**
-- [ ] MCK-01…03 pass for A.1 and A.2 (requests decode to their metadata; responses reproduced byte-for-byte; V-3E-x-10 reproduced with `failRange`).
-- [ ] MCK-HYG passes; adding `#include "core/protocol/frame_3e.h"` to a mock source makes it fail.
+- [x] MCK-01…03 pass for A.1 and A.2 (requests decode to their metadata; responses reproduced byte-for-byte; V-3E-x-10 reproduced with `failRange`).
+- [x] MCK-HYG passes; adding `#include "core/protocol/frame_3e.h"` to a mock source makes it fail.
 
 **Verification:**
-- [ ] `ctest -L mock`.
+- [x] `ctest -L mock`.
 
 **Dependencies:** T25
 
@@ -495,15 +495,15 @@
 
 **Scope:** M
 
-### T27: Fault injection and corruption (Ethernet)
+### T27: Fault injection and corruption (Ethernet) (baton T-031)
 
 **Description:** `failRange`, `mute`, `muteNext`, `corruptNext` for the Ethernet modes, unsupported commands.
 
 **Acceptance criteria:**
-- [ ] MCK-09 and the Ethernet cases of MCK-11 pass with exactly the documented bytes.
+- [x] MCK-09 and the Ethernet cases of MCK-11 pass with exactly the documented bytes.
 
 **Verification:**
-- [ ] `ctest -L mock`.
+- [x] `ctest -L mock`.
 
 **Dependencies:** T26
 
@@ -511,16 +511,16 @@
 
 **Scope:** S
 
-### T28: Integration rig and the 3E part of the matrix
+### T28: Integration rig and the 3E part of the matrix (baton T-032)
 
 **Description:** In-memory pipe with seeded fragmentation, the rig (`Session` + `MockPlc` + fake clock), `mc_integration_tests` (label `integration`), scenarios on 3E Binary and 3E ASCII.
 
 **Acceptance criteria:**
-- [ ] INT-01…03, 07, 08, 10, 11, 12, 13, 14, 15, 16 pass for 3E Binary and 3E ASCII.
-- [ ] The binary finishes in under 5 s of wall time.
+- [x] INT-01…03, 07, 08, 10, 11, 12, 13, 14, 15, 16 pass for 3E Binary and 3E ASCII.
+- [x] The binary finishes in under 5 s of wall time.
 
 **Verification:**
-- [ ] `ctest -L integration` (both compilers).
+- [x] `ctest -L integration` (both compilers).
 
 **Dependencies:** T24, T27
 
@@ -528,21 +528,25 @@
 
 **Scope:** M
 
-### T29: `examples/session_loop`
+### T29: `examples/session_loop` (baton T-033)
 
 **Description:** The non-Qt usage example of the core-session spec, driving `Session` against `MockPlc` through an in-memory pipe with `std::chrono::steady_clock`.
 
 **Acceptance criteria:**
-- [ ] Builds with no Qt on the include path; prints round-1 snapshots, then changes the example makes in the mock.
+- [x] Builds with no Qt on the include path; prints round-1 snapshots, then changes the example makes in the mock.
 
 **Verification:**
-- [ ] Build and run `build/cmake-core/examples/session_loop` (core-only configure).
+- [x] Build and run `build/cmake-core/examples/session_loop` (core-only configure).
 
 **Dependencies:** T28
 
 **Files likely touched:** `examples/session_loop/main.cpp`, `examples/CMakeLists.txt`, `examples/qmake/session_loop.pro`
 
 **Scope:** S
+
+### Checkpoint C4: mock and integration on 3E (baton T-034; added by the leader for phase-batched verification)
+- [x] `ctest -L "mock|integration"` green with both compilers and through qmake; MCK-HYG green; coverage of `src/mock` ≥ 90 % (MinGW); `mc_integration_tests` < 5 s.
+- [x] Phase tester and reviewer pass; one commit for Phase 4.
 
 ---
 

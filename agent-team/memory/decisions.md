@@ -3,6 +3,10 @@
 Curated by the team leader. One entry, one decision, newest first.
 Format: `- [T-xxx or date] Decision — why. (supersedes: entry, if any)`
 
+- [T-028] Checkpoint C: **go** — direction C kept, the sans-I/O `Session`
+  stays in `mc_core`; no fallback to direction B — owner decision 2026-09-30.
+  Delegation of Gates 1–2 extended to Phase 4; in Phase 4 the leader chooses
+  how many developers to spawn and when (`rules.md`).
 - [T-026] Drain contract stays as specified: debug asserts through an internal,
   test-replaceable handler; release discards pending outputs and logs `Error`
   — owner decision (not "always discard").
