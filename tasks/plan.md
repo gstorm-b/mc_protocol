@@ -118,11 +118,11 @@ Baton tasks are created one phase ahead.
 - [x] T35 1E commands (A1E) → T-041
 - [x] T36 1E frame and vectors → T-042
 - [x] T37 1E in the mock, integration, planner and device → T-043
-- [ ] T38 Serial receive state machine → T-045
-- [ ] T39 3C formats 1 and 4 → T-046
-- [ ] T40 3C formats 2 and 3, serial options, 4C vectors (tagged v2) → T-047
-- [ ] T41 1C commands, formats 1 and 4 → T-048
-- [ ] T42 1C formats 2 and 3, AnA command set, message wait → T-049
+- [x] T38 Serial receive state machine → T-045
+- [x] T39 3C formats 1 and 4 → T-046
+- [x] T40 3C formats 2 and 3, serial options, 4C vectors (tagged v2) → T-047
+- [x] T41 1C commands, formats 1 and 4 → T-048
+- [x] T42 1C formats 2 and 3, AnA command set, message wait → T-049
 - [ ] T43 Session serial behaviour (EOT, flush, inter-character timeout, retries) → T-051
 - [ ] T44 Mock serial server direction → T-052
 - [ ] T45 Integration matrix complete (12 combinations) → T-053

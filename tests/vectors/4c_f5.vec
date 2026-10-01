@@ -1,0 +1,39 @@
+# id: V-4C5-01
+# frame: 4C  code: Binary  format: F5  op: ReadWords  device: D100  count: 3
+# kind: request  tags: v2  bytes: 26
+10 02 12 00 F8 00 00 FF FF 03 00 00 01 04 00 00 64 00 00 A8 03 00 10 03 31 46
+
+# id: V-4C5-02
+# frame: 4C  code: Binary  format: F5  op: ReadWords  device: D100  count: 3
+# kind: response  of: V-4C5-01  expect: 1995,1202,1130  tags: v2  bytes: 26
+10 02 12 00 F8 00 00 FF FF 03 00 00 FF FF 00 00 95 19 02 12 30 11 10 03 30 43
+
+# id: V-4C5-03
+# frame: 4C  code: Binary  format: F5  op: WriteWords  device: D100  count: 3
+# kind: request  write: 1995,1202,1130  tags: v2  bytes: 32
+10 02 18 00 F8 00 00 FF FF 03 00 00 01 14 00 00 64 00 00 A8 03 00 95 19 02 12 30 11 10 03 33 38
+
+# id: V-4C5-04
+# frame: 4C  code: Binary  format: F5  op: WriteWords  device: D100  count: 3
+# kind: response  of: V-4C5-03  expect:   tags: v2  bytes: 20
+10 02 0C 00 F8 00 00 FF FF 03 00 00 FF FF 00 00 10 03 30 33
+
+# id: V-4C5-05
+# frame: 4C  code: Binary  format: F5  op: ReadWords  device: D100  count: 3
+# kind: response-error  of: V-4C5-01  error: Plc  plccode: 7151  tags: v2  bytes: 20
+10 02 0C 00 F8 00 00 FF FF 03 00 00 FF FF 51 71 10 03 43 35
+
+# id: V-4C5-06
+# frame: 4C  code: Binary  format: F5  op: ReadWords  device: D16  count: 1
+# kind: request  tags: v2  bytes: 27
+10 02 12 00 F8 00 00 FF FF 03 00 00 01 04 00 00 10 10 00 00 A8 01 00 10 03 43 39
+
+# id: V-4C5-07
+# frame: 4C  code: Binary  format: F5  op: ReadWords  device: D16  count: 1
+# kind: response  of: V-4C5-06  expect: 1010  tags: v2  bytes: 24
+10 02 0E 00 F8 00 00 FF FF 03 00 00 FF FF 00 00 10 10 10 10 10 03 32 35
+
+# id: V-4C5-M1
+# frame: 4C  code: Binary  format: F5  op: ReadBits  device: X40  count: 5  station: 05  network: 07  pc: 03  io: 0004  modulestation: 01
+# kind: request  tags: v2  bytes: 26
+10 02 12 00 F8 05 07 03 04 00 01 00 01 04 01 00 40 00 00 9C 05 00 10 03 30 35

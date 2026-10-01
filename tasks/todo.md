@@ -700,10 +700,10 @@
 **Description:** The incremental F1–F4 receive parser of spec §6.3 (STX/ACK/NAK start, junk skipping, ETX scan over new bytes only, SUM, CR LF), shared by 3C and 1C.
 
 **Acceptance criteria:**
-- [ ] Synthetic frames for every format and response kind parse byte-at-a-time; junk before the start is reported in `skipped()` (STR-03); STR-04 passes for serial.
+- [x] Synthetic frames for every format and response kind parse byte-at-a-time; junk before the start is reported in `skipped()` (STR-03); STR-04 passes for serial.
 
 **Verification:**
-- [ ] `ctest -L core_protocol`.
+- [x] `ctest -L core_protocol`.
 
 **Dependencies:** T36
 
@@ -716,10 +716,10 @@
 **Description:** 3C envelopes (frame ID F9, route, sum-check ranges of spec §2.5) for formats 1 and 4 over the shared QnA commands.
 
 **Acceptance criteria:**
-- [ ] Every A.12 and A.15 vector round-trips; 3C-01 and 3C-02 pass for F1/F4; 4C-09, 4C-10, 4C-13, 4C-15 re-applied to 3C pass.
+- [x] Every A.12 and A.15 vector round-trips; 3C-01 and 3C-02 pass for F1/F4; 4C-09, 4C-10, 4C-13, 4C-15 re-applied to 3C pass.
 
 **Verification:**
-- [ ] `ctest -L core_protocol`.
+- [x] `ctest -L core_protocol`.
 
 **Dependencies:** T38
 
@@ -732,10 +732,10 @@
 **Description:** Format 2 (block number, `checkBlockNo`), format 3 (`QACK`/`QNAK`, `f3ShortResponseHasSum`), format 5 rejected (3C-03), 4C vectors transcribed and tagged `v2`.
 
 **Acceptance criteria:**
-- [ ] Every A.13 and A.14 vector round-trips; 3C-03 and 4C-14 pass; A.7–A.11 exist tagged `v2` and are skipped.
+- [x] Every A.13 and A.14 vector round-trips; 3C-03 and 4C-14 pass; A.7–A.11 exist tagged `v2` and are skipped.
 
 **Verification:**
-- [ ] `ctest -L core_protocol`.
+- [x] `ctest -L core_protocol`.
 
 **Dependencies:** T39
 
@@ -748,10 +748,10 @@
 **Description:** BR/WR/BW/WW over ASCII with message wait, 1C envelopes for F1 and F4 (2-character NAK codes).
 
 **Acceptance criteria:**
-- [ ] CMD-25…30 and CMD-33 byte-for-byte; A.16 and A.19 vectors round-trip; 1C-01, 1C-02, 1C-06, 1C-07 pass.
+- [x] CMD-25…30 and CMD-33 byte-for-byte; A.16 and A.19 vectors round-trip; 1C-01, 1C-02, 1C-06, 1C-07 pass.
 
 **Verification:**
-- [ ] `ctest -L core_protocol`.
+- [x] `ctest -L core_protocol`.
 
 **Dependencies:** T40
 
@@ -764,10 +764,10 @@
 **Description:** 1C F2/F3 (`GG`/`NN`), JR/QR/JW/QW, message-wait character, 256 points as `"00"`, ALC-01 over every family.
 
 **Acceptance criteria:**
-- [ ] A.17 and A.18 vectors round-trip; 1C-03…05 and 1C-08 pass; ALC-01 covers every v1 family; coverage of `src/core/protocol` ≥ 95 % (MinGW).
+- [x] A.17 and A.18 vectors round-trip; 1C-03…05 and 1C-08 pass; ALC-01 covers every v1 family; coverage of `src/core/protocol` ≥ 95 % (MinGW).
 
 **Verification:**
-- [ ] `ctest -L core_protocol` (both compilers).
+- [x] `ctest -L core_protocol` (both compilers).
 
 **Dependencies:** T41
 
@@ -776,7 +776,7 @@
 **Scope:** M
 
 ### Checkpoint E2: codec complete (baton T-050; batch 6b)
-- [ ] Every enabled Appendix A vector round-trips (core-protocol success criteria 1–5).
+- [x] Every enabled Appendix A vector round-trips (core-protocol success criteria 1–5). (T-050; VEC-RT 309/309)
 
 ### T43: Session serial behaviour (baton T-051)
 

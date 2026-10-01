@@ -79,8 +79,9 @@ public:
     /**
      * @brief Bytes skipped before this frame started.
      *
-     * Always 0 for Ethernet frames (3E/4E): they have no leading junk to skip. Serial frames
-     * (3C/1C, a later task) log this for diagnostics.
+     * Always 0 for Ethernet frames (3E/4E) and 1E: they have no leading junk to skip. Serial
+     * frames (3C/1C) count the bytes before the start byte (STX, ACK or NAK) here, for
+     * diagnostics.
      *
      * @pre The last feed() call returned `Done` or `Failed`.
      * @return Number of bytes of junk skipped before the frame's own start.
@@ -215,6 +216,9 @@ public:
      * @retval ErrorCode::BufferTooSmall `out` is smaller than `encodedSize(r)`.
      * @retval ErrorCode::UnsupportedCommand `config().frame`/`config().code` is not implemented
      * yet.
+     * @retval ErrorCode::InvalidConfig `config().frame` is `F1C` and `config().messageWait` is above
+     * 15 (the one config value that would put a non-hex character on the wire; the other
+     * `FrameConfig::validate()` rules are the caller's).
      * @par Complexity
      * O(n) in `r.count`; no allocation.
      * @see encodedSize

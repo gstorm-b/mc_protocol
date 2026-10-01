@@ -1,0 +1,29 @@
+# id: V-4C2-01
+# frame: 4C  code: Ascii  format: F2  op: ReadWords  device: D100  count: 3
+# kind: request  tags: v2  bytes: 41
+05 30 30 46 38 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 33 42 30
+<ENQ>00F80000FF03FF000004010000D*0001000003B0
+
+# id: V-4C2-02
+# frame: 4C  code: Ascii  format: F2  op: ReadWords  device: D100  count: 3
+# kind: response  of: V-4C2-01  expect: 1995,1202,1130  tags: v2  bytes: 34
+02 30 30 46 38 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 39 39 35 31 32 30 32 31 31 33 30 03 33 45
+<STX>00F80000FF03FF0000199512021130<ETX>3E
+
+# id: V-4C2-03
+# frame: 4C  code: Ascii  format: F2  op: WriteWords  device: D100  count: 3
+# kind: request  write: 1995,1202,1130  tags: v2  bytes: 53
+05 30 30 46 38 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 33 31 39 39 35 31 32 30 32 31 31 33 30 31 33
+<ENQ>00F80000FF03FF000014010000D*000100000319951202113013
+
+# id: V-4C2-04
+# frame: 4C  code: Ascii  format: F2  op: WriteWords  device: D100  count: 3
+# kind: response  of: V-4C2-03  expect:   tags: v2  bytes: 19
+06 30 30 46 38 30 30 30 30 46 46 30 33 46 46 30 30 30 30
+<ACK>00F80000FF03FF0000
+
+# id: V-4C2-05
+# frame: 4C  code: Ascii  format: F2  op: ReadWords  device: D100  count: 3
+# kind: response-error  of: V-4C2-01  error: Plc  plccode: 7151  tags: v2  bytes: 23
+15 30 30 46 38 30 30 30 30 46 46 30 33 46 46 30 30 30 30 37 31 35 31
+<NAK>00F80000FF03FF00007151

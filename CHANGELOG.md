@@ -164,3 +164,19 @@ All notable changes to this project are documented in this file. The format foll
   `Session::subscribe()` checks the word-aligned range the plan will read, so a bit subscription
   such as `M8180 x 10` is accepted on 1E and 1C. `autoGap()` gives 7 for 1E words. MSVC and MinGW
   GCC 13.1, both qmake kits and `scripts/check.ps1` / `check.sh` pass.
+- The serial frames 3C and 1C, formats 1 to 4 (batch 6b). Core protocol: a serial receive state
+  machine (start on STX, ACK or NAK, junk before the start counted in `Parser::skipped()`, an ETX
+  scan over new bytes only, the sum check, CR LF, block number and the Format 3 `QACK` / `QNAK`
+  and `GG` / `NN` forms with and without a SUM on the short responses), the 3C and 1C envelopes in
+  `McProtocol` / `Parser` (frame ID and access route, sum check ranges, route and block number checks,
+  2- and 4-character error codes mapped to `Plc` errors) and the 1C command layer (BR, WR, BW, WW
+  for ACPU and JR, QR, JW, QW for AnA/AnU, the message wait character, 256 points as `00`). The
+  BT / WT test encoders exist but are not reachable through `Op`. Pinned to the Appendix A.12 to
+  A.19 vectors (`3c_f1.vec` to `3c_f4.vec`, `1c_f1.vec` to `1c_f4.vec`) and the 1C rows of the CMD
+  and CMDD vectors; the 4C vectors of A.7 to A.11 are transcribed and tagged `v2`. ALC-01 now covers
+  every v1 family (3E and 1E in both data codes, 3C and 1C in all four formats): every request
+  vector encodes and every response vector parses byte by byte with zero allocations.
+  A `messageWait` above 15 is refused by `McProtocol::encode()` with `InvalidConfig`. VEC-RT proves
+  that all 309 enabled vector records of the twelve v1 families (the Appendix A rows plus the
+  derived rows) round-trip and that the 45 tagged `v1.1` / `v2` ones are present and skipped. MSVC
+  and MinGW GCC 13.1 and both qmake kits pass; line coverage of `src/core/protocol` is 97.9 %.

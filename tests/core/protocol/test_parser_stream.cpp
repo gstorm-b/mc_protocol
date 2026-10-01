@@ -1,12 +1,13 @@
 // STR-01, STR-02, STR-04 (docs/spec/SPEC-core-protocol.md Testing Strategy), reusing
-// tests/vectors/3e_binary.vec, 3e_ascii.vec, 1e_binary.vec and 1e_ascii.vec's own response vectors
-// rather than inventing new byte sequences: every one of them is already independently proven
-// correct by test_frame_3e.cpp's / test_frame_1e.cpp's own vector-driven test, so streaming the
-// very same bytes here isolates exactly the incremental/coalesced-frame behaviour these three IDs
-// are about.
+// tests/vectors/3e_binary.vec, 3e_ascii.vec, 1e_binary.vec, 1e_ascii.vec, 3c_f1.vec ..
+// 3c_f4.vec and 1c_f1.vec .. 1c_f4.vec's own response vectors rather than inventing new byte
+// sequences: every one of them is already independently proven correct by test_frame_3e.cpp's /
+// test_frame_1e.cpp's / test_frame_serial.cpp's own vector-driven test, so streaming the very same
+// bytes here isolates exactly the incremental/coalesced-frame behaviour these three IDs are about.
 #include "doctest/doctest.h"
 
 #include "common/vectors.h"
+#include "serial_vector_config.h"
 
 #include "mc/core/device.h"
 #include "mc/core/frame_config.h"
@@ -44,6 +45,9 @@ Device parseDeviceField(const std::string& text) {
 }
 
 FrameConfig buildConfig(const Vector& v) {
+    if (v.field("frame") == "3C" || v.field("frame") == "1C") {
+        return mc::test::serialConfigFromVector(v);
+    }
     mc::DataCode code = (v.field("code") == "Ascii") ? mc::DataCode::Ascii : mc::DataCode::Binary;
     FrameConfig cfg = (v.field("frame") == "1E") ? FrameConfig::frame1E(code)
                                                  : FrameConfig::frame3E(code);
@@ -84,7 +88,9 @@ void checkPayloadMatchesExpect(const Request& r, Parser& parser, ByteView wire) 
 // here re-checks them beyond confirming payload() still succeeds and returns the right size).
 std::vector<Vector> allSuccessResponseVectors() {
     std::vector<Vector> result;
-    for (const char* fileName : {"3e_binary.vec", "3e_ascii.vec", "1e_binary.vec", "1e_ascii.vec"}) {
+    for (const char* fileName : {"3e_binary.vec", "3e_ascii.vec", "1e_binary.vec", "1e_ascii.vec",
+                                 "3c_f1.vec", "3c_f2.vec", "3c_f3.vec", "3c_f4.vec", "1c_f1.vec",
+                                 "1c_f2.vec", "1c_f3.vec", "1c_f4.vec"}) {
         for (auto& v : loadVectors(vectorsRoot() / fileName)) {
             if (!v.hasTag("v1.1") && v.field("kind") == "response") {
                 result.push_back(std::move(v));
@@ -190,4 +196,175 @@ TEST_CASE("STR-04: a frame cut short, then reset(): the parser recovers") {
     REQUIRE(status == ParseStatus::Done);
     CHECK(parser.frameLength() == v.bytes.size());
     checkPayloadMatchesExpect(r, parser, ByteView{v.bytes.data(), v.bytes.size()});
+}
+
+namespace {
+
+const Vector& vectorById(const std::vector<Vector>& all, const std::string& id) {
+    for (const auto& v : all) {
+        if (v.id == id) {
+            return v;
+        }
+    }
+    FAIL("no vector with id ", id);
+    static Vector dummy;
+    return dummy;
+}
+
+} // namespace
+
+TEST_CASE("STR-02 (serial): two 3C or 1C response frames in one buffer; frameLength() points at "
+          "the second") {
+    // Every format: a response with data to a read, then an ACK (Format 3: QACK) to a write.
+    struct Pair {
+        const char* file;
+        const char* first;
+        const char* second;
+    };
+    for (const Pair& p :
+         {Pair{"3c_f1.vec", "V-3C1-02", "V-3C1-04"}, Pair{"3c_f2.vec", "V-3C2-02", "V-3C2-04"},
+          Pair{"3c_f3.vec", "V-3C3-02", "V-3C3-04"}, Pair{"3c_f4.vec", "V-3C4-02", "V-3C4-04"},
+          Pair{"1c_f1.vec", "V-1C1-02", "V-1C1-07"}, Pair{"1c_f2.vec", "V-1C2-02", "V-1C2-07"},
+          Pair{"1c_f3.vec", "V-1C3-02", "V-1C3-07"}, Pair{"1c_f4.vec", "V-1C4-02", "V-1C4-07"}}) {
+        std::vector<Vector> all = loadVectors(vectorsRoot() / p.file);
+        const std::string firstId = p.first;
+        const std::string secondId = p.second;
+        const Vector& first = vectorById(all, firstId);
+        const Vector& second = vectorById(all, secondId);
+        INFO("file ", p.file);
+
+        std::vector<uint8_t> combined = first.bytes;
+        combined.insert(combined.end(), second.bytes.begin(), second.bytes.end());
+
+        Request firstRequest = buildRequestForResponse(first);
+        Parser parser = McProtocol(buildConfig(first)).parser(firstRequest);
+        REQUIRE(parser.feed(ByteView{combined.data(), combined.size()}) == ParseStatus::Done);
+        CHECK(parser.frameLength() == first.bytes.size()); // points at the second frame's start.
+        CHECK(parser.skipped() == 0);
+        checkPayloadMatchesExpect(firstRequest, parser, ByteView{combined.data(), combined.size()});
+
+        Request secondRequest = buildRequestForResponse(second);
+        Parser secondParser = McProtocol(buildConfig(second)).parser(secondRequest);
+        ByteView remainder{combined.data() + parser.frameLength(),
+                           combined.size() - parser.frameLength()};
+        REQUIRE(secondParser.feed(remainder) == ParseStatus::Done);
+        CHECK(secondParser.frameLength() == second.bytes.size());
+    }
+}
+
+TEST_CASE("STR-04 (serial): junk and half a frame, then reset(): the parser recovers (3C and 1C)") {
+    struct Source {
+        const char* file;
+        const char* id;
+    };
+    for (const Source& source : {Source{"3c_f1.vec", "V-3C1-02"}, Source{"1c_f1.vec", "V-1C1-02"},
+                                 Source{"1c_f2.vec", "V-1C2-02"}, Source{"1c_f3.vec", "V-1C3-02"},
+                                 Source{"1c_f4.vec", "V-1C4-02"}}) {
+        std::vector<Vector> all = loadVectors(vectorsRoot() / source.file);
+        const std::string id = source.id;
+        const Vector& v = vectorById(all, id);
+        INFO("vector ", id);
+        Request r = buildRequestForResponse(v);
+        Parser parser = McProtocol(buildConfig(v)).parser(r);
+
+        std::vector<uint8_t> junked = {0x00, 0xFF};
+        junked.insert(junked.end(), v.bytes.begin(), v.bytes.end());
+        CHECK(parser.feed(ByteView{junked.data(), junked.size() / 2}) == ParseStatus::NeedMore);
+
+        parser.reset();
+
+        // Recovers: the clean frame from the start reaches Done with nothing skipped, as if this
+        // Parser had never seen the junk or the cut-short feed.
+        REQUIRE(parser.feed(ByteView{v.bytes.data(), v.bytes.size()}) == ParseStatus::Done);
+        CHECK(parser.skipped() == 0);
+        CHECK(parser.frameLength() == v.bytes.size());
+        checkPayloadMatchesExpect(r, parser, ByteView{v.bytes.data(), v.bytes.size()});
+
+        // And after Done, reset() takes it through the junked form of the same frame.
+        parser.reset();
+        REQUIRE(parser.feed(ByteView{junked.data(), junked.size()}) == ParseStatus::Done);
+        CHECK(parser.skipped() == 2);
+        CHECK(parser.frameLength() == junked.size());
+    }
+}
+
+// Index of the first byte of the response data of a serial response (junk before the frame
+// included): start byte, the block number (Format 2), the access route and, in Format 3, the end
+// code `QACK` / `GG`.
+namespace {
+
+size_t serialDataStart(const FrameConfig& cfg, size_t junk) {
+    const size_t route = cfg.frame == mc::FrameType::F1C ? 4 : 10;
+    const size_t block = cfg.format == mc::SerialFormat::Format2 ? 2 : 0;
+    const size_t code =
+        cfg.format == mc::SerialFormat::Format3 ? (cfg.frame == mc::FrameType::F1C ? 2 : 4) : 0;
+    return junk + 1 + block + route + code;
+}
+
+} // namespace
+
+TEST_CASE("STR-01 (serial): the ETX scan never re-reads bytes already fed, through the public "
+          "Parser (poisoned buffer)") {
+    // The caller keeps one buffer and feeds it again after every receive; a serial parser examines
+    // only the bytes it has not seen. Proof: after every NeedMore the data bytes already fed are
+    // overwritten with ETX in the caller's buffer (this breaks the "fed bytes do not change" rule
+    // on purpose, like SER-03 does for serialFeed()). A parser that rescans from the start of the
+    // body, for instance because the Parser lost its scan position between calls, meets the
+    // planted ETX and ends the frame early; one that resumes at its cursor does not. The bytes are
+    // restored before the completing feed, so the frame itself is the vector's.
+    const std::string kJunk = std::string("\x41\x0D\x0A\x05\x00", 5);
+    size_t frames = 0;
+    size_t feeds = 0;
+    for (const char* fileName : {"3c_f1.vec", "3c_f2.vec", "3c_f3.vec", "3c_f4.vec", "1c_f1.vec",
+                                 "1c_f2.vec", "1c_f3.vec", "1c_f4.vec"}) {
+        for (const Vector& v : loadVectors(vectorsRoot() / fileName)) {
+            if (v.field("kind") != "response") {
+                continue;
+            }
+            for (size_t junk : {size_t{0}, kJunk.size()}) {
+                INFO("vector ", v.id, " (", v.file, ":", v.line, "), ", junk, " junk bytes");
+                std::vector<uint8_t> all(kJunk.begin(), kJunk.begin() + junk);
+                all.insert(all.end(), v.bytes.begin(), v.bytes.end());
+                const FrameConfig cfg = buildConfig(v);
+                const Request r = buildRequestForResponse(v);
+                Parser parser = McProtocol(cfg).parser(r);
+
+                std::vector<uint8_t> buffer = all;
+                const size_t poisonFrom = serialDataStart(cfg, junk);
+                for (size_t n = 1; n < all.size(); ++n) {
+                    REQUIRE(parser.feed(ByteView{buffer.data(), n}) == ParseStatus::NeedMore);
+                    ++feeds;
+                    for (size_t i = poisonFrom; i + 1 < n; ++i) {
+                        buffer[i] = 0x03; // ETX; the last byte fed is left alone
+                    }
+                }
+                buffer = all;
+                REQUIRE(parser.feed(ByteView{buffer.data(), buffer.size()}) == ParseStatus::Done);
+                CHECK(parser.skipped() == junk);
+                CHECK(parser.frameLength() == all.size());
+
+                // The payload is the one the vector states.
+                McProtocol proto(cfg);
+                std::vector<uint8_t> payload(proto.payloadSize(r), 0xFF);
+                auto decoded = parser.payload(ByteView{buffer.data(), buffer.size()},
+                                              MutableByteView{payload.data(), payload.size()});
+                REQUIRE(decoded.hasValue());
+                std::vector<uint8_t> want;
+                for (uint32_t value : mc::test::csvHex(v.field("expect"))) {
+                    if (r.isBitOp()) {
+                        want.push_back(static_cast<uint8_t>(value));
+                    } else if (!r.isWrite()) {
+                        want.push_back(static_cast<uint8_t>(value & 0xFFu));
+                        want.push_back(static_cast<uint8_t>(value >> 8));
+                    }
+                }
+                CHECK(payload == want);
+                ++frames;
+            }
+        }
+    }
+    // 4 + 4 files of serial response rows, each fed with and without junk: a row that left the
+    // vector files would shrink this count.
+    CHECK(frames == 2 * 78);
+    CHECK(feeds > 2000);
 }

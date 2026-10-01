@@ -99,3 +99,45 @@
 # frame: 1e  op: ReadBits  code: Binary  device: M100  count: 2
 # kind: response-error  error: InvalidCharacter  bytes: 1
 21
+
+# id: CMDD-14
+# frame: 1c  op: ReadBits  code: Ascii  device: X40  count: 5
+# kind: response  expect: 0,1,1,0,1  bytes: 5
+30 31 31 30 31
+01101
+
+# id: CMDD-15
+# frame: 1c  op: ReadWords  code: Ascii  device: X40  count: 2
+# kind: response  expect: 1234,ABCD  bytes: 8
+31 32 33 34 41 42 43 44
+1234ABCD
+
+# id: CMDD-16
+# frame: 1c  op: ReadWords  code: Ascii  device: TN123  count: 2
+# kind: response  expect: 7BC9,1234  bytes: 8
+37 42 43 39 31 32 33 34
+7BC91234
+
+# id: CMDD-14a
+# frame: 1c  op: ReadBits  code: Ascii  device: X40  count: 5
+# kind: response-error  error: LengthMismatch  bytes: 4
+30 31 31 30
+0110
+
+# id: CMDD-14b
+# frame: 1c  op: ReadBits  code: Ascii  device: X40  count: 5
+# kind: response-error  error: InvalidCharacter  bytes: 5
+30 31 32 30 31
+01201
+
+# id: CMDD-16a
+# frame: 1c  op: ReadWords  code: Ascii  device: TN123  count: 2
+# kind: response-error  error: LengthMismatch  bytes: 7
+37 42 43 39 31 32 33
+7BC9123
+
+# id: CMDD-16b
+# frame: 1c  op: ReadWords  code: Ascii  device: TN123  count: 2
+# kind: response-error  error: InvalidCharacter  bytes: 8
+37 42 43 39 31 47 33 34
+7BC91G34

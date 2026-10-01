@@ -92,6 +92,8 @@ add_executable(mc_core_protocol_tests
     core/protocol/test_commands.cpp
     core/protocol/test_frame_3e.cpp
     core/protocol/test_frame_1e.cpp
+    core/protocol/test_serial_parser.cpp
+    core/protocol/test_frame_serial.cpp
     core/protocol/test_parser_stream.cpp
     core/protocol/test_alloc.cpp
 )

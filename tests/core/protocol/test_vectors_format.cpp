@@ -1,9 +1,18 @@
 // VEC-01 / VEC-02 (SPEC-core-protocol.md "Golden vector files", T-013): the `.vec` loader
-// itself, and the transcription guard that runs over every checked-in vector file.
+// itself, and the transcription guard that runs over every checked-in vector file; VEC-RT (T-050):
+// every enabled vector record of every v1 family (the Appendix A rows and the derived rows)
+// round-trips through McProtocol and Parser, the tagged ones are present and skipped, counted per
+// file.
 #include "doctest/doctest.h"
 
 #include "common/vectors.h"
+#include "serial_vector_config.h"
 
+#include "mc/core/protocol.h"
+#include "mc/core/request.h"
+#include "mc/core/result.h"
+
+#include <cstdint>
 #include <filesystem>
 #include <string>
 #include <string_view>
@@ -157,4 +166,150 @@ TEST_CASE("VEC-02 transcription guard: every vector's hex byte count matches its
         size_t expected = static_cast<size_t>(std::stoul(bytesField));
         CHECK(v.bytes.size() == expected);
     }
+}
+
+namespace {
+
+// One vector record through McProtocol: a request must be reproduced byte for byte, a response
+// must reach Done with the stated payload, an error response must fail with the stated error.
+// Returns false (with the reason in `why`) instead of asserting, so the caller can count honestly.
+bool roundTrips(const Vector& v, std::string& why) {
+    std::vector<uint8_t> writeStorage;
+    mc::Request r = mc::test::serialRequestFromVector(v, writeStorage);
+    mc::McProtocol proto(mc::test::frameConfigFromVector(v));
+    const mc::ByteView wire{v.bytes.data(), v.bytes.size()};
+    const std::string kind = v.field("kind");
+
+    if (kind == "request") {
+        auto size = proto.encodedSize(r);
+        if (!size.hasValue() || size.value() != v.bytes.size()) {
+            why = "encodedSize() differs from the vector length";
+            return false;
+        }
+        std::vector<uint8_t> out(size.value(), 0xCC);
+        auto result = proto.encode(r, mc::MutableByteView{out.data(), out.size()});
+        if (!result.hasValue() || result.value() != v.bytes.size() || out != v.bytes) {
+            why = "encode() does not reproduce the vector";
+            return false;
+        }
+        return true;
+    }
+
+    mc::Parser parser = proto.parser(r);
+    const mc::ParseStatus status = parser.feed(wire);
+    if (kind == "response") {
+        if (status != mc::ParseStatus::Done || parser.frameLength() != v.bytes.size()) {
+            why = "the response does not reach Done over exactly its bytes";
+            return false;
+        }
+        std::vector<uint8_t> payload(proto.payloadSize(r), 0xFF);
+        auto decoded = parser.payload(wire, mc::MutableByteView{payload.data(), payload.size()});
+        if (!decoded.hasValue() || decoded.value() != payload.size()) {
+            why = "payload() fails or has the wrong size";
+            return false;
+        }
+        const std::vector<uint32_t> expect = mc::test::csvHex(v.field("expect"));
+        std::vector<uint8_t> want;
+        if (r.isWrite()) {
+            // no payload
+        } else if (r.isBitOp()) {
+            for (uint32_t bit : expect) {
+                want.push_back(static_cast<uint8_t>(bit));
+            }
+        } else {
+            for (uint32_t word : expect) {
+                want.push_back(static_cast<uint8_t>(word & 0xFFu));
+                want.push_back(static_cast<uint8_t>(word >> 8));
+            }
+        }
+        if (payload != want) {
+            why = "the decoded payload differs from `expect:`";
+            return false;
+        }
+        return true;
+    }
+
+    if (kind != "response-error" || status != mc::ParseStatus::Failed) {
+        why = "an error response does not fail";
+        return false;
+    }
+    const std::string name = v.field("error");
+    const mc::Error& e = parser.error();
+    if (name == "Plc") {
+        const bool ok =
+            e.category == mc::ErrorCategory::Plc && e.code == mc::ErrorCode::PlcError &&
+            static_cast<unsigned long>(e.plcCode) == std::stoul(v.field("plccode"), nullptr, 16);
+        if (!ok) {
+            why = "the PLC error code differs from `plccode:`";
+        }
+        return ok;
+    }
+    const mc::ErrorCode code = name == "FrameMismatch"      ? mc::ErrorCode::FrameMismatch
+                               : name == "LengthMismatch"   ? mc::ErrorCode::LengthMismatch
+                               : name == "SumCheck"         ? mc::ErrorCode::SumCheck
+                               : name == "InvalidCharacter" ? mc::ErrorCode::InvalidCharacter
+                                                            : mc::ErrorCode::PlcError;
+    if (e.category != mc::ErrorCategory::Protocol || e.code != code) {
+        why = "the protocol error differs from `error:`";
+        return false;
+    }
+    return true;
+}
+
+} // namespace
+
+TEST_CASE("VEC-RT: every enabled vector record of every v1 family (Appendix A rows and derived "
+          "rows) round-trips; the tagged v1.1 / v2 ones are present and skipped") {
+    struct File {
+        const char* name;
+        bool v1; ///< a v1 family: its untagged records must round-trip
+    };
+    // A.1, A.2 (3E), A.5, A.6 (1E), A.12-A.15 (3C), A.16-A.19 (1C); A.3, A.4 (4E) and A.7-A.11 (4C)
+    // are transcribed for v2.
+    const File files[] = {
+        {"3e_binary.vec", true},  {"3e_ascii.vec", true},  {"1e_binary.vec", true},
+        {"1e_ascii.vec", true},   {"3c_f1.vec", true},     {"3c_f2.vec", true},
+        {"3c_f3.vec", true},      {"3c_f4.vec", true},     {"1c_f1.vec", true},
+        {"1c_f2.vec", true},      {"1c_f3.vec", true},     {"1c_f4.vec", true},
+        {"4e_binary.vec", false}, {"4e_ascii.vec", false}, {"4c_f1.vec", false},
+        {"4c_f2.vec", false},     {"4c_f3.vec", false},    {"4c_f4.vec", false},
+        {"4c_f5.vec", false}};
+
+    size_t totalEnabled = 0;
+    size_t totalTagged = 0;
+    size_t totalRoundTripped = 0;
+    for (const File& f : files) {
+        std::vector<Vector> vectors = loadVectors(vectorsRoot() / f.name);
+        REQUIRE_FALSE(vectors.empty());
+        size_t enabled = 0;
+        size_t tagged = 0;
+        size_t roundTripped = 0;
+        for (const Vector& v : vectors) {
+            INFO("vector ", v.id, " (", v.file, ":", v.line, ")");
+            if (v.hasTag("v1.1") || v.hasTag("v2")) {
+                ++tagged;
+                continue;
+            }
+            ++enabled;
+            std::string why;
+            const bool ok = roundTrips(v, why);
+            CHECK_MESSAGE(ok, why);
+            roundTripped += ok ? 1 : 0;
+        }
+        if (f.v1) {
+            CHECK(roundTripped == enabled);
+        } else {
+            // 4E and 4C: every record is tagged v2; none is run.
+            CHECK(enabled == 0);
+            CHECK(tagged == vectors.size());
+        }
+        MESSAGE("VEC-RT ", std::string(f.name), ": ", vectors.size(), " records, ", enabled,
+                " enabled, ", tagged, " tagged and skipped, ", roundTripped, " round-tripped");
+        totalEnabled += enabled;
+        totalTagged += tagged;
+        totalRoundTripped += roundTripped;
+    }
+    MESSAGE("VEC-RT total: ", totalEnabled, " enabled, ", totalTagged, " tagged and skipped, ",
+            totalRoundTripped, " round-tripped");
+    CHECK(totalRoundTripped == totalEnabled);
 }

@@ -1,0 +1,137 @@
+# id: V-3C1-01
+# frame: 3C  code: Ascii  format: F1  op: ReadWords  device: D100  count: 3
+# kind: request  bytes: 33
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 33 30 32
+<ENQ>F90000FF0004010000D*000100000302
+
+# id: V-3C1-02
+# frame: 3C  code: Ascii  format: F1  op: ReadWords  device: D100  count: 3
+# kind: response  of: V-3C1-01  expect: 1995,1202,1130  bytes: 26
+02 46 39 30 30 30 30 46 46 30 30 31 39 39 35 31 32 30 32 31 31 33 30 03 39 30
+<STX>F90000FF00199512021130<ETX>90
+
+# id: V-3C1-03
+# frame: 3C  code: Ascii  format: F1  op: WriteBits  device: M100  count: 8
+# kind: request  write: 1,1,0,0,1,1,0,0  bytes: 41
+05 46 39 30 30 30 30 46 46 30 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 31 30 30 30 30 30 38 31 31 30 30 31 31 30 30 39 36
+<ENQ>F90000FF0014010001M*00010000081100110096
+
+# id: V-3C1-04
+# frame: 3C  code: Ascii  format: F1  op: WriteBits  device: M100  count: 8
+# kind: response  of: V-3C1-03  expect:   bytes: 11
+06 46 39 30 30 30 30 46 46 30 30
+<ACK>F90000FF00
+
+# id: V-3C1-05
+# frame: 3C  code: Ascii  format: F1  op: ReadWords  device: D100  count: 3
+# kind: response-error  of: V-3C1-01  error: Plc  plccode: 7151  bytes: 15
+15 46 39 30 30 30 30 46 46 30 30 37 31 35 31
+<NAK>F90000FF007151
+
+# id: 3C1-G2-REQ
+# frame: 3C  code: Ascii  format: F1  op: ReadBits  device: M100  count: 8
+# kind: request  bytes: 33
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 31 4D 2A 30 30 30 31 30 30 30 30 30 38 31 31
+<ENQ>F90000FF0004010001M*000100000811
+
+# id: 3C1-G2-RSP
+# frame: 3C  code: Ascii  format: F1  op: ReadBits  device: M100  count: 8
+# kind: response  of: 3C1-G2-REQ  expect: 0,0,0,1,0,0,1,1  bytes: 22
+02 46 39 30 30 30 30 46 46 30 30 30 30 30 31 30 30 31 31 03 42 31
+<STX>F90000FF0000010011<ETX>B1
+
+# id: 3C1-G3-REQ
+# frame: 3C  code: Ascii  format: F1  op: WriteWords  device: D100  count: 3
+# kind: request  write: 1995,1202,1130  bytes: 45
+05 46 39 30 30 30 30 46 46 30 30 31 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 33 31 39 39 35 31 32 30 32 31 31 33 30 36 35
+<ENQ>F90000FF0014010000D*000100000319951202113065
+
+# id: 3C1-G3-RSP
+# frame: 3C  code: Ascii  format: F1  op: WriteWords  device: D100  count: 3
+# kind: response  of: 3C1-G3-REQ  expect:   bytes: 11
+06 46 39 30 30 30 30 46 46 30 30
+<ACK>F90000FF00
+
+# id: 3C1-G6-REQ
+# frame: 3C  code: Ascii  format: F1  op: ReadBits  device: M100  count: 5
+# kind: request  bytes: 33
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 31 4D 2A 30 30 30 31 30 30 30 30 30 35 30 45
+<ENQ>F90000FF0004010001M*00010000050E
+
+# id: 3C1-G6-RSP
+# frame: 3C  code: Ascii  format: F1  op: ReadBits  device: M100  count: 5
+# kind: response  of: 3C1-G6-REQ  expect: 1,0,1,0,1  bytes: 19
+02 46 39 30 30 30 30 46 46 30 30 31 30 31 30 31 03 32 31
+<STX>F90000FF0010101<ETX>21
+
+# id: 3C1-IQR-W-REQ
+# frame: 3C  code: Ascii  format: F1  op: ReadWords  device: D100  count: 3  series: IqR
+# kind: request  bytes: 37
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 32 44 2A 2A 2A 30 30 30 30 30 31 30 30 30 30 30 33 42 38
+<ENQ>F90000FF0004010002D***000001000003B8
+
+# id: 3C1-IQR-B-REQ
+# frame: 3C  code: Ascii  format: F1  op: ReadBits  device: M100  count: 8  series: IqR
+# kind: request  bytes: 37
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 33 4D 2A 2A 2A 30 30 30 30 30 31 30 30 30 30 30 38 43 37
+<ENQ>F90000FF0004010003M***000001000008C7
+
+# id: 3C1-NOSUM-REQ
+# frame: 3C  code: Ascii  format: F1  op: ReadWords  device: D100  count: 3  sum: off
+# kind: request  bytes: 31
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 33
+<ENQ>F90000FF0004010000D*0001000003
+
+# id: 3C1-NOSUM-RSP
+# frame: 3C  code: Ascii  format: F1  op: ReadWords  device: D100  count: 3  sum: off
+# kind: response  of: 3C1-NOSUM-REQ  expect: 1995,1202,1130  bytes: 24
+02 46 39 30 30 30 30 46 46 30 30 31 39 39 35 31 32 30 32 31 31 33 30 03
+<STX>F90000FF00199512021130<ETX>
+
+# id: 3C1-ROUTE
+# frame: 3C  code: Ascii  format: F1  op: ReadWords  device: D100  count: 3
+# kind: response-error  of: V-3C1-01  error: FrameMismatch  bytes: 26
+02 46 39 30 31 30 30 46 46 30 30 31 39 39 35 31 32 30 32 31 31 33 30 03 39 31
+<STX>F90100FF00199512021130<ETX>91
+
+# id: 3C1-ROUTE-OFF
+# frame: 3C  code: Ascii  format: F1  op: ReadWords  device: D100  count: 3  checkroute: off
+# kind: response  of: V-3C1-01  expect: 1995,1202,1130  bytes: 26
+02 46 39 30 31 30 30 46 46 30 30 31 39 39 35 31 32 30 32 31 31 33 30 03 39 31
+<STX>F90100FF00199512021130<ETX>91
+
+# id: 3C1-FRAMEID
+# frame: 3C  code: Ascii  format: F1  op: ReadWords  device: D100  count: 3
+# kind: response-error  of: V-3C1-01  error: FrameMismatch  bytes: 26
+02 46 38 30 30 30 30 46 46 30 30 31 39 39 35 31 32 30 32 31 31 33 30 03 38 46
+<STX>F80000FF00199512021130<ETX>8F
+
+# id: 3C1-SUM
+# frame: 3C  code: Ascii  format: F1  op: ReadWords  device: D100  count: 3
+# kind: response-error  of: V-3C1-01  error: SumCheck  bytes: 26
+02 46 39 30 30 30 30 46 46 30 30 31 39 39 35 31 32 30 32 31 31 33 30 03 39 31
+<STX>F90000FF00199512021130<ETX>91
+
+# id: 3C1-LEN
+# frame: 3C  code: Ascii  format: F1  op: ReadWords  device: D100  count: 3
+# kind: response-error  of: V-3C1-01  error: LengthMismatch  bytes: 25
+02 46 39 30 30 30 30 46 46 30 30 31 39 39 35 31 32 30 32 31 31 33 03 36 30
+<STX>F90000FF0019951202113<ETX>60
+
+# id: 3C1-ACKREAD
+# frame: 3C  code: Ascii  format: F1  op: ReadWords  device: D100  count: 3
+# kind: response-error  of: V-3C1-01  error: LengthMismatch  bytes: 11
+06 46 39 30 30 30 30 46 46 30 30
+<ACK>F90000FF00
+
+# id: 3C1-DATAWRITE
+# frame: 3C  code: Ascii  format: F1  op: WriteBits  device: M100  count: 8
+# kind: response-error  of: V-3C1-03  error: LengthMismatch  bytes: 26
+02 46 39 30 30 30 30 46 46 30 30 31 39 39 35 31 32 30 32 31 31 33 30 03 39 30
+<STX>F90000FF00199512021130<ETX>90
+
+# id: 3C1-NAKWRITE
+# frame: 3C  code: Ascii  format: F1  op: WriteBits  device: M100  count: 8
+# kind: response-error  of: V-3C1-03  error: Plc  plccode: C051  bytes: 15
+15 46 39 30 30 30 30 46 46 30 30 43 30 35 31
+<NAK>F90000FF00C051

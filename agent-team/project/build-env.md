@@ -44,12 +44,26 @@ Last verified: 2026-09-27 (T-002 … T-012; first MinGW build of core-model: zer
    (MSVC) and the MinGW line below both prepend `C:\Qt\Tools\Ninja` so the
    right one wins.
 
+## Parallel builds — always (owner request 2026-10-01)
+
+This PC has **32 logical cores**. Every build and test run uses them:
+
+| Step | Use | Never |
+|---|---|---|
+| CMake build (Ninja) | `cmake --build <dir> --parallel 32` (Ninja is parallel by default; the flag makes it explicit) | `-j 1`, `--parallel 1` |
+| qmake, MSVC kit | `C:\Qt\Tools\QtCreator\bin\jom\jom.exe -j 32` and `jom.exe -j 32 check` (jom is an nmake-compatible parallel make) | plain `nmake` (single-threaded) |
+| qmake, MinGW kit | `mingw32-make -j32` and `mingw32-make -j32 check` | `mingw32-make` without `-j` |
+| ctest | `ctest ... -j 8` (device tests use OS-chosen ports; `-j 6`/`-j 8` stress runs were green, T-040) | — |
+
+Still **never two check scripts or two builds of the same folder at once** — parallelism
+goes inside one build, not across builds sharing a folder.
+
 ## MSVC — the daily loop (PowerShell, one call)
 
 ```powershell
 . scripts/vsdev.ps1
-cmake --build build/cmake-debug
-ctest --test-dir build/cmake-debug -L <label> --output-on-failure
+cmake --build build/cmake-debug --parallel 32
+ctest --test-dir build/cmake-debug -L <label> -j 8 --output-on-failure
 ```
 
 Fresh configure (only when needed):
@@ -59,8 +73,8 @@ Fresh configure (only when needed):
 
 ```powershell
 $env:PATH = "C:\Qt\Tools\mingw1310_64\bin;C:\Qt\Tools\CMake_64\bin;C:\Qt\Tools\Ninja;$env:PATH"
-cmake --build build/cmake-mingw
-ctest --test-dir build/cmake-mingw -L <label> --output-on-failure
+cmake --build build/cmake-mingw --parallel 32
+ctest --test-dir build/cmake-mingw -L <label> -j 8 --output-on-failure
 ```
 
 Fresh configure: same as MSVC with `-B build/cmake-mingw
@@ -72,12 +86,13 @@ Fresh configure: same as MSVC with `-B build/cmake-mingw
 . scripts/vsdev.ps1
 Push-Location build/qmake-debug
 C:\Qt\6.11.1\msvc2022_64\bin\qmake.exe ../../mc_protocol.pro CONFIG+=debug
-nmake; nmake check
+C:\Qt\Tools\QtCreator\bin\jom\jom.exe -j 32; C:\Qt\Tools\QtCreator\bin\jom\jom.exe -j 32 check
 Pop-Location
 ```
 
 MinGW flavour: MinGW `PATH` line above, `C:\Qt\6.11.1\mingw_64\bin\qmake.exe`,
-`mingw32-make` / `mingw32-make check`, in `build/qmake-mingw`.
+`mingw32-make -j32` / `mingw32-make -j32 check`, in `build/qmake-mingw`.
+Where the gotchas below say "`nmake`", jom does the same job.
 
 ## qmake gotchas
 
@@ -178,6 +193,9 @@ the bar (`-D MC_MIN_COVERAGE=<n>`, default 95, total over `src/core/model`).
   and skips without it. Do not install or reconfigure serial software.
 - Windows reports a refused **loopback** connect only after 2–4 s; a test
   against a closed port ends on its own connect timer instead (T-035).
+- Mutation runs: touching a restored source with Node `fs.utimesSync` did **not**
+  make ninja rebuild, so the "restored" run still used the mutant's objects.
+  Delete the affected object files before each mutation build (T-050).
 - After restoring a mutated source with `Copy-Item`, touch it
   (`(Get-Item f).LastWriteTime = Get-Date`): the copy keeps the old timestamp,
   ninja sees no work and the test still runs the mutant (T-036).

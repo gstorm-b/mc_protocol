@@ -3,6 +3,17 @@
 Curated by the team leader. One entry, one decision, newest first.
 Format: `- [T-xxx or date] Decision — why. (supersedes: entry, if any)`
 
+- [T-050] Batch 6b leader decisions: the serial scan cursor reuses `Parser`'s private members
+  (no `protocol.h` layout change); unlisted serial error mappings (F4 without CR LF, unknown F3
+  end code, NAK of another route → `FrameMismatch`; short body → `LengthMismatch`); unimplemented
+  frame/code → `UnsupportedCommand`; no ETX wait cap in the parser (Session deadlines bound it);
+  `messageWait > 15` → `InvalidConfig` in `encode()`; BT/WT `n > 255` → `PointCount`.
+  Carried into batch 6c: `protocol.h:219` 101 columns, 1E test-encoder `n` cast, `n = 255`
+  accept test. `McProtocol` not re-running `FrameConfig::validate()` goes to the owner.
+- [2026-10-01] Every build and test run uses the PC's 32 cores: `cmake --build --parallel 32`,
+  jom (not nmake) for qmake/MSVC, `mingw32-make -j32`, `ctest -j 8` — owner request. Commands in
+  `build-env.md`. Making `scripts/check.ps1`/`check.sh` parallel too is **pending**: the edit was
+  refused by the permission layer (T-050) and waits for the owner's permission.
 - [T-044] Batch 6a leader decisions: a non-hex 1E ASCII subheader → `FrameMismatch`
   (as 3E); `bit_payload.h` shared by QnA and A1E; `WrongRoute` leaves a 1E response
   unchanged (no route field); `chunkCount()`/`chunk()` skip rule 6 on the unsplit request

@@ -132,3 +132,68 @@
 # kind: request  tags: v1.1  bytes: 52
 30 33 30 30 35 39 32 30 30 30 30 30 30 30 38 30 37 42 32 39 35 37 32 30 30 30 30 30 30 30 32 36 31 32 33 34 34 33 34 45 30 30 30 30 30 30 31 32 30 30 35 30
 03005920000000807B295720000000261234434E000000120050
+
+# id: CMD-25
+# frame: 1c  op: ReadBits  code: Ascii  device: X40  count: 5  wait: A
+# kind: request  bytes: 10
+42 52 41 58 30 30 34 30 30 35
+BRAX004005
+
+# id: CMD-26
+# frame: 1c  op: ReadBits  code: Ascii  device: X40  count: 5  wait: A  commandset: ana
+# kind: request  bytes: 12
+4A 52 41 58 30 30 30 30 34 30 30 35
+JRAX00004005
+
+# id: CMD-27
+# frame: 1c  op: ReadWords  code: Ascii  device: TN123  count: 2
+# kind: request  bytes: 10
+57 52 30 54 4E 31 32 33 30 32
+WR0TN12302
+
+# id: CMD-28
+# frame: 1c  op: ReadWords  code: Ascii  device: TN123  count: 2  commandset: ana
+# kind: request  bytes: 12
+51 52 30 54 4E 30 30 31 32 33 30 32
+QR0TN0012302
+
+# id: CMD-29
+# frame: 1c  op: WriteBits  code: Ascii  device: M903  count: 5
+# kind: request  write: 0,1,1,0,1  bytes: 15
+42 57 30 4D 30 39 30 33 30 35 30 31 31 30 31
+BW0M09030501101
+
+# id: CMD-30
+# frame: 1c  op: WriteWords  code: Ascii  device: D0  count: 2
+# kind: request  write: 1234,ACD7  bytes: 18
+57 57 30 44 30 30 30 30 30 32 31 32 33 34 41 43 44 37
+WW0D0000021234ACD7
+
+# id: CMD-31
+# frame: 1c  op: WriteRandomWords  code: Ascii
+# kind: request  tags: v1.1  bytes: 32
+57 54 30 30 33 44 30 35 30 30 31 32 33 34 59 30 31 30 30 42 43 41 39 43 4E 31 30 30 30 30 36 34
+WT003D05001234Y0100BCA9CN1000064
+
+# id: CMD-32
+# frame: 1c  op: WriteRandomBits  code: Ascii
+# kind: request  tags: v1.1  bytes: 23
+42 54 30 30 33 4D 30 30 35 30 31 42 30 33 31 41 30 59 30 30 32 46 31
+BT003M00501B031A0Y002F1
+
+# id: CMD-33
+# frame: 1c  kind: sumcheck  expect: C0  bytes: 12
+30 30 46 46 42 52 33 4D 30 30 30 30
+00FFBR3M0000
+
+# id: CMD-35
+# frame: qna  op: ReadRandom  code: Ascii  series: QL
+# kind: request  tags: v1.1  bytes: 68
+30 34 30 33 30 30 30 30 30 34 30 33 44 2A 30 30 30 30 30 30 54 4E 30 30 30 30 30 30 4D 2A 30 30 30 31 30 30 58 2A 30 30 30 30 32 30 44 2A 30 30 31 35 30 30 59 2A 30 30 30 31 36 30 4D 2A 30 30 31 31 31 31
+040300000403D*000000TN000000M*000100X*000020D*001500Y*000160M*001111
+
+# id: CMD-36
+# frame: qna  op: WriteRandom  code: Ascii  series: QL
+# kind: request  tags: v1.1  bytes: 108
+31 34 30 32 30 30 30 30 30 34 30 33 44 2A 30 30 30 30 30 30 30 35 35 30 44 2A 30 30 30 30 30 31 30 35 37 35 4D 2A 30 30 30 31 30 30 30 35 34 30 58 2A 30 30 30 30 32 30 30 35 38 33 44 2A 30 30 31 35 30 30 30 34 33 39 31 32 30 32 59 2A 30 30 30 31 36 30 32 33 37 35 32 36 30 37 4D 2A 30 30 31 31 31 31 30 34 32 35 30 34 37 35
+140200000403D*0000000550D*0000010575M*0001000540X*0000200583D*00150004391202Y*00016023752607M*00111104250475

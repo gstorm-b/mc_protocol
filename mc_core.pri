@@ -36,8 +36,11 @@ HEADERS += \
     $$PWD/src/core/protocol/command_qna.h \
     $$PWD/src/core/protocol/bit_payload.h \
     $$PWD/src/core/protocol/command_a1e.h \
+    $$PWD/src/core/protocol/command_a1c.h \
     $$PWD/src/core/protocol/frame_1e.h \
-    $$PWD/src/core/protocol/frame_3e.h
+    $$PWD/src/core/protocol/frame_3e.h \
+    $$PWD/src/core/protocol/frame_serial.h \
+    $$PWD/src/core/protocol/serial_parser.h
 
 SOURCES += \
     $$PWD/src/core/version.cpp \
@@ -54,8 +57,11 @@ SOURCES += \
     $$PWD/src/core/protocol/device_encode.cpp \
     $$PWD/src/core/protocol/command_qna.cpp \
     $$PWD/src/core/protocol/command_a1e.cpp \
+    $$PWD/src/core/protocol/command_a1c.cpp \
     $$PWD/src/core/protocol/frame_1e.cpp \
     $$PWD/src/core/protocol/frame_3e.cpp \
+    $$PWD/src/core/protocol/frame_serial.cpp \
+    $$PWD/src/core/protocol/serial_parser.cpp \
     $$PWD/src/core/protocol/protocol.cpp \
     $$PWD/src/core/session/range_set.cpp \
     $$PWD/src/core/session/read_plan.cpp \

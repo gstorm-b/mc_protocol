@@ -1,13 +1,13 @@
-// McProtocol dispatch by FrameType, and Parser's own state machine (spec sections 5, 7.2). F3E
-// and F1E (both DataCode::Binary and DataCode::Ascii) are implemented; every other frame family
-// fails with UnsupportedCommand rather than reaching any frame-specific code, so extending
-// isImplemented() and the per-frame helpers below is what later tasks (3C, 1C) do; nothing here
-// needs to change shape to add a branch.
+// McProtocol dispatch by FrameType, and Parser's own state machine (spec sections 5, 7.2). F3E and
+// F1E (both DataCode::Binary and DataCode::Ascii) and F3C and F1C (ASCII, the serial formats
+// frameSerialFormatSupported() lists) are implemented; every other frame family fails with
+// UnsupportedCommand rather than reaching any frame-specific code.
 #include "mc/core/protocol.h"
 
 #include "field_codec.h"
 #include "frame_1e.h"
 #include "frame_3e.h"
+#include "frame_serial.h"
 
 #include <utility>
 
@@ -22,12 +22,22 @@ Error unsupportedCommandError() noexcept {
     return e;
 }
 
+// Serial frames (3C, 1C) are ASCII only and take no codec parameter: they dispatch before the
+// Binary/ASCII choice below, to frame_serial.h.
+bool isSerialFrame(const FrameConfig& cfg) noexcept {
+    return cfg.frame == FrameType::F3C || cfg.frame == FrameType::F1C;
+}
+
 bool isImplemented(const FrameConfig& cfg) noexcept {
+    if (isSerialFrame(cfg)) {
+        return cfg.code == DataCode::Ascii && detail::frameSerialFormatSupported(cfg.format);
+    }
     return cfg.frame == FrameType::F3E || cfg.frame == FrameType::F1E;
 }
 
-// Per-frame dispatch, one helper per operation, templated on the wire code. Only called once
-// isImplemented(cfg) holds, so the two-way choice on cfg.frame is exhaustive.
+// Per-frame dispatch of the Ethernet frames, one helper per operation, templated on the wire code.
+// Only called once isImplemented(cfg) holds and isSerialFrame(cfg) does not, so the two-way choice
+// on cfg.frame is exhaustive.
 template <class Codec> size_t frameEncodedSize(const Request& r, const FrameConfig& cfg) noexcept {
     return cfg.frame == FrameType::F1E ? detail::frame1eEncodedSize<Codec>(r)
                                        : detail::frame3eEncodedSize<Codec>(r, cfg.series);
@@ -98,6 +108,9 @@ Expected<size_t> McProtocol::encodedSize(const Request& r) const noexcept {
     if (!isImplemented(m_config)) {
         return Expected<size_t>(unsupportedCommandError());
     }
+    if (isSerialFrame(m_config)) {
+        return Expected<size_t>(detail::frameSerialEncodedSize(r, m_config));
+    }
     if (m_config.code == DataCode::Binary) {
         return Expected<size_t>(frameEncodedSize<detail::BinaryCodec>(r, m_config));
     }
@@ -111,6 +124,9 @@ Expected<size_t> McProtocol::encode(const Request& r, MutableByteView out) const
     }
     if (!isImplemented(m_config)) {
         return Expected<size_t>(unsupportedCommandError());
+    }
+    if (isSerialFrame(m_config)) {
+        return detail::frameSerialEncode(r, m_config, out);
     }
     if (m_config.code == DataCode::Binary) {
         return frameEncode<detail::BinaryCodec>(r, m_config, out);
@@ -134,6 +150,9 @@ Expected<ByteBuf> McProtocol::encode(const Request& r) const {
 size_t McProtocol::maxResponseSize(const Request& r) const noexcept {
     if (!isImplemented(m_config)) {
         return 0;
+    }
+    if (isSerialFrame(m_config)) {
+        return detail::frameSerialMaxResponseSize(r, m_config);
     }
     if (m_config.code == DataCode::Binary) {
         return frameMaxResponseSize<detail::BinaryCodec>(r, m_config);
@@ -174,6 +193,23 @@ ParseStatus Parser::feed(ByteView buffer) noexcept {
 
     size_t frameLength = 0;
     Error err{};
+    if (isSerialFrame(m_cfg)) {
+        // A serial frame has no length field to re-read, so the scan position is kept between
+        // calls: in m_frameLength (only meaningful after Done/Failed, so free while NeedMore) and
+        // m_skipped (the junk counted so far), together the detail::SerialCursor.
+        detail::SerialCursor cursor{m_frameLength, m_skipped};
+        ParseStatus serial =
+            detail::frameSerialTryParse(buffer, r, m_cfg, cursor, frameLength, err);
+        m_skipped = cursor.skipped;
+        if (serial == ParseStatus::NeedMore) {
+            m_frameLength = cursor.scanned;
+            return ParseStatus::NeedMore;
+        }
+        m_status = serial;
+        m_frameLength = frameLength;
+        m_error = err;
+        return m_status;
+    }
     ParseStatus status =
         (m_cfg.code == DataCode::Binary)
             ? frameTryParse<detail::BinaryCodec>(buffer, r, m_cfg, frameLength, err)
@@ -206,6 +242,9 @@ Expected<size_t> Parser::payload(ByteView buffer, MutableByteView out) const noe
         return Expected<size_t>(detail::fieldBufferTooSmallError());
     }
 
+    if (isSerialFrame(m_cfg)) {
+        return detail::frameSerialPayload(buffer, m_skipped, r, m_cfg, out);
+    }
     if (m_cfg.code == DataCode::Binary) {
         return frameResponsePayload<detail::BinaryCodec>(buffer, r, m_cfg, out);
     }

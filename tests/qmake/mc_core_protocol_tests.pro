@@ -40,13 +40,15 @@ INCLUDEPATH += \
 
 # tests/vectors, resolved from the source tree at runtime: mirrors tests/CMakeLists.txt's own
 # MC_TESTS_SOURCE_DIR compile definition (test_vectors_format.cpp, test_primitives.cpp,
-# test_device_encode.cpp, test_commands.cpp, test_frame_3e.cpp, test_frame_1e.cpp and
-# test_parser_stream.cpp all read this macro the same way regardless of which build system
-# produced the binary).
+# test_device_encode.cpp, test_commands.cpp, test_frame_3e.cpp, test_frame_1e.cpp,
+# test_frame_serial.cpp and test_parser_stream.cpp all read this macro the same way regardless of
+# which build system produced the binary).
 DEFINES += MC_TESTS_SOURCE_DIR=\\\"$$PWD/..\\\"
 
 HEADERS += \
-    $$PWD/../common/vectors.h
+    $$PWD/../common/vectors.h \
+    $$PWD/../core/protocol/serial_synthetic.h \
+    $$PWD/../core/protocol/serial_vector_config.h
 
 SOURCES += \
     $$PWD/../common/vectors.cpp \
@@ -57,5 +59,7 @@ SOURCES += \
     $$PWD/../core/protocol/test_commands.cpp \
     $$PWD/../core/protocol/test_frame_3e.cpp \
     $$PWD/../core/protocol/test_frame_1e.cpp \
+    $$PWD/../core/protocol/test_serial_parser.cpp \
+    $$PWD/../core/protocol/test_frame_serial.cpp \
     $$PWD/../core/protocol/test_parser_stream.cpp \
     $$PWD/../core/protocol/test_alloc.cpp

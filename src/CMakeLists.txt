@@ -22,10 +22,16 @@ add_library(mc_core STATIC
     core/protocol/bit_payload.h
     core/protocol/command_a1e.cpp
     core/protocol/command_a1e.h
+    core/protocol/command_a1c.cpp
+    core/protocol/command_a1c.h
     core/protocol/frame_1e.cpp
     core/protocol/frame_1e.h
     core/protocol/frame_3e.cpp
     core/protocol/frame_3e.h
+    core/protocol/frame_serial.cpp
+    core/protocol/frame_serial.h
+    core/protocol/serial_parser.cpp
+    core/protocol/serial_parser.h
     core/protocol/protocol.cpp
     core/session/range_set.cpp
     core/session/read_plan.cpp

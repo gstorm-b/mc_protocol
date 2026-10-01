@@ -1,0 +1,215 @@
+# id: V-1C3-01
+# frame: 1C  code: Ascii  format: F3  op: ReadWords  device: D100  count: 3
+# kind: request  bytes: 18
+02 30 30 46 46 57 52 30 44 30 31 30 30 30 33 03 33 30
+<STX>00FFWR0D010003<ETX>30
+
+# id: V-1C3-02
+# frame: 1C  code: Ascii  format: F3  op: ReadWords  device: D100  count: 3
+# kind: response  of: V-1C3-01  expect: 1995,1202,1130  bytes: 22
+02 30 30 46 46 47 47 31 39 39 35 31 32 30 32 31 31 33 30 03 44 46
+<STX>00FFGG199512021130<ETX>DF
+
+# id: V-1C3-03
+# frame: 1C  code: Ascii  format: F3  op: ReadBits  device: M100  count: 8
+# kind: request  bytes: 18
+02 30 30 46 46 42 52 30 4D 30 31 30 30 30 38 03 32 39
+<STX>00FFBR0M010008<ETX>29
+
+# id: V-1C3-04
+# frame: 1C  code: Ascii  format: F3  op: ReadBits  device: M100  count: 8
+# kind: response  of: V-1C3-03  expect: 0,0,0,1,0,0,1,1  bytes: 18
+02 30 30 46 46 47 47 30 30 30 31 30 30 31 31 03 30 30
+<STX>00FFGG00010011<ETX>00
+
+# id: V-1C3-05
+# frame: 1C  code: Ascii  format: F3  op: WriteWords  device: D100  count: 3
+# kind: request  write: 1995,1202,1130  bytes: 30
+02 30 30 46 46 57 57 30 44 30 31 30 30 30 33 31 39 39 35 31 32 30 32 31 31 33 30 03 39 37
+<STX>00FFWW0D010003199512021130<ETX>97
+
+# id: V-1C3-06
+# frame: 1C  code: Ascii  format: F3  op: WriteBits  device: M100  count: 8
+# kind: request  write: 1,1,0,0,1,1,0,0  bytes: 26
+02 30 30 46 46 42 57 30 4D 30 31 30 30 30 38 31 31 30 30 31 31 30 30 03 42 32
+<STX>00FFBW0M01000811001100<ETX>B2
+
+# id: V-1C3-07
+# frame: 1C  code: Ascii  format: F3  op: WriteBits  device: M100  count: 8
+# kind: response  of: V-1C3-06  expect:   bytes: 8
+02 30 30 46 46 47 47 03
+<STX>00FFGG<ETX>
+
+# id: V-1C3-08
+# frame: 1C  code: Ascii  format: F3  op: ReadWords  device: D100  count: 3
+# kind: response-error  of: V-1C3-01  error: Plc  plccode: 06  bytes: 10
+02 30 30 46 46 4E 4E 30 36 03
+<STX>00FFNN06<ETX>
+
+# id: 1C3-ANAW-REQ
+# frame: 1C  code: Ascii  format: F3  op: WriteWords  device: D100  count: 3  commandset: ana
+# kind: request  write: 1995,1202,1130  bytes: 32
+02 30 30 46 46 51 57 30 44 30 30 30 31 30 30 30 33 31 39 39 35 31 32 30 32 31 31 33 30 03 46 31
+<STX>00FFQW0D00010003199512021130<ETX>F1
+
+# id: 1C3-ANAB-REQ
+# frame: 1C  code: Ascii  format: F3  op: WriteBits  device: M100  count: 8  commandset: ana
+# kind: request  write: 1,1,0,0,1,1,0,0  bytes: 28
+02 30 30 46 46 4A 57 30 4D 30 30 30 31 30 30 30 38 31 31 30 30 31 31 30 30 03 31 41
+<STX>00FFJW0M0001000811001100<ETX>1A
+
+# id: 1C3-ANAR-REQ
+# frame: 1C  code: Ascii  format: F3  op: ReadBits  device: M100  count: 8  commandset: ana
+# kind: request  bytes: 20
+02 30 30 46 46 4A 52 30 4D 30 30 30 31 30 30 30 38 03 39 31
+<STX>00FFJR0M00010008<ETX>91
+
+# id: 1C3-WAIT-REQ
+# frame: 1C  code: Ascii  format: F3  op: ReadBits  device: X40  count: 5  wait: A
+# kind: request  bytes: 18
+02 30 30 46 46 42 52 41 58 30 30 34 30 30 35 03 34 35
+<STX>00FFBRAX004005<ETX>45
+
+# id: 1C3-WAIT-RSP
+# frame: 1C  code: Ascii  format: F3  op: ReadBits  device: X40  count: 5  wait: A
+# kind: response  of: 1C3-WAIT-REQ  expect: 0,1,1,0,1  bytes: 15
+02 30 30 46 46 47 47 30 31 31 30 31 03 37 30
+<STX>00FFGG01101<ETX>70
+
+# id: 1C3-TN-REQ
+# frame: 1C  code: Ascii  format: F3  op: ReadWords  device: TN123  count: 2
+# kind: request  bytes: 18
+02 30 30 46 46 57 52 30 54 4E 31 32 33 30 32 03 36 32
+<STX>00FFWR0TN12302<ETX>62
+
+# id: 1C3-TN-RSP
+# frame: 1C  code: Ascii  format: F3  op: ReadWords  device: TN123  count: 2
+# kind: response  of: 1C3-TN-REQ  expect: 7BC9,1234  bytes: 18
+02 30 30 46 46 47 47 37 42 43 39 31 32 33 34 03 33 43
+<STX>00FFGG7BC91234<ETX>3C
+
+# id: 1C3-X40-REQ
+# frame: 1C  code: Ascii  format: F3  op: ReadWords  device: X40  count: 2
+# kind: request  bytes: 18
+02 30 30 46 46 57 52 30 58 30 30 34 30 30 32 03 34 36
+<STX>00FFWR0X004002<ETX>46
+
+# id: 1C3-256-REQ
+# frame: 1C  code: Ascii  format: F3  op: ReadBits  device: M0  count: 256
+# kind: request  bytes: 18
+02 30 30 46 46 42 52 30 4D 30 30 30 30 30 30 03 32 30
+<STX>00FFBR0M000000<ETX>20
+
+# id: 1C3-X40-RSP
+# frame: 1C  code: Ascii  format: F3  op: ReadWords  device: X40  count: 2
+# kind: response  of: 1C3-X40-REQ  expect: 1234,ABCD  bytes: 18
+02 30 30 46 46 47 47 31 32 33 34 41 42 43 44 03 35 31
+<STX>00FFGG1234ABCD<ETX>51
+
+# id: 1C3-BIT5-REQ
+# frame: 1C  code: Ascii  format: F3  op: ReadBits  device: M100  count: 5
+# kind: request  bytes: 18
+02 30 30 46 46 42 52 30 4D 30 31 30 30 30 35 03 32 36
+<STX>00FFBR0M010005<ETX>26
+
+# id: 1C3-BIT5-RSP
+# frame: 1C  code: Ascii  format: F3  op: ReadBits  device: M100  count: 5
+# kind: response  of: 1C3-BIT5-REQ  expect: 1,0,1,0,1  bytes: 15
+02 30 30 46 46 47 47 31 30 31 30 31 03 37 30
+<STX>00FFGG10101<ETX>70
+
+# id: 1C3-WW-RSP
+# frame: 1C  code: Ascii  format: F3  op: WriteWords  device: D100  count: 3
+# kind: response  of: V-1C3-05  expect:   bytes: 8
+02 30 30 46 46 47 47 03
+<STX>00FFGG<ETX>
+
+# id: 1C3-256-RSP
+# frame: 1C  code: Ascii  format: F3  op: ReadBits  device: M0  count: 256
+# kind: response  of: 1C3-256-REQ  expect: 0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1  bytes: 266
+02 30 30 46 46 47 47 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 03 46 44
+<STX>00FFGG0101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101<ETX>FD
+
+# id: 1C3-NOSUM-REQ
+# frame: 1C  code: Ascii  format: F3  op: ReadWords  device: D100  count: 3  sum: off
+# kind: request  bytes: 16
+02 30 30 46 46 57 52 30 44 30 31 30 30 30 33 03
+<STX>00FFWR0D010003<ETX>
+
+# id: 1C3-NOSUM-RSP
+# frame: 1C  code: Ascii  format: F3  op: ReadWords  device: D100  count: 3  sum: off
+# kind: response  of: 1C3-NOSUM-REQ  expect: 1995,1202,1130  bytes: 20
+02 30 30 46 46 47 47 31 39 39 35 31 32 30 32 31 31 33 30 03
+<STX>00FFGG199512021130<ETX>
+
+# id: 1C3-ROUTE-STATION
+# frame: 1C  code: Ascii  format: F3  op: ReadWords  device: D100  count: 3
+# kind: response-error  of: V-1C3-01  error: FrameMismatch  bytes: 22
+02 30 31 46 46 47 47 31 39 39 35 31 32 30 32 31 31 33 30 03 45 30
+<STX>01FFGG199512021130<ETX>E0
+
+# id: 1C3-ROUTE-STATION-OFF
+# frame: 1C  code: Ascii  format: F3  op: ReadWords  device: D100  count: 3  checkroute: off
+# kind: response  of: V-1C3-01  expect: 1995,1202,1130  bytes: 22
+02 30 31 46 46 47 47 31 39 39 35 31 32 30 32 31 31 33 30 03 45 30
+<STX>01FFGG199512021130<ETX>E0
+
+# id: 1C3-ROUTE-PC
+# frame: 1C  code: Ascii  format: F3  op: ReadWords  device: D100  count: 3
+# kind: response-error  of: V-1C3-01  error: FrameMismatch  bytes: 22
+02 30 30 46 45 47 47 31 39 39 35 31 32 30 32 31 31 33 30 03 44 45
+<STX>00FEGG199512021130<ETX>DE
+
+# id: 1C3-SUM
+# frame: 1C  code: Ascii  format: F3  op: ReadWords  device: D100  count: 3
+# kind: response-error  of: V-1C3-01  error: SumCheck  bytes: 22
+02 30 30 46 46 47 47 31 39 39 35 31 32 30 32 31 31 33 30 03 44 30
+<STX>00FFGG199512021130<ETX>D0
+
+# id: 1C3-LEN
+# frame: 1C  code: Ascii  format: F3  op: ReadWords  device: D100  count: 3
+# kind: response-error  of: V-1C3-01  error: LengthMismatch  bytes: 21
+02 30 30 46 46 47 47 31 39 39 35 31 32 30 32 31 31 33 03 41 46
+<STX>00FFGG19951202113<ETX>AF
+
+# id: 1C3-ACKREAD
+# frame: 1C  code: Ascii  format: F3  op: ReadWords  device: D100  count: 3
+# kind: response-error  of: V-1C3-01  error: LengthMismatch  bytes: 8
+02 30 30 46 46 47 47 03
+<STX>00FFGG<ETX>
+
+# id: 1C3-DATAWRITE
+# frame: 1C  code: Ascii  format: F3  op: WriteBits  device: M100  count: 8
+# kind: response-error  of: V-1C3-06  error: LengthMismatch  bytes: 22
+02 30 30 46 46 47 47 31 39 39 35 31 32 30 32 31 31 33 30 03 44 46
+<STX>00FFGG199512021130<ETX>DF
+
+# id: 1C3-NAKWRITE
+# frame: 1C  code: Ascii  format: F3  op: WriteBits  device: M100  count: 8
+# kind: response-error  of: V-1C3-06  error: Plc  plccode: 10  bytes: 10
+02 30 30 46 46 4E 4E 31 30 03
+<STX>00FFNN10<ETX>
+
+# id: 1C3-SHORTSUM-ACK
+# frame: 1C  code: Ascii  format: F3  op: WriteWords  device: D100  count: 3  f3shortsum: on
+# kind: response  of: V-1C3-05  expect:   bytes: 10
+02 30 30 46 46 47 47 03 37 44
+<STX>00FFGG<ETX>7D
+
+# id: 1C3-SHORTSUM-NAK
+# frame: 1C  code: Ascii  format: F3  op: ReadWords  device: D100  count: 3  f3shortsum: on
+# kind: response-error  of: V-1C3-01  error: Plc  plccode: 06  bytes: 12
+02 30 30 46 46 4E 4E 30 36 03 46 31
+<STX>00FFNN06<ETX>F1
+
+# id: 1C3-SHORTSUM-WRONG
+# frame: 1C  code: Ascii  format: F3  op: WriteWords  device: D100  count: 3  f3shortsum: on
+# kind: response-error  of: V-1C3-05  error: SumCheck  bytes: 10
+02 30 30 46 46 47 47 03 37 30
+<STX>00FFGG<ETX>70
+
+# id: 1C3-BADCODE
+# frame: 1C  code: Ascii  format: F3  op: ReadWords  device: D100  count: 3
+# kind: response-error  of: V-1C3-01  error: FrameMismatch  bytes: 8
+02 30 30 46 46 51 58 03
+<STX>00FFQX<ETX>
