@@ -180,3 +180,25 @@ All notable changes to this project are documented in this file. The format foll
   that all 309 enabled vector records of the twelve v1 families (the Appendix A rows plus the
   derived rows) round-trip and that the 45 tagged `v1.1` / `v2` ones are present and skipped. MSVC
   and MinGW GCC 13.1 and both qmake kits pass; line coverage of `src/core/protocol` is 97.9 %.
+- The serial transport and the serial behaviour of the Session through every layer (batch 6c,
+  Checkpoint E). `Session`: on a serial frame a timeout or protocol error sends EOT (`EOT CR LF` in
+  Format 4), flushes until `serialFlushMs` of silence (capped at `effectiveTimeoutMs()`, the cap
+  counting as one more link error), resends a read up to `readRetries` times with identical bytes
+  and fails a write with `Timeout` without ever resending it, faults the link after
+  `maxConsecutiveLinkErrors` errors in a row (`reopenTransport = false`; a PLC error resets the
+  count), applies the first-byte and inter-character deadlines and discards unsolicited bytes
+  (SES-17 to SES-20, SES-24, SES-27; ALC-01 covers a serial retry and an EOT/flush cycle).
+  `MockPlc` answers 3C and 1C in formats 1 to 4 pinned to the Appendix A.12 to A.19 vectors read in
+  the reverse direction (junk skipped until the start byte, EOT counted and discarding a partial
+  request, station mismatch unanswered, wrong SUM answered with NAK, every `Corruption` mode on
+  serial frames; MCK-01 to MCK-12). The integration matrix runs on the twelve frame cells (3E, 1E,
+  3C and 1C in every data code or format). `SerialTransport` (`QSerialPort`, the port opens one
+  event-loop turn after `open()`, a port error while open ends the link with `lost()`) is built by
+  `McDevice` for `TransportKind::Serial`; QDV-13 adds 3C Format 1 over TCP and QDV-14 runs 3C
+  Format 4 and 1C Format 1 over a virtual COM pair (`MC_TEST_SERIAL_PAIR`, skipped without it; the
+  ctest entry holds the `mc_serial_pair` resource lock). A serial line that keeps sending during
+  `Flushing` still ends the flush at its cap through `McDevice`. `virtual_plc --serial COMx
+  [--baud N]` serves a `MockPlc` on a COM port and `qt_console_poller` takes `--serial`, `--baud`
+  and `--format`. Line coverage on MinGW: `src/core/session` 98.1 %, `src/core/protocol` 97.9 %,
+  `src/mock` 97.3 %, `src/device` 91.8 % (report only). MSVC and MinGW GCC 13.1, both qmake kits,
+  `scripts/check.ps1` (both kits) and `check.sh` pass.

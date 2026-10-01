@@ -783,10 +783,10 @@
 **Description:** The serial column of the fault table: EOT (F4: EOT CR LF), silence-based flush capped at `effectiveTimeoutMs()`, first-byte + inter-character deadlines, read retries, never retried writes, `maxConsecutiveLinkErrors`.
 
 **Acceptance criteria:**
-- [ ] SES-17, SES-18, SES-19 (serial), SES-24 (serial), SES-27 pass using the 3C golden vectors.
+- [x] SES-17, SES-18, SES-19 (serial), SES-24 (serial), SES-27 pass using the 3C golden vectors.
 
 **Verification:**
-- [ ] `ctest -L core_session` (both compilers).
+- [x] `ctest -L core_session` (both compilers).
 
 **Dependencies:** T42
 
@@ -799,10 +799,10 @@
 **Description:** 3C and 1C request decoding for F1–F4 (command-aware length for F1/F2/F4, ETX for F3), station filtering, EOT reset, junk skipping, SUM verification, serial corruption modes.
 
 **Acceptance criteria:**
-- [ ] MCK-01…03 pass for A.12–A.19; MCK-05…08 pass; serial cases of MCK-11 pass.
+- [x] MCK-01…03 pass for A.12–A.19; MCK-05…08 pass; serial cases of MCK-11 pass.
 
 **Verification:**
-- [ ] `ctest -L mock`.
+- [x] `ctest -L mock`.
 
 **Dependencies:** T42, T27
 
@@ -815,10 +815,10 @@
 **Description:** Add 3C F1–F4 and 1C F1–F4 to the matrix, with the serial variants of INT-11 (EOT, retries) and INT-12 (sum-check corruption retried).
 
 **Acceptance criteria:**
-- [ ] All 12 combinations pass INT-01…03, 07, 08, 10…16; the binary stays under 5 s.
+- [x] All 12 combinations pass INT-01…03, 07, 08, 10…16; the binary stays under 5 s.
 
 **Verification:**
-- [ ] `ctest -L integration` (both compilers).
+- [x] `ctest -L integration` (both compilers).
 
 **Dependencies:** T43, T44
 
@@ -831,11 +831,11 @@
 **Description:** `SerialTransport` (open completes on the next event-loop turn, `lost()` on port errors), `virtual_plc --serial`, the serial bridge helper, QDV-13 for 3C F1 over TCP, QDV-14.
 
 **Acceptance criteria:**
-- [ ] QDV-13 (3C F1 over TCP) passes; QDV-14 passes with `MC_TEST_SERIAL_PAIR` set and is skipped without it.
-- [ ] No blocking call in `SerialTransport`.
+- [x] QDV-13 (3C F1 over TCP) passes; QDV-14 passes with `MC_TEST_SERIAL_PAIR` set and is skipped without it.
+- [x] No blocking call in `SerialTransport`.
 
 **Verification:**
-- [ ] `ctest -L device`; QDV-14 once with a virtual COM pair if the owner installs one (installing is ask-first).
+- [x] `ctest -L device`; QDV-14 once with a virtual COM pair if the owner installs one (installing is ask-first).
 
 **Dependencies:** T45, T34
 
@@ -844,7 +844,7 @@
 **Scope:** M
 
 ### Checkpoint E: all four frames through every layer (baton T-055; batch 6c)
-- [ ] `scripts/check.ps1` green with both compilers; `check.sh` in Git Bash; coverage targets of every std module met.
+- [x] `scripts/check.ps1` green with both compilers; `check.sh` in Git Bash; coverage targets of every std module met.
 - [ ] Owner review before the tooling phase.
 
 ---

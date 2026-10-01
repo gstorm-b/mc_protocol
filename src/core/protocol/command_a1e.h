@@ -141,6 +141,7 @@ template <class Codec> size_t a1eTestWordsRequestDataSize(size_t n) noexcept {
  * @param[in] n Number of entries; at most 255 (the `n` field is a `u8`).
  * @param[out] out Destination; must hold at least `a1eTestBitsRequestDataSize<Codec>(n)`.
  * @return Bytes/characters written.
+ * @retval ErrorCode::PointCount `n` is above 255 (checked before `items` is read).
  * @retval ErrorCode::InvalidDevice an entry's device type has no 1E code.
  * @retval ErrorCode::BufferTooSmall `out` is too small.
  * @par Complexity
@@ -156,6 +157,7 @@ Expected<size_t> a1eTestBitsRequestData(const A1eTestBit* items, size_t n,
  * @param[in] n Number of entries; at most 255 (the `n` field is a `u8`).
  * @param[out] out Destination; must hold at least `a1eTestWordsRequestDataSize<Codec>(n)`.
  * @return Bytes/characters written.
+ * @retval ErrorCode::PointCount `n` is above 255 (checked before `items` is read).
  * @retval ErrorCode::InvalidDevice an entry's device type has no 1E code.
  * @retval ErrorCode::BufferTooSmall `out` is too small.
  * @par Complexity

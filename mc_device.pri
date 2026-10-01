@@ -17,6 +17,7 @@ HEADERS += \
 
 SOURCES += \
     $$PWD/src/device/tcp_transport.cpp \
+    $$PWD/src/device/serial_transport.cpp \
     $$PWD/src/device/meta_types.cpp \
     $$PWD/src/device/mc_device_config.cpp \
     $$PWD/src/device/mc_device.cpp

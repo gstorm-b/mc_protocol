@@ -33,10 +33,12 @@
 // very same (debug) build it runs in. See drain_violation.h's own doc comment for the full
 // rationale; test_session_fault.cpp's own SES-25 proves both halves.
 //
-// Serial handling (EOT/Flushing, readRetries, serialInterCharMs/serialFlushMs,
-// maxConsecutiveLinkErrors) is still not implemented (State::Flushing remains declared but
-// unreachable); that is a later task's own job (SES-17/18/27, not in this task's acceptance
-// list).
+// T-051 adds the serial column of the fault table (EOT, the Flushing state, readRetries,
+// serialInterCharMs / serialFlushMs, maxConsecutiveLinkErrors): the logic lives in
+// session_rx.cpp (onResponseDeadline(), serialAttemptFailed(), onFlushDeadline(), endFlush());
+// this file keeps the state-machine plumbing it touches -- tick()'s dispatch to them, faultLink()
+// (the one place a link fault is reported, now for both families), nextDeadline() and linkDown()'s
+// reset.
 #include "mc/core/session.h"
 
 #include "mc/core/limits.h"
@@ -63,14 +65,6 @@ Error linkDownError(const char* message) noexcept {
     Error e{};
     e.category = ErrorCategory::Transport;
     e.code = ErrorCode::LinkDown;
-    e.message = message;
-    return e;
-}
-
-Error timeoutError(const char* message) noexcept {
-    Error e{};
-    e.category = ErrorCategory::Transport;
-    e.code = ErrorCode::Timeout;
     e.message = message;
     return e;
 }
@@ -275,13 +269,21 @@ void Session::linkDown(TimeMs now) noexcept {
     m_parser.reset();
     m_rxBuffer.clear();
     m_responseDeadline = kNoDeadline;
+    m_consecutiveLinkErrors = 0;
+    m_retriesUsed = 0;
+    m_attemptError = Error{};
 }
 
 void Session::faultLink(LinkFaultKind kind, Error err, TimeMs /*now*/) noexcept {
     // now is unused: a fault stops all timers (m_responseDeadline -> kNoDeadline below) rather
     // than scheduling one. Kept as a parameter for symmetry with every other dispatch-adjacent
     // function here (sendChunk, sendAdHocChunk, ...), all of which take the caller's current time.
-    if (m_state == State::Waiting) {
+
+    // Serial only: a fault while Flushing (the flush reached its cap) fails the in-flight item
+    // with the error of the attempt that began the flush, not with the flush's own error.
+    const bool flushing = (m_state == State::Flushing);
+    const Error itemError = flushing ? m_attemptError : err;
+    if (m_state == State::Waiting || flushing) {
         if (m_currentIsHeartbeat) {
             // Internal (spec "Ad-hoc requests": no RequestDone, ever): this round is abandoned
             // by the fault below, not completed, so heartbeatOkThisRound has no CycleDone left to
@@ -294,7 +296,7 @@ void Session::faultLink(LinkFaultKind kind, Error err, TimeMs /*now*/) noexcept 
             // chunk" rule). completeInFlightChunk() marks the job completed; it is always the
             // FIFO-oldest one, so the completeAllForLinkDown() loop below picks up correctly from
             // the next-oldest queued job, preserving submission order end to end.
-            auto completion = m_adHocQueue->completeInFlightChunk(false, err);
+            auto completion = m_adHocQueue->completeInFlightChunk(false, itemError);
             if (completion.has_value()) {
                 Output out{};
                 out.kind = OutputKind::RequestDone;
@@ -311,7 +313,7 @@ void Session::faultLink(LinkFaultKind kind, Error err, TimeMs /*now*/) noexcept 
             // from a synthesized partial round summary).
             ChunkInfo& ci = m_plan.chunkForUpdate(m_currentChunk);
             ci.state = ChunkState::Failed;
-            ci.lastError = err;
+            ci.lastError = itemError;
             m_values.markFailed(m_plan, m_currentChunk);
         }
     }
@@ -338,6 +340,8 @@ void Session::faultLink(LinkFaultKind kind, Error err, TimeMs /*now*/) noexcept 
     m_currentIsAdHoc = false;
     m_currentIsHeartbeat = false;
     m_adHocBurstSinceLastPollChunk = 0;
+    m_retriesUsed = 0;
+    m_attemptError = Error{};
 
     if (log().enabled(LogLevel::Error)) {
         log().write(LogLevel::Error, "mc.session", "link fault");
@@ -347,8 +351,10 @@ void Session::faultLink(LinkFaultKind kind, Error err, TimeMs /*now*/) noexcept 
     out.kind = OutputKind::LinkFault;
     out.fault = kind;
     out.error = err;
-    out.reopenTransport = true; // Ethernet: always true (spec fault table). Decision S7 leaves
-                                 // the choice of what to actually do about it to the application.
+    // Spec fault table: Ethernet always reopens (a late response would be taken for the next
+    // request's); serial never does -- the line itself is not broken, only this exchange. Decision
+    // S7 leaves the choice of what to actually do about it to the application either way.
+    out.reopenTransport = !m_frameConfig.isSerial();
     m_outputRing->push(out);
 }
 
@@ -380,17 +386,17 @@ void Session::tick(TimeMs now) noexcept {
     checkDrained();
     now = clampNow(now);
     if (m_state == State::Waiting && now >= m_responseDeadline) {
-        // Ethernet response deadline (spec "Faults, retries, EOT"): no resend on this connection
-        // (a late response would be taken for the next request's), so this always faults --
-        // never a retry, unlike the serial column (not implemented; SES-17/18/27).
-        ++m_stats.timeouts;
-        faultLink(LinkFaultKind::Timeout, timeoutError("response deadline passed"), now);
+        onResponseDeadline(now);
+        return;
+    }
+    if (m_state == State::Flushing) {
+        onFlushDeadline(now);
         return;
     }
     if (m_state == State::Idle) {
         dispatch(now);
     }
-    // Faulted/Down/Flushing: nothing to do.
+    // Faulted/Down: nothing to do.
 }
 
 void Session::dispatch(TimeMs now) noexcept {
@@ -535,6 +541,7 @@ void Session::sendChunk(size_t index, TimeMs now) noexcept {
     m_rxBuffer.clear();
     m_responseDeadline = now + m_frameConfig.effectiveTimeoutMs();
     m_state = State::Waiting;
+    m_retriesUsed = 0;
     m_adHocBurstSinceLastPollChunk = 0; // Spec dispatch step 2: sending a polling chunk resets it.
 
     ++m_stats.framesSent;
@@ -608,8 +615,11 @@ TimeMs Session::nextDeadline() const noexcept {
         return m_responseDeadline;
     case State::Idle:
         return m_nextRoundAt;
-    case State::Flushing:
-        return kNoDeadline; // Serial-only; unreachable until a later task wires it up.
+    case State::Flushing: {
+        // Serial: the silence window (restarted by every discarded byte), but never past the cap.
+        const TimeMs silentAt = m_flushLastActivityAt + m_config.serialFlushMs;
+        return silentAt < m_flushCapAt ? silentAt : m_flushCapAt;
+    }
     }
     return kNoDeadline;
 }

@@ -123,10 +123,10 @@ Baton tasks are created one phase ahead.
 - [x] T40 3C formats 2 and 3, serial options, 4C vectors (tagged v2) → T-047
 - [x] T41 1C commands, formats 1 and 4 → T-048
 - [x] T42 1C formats 2 and 3, AnA command set, message wait → T-049
-- [ ] T43 Session serial behaviour (EOT, flush, inter-character timeout, retries) → T-051
-- [ ] T44 Mock serial server direction → T-052
-- [ ] T45 Integration matrix complete (12 combinations) → T-053
-- [ ] T46 `SerialTransport` and serial loopback → T-054
+- [x] T43 Session serial behaviour (EOT, flush, inter-character timeout, retries) → T-051
+- [x] T44 Mock serial server direction → T-052
+- [x] T45 Integration matrix complete (12 combinations) → T-053
+- [x] T46 `SerialTransport` and serial loopback → T-054
 
 **Checkpoint E1** → T-044 (after T37): 1E complete. **Checkpoint E2** → T-050 (after T42): codec complete. **Checkpoint E** → T-055: all four frames through every layer. Run as three batches 6a/6b/6c, one commit each (owner decision 2026-10-01).
 

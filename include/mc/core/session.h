@@ -154,7 +154,8 @@ struct Output {
                                         ///< a write, or on failure).
     LinkFaultKind fault{LinkFaultKind::Timeout}; ///< `LinkFault`: which kind.
     bool reopenTransport{false};       ///< `LinkFault`: whether the transport itself is
-                                        ///< considered unusable (Ethernet: always `true`).
+                                        ///< considered unusable (Ethernet: always `true`;
+                                        ///< serial: always `false`).
 };
 
 /**
@@ -292,6 +293,12 @@ public:
      * normally. A `Plc`-category failure (the PLC answered with a non-zero end code) is not a
      * link fault: the in-flight item simply fails, same as always.
      *
+     * Serial (spec "Faults, retries, EOT", serial column): once a response's first byte has
+     * arrived its deadline becomes `SessionConfig::serialInterCharMs` after the latest byte. A
+     * `Protocol`-category parse failure or a receive-buffer overflow is a link error, handled like
+     * a timeout (`tick()`); bytes while `Idle` are discarded and logged at `Warn`; bytes while
+     * `Flushing` are discarded and restart the flush's silence window.
+     *
      * @param[in] bytes Bytes received since the last call.
      * @param[in] now Current time.
      * @pre `nextOutput()` has drained every output of the previous input call.
@@ -306,6 +313,18 @@ public:
      * Ethernet timeout (spec "Faults, retries, EOT"): once `now >= ` the response deadline while
      * `Waiting`, reports `LinkFault{Timeout, reopenTransport=true}` via `faultLink()` instead of
      * continuing to wait.
+     *
+     * Serial: a response deadline is a link error. `EOT` is sent (when
+     * `FrameConfig::sendEotOnError`) and the session stays `Flushing` until the line has been
+     * silent for `SessionConfig::serialFlushMs` (capped at `FrameConfig::effectiveTimeoutMs()`,
+     * which counts as one more link error); then a read is resent up to
+     * `FrameConfig::readRetries` times and a write fails with `Timeout`, never resent.
+     * `SessionConfig::maxConsecutiveLinkErrors` link errors in a row report
+     * `LinkFault{..., reopenTransport=false}`.
+     *
+     * @note Call this whenever `nextDeadline()` passes, even while bytes keep arriving: a driver
+     * loop that calls `tick()` only when no data came never ends a serial flush on a line that
+     * keeps chattering (the flush cap is evaluated here).
      *
      * @param[in] now Current time.
      * @pre `nextOutput()` has drained every output of the previous input call.
@@ -326,8 +345,9 @@ public:
 
     /**
      * @brief Earliest time the engine needs `tick()`.
-     * @return The response timeout while `Waiting`; the next round start while `Idle`;
-     * `kNoDeadline` when down or faulted.
+     * @return The response deadline while `Waiting`; the end of the flush (silence window or cap,
+     * whichever is earlier) while `Flushing`; the next round start while `Idle`; `kNoDeadline`
+     * when down or faulted.
      * @par Complexity
      * O(1); no allocation.
      */
@@ -350,8 +370,8 @@ public:
 
 private:
     /// The state machine's own states (spec "States"): a `switch` over this drives every input
-    /// method. `Flushing` (serial only) is declared for completeness but unreachable until a
-    /// later task wires up serial handling.
+    /// method. `Flushing` is serial only: an `EOT` was sent after a link error and received bytes
+    /// are discarded until the line is silent.
     enum class State : uint8_t { Down, Idle, Waiting, Flushing, Faulted };
 
     Session(const FrameConfig& frame, const SessionConfig& cfg, ReadPlan plan);
@@ -427,15 +447,49 @@ private:
     /// session.cpp (T-026).
     void encodeHeartbeatFrames();
 
-    /// Spec "Faults, retries, EOT": the in-flight item (if any) fails with `err` -- a poll
-    /// chunk's own `ChunkInfo`/`ValueStore` marking (no `Snapshot`/`CycleDone`: this round is
-    /// abandoned, not completed), an ad-hoc job's `RequestDone{err}`, or (heartbeat) just
+    /// Spec "Faults, retries, EOT": the in-flight item (if any) fails -- a poll chunk's own
+    /// `ChunkInfo`/`ValueStore` marking (no `Snapshot`/`CycleDone`: this round is abandoned, not
+    /// completed), an ad-hoc job's `RequestDone`, or (heartbeat) just
     /// `m_heartbeatOkThisRound = false` -- every other still-queued ad-hoc job then completes
     /// with `LinkDown` (T-025's own exactly-once rule, same as `linkDown()`'s loop), timers stop,
-    /// the state becomes `Faulted`, and `LinkFault{kind, err, reopenTransport=true}` is emitted
-    /// (Ethernet: always `reopenTransport = true`, decision S7). Only `linkDown()` leaves
-    /// `Faulted` (spec "States"). Defined in session.cpp (T-026).
+    /// the state becomes `Faulted`, and `LinkFault{kind, err, reopenTransport}` is emitted
+    /// (`reopenTransport` is `true` on Ethernet and `false` on serial, decision S7). The in-flight
+    /// item fails with `err`, except while `Flushing`, where it fails with the error of the
+    /// attempt that started the flush (`m_attemptError`) and `err` describes the flush itself.
+    /// Only `linkDown()` leaves `Faulted` (spec "States"). Defined in session.cpp.
     void faultLink(LinkFaultKind kind, Error err, TimeMs now) noexcept;
+
+    /// Response deadline of the `Waiting` state passed (`tick()`). Ethernet: `faultLink()`. Serial:
+    /// `serialAttemptFailed()` with a `Timeout`. Defined in session_rx.cpp.
+    void onResponseDeadline(TimeMs now) noexcept;
+
+    /// Serial only (spec "Faults, retries, EOT", serial column): one attempt of the in-flight
+    /// item failed with `err` (`kind` `Timeout`: response deadline; `ProtocolError`: a `Protocol`
+    /// parse failure or receive-buffer overflow). Counts one consecutive link error, sends `EOT`
+    /// when `FrameConfig::sendEotOnError`, then either faults the link (the count reached
+    /// `maxConsecutiveLinkErrors`) or enters `Flushing`, remembering `err`; the item is resolved
+    /// (resent or failed) by `endFlush()`. Defined in session_rx.cpp.
+    void serialAttemptFailed(LinkFaultKind kind, Error err, TimeMs now) noexcept;
+
+    /// `tick()` while `Flushing`: the silence window ended (`endFlush()`), or the whole flush
+    /// reached its cap (`effectiveTimeoutMs()` after it began) and counts as one more consecutive
+    /// link error. Defined in session_rx.cpp.
+    void onFlushDeadline(TimeMs now) noexcept;
+
+    /// The flush is over: a read with retries left is resent (identical bytes, `m_retriesUsed`),
+    /// anything else fails with `m_attemptError` through its usual completion path
+    /// (`completeCurrentChunk()` / `completeAdHocResponse()` / `completeHeartbeatResponse()`),
+    /// which then dispatches. Writes (ad-hoc and heartbeat) are never resent (spec §7.3). Defined
+    /// in session_rx.cpp.
+    void endFlush(TimeMs now) noexcept;
+
+    /// Resends the in-flight item's frame (the pre-encoded chunk frame, or the ad-hoc queue's
+    /// in-flight chunk frame) and enters `Waiting` again. Defined in session_rx.cpp.
+    void resendInFlight(TimeMs now) noexcept;
+
+    /// Emits the serial `EOT` (`EOT` alone; `EOT CR LF` for Format 4) as a `Send` when
+    /// `FrameConfig::sendEotOnError`. Defined in session_rx.cpp.
+    void sendEot() noexcept;
 
     /// Spec "Drain contract": a precondition violation (an input call made while the previous
     /// one's outputs are still pending). Keeps the spec's own debug/release split (owner
@@ -501,7 +555,23 @@ private:
 
     std::optional<Parser> m_parser;
     std::vector<uint8_t> m_rxBuffer;
+    /// While `Waiting`: Ethernet, `effectiveTimeoutMs()` after the send; serial, the same until
+    /// the first byte arrives, then `serialInterCharMs` after the latest byte.
     TimeMs m_responseDeadline{kNoDeadline};
+
+    /// Serial: link errors in a row (timeouts, protocol errors, flushes that reached their
+    /// cap); any well-formed response and `linkDown()` reset it.
+    uint32_t m_consecutiveLinkErrors{0};
+    /// Resends already made of the in-flight item; reset whenever a new item is sent.
+    uint8_t m_retriesUsed{0};
+    /// The error of the attempt that started the current flush (what the item fails with when it
+    /// is not resent).
+    Error m_attemptError{};
+    /// While `Flushing`: when the latest discarded byte (or the `EOT`) went by; the silence
+    /// window ends `serialFlushMs` later.
+    TimeMs m_flushLastActivityAt{0};
+    /// While `Flushing`: end of the whole flush (`effectiveTimeoutMs()` after it began).
+    TimeMs m_flushCapAt{0};
 
     /// Scratch storage `completeCurrentChunk()` decodes into, resized to the current plan's own
     /// `maxPayloadSize()`/`maxChunkPoints()` whenever the plan changes (`Session`'s own "change

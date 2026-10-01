@@ -29,18 +29,22 @@ Last verified: 2026-09-27 (T-002 … T-012; first MinGW build of core-model: zer
    already configured. `cmake --build` re-runs configure by itself when a
    `CMakeLists.txt` changed; configure from scratch only when the Plan asks for
    a fresh configure. Never delete these folders.
-3. **Scratch experiments** go to `build/_scratch-<task>/` and are deleted
+3. **Temporary files never go to `%TEMP%`** or anywhere outside the project
+   (Access boundaries, `rules.md`): use `build/_scratch-<task>/` or `temp-docs/`.
+   `clang-format` lives at `C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\Llvm\x64\bin\`
+   (not on PATH after `vsdev.ps1`; running the toolchain binary is fine) (T-051).
+4. **Scratch experiments** go to `build/_scratch-<task>/` and are deleted
    before you finish. Nothing outside `build/` is written by a build.
-4. **Harmless noise:** `. scripts/vsdev.ps1` prints
+5. **Harmless noise:** `. scripts/vsdev.ps1` prints
    `'vswhere.exe' is not recognized …` — it comes from Microsoft's
    `Launch-VsDevShell.ps1`; `cl`, `cmake`, `ninja` resolve correctly anyway.
    `git add` prints `LF will be replaced by CRLF` warnings — expected
    (`core.autocrlf=true`, `.gitattributes`).
-5. **Do not merge native stderr in PowerShell 5.1** (`2>&1`, `*>&1`) on
+6. **Do not merge native stderr in PowerShell 5.1** (`2>&1`, `*>&1`) on
    `cmake`, `ctest`, `scripts/check.ps1` …: a routine CMake warning on stderr
    becomes a `NativeCommandError` and a false failure (T-005). stderr is
    captured anyway.
-6. **A Python `ninja` may be on `PATH`** before `vsdev.ps1` runs; `vsdev.ps1`
+7. **A Python `ninja` may be on `PATH`** before `vsdev.ps1` runs; `vsdev.ps1`
    (MSVC) and the MinGW line below both prepend `C:\Qt\Tools\Ninja` so the
    right one wins.
 
@@ -188,9 +192,14 @@ the bar (`-D MC_MIN_COVERAGE=<n>`, default 95, total over `src/core/model`).
   `QT_ASSUME_STDERR_HAS_CONSOLE=1` — without it QtTest prints **nothing** on
   Windows when its output is a pipe, so a failure is silent under ctest or an
   agent shell. Running a Qt binary by hand needs the Qt `bin` on PATH yourself (T-035).
-- **Virtual COM pairs** (installed by the owner, 2026-10-01): `COM50`↔`COM51`
-  and `COM52`↔`COM53`. QDV-14 runs with `$env:MC_TEST_SERIAL_PAIR = "COM50,COM51"`
-  and skips without it. Do not install or reconfigure serial software.
+- **Virtual COM pairs** (Electronic Team Virtual Serial Port, set up by the
+  owner): **`COM54`↔`COM55` replaces `COM50`↔`COM51`** (owner, 2026-10-01; the
+  `COM50->COM51` device went to PnP state Error, code 43, in T-054 — do not use
+  it), and `COM52`↔`COM53`. Default:
+  `$env:MC_TEST_SERIAL_PAIR = "COM54,COM55"` (verified by the leader: 10 passed,
+  0 skipped); `COM52,COM53` is the second pair. QDV-14 skips without the variable. Never install, reconfigure or repair serial
+  software (owner only). Tests that open the pair must not run concurrently
+  (ctest `RESOURCE_LOCK`): the pair broke during a `ctest -j 8` run (T-054).
 - Windows reports a refused **loopback** connect only after 2–4 s; a test
   against a closed port ends on its own connect timer instead (T-035).
 - Mutation runs: touching a restored source with Node `fs.utimesSync` did **not**

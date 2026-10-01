@@ -216,8 +216,8 @@ public:
      * @retval ErrorCode::BufferTooSmall `out` is smaller than `encodedSize(r)`.
      * @retval ErrorCode::UnsupportedCommand `config().frame`/`config().code` is not implemented
      * yet.
-     * @retval ErrorCode::InvalidConfig `config().frame` is `F1C` and `config().messageWait` is above
-     * 15 (the one config value that would put a non-hex character on the wire; the other
+     * @retval ErrorCode::InvalidConfig `config().frame` is `F1C` and `config().messageWait` is
+     * above 15 (the one config value that would put a non-hex character on the wire; the other
      * `FrameConfig::validate()` rules are the caller's).
      * @par Complexity
      * O(n) in `r.count`; no allocation.

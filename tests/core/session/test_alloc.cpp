@@ -3,6 +3,8 @@
 // guarantee -- rounds 3-10, changes every round, heartbeat on, no ad-hoc. ALC-02 (T-025) is the
 // ad-hoc queue's -- 1000 submit/complete cycles, including a linkDown() with a full queue. Both
 // share this one .cpp (see the duplicate-symbol note below) rather than getting their own files.
+// A second ALC-01 case (T-051) runs the same steady-state check on 3C with the serial fault paths
+// in every round: a timeout, the EOT and flush, a resend, and a timed-out ad-hoc write.
 //
 // This file also carries three older, narrower zero-allocation checks against ValueStore alone,
 // predating ALC-01's own real definition (T-021, before this task's ALC-01 -- the engine-level
@@ -323,4 +325,164 @@ TEST_CASE("ALC-02 Session ad-hoc submit/complete: zero allocations across 1000 c
 
     size_t count = mc::test::allocCount();
     CHECK(count == 0);
+}
+
+TEST_CASE("ALC-01 Session serial (3C): zero allocation across rounds 3-10, each with a timeout, "
+          "an EOT/flush cycle, a retry and a timed-out ad-hoc write") {
+    // Same pattern as ALC-01 above (Session::nextOutput() directly, every response precomputed
+    // before the measured window), on 3C Format 1 with the serial fault paths in every round:
+    // the poll chunk times out once (EOT, a byte discarded during the flush, resend, response),
+    // the heartbeat write is acknowledged, and an ad-hoc write times out (EOT, flush, then
+    // RequestDone{Timeout}). Rounds are long (a timeout each), so the next round is pushed far
+    // out and started by tick(nextDeadline()), like a driver would.
+    FrameConfig frame = FrameConfig::frame3C();
+    frame.readRetries = 2;
+    frame.timeoutMs = 1000;
+    SessionConfig cfg;
+    cfg.heartbeat.enabled = true;
+    cfg.heartbeat.device = Device{DeviceType::M, 2000};
+    cfg.cycleIntervalMs = 100000;
+    auto created = Session::create(frame, cfg);
+    REQUIRE(created.hasValue());
+    Session s = std::move(created.value());
+    REQUIRE(s.subscribe(Device{DeviceType::D, 100}, 4).hasValue());
+
+    const std::vector<uint8_t> hbAck = mc::test::vectorBytes("3c_f1.vec", "V-3C1-04");
+    std::vector<std::vector<uint8_t>> pollResponses;
+    for (uint16_t value = 1; value <= 10; ++value) {
+        pollResponses.push_back(mc::test::serialReadResponse3C({value, value, value, value}));
+    }
+    const uint8_t junk = 0x55;
+    const uint8_t bits[8] = {1, 1, 0, 0, 1, 1, 0, 0};
+    const Request writeReq = Request::writeBits(Device{DeviceType::M, 100}, ByteView{bits, 8});
+
+    TimeMs now = 0;
+    Output out;
+    auto expectSend = [&]() {
+        REQUIRE(s.nextOutput(out));
+        REQUIRE(out.kind == OutputKind::Send);
+    };
+    auto expectEot = [&]() {
+        expectSend();
+        REQUIRE(out.bytes.size == 1);
+        REQUIRE(out.bytes.data[0] == 0x04);
+    };
+    auto expectNothing = [&]() { REQUIRE_FALSE(s.nextOutput(out)); };
+
+    auto runRound = [&](uint32_t round, uint16_t value) {
+        if (round == 1) {
+            s.linkUp(now);
+        } else {
+            now = s.nextDeadline(); // Idle: the next round's start.
+            s.tick(now);
+        }
+        expectSend(); // The heartbeat write.
+        expectNothing();
+        now += 1;
+        s.bytesIn(ByteView{hbAck.data(), hbAck.size()}, now);
+        expectSend(); // The poll chunk.
+        expectNothing();
+
+        now = s.nextDeadline(); // The poll chunk times out: EOT, flush.
+        s.tick(now);
+        expectEot();
+        expectNothing();
+        now += 10;
+        s.bytesIn(ByteView{&junk, 1}, now); // Discarded; restarts the silence window.
+        expectNothing();
+        now = s.nextDeadline(); // Silent for serialFlushMs: the read is resent.
+        s.tick(now);
+        expectSend();
+        expectNothing();
+        now += 1;
+        const std::vector<uint8_t>& pollBytes = pollResponses[value - 1];
+        s.bytesIn(ByteView{pollBytes.data(), pollBytes.size()}, now);
+        bool sawCycleDone = false;
+        while (s.nextOutput(out)) {
+            REQUIRE(out.kind != OutputKind::Send);
+            if (out.kind == OutputKind::CycleDone) {
+                sawCycleDone = true;
+                CHECK(out.cycle.round == round);
+                CHECK(out.cycle.requests == 3); // Heartbeat, poll chunk, its resend.
+                CHECK(out.cycle.failedChunks == 0);
+                CHECK(out.cycle.heartbeatOk == true);
+            }
+        }
+        REQUIRE(sawCycleDone);
+
+        now += 1; // An ad-hoc write that times out: EOT, flush, then RequestDone{Timeout}.
+        auto id = s.submit(writeReq, now);
+        REQUIRE(id.hasValue());
+        expectSend();
+        expectNothing();
+        now = s.nextDeadline();
+        s.tick(now);
+        expectEot();
+        expectNothing();
+        now = s.nextDeadline();
+        s.tick(now);
+        REQUIRE(s.nextOutput(out));
+        REQUIRE(out.kind == OutputKind::RequestDone);
+        REQUIRE(out.error.code == ErrorCode::Timeout);
+        expectNothing();
+    };
+
+    // Rounds 1 and 2 are outside the measured window (re-plan, buffer capacities, round 1's
+    // silent baseline).
+    runRound(1, 1);
+    runRound(2, 2);
+
+    mc::test::resetAllocCount();
+    for (uint32_t round = 3; round <= 10; ++round) {
+        runRound(round, static_cast<uint16_t>(round));
+    }
+    size_t count = mc::test::allocCount();
+    CHECK(count == 0);
+
+    CHECK_FALSE(s.isFaulted());
+    CHECK(s.stats().retries == 10);  // One resend per round.
+    CHECK(s.stats().eotsSent == 20); // Poll chunk and ad-hoc write, every round.
+}
+
+TEST_CASE("ALC-01 Session serial: junk with no start byte, in many small calls and in one big call, "
+          "allocates nothing and keeps the receive buffer bounded") {
+    // The receive buffer is dropped while only junk has arrived (nothing counts toward the
+    // overflow bound before the start byte). If it were kept, 20000 junk bytes would outgrow the
+    // capacity the warm-up call left and allocate.
+    FrameConfig frame = FrameConfig::frame3C();
+    frame.timeoutMs = 1000;
+    SessionConfig cfg;
+    cfg.cycleIntervalMs = 100000;
+    auto created = Session::create(frame, cfg);
+    REQUIRE(created.hasValue());
+    Session s = std::move(created.value());
+    REQUIRE(s.subscribe(Device{DeviceType::D, 100}, 3).hasValue());
+
+    Output out;
+    s.linkUp(0);
+    REQUIRE(s.nextOutput(out));
+    REQUIRE(out.kind == OutputKind::Send);
+    REQUIRE_FALSE(s.nextOutput(out));
+
+    // Far more than the largest response to this read (26 bytes), 0x55 is no start byte.
+    const std::vector<uint8_t> big(5000, 0x55);
+    const uint8_t one = 0x55;
+    TimeMs now = 1;
+
+    // Warm-up: the buffer's capacity grows once, here.
+    s.bytesIn(ByteView{big.data(), big.size()}, now);
+    REQUIRE_FALSE(s.nextOutput(out));
+
+    mc::test::resetAllocCount();
+    for (int i = 0; i < 20000; ++i) {
+        s.bytesIn(ByteView{&one, 1}, ++now);
+    }
+    s.bytesIn(ByteView{big.data(), big.size()}, ++now);
+    size_t count = mc::test::allocCount();
+    CHECK(count == 0);
+
+    CHECK_FALSE(s.nextOutput(out)); // no overflow, no EOT: junk is skipped
+    CHECK(s.stats().protocolErrors == 0);
+    CHECK(s.stats().eotsSent == 0);
+    CHECK_FALSE(s.isFaulted());
 }

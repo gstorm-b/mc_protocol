@@ -29,6 +29,14 @@ const std::vector<Combo>& combos() {
         {"3E ASCII", FrameConfig::frame3E(DataCode::Ascii)},
         {"1E Binary", FrameConfig::frame1E(DataCode::Binary)},
         {"1E ASCII", FrameConfig::frame1E(DataCode::Ascii)},
+        {"3C F1", FrameConfig::frame3C(SerialFormat::Format1)},
+        {"3C F2", FrameConfig::frame3C(SerialFormat::Format2)},
+        {"3C F3", FrameConfig::frame3C(SerialFormat::Format3)},
+        {"3C F4", FrameConfig::frame3C(SerialFormat::Format4)},
+        {"1C F1", FrameConfig::frame1C(SerialFormat::Format1)},
+        {"1C F2", FrameConfig::frame1C(SerialFormat::Format2)},
+        {"1C F3", FrameConfig::frame1C(SerialFormat::Format3)},
+        {"1C F4", FrameConfig::frame1C(SerialFormat::Format4)},
     };
     return list;
 }

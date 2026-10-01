@@ -64,6 +64,18 @@ private:
     FrameConfig m_cfg;
 };
 
+/// The bytes of record `id` of `tests/vectors/<file>` (spec "Testing Strategy": serial behaviour
+/// uses the golden vectors directly, e.g. `3c_f1.vec` / `V-3C1-01`). Throws when the file or the
+/// record is missing, which doctest reports as a failed test.
+std::vector<uint8_t> vectorBytes(const char* file, std::string_view id);
+
+/// A 3C Format 1 response to a word read, built by hand from spec section 5.5 and 2.5, not by the
+/// library: STX, `F90000FF00` (frame ID, station, network, PC, self-station of the default
+/// route), 4 upper-case hex characters per word, ETX, then the sum check (the low byte of the sum
+/// of every byte after STX through ETX, 2 hex characters). Equals V-3C1-02 for 1995H, 1202H, 1130H
+/// (a test in test_session_fault.cpp checks that), and lets a test make a response of any length.
+std::vector<uint8_t> serialReadResponse3C(const std::vector<uint16_t>& words);
+
 /// A single previously-popped `Output`, with every raw-pointer view (`bytes`, `payload`,
 /// `changes`, `chunks`) copied into owned storage so it stays valid long after the `Session` call
 /// that produced it (`Output`'s own contract: those views are only valid until the *next* input

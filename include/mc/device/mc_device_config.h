@@ -26,7 +26,7 @@ namespace mc {
  */
 enum class TransportKind : uint8_t {
     Tcp,   ///< A TcpTransport configured by McDeviceConfig::tcp.
-    Serial ///< Configured by McDeviceConfig::serial; not usable yet, see McDevice::connectToPlc().
+    Serial ///< A SerialTransport configured by McDeviceConfig::serial.
 };
 
 /**
@@ -52,7 +52,7 @@ struct McDeviceConfig {
     SessionConfig session{}; ///< Polling engine settings; `session.log` is ignored.
     TransportKind transport{TransportKind::Tcp}; ///< Which of `tcp` / `serial` is used.
     TcpSettings tcp{};                           ///< Used when `transport == TransportKind::Tcp`.
-    SerialSettings serial{}; ///< Kept for `TransportKind::Serial`, which is not available yet.
+    SerialSettings serial{}; ///< Used when `transport == TransportKind::Serial`.
     QVector<SubscriptionSpec> subscriptions{}; ///< Subscribed at construction, in this order.
 
     /**

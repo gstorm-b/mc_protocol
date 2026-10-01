@@ -334,12 +334,12 @@ class McDevice : public QObject {
     /**
      * @brief Opens the link, or re-publishes the state when it is already open or opening.
      *
-     * Disconnected: builds the transport unless one was injected and opens it (Connecting).
-     * Connected: republishes Connected and opens no second socket. Connecting: opens nothing
-     * more and republishes Connecting. Faulted: stops the Session, closes the transport and opens
-     * it again. An unusable configuration publishes (Disconnected, OpenFailed) without opening
-     * anything. So does `TransportKind::Serial` without an injected transport: the serial
-     * transport is not available in this version, and the detail text says so.
+     * Disconnected: builds the transport unless one was injected (a TcpTransport or, for
+     * `TransportKind::Serial`, a SerialTransport) and opens it (Connecting). Connected:
+     * republishes Connected and opens no second socket. Connecting: opens nothing more and
+     * republishes Connecting. Faulted: stops the Session, closes the transport and opens it
+     * again. An unusable configuration publishes (Disconnected, OpenFailed) without opening
+     * anything; so does a transport that cannot be opened (a COM port that does not exist).
      *
      * @post At least one linkStateChanged() is emitted before the call returns.
      * @see disconnectFromPlc
@@ -427,7 +427,7 @@ class McDevice : public QObject {
 
     void rebuildSession();
     void attachTransport();
-    bool ensureTransport();
+    void ensureTransport();
     void startOpen();
     void setState(LinkState state, LinkReason reason, const QString& detail);
     void failOpen(const QString& detail);

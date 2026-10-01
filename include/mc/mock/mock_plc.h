@@ -51,6 +51,18 @@ struct MockOptions {
  * network, PC or station field, so WrongRoute leaves it unchanged; the other modes act on a 1E
  * response as they do on a 3E one.
  *
+ * On a serial frame (3C, 1C) WrongSubheader leaves the response unchanged. WrongSumCheck adds 1
+ * to the SUM (wrapping at FFH); a response without a SUM (ACK and NAK, a format 3 short response
+ * unless FrameConfig::f3ShortResponseHasSum, sum check off) is left unchanged. WrongRoute adds 1
+ * to the station, network and PC fields of the access route on 3C and to the station and PC
+ * fields on 1C (wrapping at FFH; the self-station is not touched). WrongBlockNo adds 1 to the
+ * block number of format 2 (wrapping at FFH) and leaves the other formats unchanged. WrongRoute
+ * and WrongBlockNo recompute the SUM of a response that has one, so the named field is the only
+ * damage; only WrongSumCheck leaves a SUM that does not match. Truncate drops the last byte (the
+ * LF in format 4), JunkPrefix puts three 55H bytes in front of the frame and ExtraByte one 00H
+ * byte after it (after the CR LF in format 4). The ASCII digits of a changed field are
+ * upper-case hexadecimal.
+ *
  * @see MockPlc::corruptNext
  */
 enum class Corruption : uint8_t {
@@ -89,11 +101,37 @@ struct MockRequestRecord {
  * throws nothing; the same inputs always produce the same bytes. It is test and demo
  * infrastructure and may allocate freely.
  *
- * In this version FrameType::F3E and FrameType::F1E (Binary and ASCII each) are answered. A 1E
- * request is framed by its command's fixed layout plus the point count (reference spec §4.2,
- * §5.3); commands 00H to 03H are executed, 04H and 05H are answered with
- * MockOptions::unsupported1e. The constructor accepts the other frame families, but bytesIn() then
- * recognises no request: nothing is queued for nextResponse() and nothing is added to requests().
+ * In this version FrameType::F3E and FrameType::F1E (Binary and ASCII each) and FrameType::F3C
+ * and FrameType::F1C (ASCII, formats 1 to 4) are answered. A 1E request is framed by its
+ * command's fixed layout plus the point count (reference spec §4.2, §5.3); commands 00H to 03H
+ * are executed, 04H and 05H are answered with MockOptions::unsupported1e. The constructor accepts
+ * the other frame families, but bytesIn() then recognises no request: nothing is queued for
+ * nextResponse() and nothing is added to requests().
+ *
+ * A serial request is received as the PLC side of reference spec §6.3 does:
+ *  - Bytes before the start byte (ENQ; STX in format 3) are skipped without a trace: they add
+ *    nothing to requests().
+ *  - Formats 1, 2 and 4 have no terminator before the SUM, so a request ends where its command
+ *    and point count say (§4.1, §4.3); format 3 ends at ETX. A format 1, 2 or 4 request whose
+ *    layout cannot be followed (a command the mock has no layout for, a route that is not
+ *    hexadecimal) is skipped like junk: its start byte is dropped and the scan goes on to the
+ *    next one. A format 3 request is always framed; one with an unknown command is answered with
+ *    an error.
+ *  - 3C: commands 0401 and 1401 are executed (subcommands 0000 to 0003, so Q/L and iQ-R device
+ *    fields); 0403 and 1402 are framed and answered with MockOptions::unsupportedQna. 1C: BR, WR,
+ *    BW, WW (ACPU) and JR, QR, JW, QW (AnA/AnU) are executed, the message wait character is
+ *    accepted and ignored; BT, WT, JT, QT are framed and answered with MockOptions::unsupported1c.
+ *  - EOT (format 4: EOT CR LF) at any point drops the partial request and is counted by
+ *    eotCount(), also while muted. It is not answered.
+ *  - A request whose station number differs from FrameConfig::stationNo is added to requests()
+ *    with `answered == false`, is not executed and gets no response; it does not use up a
+ *    muteNext(). Another network, PC or self-station number is answered, and echoed.
+ *  - With FrameConfig::sumCheck a request whose SUM is wrong is not executed: it is answered with
+ *    NAK (QNAK in format 3; NN on 1C) and MockOptions::sumErrorQna or sumError1c. Without
+ *    sumCheck neither a request nor a response carries a SUM.
+ *  - A response echoes the access route and, in format 2, the block number of its request.
+ *    The "no data" and error responses of format 3 carry a SUM only when
+ *    FrameConfig::f3ShortResponseHasSum is set (spec §10 Q1); ACK and NAK carry none.
  *
  * Bit devices hold single bits. Word access to a bit device sees bit i of word k at
  * head + 16k + i (spec §2.4). Unwritten memory reads as 0. Device numbers are not aliased
@@ -224,8 +262,9 @@ public:
      * @brief Answers every request touching [@p first, @p last] of @p t with a PLC error.
      *
      * The answer is an end code plus error information on 3E, an end code (plus the abnormal
-     * code when it is 5BH) on 1E, and NAK / QNAK / NN with the code on 3C and 1C. The 1E end code
-     * is one byte: a larger @p code is sent as its low byte. A faulted request changes no memory.
+     * code when it is 5BH) on 1E, and NAK (QNAK in format 3) with a 4-character code on 3C or
+     * NAK (NN in format 3) with a 2-character code on 1C. The 1E end code and the 1C code are one
+     * byte: a larger @p code is sent as its low byte. A faulted request changes no memory.
      *
      * @param[in] t Device type the fault applies to.
      * @param[in] first First device number of the faulted range.
@@ -279,7 +318,7 @@ public:
      */
     const std::vector<MockRequestRecord>& requests() const;
 
-    /// @return Number of EOT (or EOT CR LF) received; 0 on Ethernet frames.
+    /// @return Number of EOT (or EOT CR LF) received, whatever mute() says; 0 on Ethernet frames.
     uint32_t eotCount() const;
 
     /// @brief Empties the request log.

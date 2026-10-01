@@ -2,6 +2,7 @@
 // line and prints what the device reports.
 //
 //   qt_console_poller --host 127.0.0.1 --port 5000 --frame 3E --sub D100:64 --sub M0:32
+//   qt_console_poller --frame 3C --format 4 --serial COM51 --sub D100:64     (a COM port, 9600 7E1)
 //
 // What it shows:
 //   * McDevice never blocks: connectToPlc() returns at once and everything else arrives as a
@@ -13,8 +14,10 @@
 //     decides what to do: it gives up and exits with 1. Another application might call
 //     connectToPlc() again instead.
 //
-// Options: --rounds N exits with 0 after N polling rounds (1 on a link fault or when the
-// connection cannot be opened), so a script can run it; without it the program runs until Ctrl+C.
+// Options: --serial PORT [--baud N] talks over a COM port instead of TCP (--host and --port are
+// then ignored); --format 1..4 picks the envelope of a 3C or 1C frame. --rounds N exits with 0
+// after N polling rounds (1 on a link fault or when the connection cannot be opened), so a script
+// can run it; without it the program runs until Ctrl+C.
 #include "mc/core/device.h"
 #include "mc/core/frame_config.h"
 #include "mc/device/mc_device.h"
@@ -80,7 +83,8 @@ void printSegment(const mc::SnapshotSegment& seg) {
     }
 }
 
-mc::FrameConfig frameFor(const QString& name, mc::DataCode code, bool& ok) {
+mc::FrameConfig frameFor(const QString& name, mc::DataCode code, mc::SerialFormat format,
+                         bool& ok) {
     ok = true;
     if (name.compare(QLatin1String("3E"), Qt::CaseInsensitive) == 0) {
         return mc::FrameConfig::frame3E(code);
@@ -89,10 +93,10 @@ mc::FrameConfig frameFor(const QString& name, mc::DataCode code, bool& ok) {
         return mc::FrameConfig::frame1E(code);
     }
     if (name.compare(QLatin1String("3C"), Qt::CaseInsensitive) == 0) {
-        return mc::FrameConfig::frame3C();
+        return mc::FrameConfig::frame3C(format);
     }
     if (name.compare(QLatin1String("1C"), Qt::CaseInsensitive) == 0) {
-        return mc::FrameConfig::frame1C();
+        return mc::FrameConfig::frame1C(format);
     }
     ok = false;
     return mc::FrameConfig::frame3E();
@@ -114,6 +118,13 @@ int main(int argc, char** argv) {
                       QStringLiteral("FRAME"), QStringLiteral("3E")});
     parser.addOption({QStringLiteral("code"), QStringLiteral("Binary or ASCII (3E and 1E)."),
                       QStringLiteral("Binary|ASCII"), QStringLiteral("Binary")});
+    parser.addOption({QStringLiteral("format"), QStringLiteral("Serial format 1 to 4 (3C and 1C)."),
+                      QStringLiteral("1|2|3|4"), QStringLiteral("1")});
+    parser.addOption({QStringLiteral("serial"),
+                      QStringLiteral("Use this COM port (7E1) instead of TCP."),
+                      QStringLiteral("PORT")});
+    parser.addOption({QStringLiteral("baud"), QStringLiteral("Baud rate with --serial."),
+                      QStringLiteral("N"), QStringLiteral("9600")});
     parser.addOption({QStringLiteral("sub"), QStringLiteral("Subscribe to COUNT points from DEV."),
                       QStringLiteral("DEV:COUNT")});
     parser.addOption({QStringLiteral("rounds"), QStringLiteral("Exit 0 after N rounds."),
@@ -137,9 +148,16 @@ int main(int argc, char** argv) {
                      qPrintable(codeText));
         return 2;
     }
+    bool formatOk = false;
+    const int formatNumber = parser.value(QStringLiteral("format")).toInt(&formatOk);
+    if (!formatOk || formatNumber < 1 || formatNumber > 4) {
+        std::fprintf(stderr, "qt_console_poller: --format is 1, 2, 3 or 4.\n");
+        return 2;
+    }
     bool frameOk = false;
     mc::McDeviceConfig cfg;
-    cfg.frame = frameFor(parser.value(QStringLiteral("frame")), code, frameOk);
+    cfg.frame = frameFor(parser.value(QStringLiteral("frame")), code,
+                         static_cast<mc::SerialFormat>(formatNumber), frameOk);
     if (!frameOk) {
         std::fprintf(stderr, "qt_console_poller: --frame is 3E, 1E, 3C or 1C.\n");
         return 2;
@@ -152,6 +170,20 @@ int main(int argc, char** argv) {
     }
     cfg.tcp.host = parser.value(QStringLiteral("host"));
     cfg.tcp.port = static_cast<quint16>(port);
+    if (parser.isSet(QStringLiteral("serial"))) {
+        bool baudOk = false;
+        const int baud = parser.value(QStringLiteral("baud")).toInt(&baudOk);
+        if (!baudOk || baud <= 0) {
+            std::fprintf(stderr, "qt_console_poller: --baud is a positive number.\n");
+            return 2;
+        }
+        cfg.transport = mc::TransportKind::Serial;
+        cfg.serial.portName = parser.value(QStringLiteral("serial")); // 7E1 by default
+        cfg.serial.baudRate = baud;
+    } else if (parser.isSet(QStringLiteral("baud"))) {
+        std::fprintf(stderr, "qt_console_poller: --baud needs --serial.\n");
+        return 2;
+    }
     for (const QString& text : parser.values(QStringLiteral("sub"))) {
         const qsizetype colon = text.indexOf(QLatin1Char(':'));
         bool countOk = false;

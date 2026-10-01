@@ -11,6 +11,14 @@ Error lengthMismatchError() noexcept {
     return e;
 }
 
+Error pointCountError() noexcept {
+    Error e{};
+    e.category = ErrorCategory::Encode;
+    e.code = ErrorCode::PointCount;
+    e.message = "a 1E test command takes at most 255 entries";
+    return e;
+}
+
 // Writes n (u8) + the fixed 00 (u8) at the start of a test command's request data.
 template <class Codec> size_t putTestHead(size_t n, MutableByteView out) noexcept {
     (void)Codec::putU8(static_cast<uint8_t>(n), MutableByteView{out.data, Codec::u8Size()});
@@ -74,6 +82,9 @@ Expected<size_t> a1eResponseData(const Request& r, ByteView in,
 template <class Codec>
 Expected<size_t> a1eTestBitsRequestData(const A1eTestBit* items, size_t n,
                                          MutableByteView out) noexcept {
+    if (n > 255) {
+        return Expected<size_t>(pointCountError());
+    }
     if (out.size < a1eTestBitsRequestDataSize<Codec>(n)) {
         return Expected<size_t>(fieldBufferTooSmallError());
     }
@@ -96,6 +107,9 @@ Expected<size_t> a1eTestBitsRequestData(const A1eTestBit* items, size_t n,
 template <class Codec>
 Expected<size_t> a1eTestWordsRequestData(const A1eTestWord* items, size_t n,
                                           MutableByteView out) noexcept {
+    if (n > 255) {
+        return Expected<size_t>(pointCountError());
+    }
     if (out.size < a1eTestWordsRequestDataSize<Codec>(n)) {
         return Expected<size_t>(fieldBufferTooSmallError());
     }

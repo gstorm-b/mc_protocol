@@ -527,7 +527,7 @@ TEST_CASE("CMD-31, 32 (1C WT / BT test commands, v1.1): encoders match the tagge
 }
 
 TEST_CASE("A1C-REQUEST-ERRORS: 256 points wrap to 00; BufferTooSmall, InvalidDevice, "
-          "InvalidConfig") {
+          "InvalidConfig, PointCount") {
     SUBCASE("256 points are written as 00 (spec E8, 1C-06)") {
         Request r = Request::readBits(Device{DeviceType::M, 0}, 256);
         std::vector<uint8_t> out(a1cRequestDataSize(r, mc::C1CommandSet::ACPU), 0xCC);
@@ -603,6 +603,24 @@ TEST_CASE("A1C-REQUEST-ERRORS: 256 points wrap to 00; BufferTooSmall, InvalidDev
             a1cTestWordsRequestData(word, 256, acpu, 0, MutableByteView{big, sizeof(big)});
         REQUIRE_FALSE(manyWords.hasValue());
         CHECK(manyWords.error().code == ErrorCode::PointCount);
+    }
+    SUBCASE("test commands: 255 entries, the largest the 2-character count holds, are accepted") {
+        const mc::C1CommandSet acpu = mc::C1CommandSet::ACPU;
+        const std::vector<A1cTestBit> bits(255, A1cTestBit{Device{DeviceType::M, 50}, true});
+        std::vector<uint8_t> bitOut(a1cTestBitsRequestDataSize(bits.data(), 255, acpu), 0xCC);
+        auto bitResult = a1cTestBitsRequestData(bits.data(), 255, acpu, 0,
+                                                MutableByteView{bitOut.data(), bitOut.size()});
+        REQUIRE(bitResult.hasValue());
+        CHECK(bitResult.value() == bitOut.size());
+        CHECK(std::string(bitOut.begin(), bitOut.begin() + 5) == "BT0FF");
+
+        const std::vector<A1cTestWord> words(255, A1cTestWord{Device{DeviceType::D, 500}, 0x1234});
+        std::vector<uint8_t> wordOut(a1cTestWordsRequestDataSize(words.data(), 255, acpu), 0xCC);
+        auto wordResult = a1cTestWordsRequestData(words.data(), 255, acpu, 0,
+                                                  MutableByteView{wordOut.data(), wordOut.size()});
+        REQUIRE(wordResult.hasValue());
+        CHECK(wordResult.value() == wordOut.size());
+        CHECK(std::string(wordOut.begin(), wordOut.begin() + 5) == "WT0FF");
     }
 }
 
@@ -854,7 +872,8 @@ TEST_CASE("CMD-22..24, 37 (1E 04H/05H test commands, v1.1): encoders match the t
                a1eTestWordsRequestDataSize<AsciiCodec>);
 }
 
-TEST_CASE("A1E-REQUEST-ERRORS: 256 points wrap to 00; BufferTooSmall and InvalidDevice") {
+TEST_CASE("A1E-REQUEST-ERRORS: 256 points wrap to 00; BufferTooSmall, InvalidDevice and "
+          "PointCount") {
     SUBCASE("256 points are written as 00 (spec E8), Binary and ASCII") {
         Request r = Request::readWords(Device{DeviceType::D, 0}, 256);
         std::vector<uint8_t> bin(a1eRequestDataSize<BinaryCodec>(r), 0xCC);
@@ -903,6 +922,40 @@ TEST_CASE("A1E-REQUEST-ERRORS: 256 points wrap to 00; BufferTooSmall and Invalid
             a1eTestWordsRequestData<BinaryCodec>(word, 1, MutableByteView{big, sizeof(big)});
         REQUIRE_FALSE(badWords.hasValue());
         CHECK(badWords.error().code == ErrorCode::InvalidDevice);
+    }
+    SUBCASE("test commands: 256 entries are PointCount (n is a u8, 256 would wrap to 00), "
+            "255 are accepted") {
+        // n above 255 is refused before `items` is read, so a one-entry array is enough.
+        const A1eTestBit bit[] = {{Device{DeviceType::M, 50}, true}};
+        const A1eTestWord word[] = {{Device{DeviceType::D, 500}, 1}};
+        uint8_t big[64];
+
+        auto manyBits = a1eTestBitsRequestData<BinaryCodec>(bit, 256, MutableByteView{big, 64});
+        REQUIRE_FALSE(manyBits.hasValue());
+        CHECK(manyBits.error().category == ErrorCategory::Encode);
+        CHECK(manyBits.error().code == ErrorCode::PointCount);
+        auto manyWords = a1eTestWordsRequestData<AsciiCodec>(word, 256, MutableByteView{big, 64});
+        REQUIRE_FALSE(manyWords.hasValue());
+        CHECK(manyWords.error().category == ErrorCategory::Encode);
+        CHECK(manyWords.error().code == ErrorCode::PointCount);
+
+        // 255 is the largest count the u8 holds: accepted, written as FF (Binary) / "FF" (ASCII).
+        const std::vector<A1eTestBit> bits(255, bit[0]);
+        std::vector<uint8_t> bitOut(a1eTestBitsRequestDataSize<BinaryCodec>(255), 0xCC);
+        auto bitResult = a1eTestBitsRequestData<BinaryCodec>(
+            bits.data(), 255, MutableByteView{bitOut.data(), bitOut.size()});
+        REQUIRE(bitResult.hasValue());
+        CHECK(bitResult.value() == bitOut.size());
+        CHECK(bitOut[0] == 0xFF);
+        CHECK(bitOut[1] == 0x00);
+
+        const std::vector<A1eTestWord> words(255, word[0]);
+        std::vector<uint8_t> wordOut(a1eTestWordsRequestDataSize<AsciiCodec>(255), 0xCC);
+        auto wordResult = a1eTestWordsRequestData<AsciiCodec>(
+            words.data(), 255, MutableByteView{wordOut.data(), wordOut.size()});
+        REQUIRE(wordResult.hasValue());
+        CHECK(wordResult.value() == wordOut.size());
+        CHECK(std::string(wordOut.begin(), wordOut.begin() + 4) == "FF00");
     }
 }
 

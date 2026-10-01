@@ -77,6 +77,7 @@ set(_mc_mock_sources
     mock/memory_image.h
     mock/mock_internal.h
     mock/request_decode_ethernet.cpp
+    mock/request_decode_serial.cpp
     mock/command_exec.cpp
     mock/response_build.cpp
     mock/corruption.cpp
@@ -104,6 +105,7 @@ endif()
 # called only inside the option, so a core-only configure never searches for Qt (BLD-02).
 set(_mc_device_sources
     device/tcp_transport.cpp
+    device/serial_transport.cpp
     device/meta_types.cpp
     device/mc_device_config.cpp
     device/mc_device.cpp

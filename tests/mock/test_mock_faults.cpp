@@ -1,11 +1,12 @@
-// MCK-09 (3E and 1E: unsupported commands) and the Ethernet cases of MCK-11 (mute, muteNext and
-// every Corruption mode) on 3E and 1E, Binary and ASCII, asserted byte for byte against a clean response;
-// plus clearFaults(). The expected bytes are derived here from the documented rule of each mode
-// (mc/mock/mock_plc.h) applied to a clean response, never by calling the mock a second time for
-// the damage itself.
+// MCK-09 (unsupported commands) and MCK-11 (mute, muteNext and every Corruption mode) on 3E and
+// 1E, Binary and ASCII, and on 3C and 1C in formats 1 to 4, asserted byte for byte against a clean
+// response; plus clearFaults() and the serial parts of MCK-12. The expected bytes are derived here
+// from the documented rule of each mode (mc/mock/mock_plc.h) applied to a clean response, never by
+// calling the mock a second time for the damage itself.
 #include "doctest/doctest.h"
 
 #include "common/vectors.h"
+#include "serial_frames.h"
 
 #include "mc/core/device.h"
 #include "mc/core/frame_config.h"
@@ -15,6 +16,7 @@
 #include <algorithm>
 #include <cstdint>
 #include <cstdio>
+#include <deque>
 #include <filesystem>
 #include <string>
 #include <vector>
@@ -25,10 +27,14 @@ using mc::DataCode;
 using mc::Device;
 using mc::DeviceType;
 using mc::FrameConfig;
+using mc::FrameType;
 using mc::MockOptions;
 using mc::MockPlc;
+using mc::SerialFormat;
 using mc::test::loadVectors;
 using mc::test::Vector;
+
+namespace sf = mc::test::serial;
 
 namespace {
 
@@ -53,20 +59,32 @@ std::vector<Vector> loadFile(const char* name) {
     return vectors;
 }
 
-// One wire representation under test: its frame family and code, a request for D100 x 3 words (the
-// vector of the spec's example G1), the same request with a route that carries hex digits (3E: 0F,
-// FE, 1F; 1E has only the PC number: 03), and a write of D100 = 1234H.
+// One wire representation under test: the configuration of the mock, a request for D100 x 3 words
+// (the vector of the spec's example G1), the same request with a route that carries hex digits (3E:
+// 0F, FE, 1F; 1E has only the PC number: 03; 3C: network 0F, PC 3E, self-station 1F; 1C: PC 3E), and
+// a write of D100 = 1234H.
 struct Wire {
     const char* name;
-    bool is1e;
-    DataCode code;
+    FrameConfig cfg;
     Bytes read;
     Bytes readOtherRoute;
     Bytes write;
+
+    bool is1e() const { return cfg.frame == FrameType::F1E; }
+    bool serial() const { return cfg.frame == FrameType::F3C || cfg.frame == FrameType::F1C; }
+    bool ascii() const { return cfg.code == DataCode::Ascii; }
 };
 
-FrameConfig configOf(const Wire& w) {
-    return w.is1e ? FrameConfig::frame1E(w.code) : FrameConfig::frame3E(w.code);
+FrameConfig configOf(const Wire& w) { return w.cfg; }
+
+// The route of readOtherRoute for the serial frames.
+sf::Route otherSerialRoute() {
+    sf::Route r;
+    r.network = 0x0F;
+    r.pc = 0x3E;
+    r.self = 0x1F;
+    r.block = 0x3A;
+    return r;
 }
 
 std::vector<Wire> wires() {
@@ -98,14 +116,32 @@ std::vector<Wire> wires() {
     asc1eOther[2] = '0';
     asc1eOther[3] = '3';
 
-    return {
-        {"3E Binary", false, DataCode::Binary, binRead, binOther, binWrite3e},
-        {"3E ASCII", false, DataCode::Ascii, ascRead, ascOther,
+    std::vector<Wire> list = {
+        {"3E Binary", FrameConfig::frame3E(DataCode::Binary), binRead, binOther, binWrite3e},
+        {"3E ASCII", FrameConfig::frame3E(DataCode::Ascii), ascRead, ascOther,
          Bytes(ascWrite3eText.begin(), ascWrite3eText.end())},
-        {"1E Binary", true, DataCode::Binary, bin1eRead, bin1eOther, binWrite1e},
-        {"1E ASCII", true, DataCode::Ascii, asc1eRead, asc1eOther,
+        {"1E Binary", FrameConfig::frame1E(DataCode::Binary), bin1eRead, bin1eOther, binWrite1e},
+        {"1E ASCII", FrameConfig::frame1E(DataCode::Ascii), asc1eRead, asc1eOther,
          Bytes(ascWrite1eText.begin(), ascWrite1eText.end())},
     };
+
+    // The eight serial combinations; the frames are written from the tables of spec 5.4-5.6.
+    for (bool threeC : {true, false}) {
+        for (SerialFormat format : {SerialFormat::Format1, SerialFormat::Format2,
+                                    SerialFormat::Format3, SerialFormat::Format4}) {
+            static std::deque<std::string> names; // element addresses stay valid
+            names.push_back(std::string(threeC ? "3C F" : "1C F") +
+                            std::to_string(static_cast<int>(format)));
+            Wire w;
+            w.name = names.back().c_str();
+            w.cfg = threeC ? FrameConfig::frame3C(format) : FrameConfig::frame1C(format);
+            w.read = sf::request(w.cfg, sf::readD(w.cfg, 100, 3));
+            w.readOtherRoute = sf::request(w.cfg, sf::readD(w.cfg, 100, 3), otherSerialRoute());
+            w.write = sf::request(w.cfg, sf::writeD(w.cfg, 100, "1234"));
+            list.push_back(w);
+        }
+    }
+    return list;
 }
 
 MockPlc seeded(const Wire& w) {
@@ -135,15 +171,87 @@ Bytes cleanResponse(const Wire& w, const Bytes& request) {
 }
 
 // The documented damage of `mode` on a clean 3E or 1E response, written out by hand.
+Bytes expectedSerialDamage(Corruption mode, const Wire& w, const Bytes& clean) {
+    const FrameConfig& cfg = w.cfg;
+    const bool threeC = cfg.frame == FrameType::F3C;
+    const bool format2 = cfg.format == SerialFormat::Format2;
+    const bool format4 = cfg.format == SerialFormat::Format4;
+    Bytes out = clean;
+
+    // A SUM is there when the response has an ETX and two characters follow it (before CR LF).
+    const auto etxAt = std::find(clean.begin(), clean.end(), sf::kEtx);
+    const size_t etx = static_cast<size_t>(etxAt - clean.begin());
+    const bool hasSum = etxAt != clean.end() && clean.size() == etx + 1 + 2 + (format4 ? 2 : 0);
+    auto setSum = [&](unsigned value) {
+        const std::string text = sf::hex2(value);
+        out[etx + 1] = static_cast<uint8_t>(text[0]);
+        out[etx + 2] = static_cast<uint8_t>(text[1]);
+    };
+    auto addOne = [&](size_t at) {
+        const std::string field(clean.begin() + static_cast<std::ptrdiff_t>(at),
+                                clean.begin() + static_cast<std::ptrdiff_t>(at) + 2);
+        const unsigned v = static_cast<unsigned>(std::stoul(field, nullptr, 16));
+        const std::string text = sf::hex2(v + 1);
+        out[at] = static_cast<uint8_t>(text[0]); // wraps at FFH
+        out[at + 1] = static_cast<uint8_t>(text[1]);
+    };
+
+    switch (mode) {
+    case Corruption::WrongSubheader:
+        return out; // there is no subheader in a serial frame
+    case Corruption::WrongSumCheck:
+        if (hasSum) {
+            setSum(sf::byteSum(clean, 1, etx + 1) + 1);
+        }
+        return out;
+    case Corruption::WrongRoute: {
+        const size_t p = format2 ? 3 : 1; // start of the access route
+        if (threeC) {
+            addOne(p + 2); // station (after "F9")
+            addOne(p + 4); // network
+            addOne(p + 6); // PC; the self-station at p + 8 stays
+        } else {
+            addOne(p);     // station
+            addOne(p + 2); // PC
+        }
+        if (hasSum) {
+            setSum(sf::byteSum(out, 1, etx + 1)); // the route is the only damage
+        }
+        return out;
+    }
+    case Corruption::WrongBlockNo:
+        if (format2) {
+            addOne(1);
+            if (hasSum) {
+                setSum(sf::byteSum(out, 1, etx + 1)); // the block number is the only damage
+            }
+        }
+        return out;
+    case Corruption::Truncate:
+        out.pop_back();
+        return out;
+    case Corruption::JunkPrefix:
+        out.insert(out.begin(), kJunk.begin(), kJunk.end());
+        return out;
+    case Corruption::ExtraByte:
+        out.push_back(0x00);
+        return out;
+    }
+    return out;
+}
+
 Bytes expectedDamage(Corruption mode, const Wire& w, const Bytes& clean) {
-    const bool ascii = w.code == DataCode::Ascii;
+    if (w.serial()) {
+        return expectedSerialDamage(mode, w, clean);
+    }
+    const bool ascii = w.ascii();
     Bytes out = clean;
     switch (mode) {
     case Corruption::WrongSubheader:
         out[0] = ascii ? uint8_t{'E'} : static_cast<uint8_t>(clean[0] ^ 0x01);
         return out;
     case Corruption::WrongRoute: {
-        if (w.is1e) {
+        if (w.is1e()) {
             return out; // a 1E response has no route fields
         }
         // network, PC and station + 1 (wrapping); the I/O number is not touched.
@@ -638,4 +746,233 @@ TEST_CASE("MCK-11 1E ASCII: the documented text of the subheader and route modes
     plc.corruptNext(Corruption::WrongSubheader);
     feed(plc, request);
     CHECK(asText(drainAll(plc)[0]) == "E15B10");
+}
+
+// ---- 3C and 1C ---------------------------------------------------------------------------------
+
+namespace {
+
+std::vector<Wire> serialWires() {
+    std::vector<Wire> out;
+    for (const Wire& w : wires()) {
+        if (w.serial()) {
+            out.push_back(w);
+        }
+    }
+    return out;
+}
+
+// Request data the mock frames by its layout and answers with the unsupported error of the family.
+std::vector<std::pair<const char*, std::string>> unsupportedData(bool threeC) {
+    if (threeC) {
+        return {
+            {"0403 random read, Q/L", "04030000" "0100" "D*000100"},
+            {"0403 random read, iQ-R, one word and one dword device",
+             "04030002" "0101" "D***00000100" "D***00000200"},
+            {"1402 random write, word units", "14020000" "0100" "D*000100" "1234"},
+            {"1402 random write, one word and one dword",
+             "14020002" "0101" "D***00000100" "1234" "D***00000200" "12345678"},
+            {"1402 random write, bit units, Q/L", "14020001" "01" "M*000100" "01"},
+            {"1402 random write, bit units, iQ-R", "14020003" "01" "M***00000100" "0001"},
+        };
+    }
+    return {
+        {"BT", "BT0" "01" "M0100" "1"},
+        {"WT", "WT0" "01" "D0100" "1234"},
+        {"JT", "JT0" "01" "M000100" "1"},
+        {"QT", "QT0" "02" "D000100" "1234" "D000101" "5678"},
+    };
+}
+
+} // namespace
+
+TEST_CASE("MCK-09 3C and 1C: commands the mock does not execute are answered with the unsupported "
+          "error of the family") {
+    for (const Wire& w : serialWires()) {
+        INFO(w.name);
+        const bool threeC = w.cfg.frame == FrameType::F3C;
+        const std::string code = threeC ? "C059" : "06";
+        const auto commands = unsupportedData(threeC);
+        for (size_t chunk : {size_t{1024}, size_t{1}}) {
+            INFO("chunk ", chunk);
+            // Every such request and a good read after them, in one stream: each ends where its
+            // layout says, so the read is found.
+            Bytes stream;
+            for (const auto& c : commands) {
+                const Bytes frame = sf::request(w.cfg, c.second);
+                stream.insert(stream.end(), frame.begin(), frame.end());
+            }
+            stream.insert(stream.end(), w.read.begin(), w.read.end());
+            MockPlc plc = seeded(w);
+            for (size_t pos = 0; pos < stream.size(); pos += chunk) {
+                plc.bytesIn(ByteView{stream.data() + pos, std::min(chunk, stream.size() - pos)});
+            }
+            const std::vector<Bytes> got = drainAll(plc);
+            REQUIRE(got.size() == commands.size() + 1);
+            for (size_t i = 0; i < commands.size(); ++i) {
+                INFO(commands[i].first);
+                CHECK(got[i] == sf::response(w.cfg, sf::Kind::Nak, code));
+                CHECK(plc.requests()[i].answered);
+                CHECK(plc.requests()[i].answeredWith.plcCode == (threeC ? 0xC059 : 0x06));
+            }
+            CHECK(got.back() == sf::response(w.cfg, sf::Kind::Data, "199512021130"));
+            CHECK(plc.word(Device{DeviceType::D, 100}) == 0x1995); // nothing was executed
+        }
+
+        // The codes are MockOptions values.
+        MockOptions opt;
+        opt.unsupportedQna = 0xC061;
+        opt.unsupported1c = 0x07;
+        MockPlc custom(w.cfg, opt);
+        feed(custom, sf::request(w.cfg, commands.front().second));
+        const std::vector<Bytes> got = drainAll(custom);
+        REQUIRE(got.size() == 1);
+        CHECK(got[0] == sf::response(w.cfg, sf::Kind::Nak, threeC ? "C061" : "07"));
+    }
+}
+
+TEST_CASE("MCK-09 3C and 1C: request data that does not fit the command is answered, not "
+          "executed") {
+    struct Case {
+        const char* name;
+        std::string data3c;
+        std::string data1c; // empty: no 1C twin
+    };
+    const std::vector<Case> cases = {
+        {"bit read of a word device", sf::data3c(0x0401, 0x0001, "D*000100", 1),
+         sf::data1c("BR", '0', "D0100", 1)},
+        {"device without a code in the family", sf::data3c(0x0401, 0x0000, "RD000100", 1),
+         sf::data1c("WR", '0', "V0100", 1)},
+        {"unknown device code", sf::data3c(0x0401, 0x0000, "Q*000100", 1),
+         sf::data1c("WR", '0', "Q0100", 1)},
+        {"digit outside the radix", sf::data3c(0x0401, 0x0000, "D*0001G0", 1),
+         sf::data1c("WR", '0', "D01G0", 1)},
+        {"zero points (3C)", sf::data3c(0x0401, 0x0000, "D*000100", 0), ""},
+        {"word data with a bad digit", sf::data3c(0x1401, 0x0000, "D*000100", 1, "12G4"),
+         sf::data1c("WW", '0', "D0100", 1, "12G4")},
+        {"bit data that is not 0 or 1", sf::data3c(0x1401, 0x0001, "M*000100", 2, "12"),
+         sf::data1c("BW", '0', "M0100", 2, "12")},
+        {"bit write to a word device", sf::data3c(0x1401, 0x0001, "D*000100", 1, "1"),
+         sf::data1c("BW", '0', "D0100", 1, "1")},
+    };
+    for (const Wire& w : serialWires()) {
+        INFO(w.name);
+        const bool threeC = w.cfg.frame == FrameType::F3C;
+        const std::string code = threeC ? "C059" : "06";
+        for (const Case& c : cases) {
+            const std::string& data = threeC ? c.data3c : c.data1c;
+            if (data.empty()) {
+                continue;
+            }
+            INFO(c.name);
+            MockPlc plc = seeded(w);
+            feed(plc, sf::request(w.cfg, data));
+            const std::vector<Bytes> got = drainAll(plc);
+            REQUIRE(got.size() == 1);
+            CHECK(got[0] == sf::response(w.cfg, sf::Kind::Nak, code));
+            CHECK(plc.word(Device{DeviceType::D, 100}) == 0x1995);
+            CHECK_FALSE(plc.bit(Device{DeviceType::M, 100}));
+        }
+    }
+}
+
+TEST_CASE("MCK-09 3C and 1C format 3: a frame is framed by its ETX, so an unknown command or a "
+          "short write is answered") {
+    for (const Wire& w : serialWires()) {
+        if (w.cfg.format != SerialFormat::Format3) {
+            continue;
+        }
+        INFO(w.name);
+        const bool threeC = w.cfg.frame == FrameType::F3C;
+        const std::vector<std::string> data =
+            threeC ? std::vector<std::string>{"0406" "0000" "00", "04010004" "D*000100" "0001", "",
+                                              "0401"}
+                   : std::vector<std::string>{"ZZ0" "D0100" "01", "WW0" "D0100" "02" "1234", "",
+                                              "WR"};
+        for (const std::string& d : data) {
+            INFO("request data \"", d, "\"");
+            MockPlc plc = seeded(w);
+            feed(plc, sf::request(w.cfg, d));
+            const std::vector<Bytes> got = drainAll(plc);
+            REQUIRE(got.size() == 1);
+            CHECK(got[0] == sf::response(w.cfg, sf::Kind::Nak, threeC ? "C059" : "06"));
+        }
+    }
+}
+
+TEST_CASE("MCK-11 3C and 1C: the documented bytes of each mode, spelled out") {
+    const std::string stx = "\x02";
+    const std::string etx = "\x03";
+    const std::string tail = "199512021130" + etx;
+    // 3C format 1: clean <STX>F90000FF00199512021130<ETX>90
+    {
+        MockPlc plc(FrameConfig::frame3C(SerialFormat::Format1));
+        plc.setWords(Device{DeviceType::D, 100}, {0x1995, 0x1202, 0x1130});
+        const Bytes request = byId(loadFile("3c_f1.vec"), "V-3C1-01").bytes;
+        auto answer = [&](Corruption mode) {
+            plc.corruptNext(mode);
+            feed(plc, request);
+            return asText(drainAll(plc)[0]);
+        };
+        CHECK(answer(Corruption::WrongSubheader) == stx + "F90000FF00" + tail + "90");
+        CHECK(answer(Corruption::WrongSumCheck) == stx + "F90000FF00" + tail + "91");
+        // Station, network and PC + 1 (PC FF wraps to 00), self-station untouched, SUM recomputed.
+        CHECK(answer(Corruption::WrongRoute) == stx + "F901010000" + tail + "66");
+        CHECK(answer(Corruption::WrongBlockNo) == stx + "F90000FF00" + tail + "90"); // not format 2
+        CHECK(answer(Corruption::Truncate) == stx + "F90000FF00" + tail + "9");
+        CHECK(answer(Corruption::JunkPrefix) == "UUU" + stx + "F90000FF00" + tail + "90");
+        CHECK(answer(Corruption::ExtraByte) ==
+              stx + "F90000FF00" + tail + "90" + std::string(1, '\0'));
+    }
+    // 1C format 2: clean <STX>0000FF199512021130<ETX>B1 (block 00, station 00, PC FF)
+    {
+        MockPlc plc(FrameConfig::frame1C(SerialFormat::Format2));
+        plc.setWords(Device{DeviceType::D, 100}, {0x1995, 0x1202, 0x1130});
+        const Bytes request = byId(loadFile("1c_f2.vec"), "V-1C2-01").bytes;
+        auto answer = [&](Corruption mode) {
+            plc.corruptNext(mode);
+            feed(plc, request);
+            return asText(drainAll(plc)[0]);
+        };
+        CHECK(answer(Corruption::WrongSumCheck) == stx + "0000FF" + tail + "B2");
+        CHECK(answer(Corruption::WrongRoute) == stx + "00" "0100" + tail + "86");
+        CHECK(answer(Corruption::WrongBlockNo) == stx + "0100FF" + tail + "B2");
+        CHECK(answer(Corruption::WrongSubheader) == stx + "0000FF" + tail + "B1");
+    }
+    // Format 4: the LF is what Truncate drops, ExtraByte goes after the CR LF, and a short ACK has
+    // no SUM for WrongSumCheck to change.
+    {
+        const FrameConfig cfg = FrameConfig::frame1C(SerialFormat::Format4);
+        MockPlc plc(cfg);
+        plc.setWords(Device{DeviceType::D, 100}, {0x1995, 0x1202, 0x1130});
+        const std::vector<Vector> vectors = loadFile("1c_f4.vec");
+        const Bytes request = byId(vectors, "V-1C4-01").bytes;
+        const Bytes clean = byId(vectors, "V-1C4-02").bytes;
+        plc.corruptNext(Corruption::Truncate);
+        feed(plc, request);
+        CHECK(drainAll(plc)[0] == Bytes(clean.begin(), clean.end() - 1));
+        plc.corruptNext(Corruption::ExtraByte);
+        feed(plc, request);
+        Bytes extra = clean;
+        extra.push_back(0x00);
+        CHECK(drainAll(plc)[0] == extra);
+        plc.corruptNext(Corruption::WrongSumCheck);
+        feed(plc, sf::request(cfg, sf::writeD(cfg, 100, "0001")));
+        CHECK(drainAll(plc)[0] == byId(vectors, "V-1C4-07").bytes);
+    }
+}
+
+TEST_CASE("MCK-11 3C and 1C: a failRange fault is answered with NAK, QNAK or NN, and 1C sends the "
+          "low byte of the code") {
+    for (const Wire& w : serialWires()) {
+        INFO(w.name);
+        const bool threeC = w.cfg.frame == FrameType::F3C;
+        MockPlc plc = seeded(w);
+        plc.failRange(DeviceType::D, 100, 100, 0x7151);
+        feed(plc, w.read);
+        const std::vector<Bytes> got = drainAll(plc);
+        REQUIRE(got.size() == 1);
+        CHECK(got[0] == sf::response(w.cfg, sf::Kind::Nak, threeC ? "7151" : "51"));
+        CHECK(plc.requests()[0].answeredWith.plcCode == (threeC ? 0x7151 : 0x51));
+    }
 }

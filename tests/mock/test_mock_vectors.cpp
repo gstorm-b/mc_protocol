@@ -1,12 +1,14 @@
-// MCK-01, MCK-02, MCK-03, MCK-10, MCK-12 (end to end) and the 3E and 1E parts of MCK-05 and
-// the 3E part of MCK-07: MockPlc's 3E and 1E server directions against the golden vectors of
-// tests/vectors/3e_*.vec and 1e_*.vec (spec Appendix A.1, A.2, A.5, A.6 and sections 9.6, 9.7),
-// read in the reverse direction: the request vectors go into MockPlc::bytesIn, the response
-// vectors are what nextResponse must give. Frames that the vectors do not have are built here by
-// hand from the tables of spec sections 5.1, 5.3 and 4.2.
+// MCK-01, MCK-02, MCK-03, MCK-10, MCK-12 (end to end) and the vector parts of MCK-05 and the 3E
+// part of MCK-07: MockPlc's 3E, 1E, 3C and 1C server directions against the golden vectors of
+// tests/vectors/3e_*.vec, 1e_*.vec, 3c_f*.vec and 1c_f*.vec (spec Appendix A.1, A.2, A.5, A.6,
+// A.12-A.19 and sections 9.6-9.8), read in the reverse direction: the request vectors go into
+// MockPlc::bytesIn, the response vectors are what nextResponse must give. Frames that the vectors
+// do not have are built here by hand from the tables of spec sections 5.1, 5.3 and 4.2. The serial
+// stream behaviour (MCK-06, MCK-07, MCK-08) is in test_mock_stream.cpp.
 #include "doctest/doctest.h"
 
 #include "common/vectors.h"
+#include "serial_frames.h"
 
 #include "mc/core/device.h"
 #include "mc/core/frame_config.h"
@@ -38,8 +40,11 @@ using Bytes = std::vector<uint8_t>;
 
 const char* const kVectorFiles[] = {"3e_binary.vec", "3e_ascii.vec"};
 const char* const k1eVectorFiles[] = {"1e_binary.vec", "1e_ascii.vec"};
-const char* const kAllVectorFiles[] = {"3e_binary.vec", "3e_ascii.vec", "1e_binary.vec",
-                                       "1e_ascii.vec"};
+const char* const kSerialVectorFiles[] = {"3c_f1.vec", "3c_f2.vec", "3c_f3.vec", "3c_f4.vec",
+                                          "1c_f1.vec", "1c_f2.vec", "1c_f3.vec", "1c_f4.vec"};
+const char* const kAllVectorFiles[] = {
+    "3e_binary.vec", "3e_ascii.vec", "1e_binary.vec", "1e_ascii.vec", "3c_f1.vec", "3c_f2.vec",
+    "3c_f3.vec",     "3c_f4.vec",    "1c_f1.vec",     "1c_f2.vec",    "1c_f3.vec", "1c_f4.vec"};
 
 std::filesystem::path vectorsRoot() {
     return std::filesystem::path(MC_TESTS_SOURCE_DIR) / "vectors";
@@ -87,11 +92,47 @@ std::vector<uint32_t> parseCsvHex(const std::string& s) {
     return values;
 }
 
-bool is1e(const Vector& v) { return v.field("frame") == "1E"; }
+mc::FrameType frameOf(const Vector& v) {
+    const std::string frame = v.field("frame");
+    if (frame == "1E") {
+        return mc::FrameType::F1E;
+    }
+    if (frame == "3C") {
+        return mc::FrameType::F3C;
+    }
+    if (frame == "1C") {
+        return mc::FrameType::F1C;
+    }
+    return mc::FrameType::F3E;
+}
 
-FrameConfig configFor(const Vector& v) {
+// The setting a vector's metadata names, taken from the response vector when it names it and from
+// the request vector otherwise (3C3-SHORTSUM-* put the f3shortsum setting on the response only).
+std::string settingOf(const Vector& request, const Vector* response, const char* key) {
+    if (response != nullptr && !response->field(key).empty()) {
+        return response->field(key);
+    }
+    return request.field(key);
+}
+
+FrameConfig configFor(const Vector& v, const Vector* response = nullptr) {
+    const mc::FrameType frame = frameOf(v);
+    if (frame == mc::FrameType::F3C || frame == mc::FrameType::F1C) {
+        const std::string f = v.field("format"); // "F1" .. "F4"
+        const auto format = static_cast<mc::SerialFormat>(f.at(1) - '0');
+        FrameConfig cfg = frame == mc::FrameType::F3C ? FrameConfig::frame3C(format)
+                                                      : FrameConfig::frame1C(format);
+        cfg.series = v.field("series") == "IqR" ? PlcSeries::IqR : PlcSeries::QL;
+        cfg.sumCheck = settingOf(v, response, "sum") != "off";
+        cfg.f3ShortResponseHasSum = settingOf(v, response, "f3shortsum") == "on";
+        cfg.blockNo = static_cast<uint8_t>(parseHexOr(v.field("block"), cfg.blockNo));
+        cfg.commandSet =
+            v.field("commandset") == "ana" ? mc::C1CommandSet::AnA : mc::C1CommandSet::ACPU;
+        return cfg;
+    }
     const DataCode code = v.field("code") == "Ascii" ? DataCode::Ascii : DataCode::Binary;
-    FrameConfig cfg = is1e(v) ? FrameConfig::frame1E(code) : FrameConfig::frame3E(code);
+    FrameConfig cfg =
+        frame == mc::FrameType::F1E ? FrameConfig::frame1E(code) : FrameConfig::frame3E(code);
     cfg.series = v.field("series") == "IqR" ? PlcSeries::IqR : PlcSeries::QL;
     cfg.network = static_cast<uint8_t>(parseHexOr(v.field("network"), cfg.network));
     cfg.pc = static_cast<uint8_t>(parseHexOr(v.field("pc"), cfg.pc));
@@ -157,8 +198,11 @@ Bytes drain(MockPlc& plc, size_t* count = nullptr) {
 // Seeds the memory a read request will see from the `expect:` list of its response vector.
 void seedFromExpect(MockPlc& plc, const Meta& m, const std::string& expect) {
     std::vector<uint32_t> values = parseCsvHex(expect);
+    const bool bitDevice = mc::deviceInfo(m.head.type).kind == mc::DeviceKind::Bit;
     for (size_t i = 0; i < values.size(); ++i) {
-        Device d{m.head.type, m.head.number + static_cast<uint32_t>(i)};
+        // Word k of a bit device starts at head + 16k (spec 2.4).
+        const uint32_t step = (m.op != Op::ReadBits && bitDevice) ? 16 : 1;
+        Device d{m.head.type, m.head.number + static_cast<uint32_t>(i) * step};
         if (m.op == Op::ReadBits) {
             plc.setBit(d, values[i] != 0);
         } else {
@@ -297,8 +341,8 @@ std::string asText(const Bytes& b) { return std::string(b.begin(), b.end()); }
 
 } // namespace
 
-TEST_CASE("MCK-01 every 3E and 1E request vector decodes to the op, head, count, series and write "
-          "data of its metadata") {
+TEST_CASE("MCK-01 every request vector (3E, 1E, 3C, 1C) decodes to the op, head, count, series and "
+          "write data of its metadata") {
     for (const char* file : kAllVectorFiles) {
         for (const Vector& v : loadFile(file)) {
             if (v.field("kind") != "request" || isTaggedLater(v)) {
@@ -311,7 +355,7 @@ TEST_CASE("MCK-01 every 3E and 1E request vector decodes to the op, head, count,
             REQUIRE(plc.requests().size() == 1);
             const Meta m = metaOf(v);
             const MockRequestRecord& rec = plc.requests().front();
-            CHECK(rec.frame == (is1e(v) ? mc::FrameType::F1E : mc::FrameType::F3E));
+            CHECK(rec.frame == frameOf(v));
             CHECK(rec.op == m.op);
             CHECK(rec.head == m.head);
             CHECK(rec.count == m.count);
@@ -329,12 +373,21 @@ TEST_CASE("MCK-01 every 3E and 1E request vector decodes to the op, head, count,
     }
 }
 
-TEST_CASE("MCK-02 with memory seeded from the metadata, every 3E and 1E success response vector "
-          "is reproduced byte for byte") {
+TEST_CASE("MCK-02 with memory seeded from the metadata, every success response vector (3E, 1E, 3C, "
+          "1C) is reproduced byte for byte") {
+    int reproduced = 0;
+    int skipped = 0;
     for (const char* file : kAllVectorFiles) {
         std::vector<Vector> vectors = loadFile(file);
         for (const Vector& v : vectors) {
-            if (v.field("kind") != "response" || isTaggedLater(v)) {
+            // checkroute: off / blockcheck: off vectors are responses whose route or block number
+            // differs from the request's, for a client that does not check it: a PLC that echoes
+            // the request cannot produce them.
+            if (v.field("kind") != "response" || isTaggedLater(v) ||
+                !v.field("checkroute").empty() || !v.field("blockcheck").empty()) {
+                if (v.field("kind") == "response" && !isTaggedLater(v)) {
+                    ++skipped;
+                }
                 continue;
             }
             INFO("vector ", v.id, " (", v.file, ":", v.line, ")");
@@ -342,7 +395,7 @@ TEST_CASE("MCK-02 with memory seeded from the metadata, every 3E and 1E success 
             const std::string requestId = v.field("of");
             const Vector& request = byId(vectors, requestId);
 
-            MockPlc plc(configFor(request));
+            MockPlc plc(configFor(request, &v));
             const Meta m = metaOf(request);
             seedFromExpect(plc, m, v.field("expect"));
             feed(plc, request.bytes);
@@ -350,9 +403,15 @@ TEST_CASE("MCK-02 with memory seeded from the metadata, every 3E and 1E success 
             size_t responses = 0;
             Bytes got = drain(plc, &responses);
             CHECK(responses == 1);
+            ++reproduced;
             CHECK(got == v.bytes);
         }
     }
+    // Exact counts, so the skip filter cannot silently grow: the files carry 10 responses with
+    // `checkroute: off` (8) or `blockcheck: off` (2), and every other untagged success response is
+    // reproduced.
+    CHECK(skipped == 10);
+    CHECK(reproduced == 86);
 }
 
 TEST_CASE("MCK-03 the 3E error vectors are reproduced with failRange") {
@@ -531,8 +590,9 @@ TEST_CASE("MCK-12 a word read of a bit device counts 16 points per word against 
     CHECK(plc.requests().back().answeredWith.ok());
 }
 
-TEST_CASE("MCK-05 3E and 1E: every request vector fed one byte at a time, in 3-byte pieces, or "
-          "twice in one buffer decodes identically") {
+TEST_CASE(
+    "MCK-05 every request vector (3E, 1E, 3C, 1C) fed one byte at a time, in 3-byte pieces, or "
+    "twice in one buffer decodes identically") {
     for (const char* file : kAllVectorFiles) {
         for (const Vector& v : loadFile(file)) {
             if (v.field("kind") != "request" || isTaggedLater(v)) {
@@ -1211,4 +1271,204 @@ TEST_CASE("MCK-05 1E: responses come out in request order, one per request") {
     REQUIRE(plc.nextResponse(view));
     CHECK(view.data[2] == 0x22);
     CHECK_FALSE(plc.nextResponse(view));
+}
+
+// ---- 3C and 1C (spec sections 5.4-5.6, appendix A.12-A.19) -----------------------------------
+
+TEST_CASE("MCK-03 the 3C and 1C error vectors are reproduced with failRange") {
+    int reproduced = 0;
+    for (const char* file : kSerialVectorFiles) {
+        std::vector<Vector> vectors = loadFile(file);
+        for (const Vector& v : vectors) {
+            // Only errors the mock itself produces: a PLC error code. FrameMismatch / SumCheck
+            // vectors are malformed responses for the client's parser.
+            if (v.field("kind") != "response-error" || v.field("error") != "Plc" ||
+                isTaggedLater(v)) {
+                continue;
+            }
+            INFO("vector ", v.id, " (", v.file, ":", v.line, ")");
+            const std::string requestId = v.field("of");
+            const Vector& request = byId(vectors, requestId);
+            const Meta m = metaOf(request);
+            const uint16_t code = static_cast<uint16_t>(parseHexOr(v.field("plccode"), 0));
+
+            MockPlc plc(configFor(request, &v));
+            plc.failRange(m.head.type, m.head.number, m.head.number, code);
+            feed(plc, request.bytes);
+
+            CHECK(drain(plc) == v.bytes);
+            REQUIRE(plc.requests().size() == 1);
+            const mc::Error& err = plc.requests().front().answeredWith;
+            CHECK(plc.requests().front().answered);
+            CHECK(err.category == mc::ErrorCategory::Plc);
+            CHECK(err.code == mc::ErrorCode::PlcError);
+            CHECK(err.plcCode == code);
+            ++reproduced;
+        }
+    }
+    // Per family: V-xCn-05 / V-1Cn-08 (x4), the NAKWRITE twins of formats 2 and 3 (x2), BLK-NAK of
+    // format 2 and SHORTSUM-NAK of format 3: ten each.
+    CHECK(reproduced == 20);
+}
+
+TEST_CASE("MCK-01 1C: AnA/AnU commands, message wait, T/C devices, hex devices and points 00") {
+    namespace sf = mc::test::serial;
+    struct Case {
+        const char* name;
+        std::string data;
+        Op op;
+        Device head;
+        uint16_t count;
+    };
+    const std::vector<Case> cases = {
+        {"JR bit read, 7-character device", sf::data1c("JR", '0', "M000100", 8), Op::ReadBits,
+         Device{DeviceType::M, 100}, 8},
+        {"QR word read", sf::data1c("QR", 'A', "D000100", 3), Op::ReadWords,
+         Device{DeviceType::D, 100}, 3},
+        {"JW bit write", sf::data1c("JW", '0', "M000100", 2, "10"), Op::WriteBits,
+         Device{DeviceType::M, 100}, 2},
+        {"QW word write", sf::data1c("QW", '0', "D000100", 1, "1234"), Op::WriteWords,
+         Device{DeviceType::D, 100}, 1},
+        {"timer current value, ACPU (code 2, number 3)", sf::data1c("WR", '0', "TN123", 2),
+         Op::ReadWords, Device{DeviceType::TN, 123}, 2},
+        {"timer current value, AnA (code 2, number 5)", sf::data1c("QR", '0', "TN00123", 2),
+         Op::ReadWords, Device{DeviceType::TN, 123}, 2},
+        {"counter contact", sf::data1c("BR", '0', "CS012", 1), Op::ReadBits,
+         Device{DeviceType::CS, 12}, 1},
+        {"hexadecimal X, lower case digits", sf::data1c("BR", '0', "X001f", 4), Op::ReadBits,
+         Device{DeviceType::X, 0x1F}, 4},
+        {"hexadecimal W", sf::data1c("WR", '0', "W00A0", 1), Op::ReadWords,
+         Device{DeviceType::W, 0xA0}, 1},
+        {"latch relay and step relay are their own devices", sf::data1c("BR", '0', "L0010", 1),
+         Op::ReadBits, Device{DeviceType::L, 10}, 1},
+        {"step relay", sf::data1c("BR", '0', "S0010", 1), Op::ReadBits, Device{DeviceType::S, 10},
+         1},
+        {"leading zeros of the number as spaces", sf::data1c("WR", '0', "D  10", 1), Op::ReadWords,
+         Device{DeviceType::D, 10}, 1},
+        {"file register", sf::data1c("WR", '0', "R0007", 1), Op::ReadWords,
+         Device{DeviceType::R, 7}, 1},
+        {"points 00 are 256 (bit read)", sf::data1c("BR", '0', "M0000", 0), Op::ReadBits,
+         Device{DeviceType::M, 0}, 256},
+        {"points 00 are 256 (word read)", sf::data1c("WR", '0', "D0000", 0), Op::ReadWords,
+         Device{DeviceType::D, 0}, 256},
+        {"points in lower case hex", sf::data1c("WR", '0', "D0000", 0x0A), Op::ReadWords,
+         Device{DeviceType::D, 0}, 10},
+    };
+    for (mc::SerialFormat format : {mc::SerialFormat::Format1, mc::SerialFormat::Format2,
+                                    mc::SerialFormat::Format3, mc::SerialFormat::Format4}) {
+        const FrameConfig cfg = FrameConfig::frame1C(format);
+        for (const Case& c : cases) {
+            INFO(c.name, ", format ", static_cast<int>(format));
+            MockPlc plc(cfg);
+            feed(plc, sf::request(cfg, c.data));
+            REQUIRE(plc.requests().size() == 1);
+            const MockRequestRecord& rec = plc.requests()[0];
+            CHECK(rec.frame == mc::FrameType::F1C);
+            CHECK(rec.op == c.op);
+            CHECK(rec.head == c.head);
+            CHECK(rec.count == c.count);
+            CHECK(rec.series == PlcSeries::QL);
+            CHECK(rec.answeredWith.ok());
+            size_t responses = 0;
+            drain(plc, &responses);
+            CHECK(responses == 1);
+        }
+    }
+}
+
+TEST_CASE("MCK-04 1C and 3C: writes reach memory, bits one character per point, words 4 hex") {
+    namespace sf = mc::test::serial;
+    for (bool threeC : {true, false}) {
+        const FrameConfig cfg = threeC ? FrameConfig::frame3C() : FrameConfig::frame1C();
+        MockPlc plc(cfg);
+        feed(plc, sf::request(cfg, sf::writeD(cfg, 100, "199512021130")));
+        CHECK(plc.word(Device{DeviceType::D, 100}) == 0x1995);
+        CHECK(plc.word(Device{DeviceType::D, 102}) == 0x1130);
+
+        // M100 = 1,0,1,1,0 written as 5 characters: no padding on an ASCII serial frame.
+        const std::string bits = threeC ? sf::data3c(0x1401, 0x0001, "M*000100", 5, "10110")
+                                        : sf::data1c("BW", '0', "M0100", 5, "10110");
+        feed(plc, sf::request(cfg, bits));
+        CHECK(plc.bit(Device{DeviceType::M, 100}));
+        CHECK_FALSE(plc.bit(Device{DeviceType::M, 101}));
+        CHECK(plc.bit(Device{DeviceType::M, 102}));
+        CHECK(plc.bit(Device{DeviceType::M, 103}));
+        CHECK_FALSE(plc.bit(Device{DeviceType::M, 104}));
+        size_t responses = 0;
+        drain(plc, &responses);
+        CHECK(responses == 2);
+    }
+}
+
+TEST_CASE("MCK-10 serial odd bit read: one character per point, nothing is padded or read past the "
+          "count") {
+    namespace sf = mc::test::serial;
+    for (bool threeC : {true, false}) {
+        const FrameConfig cfg = threeC ? FrameConfig::frame3C() : FrameConfig::frame1C();
+        MockPlc plc(cfg);
+        plc.setBits(Device{DeviceType::M, 100}, {true, false, true, false, true, true});
+        const std::string data =
+            threeC ? sf::data3c(0x0401, 0x0001, "M*000100", 5) : sf::data1c("BR", '0', "M0100", 5);
+        feed(plc, sf::request(cfg, data));
+        const Bytes got = drain(plc);
+        CHECK(got == sf::response(cfg, sf::Kind::Data, "10101"));
+    }
+}
+
+TEST_CASE("MCK-12 serial: a request reaching the device limit gets outOfRange, one below it "
+          "succeeds") {
+    namespace sf = mc::test::serial;
+    for (bool threeC : {true, false}) {
+        const FrameConfig cfg = threeC ? FrameConfig::frame3C() : FrameConfig::frame1C();
+        const uint16_t code = threeC ? 0xC051 : 0x06;
+        const std::string codeText = threeC ? "C051" : "06";
+        MockPlc plc(cfg);
+        plc.setDeviceLimit(DeviceType::D, 102); // D100..D102 reaches D102
+        feed(plc, sf::request(cfg, sf::readD(cfg, 100, 3)));
+        CHECK(drain(plc) == sf::response(cfg, sf::Kind::Nak, codeText));
+        CHECK(plc.requests().back().answeredWith.plcCode == code);
+        feed(plc, sf::request(cfg, sf::writeD(cfg, 101, "00010002"))); // a write is stopped too
+        CHECK(drain(plc) == sf::response(cfg, sf::Kind::Nak, codeText));
+        CHECK(plc.word(Device{DeviceType::D, 101}) == 0);
+        plc.setDeviceLimit(DeviceType::D, 103);
+        feed(plc, sf::request(cfg, sf::readD(cfg, 100, 3)));
+        CHECK(plc.requests().back().answeredWith.ok());
+        drain(plc);
+
+        // A word read of a bit device counts 16 points per word: M100 x 1 word reaches M115.
+        plc.setDeviceLimit(DeviceType::M, 115);
+        const std::string word =
+            threeC ? sf::data3c(0x0401, 0x0000, "M*000100", 1) : sf::data1c("WR", '0', "M0100", 1);
+        feed(plc, sf::request(cfg, word));
+        CHECK(plc.requests().back().answeredWith.plcCode == code);
+        drain(plc);
+        plc.setDeviceLimit(DeviceType::M, 116);
+        feed(plc, sf::request(cfg, word));
+        CHECK(plc.requests().back().answeredWith.ok());
+    }
+}
+
+TEST_CASE("MCK-01 1C: a write with points 00 carries 256 points, and the next request is found "
+          "after them") {
+    namespace sf = mc::test::serial;
+    for (mc::SerialFormat format : {mc::SerialFormat::Format1, mc::SerialFormat::Format2,
+                                    mc::SerialFormat::Format3, mc::SerialFormat::Format4}) {
+        const FrameConfig cfg = FrameConfig::frame1C(format);
+        INFO("format ", static_cast<int>(format));
+        MockPlc plc(cfg);
+        Bytes stream = sf::request(cfg, sf::data1c("BW", '0', "M0000", 0, std::string(256, '1')));
+        sf::append(stream,
+                   sf::request(cfg, sf::data1c("WW", '0', "D0000", 0, std::string(1024, 'F'))));
+        sf::append(stream, sf::request(cfg, sf::data1c("BR", '0', "M0000", 1)));
+        feed(plc, stream);
+        REQUIRE(plc.requests().size() == 3);
+        CHECK(plc.requests()[0].count == 256);
+        CHECK(plc.requests()[1].count == 256);
+        CHECK(plc.requests()[2].count == 1);
+        CHECK(plc.bit(Device{DeviceType::M, 255}));
+        CHECK(plc.word(Device{DeviceType::D, 255}) == 0xFFFF);
+        size_t responses = 0;
+        drain(plc, &responses);
+        CHECK(responses == 3);
+    }
 }

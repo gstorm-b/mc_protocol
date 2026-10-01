@@ -1,8 +1,49 @@
 #include "harness.h"
 
+#include "common/vectors.h"
+
 #include <cstdio>
+#include <filesystem>
+#include <stdexcept>
+#include <string>
 
 namespace mc::test {
+
+std::vector<uint8_t> vectorBytes(const char* file, std::string_view id) {
+    const std::filesystem::path path =
+        std::filesystem::path(MC_TESTS_SOURCE_DIR) / "vectors" / file;
+    for (const Vector& v : loadVectors(path)) {
+        if (v.id == id) {
+            return v.bytes;
+        }
+    }
+    throw std::runtime_error(std::string("no vector ") + std::string(id) + " in " + file);
+}
+
+std::vector<uint8_t> serialReadResponse3C(const std::vector<uint16_t>& words) {
+    std::vector<uint8_t> out = {0x02}; // STX
+    for (char c : std::string("F90000FF00")) {
+        out.push_back(static_cast<uint8_t>(c));
+    }
+    for (uint16_t w : words) {
+        char buf[5];
+        std::snprintf(buf, sizeof(buf), "%04X", static_cast<unsigned>(w));
+        for (int i = 0; i < 4; ++i) {
+            out.push_back(static_cast<uint8_t>(buf[i]));
+        }
+    }
+    out.push_back(0x03); // ETX
+    unsigned sum = 0;
+    for (size_t i = 1; i < out.size(); ++i) {
+        sum += out[i];
+    }
+    char buf[3];
+    std::snprintf(buf, sizeof(buf), "%02X", sum & 0xFFu);
+    out.push_back(static_cast<uint8_t>(buf[0]));
+    out.push_back(static_cast<uint8_t>(buf[1]));
+    return out;
+}
+
 namespace {
 
 void putHex8(std::vector<uint8_t>& out, uint8_t v) {

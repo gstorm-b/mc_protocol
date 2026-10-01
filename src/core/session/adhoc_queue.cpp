@@ -255,6 +255,16 @@ ByteView AdHocQueue::nextChunkFrame() const noexcept {
     return ByteView{m_arena.data() + physicalFrame, frameSize};
 }
 
+ByteView AdHocQueue::inFlightChunkFrame() const noexcept {
+    const AdHocJob& job = *frontUnfinished();
+    McProtocol proto(m_frame);
+    size_t frameSize = proto.encodedSize(nextChunkRequest()).value(); // Validated at submit().
+    // markChunkSent() advanced framesSent past this chunk's own frame, so it ends there.
+    size_t physicalFrame =
+        static_cast<size_t>((job.framesStart + job.framesSent - frameSize) % m_arena.size());
+    return ByteView{m_arena.data() + physicalFrame, frameSize};
+}
+
 void AdHocQueue::markChunkSent(uint16_t chunkPoints) noexcept {
     AdHocJob& job = *frontUnfinished();
     McProtocol proto(m_frame);

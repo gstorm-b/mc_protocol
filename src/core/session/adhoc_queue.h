@@ -111,6 +111,15 @@ public:
     /// @copydoc nextChunkRequest
     ByteView nextChunkFrame() const noexcept;
 
+    /// The pre-encoded frame of the chunk `markChunkSent()` last marked, still in flight: the
+    /// same bytes `nextChunkFrame()` returned then, for a serial read that is resent after a
+    /// timeout (the in-flight chunk is also what `nextChunkRequest()` still describes, since
+    /// `completeInFlightChunk()` has not advanced the job yet).
+    /// @pre A chunk is in flight (`markChunkSent()` called, not yet completed).
+    /// @par Complexity
+    /// O(1); no allocation.
+    ByteView inFlightChunkFrame() const noexcept;
+
     /// Marks the chunk `nextChunkRequest()` last described as sent (in flight).
     /// @param[in] chunkPoints That chunk's own point count (`nextChunkRequest().count`).
     void markChunkSent(uint16_t chunkPoints) noexcept;

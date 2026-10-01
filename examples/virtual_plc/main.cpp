@@ -1,27 +1,37 @@
-// virtual_plc: a PLC for demos and manual tests. A QTcpServer on 127.0.0.1 in front of mc::MockPlc.
+// virtual_plc: a PLC for demos and manual tests. A QTcpServer on 127.0.0.1, or one COM port, in
+// front of mc::MockPlc.
 //
 //   virtual_plc --frame 3E --code Binary --port 5000 --set D100=1234 --wiggle D105
+//   virtual_plc --frame 3C --format 4 --serial COM50 --set D100=1234 --wiggle D105
 //
 // What it does:
-//   * Every accepted connection gets its own mc::MockPlc, built from the same frame settings and
-//     the same starting image (the --set values). The connections do not share memory: a write
-//     from one client is not visible to another. That is enough for a demo with one client.
+//   * Over TCP, every accepted connection gets its own mc::MockPlc, built from the same frame
+//     settings and the same starting image (the --set values). The connections do not share
+//     memory: a write from one client is not visible to another. That is enough for a demo with
+//     one client.
+//   * With --serial PORT (and --baud N, default 9600; the line is 7E1, the default of the old
+//     device and the usual C24 setting) one mc::MockPlc answers on that COM port instead, and no
+//     TCP port is opened. Pair it with a virtual COM pair (the other end of PORT) and
+//     `qt_console_poller --serial OTHER`.
 //   * --set DEV=VALUE (repeatable) sets a word, or a bit when DEV is a bit device.
 //   * --wiggle DEV (repeatable) changes DEV once a second (a word counts up, a bit toggles), in
 //     every live connection, so a poller sees a change each second. It starts from the value
 //     --set gave the same device (0 when there is none), so --set keeps its meaning.
-//   * The 3E and 1E frames are answered by the mock in this version (--frame 3E, --frame 1E, each
-//     with --code Binary or ASCII). Serial options are refused.
+//   * The 3E and 1E frames (--code Binary or ASCII) and the 3C and 1C frames (ASCII, --format 1 to
+//     4) are answered by the mock; without --serial the serial frames travel over the TCP socket,
+//     as through a serial-to-Ethernet converter.
 //
-// The mock is a sans-I/O object: this file is the only place that touches a socket. Bytes that
-// arrive go in with bytesIn(); whatever nextResponse() hands back is written to the socket.
+// The mock is a sans-I/O object: this file is the only place that touches a socket or a port.
+// Bytes that arrive go in with bytesIn(); whatever nextResponse() hands back is written back.
 #include "mc/core/device.h"
 #include "mc/core/frame_config.h"
+#include "mc/device/serial_transport.h"
 #include "mc/mock/mock_plc.h"
 
 #include <QCommandLineParser>
 #include <QCoreApplication>
 #include <QHostAddress>
+#include <QSerialPort>
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QTimer>
@@ -61,6 +71,17 @@ void apply(mc::MockPlc& plc, const Point& p) {
     }
 }
 
+// What arrives on `io` goes into the mock; what the mock answers goes back on `io`.
+void feed(QIODevice& io, mc::MockPlc& plc) {
+    const QByteArray request = io.readAll();
+    plc.bytesIn(mc::ByteView{reinterpret_cast<const uint8_t*>(request.constData()),
+                             static_cast<size_t>(request.size())});
+    mc::ByteView response;
+    while (plc.nextResponse(response)) {
+        io.write(reinterpret_cast<const char*>(response.data), static_cast<qint64>(response.size));
+    }
+}
+
 class VirtualPlc {
   public:
     VirtualPlc(const mc::FrameConfig& frame, std::vector<Point> image, std::vector<Point> wiggles)
@@ -68,16 +89,45 @@ class VirtualPlc {
 
     bool listen(quint16 port) {
         QObject::connect(&m_server, &QTcpServer::newConnection, &m_server, [this]() { accept(); });
-        // One timer changes the wiggled devices; every live mock gets the same new value.
-        m_timer.setInterval(1000);
-        QObject::connect(&m_timer, &QTimer::timeout, &m_server, [this]() { wiggle(); });
-        if (!m_wiggles.empty()) {
-            m_timer.start();
-        }
+        startWiggle();
         return m_server.listen(QHostAddress::LocalHost, port);
     }
 
-    QString errorText() const { return m_server.errorString(); }
+    // One mock on one COM port; false with errorText() set when the port cannot be opened.
+    bool listenSerial(const mc::SerialSettings& line) {
+        m_serialPlc = std::make_unique<mc::MockPlc>(m_frame);
+        for (const Point& p : m_image) {
+            apply(*m_serialPlc, p);
+        }
+        for (const Point& p : m_wiggles) {
+            apply(*m_serialPlc, p);
+        }
+        m_port.setPortName(line.portName);
+        m_port.setBaudRate(line.baudRate);
+        m_port.setDataBits(line.dataBits);
+        m_port.setParity(line.parity);
+        m_port.setStopBits(line.stopBits);
+        m_port.setFlowControl(line.flowControl);
+        QObject::connect(&m_port, &QSerialPort::readyRead, &m_port,
+                         [this]() { feed(m_port, *m_serialPlc); });
+        QObject::connect(
+            &m_port, &QSerialPort::errorOccurred, &m_port, [this](QSerialPort::SerialPortError e) {
+                if (e != QSerialPort::NoError && e != QSerialPort::TimeoutError) {
+                    say(QStringLiteral("serial port error: %1").arg(m_port.errorString()));
+                    QCoreApplication::exit(1);
+                }
+            });
+        if (!m_port.open(QIODevice::ReadWrite)) {
+            m_portError = m_port.errorString();
+            return false;
+        }
+        startWiggle();
+        return true;
+    }
+
+    QString errorText() const {
+        return m_portError.isEmpty() ? m_server.errorString() : m_portError;
+    }
     quint16 port() const { return m_server.serverPort(); }
 
   private:
@@ -85,6 +135,15 @@ class VirtualPlc {
         QTcpSocket* socket;
         std::unique_ptr<mc::MockPlc> plc;
     };
+
+    // One timer changes the wiggled devices; every live mock gets the same new value.
+    void startWiggle() {
+        m_timer.setInterval(1000);
+        QObject::connect(&m_timer, &QTimer::timeout, &m_timer, [this]() { wiggle(); });
+        if (!m_wiggles.empty()) {
+            m_timer.start();
+        }
+    }
 
     void accept() {
         while (m_server.hasPendingConnections()) {
@@ -103,16 +162,8 @@ class VirtualPlc {
                     .arg(socket->peerPort()));
 
             // The request bytes go into the mock; its responses go back on the socket.
-            QObject::connect(socket, &QTcpSocket::readyRead, socket, [socket, raw]() {
-                const QByteArray request = socket->readAll();
-                raw->bytesIn(mc::ByteView{reinterpret_cast<const uint8_t*>(request.constData()),
-                                          static_cast<size_t>(request.size())});
-                mc::ByteView response;
-                while (raw->nextResponse(response)) {
-                    socket->write(reinterpret_cast<const char*>(response.data),
-                                  static_cast<qint64>(response.size));
-                }
-            });
+            QObject::connect(socket, &QTcpSocket::readyRead, socket,
+                             [socket, raw]() { feed(*socket, *raw); });
             QObject::connect(socket, &QTcpSocket::disconnected, socket, [this, socket]() {
                 say(QStringLiteral("client disconnected"));
                 for (size_t i = 0; i < m_connections.size(); ++i) {
@@ -134,6 +185,9 @@ class VirtualPlc {
             for (Connection& c : m_connections) {
                 apply(*c.plc, p);
             }
+            if (m_serialPlc) {
+                apply(*m_serialPlc, p);
+            }
             say(QStringLiteral("wiggle %1 = %2").arg(nameOf(p.device)).arg(p.value));
         }
     }
@@ -142,6 +196,9 @@ class VirtualPlc {
     std::vector<Point> m_image;
     std::vector<Point> m_wiggles;
     QTcpServer m_server;
+    QSerialPort m_port;
+    std::unique_ptr<mc::MockPlc> m_serialPlc; // the one mock of --serial mode
+    QString m_portError;
     QTimer m_timer;
     std::vector<Connection> m_connections;
 };
@@ -172,23 +229,26 @@ int main(int argc, char** argv) {
 
     QCommandLineParser parser;
     parser.setApplicationDescription(
-        QStringLiteral("A virtual PLC: a TCP server in front of mc::MockPlc (3E or 1E frame)."));
+        QStringLiteral("A virtual PLC: a TCP server or a COM port in front of mc::MockPlc (3E, "
+                       "1E, 3C or 1C frame)."));
     parser.addHelpOption();
-    parser.addOption({QStringLiteral("frame"), QStringLiteral("Frame family: 3E or 1E."),
-                      QStringLiteral("3E|1E"), QStringLiteral("3E")});
-    parser.addOption({QStringLiteral("code"), QStringLiteral("Binary or ASCII."),
+    parser.addOption({QStringLiteral("frame"), QStringLiteral("Frame family: 3E, 1E, 3C or 1C."),
+                      QStringLiteral("3E|1E|3C|1C"), QStringLiteral("3E")});
+    parser.addOption({QStringLiteral("code"), QStringLiteral("Binary or ASCII (3E and 1E)."),
                       QStringLiteral("Binary|ASCII"), QStringLiteral("Binary")});
+    parser.addOption({QStringLiteral("format"), QStringLiteral("Serial format 1 to 4 (3C and 1C)."),
+                      QStringLiteral("1|2|3|4"), QStringLiteral("1")});
     parser.addOption({QStringLiteral("port"), QStringLiteral("TCP port on 127.0.0.1."),
                       QStringLiteral("N"), QStringLiteral("5000")});
     parser.addOption({QStringLiteral("set"), QStringLiteral("Initial value, e.g. D100=1234."),
                       QStringLiteral("DEV=VALUE")});
     parser.addOption({QStringLiteral("wiggle"), QStringLiteral("Change DEV once a second, from its --set value (0 if none)."),
                       QStringLiteral("DEV")});
-    // Recognised only to say clearly that they are not there yet.
-    parser.addOption({QStringLiteral("serial"), QStringLiteral("Not available yet."),
+    parser.addOption({QStringLiteral("serial"),
+                      QStringLiteral("Answer on this COM port (7E1) instead of a TCP port."),
                       QStringLiteral("PORT")});
-    parser.addOption({QStringLiteral("baud"), QStringLiteral("Not available yet."),
-                      QStringLiteral("N")});
+    parser.addOption({QStringLiteral("baud"), QStringLiteral("Baud rate with --serial."),
+                      QStringLiteral("N"), QStringLiteral("9600")});
     if (!parser.parse(app.arguments())) {
         std::fprintf(stderr, "%s\n", qPrintable(parser.errorText()));
         return 2;
@@ -197,18 +257,45 @@ int main(int argc, char** argv) {
         std::printf("%s", qPrintable(parser.helpText()));
         return 0;
     }
-    if (parser.isSet(QStringLiteral("serial")) || parser.isSet(QStringLiteral("baud"))) {
-        std::fprintf(stderr, "virtual_plc: the serial (COM port) side is not available yet; "
-                             "this build serves TCP only.\n");
+    const bool onComPort = parser.isSet(QStringLiteral("serial"));
+    if (parser.isSet(QStringLiteral("baud")) && !onComPort) {
+        std::fprintf(stderr, "virtual_plc: --baud needs --serial.\n");
+        return 2;
+    }
+    mc::SerialSettings line; // 9600 7E1, no flow control: the defaults of the old device
+    line.portName = parser.value(QStringLiteral("serial"));
+    bool baudOk = false;
+    const int baud = parser.value(QStringLiteral("baud")).toInt(&baudOk);
+    if (!baudOk || baud <= 0) {
+        std::fprintf(stderr, "virtual_plc: --baud is a positive number.\n");
+        return 2;
+    }
+    line.baudRate = baud;
+    if (onComPort && line.portName.isEmpty()) {
+        std::fprintf(stderr, "virtual_plc: --serial needs a port name, e.g. COM50.\n");
         return 2;
     }
 
     const QString frameText = parser.value(QStringLiteral("frame"));
     const bool is1e = frameText.compare(QLatin1String("1E"), Qt::CaseInsensitive) == 0;
-    if (!is1e && frameText.compare(QLatin1String("3E"), Qt::CaseInsensitive) != 0) {
-        std::fprintf(stderr,
-                     "virtual_plc: only --frame 3E and --frame 1E are answered by the mock in this "
-                     "version.\n");
+    const bool is3c = frameText.compare(QLatin1String("3C"), Qt::CaseInsensitive) == 0;
+    const bool is1c = frameText.compare(QLatin1String("1C"), Qt::CaseInsensitive) == 0;
+    const bool serialFrame = is3c || is1c;
+    if (!is1e && !serialFrame &&
+        frameText.compare(QLatin1String("3E"), Qt::CaseInsensitive) != 0) {
+        std::fprintf(stderr, "virtual_plc: --frame is 3E, 1E, 3C or 1C.\n");
+        return 2;
+    }
+    bool formatOk = false;
+    const int formatNumber = parser.value(QStringLiteral("format")).toInt(&formatOk);
+    if (!formatOk || formatNumber < 1 || formatNumber > 4) {
+        std::fprintf(stderr, "virtual_plc: --format is 1, 2, 3 or 4.\n");
+        return 2;
+    }
+    if (serialFrame && parser.isSet(QStringLiteral("code")) &&
+        parser.value(QStringLiteral("code")).compare(QLatin1String("ASCII"),
+                                                     Qt::CaseInsensitive) != 0) {
+        std::fprintf(stderr, "virtual_plc: 3C and 1C frames are ASCII only.\n");
         return 2;
     }
     const QString codeText = parser.value(QStringLiteral("code"));
@@ -254,8 +341,31 @@ int main(int argc, char** argv) {
         wiggles.push_back(Point{device.value(), start});
     }
 
-    VirtualPlc plc(is1e ? mc::FrameConfig::frame1E(code) : mc::FrameConfig::frame3E(code), image,
-                   wiggles);
+    const auto format = static_cast<mc::SerialFormat>(formatNumber);
+    mc::FrameConfig frame = mc::FrameConfig::frame3E(code);
+    if (is1e) {
+        frame = mc::FrameConfig::frame1E(code);
+    } else if (is3c) {
+        frame = mc::FrameConfig::frame3C(format);
+    } else if (is1c) {
+        frame = mc::FrameConfig::frame1C(format);
+    }
+    VirtualPlc plc(frame, image, wiggles);
+    const QString shape = serialFrame ? QStringLiteral("format %1").arg(formatNumber)
+                          : code == mc::DataCode::Binary ? QStringLiteral("Binary")
+                                                         : QStringLiteral("ASCII");
+    if (onComPort) {
+        if (!plc.listenSerial(line)) {
+            std::fprintf(stderr, "virtual_plc: cannot open %s: %s\n", qPrintable(line.portName),
+                         qPrintable(plc.errorText()));
+            return 1;
+        }
+        say(QStringLiteral("virtual_plc listening on %1 %2 7E1 (%3 %4)")
+                .arg(line.portName)
+                .arg(line.baudRate)
+                .arg(frameText.toUpper(), shape));
+        return app.exec();
+    }
     if (!plc.listen(static_cast<quint16>(port))) {
         std::fprintf(stderr, "virtual_plc: cannot listen on 127.0.0.1:%d: %s\n", port,
                      qPrintable(plc.errorText()));
@@ -263,7 +373,6 @@ int main(int argc, char** argv) {
     }
     say(QStringLiteral("virtual_plc listening on 127.0.0.1:%1 (%2 %3)")
             .arg(plc.port())
-            .arg(is1e ? QLatin1String("1E") : QLatin1String("3E"))
-            .arg(code == mc::DataCode::Binary ? QLatin1String("Binary") : QLatin1String("ASCII")));
+            .arg(frameText.toUpper(), shape));
     return app.exec();
 }

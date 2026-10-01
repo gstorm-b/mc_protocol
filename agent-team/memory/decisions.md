@@ -3,6 +3,31 @@
 Curated by the team leader. One entry, one decision, newest first.
 Format: `- [T-xxx or date] Decision — why. (supersedes: entry, if any)`
 
+- [T-055] Serial inter-character deadline is re-armed only once a start byte has been seen;
+  while only junk has arrived the first-byte deadline stays, so a line sending junk forever
+  still times out (SES-27 "once a response has started") — re-review should-fix, leader.
+- [T-054] Batch 6c device decisions: every ctest entry that opens the COM pair holds
+  `RESOURCE_LOCK mc_serial_pair`; `McDevice::ensureTransport()` is `void`; any `QSerialPort`
+  error while Open except `NoError`/`TimeoutError` → `lost()`; the untestable open-port-error /
+  failed-write paths of `SerialTransport` are accepted with coverage reported — leader.
+- [T-052] Batch 6c mock decisions: Ethernet and serial decoders share device/subcommand/3C
+  request-data decoding; MCK-02 skips the 10 vectors marked `checkroute: off` /
+  `blockcheck: off`; skipped junk is not logged as a request (no accessor); check order
+  station → mute → SUM → execute, EOT counted while muted; serial `Corruption` modes as in
+  `mock_plc.h`; 1C error codes one byte; points `00` = 256 on every 1C command — leader.
+- [T-051] Batch 6c session readings: an item resolves when the flush ends; EOT is also sent on
+  the faulting error; `sendEotOnError` off skips only the EOT; the flush cap counts a link
+  error but not `stats.timeouts`; `maxConsecutiveLinkErrors = 0` acts as 1; a pending read is
+  resent before queued ad-hoc; deadlines are evaluated in `tick()` only, which is called at
+  `nextDeadline()` even while bytes arrive (`McDevice` arms its timer independently) — leader.
+
+- [T-055] Serial receive-buffer bound counts only bytes from the frame's start byte
+  (STX/ACK/NAK); junk before it is skipped (spec 4C-15) and never causes an overflow. Before,
+  one stray byte before a maximum-size read response forced EOT + flush + retry — owner
+  decision 2026-10-02 (supersedes the T-051 "open question A" literal reading).
+- [2026-10-01] Virtual COM pair `COM54`↔`COM55` replaces `COM50`↔`COM51` (broken since
+  T-054) as the default `MC_TEST_SERIAL_PAIR`; `COM52`↔`COM53` stays the second pair — owner
+  decision.
 - [T-050] Batch 6b leader decisions: the serial scan cursor reuses `Parser`'s private members
   (no `protocol.h` layout change); unlisted serial error mappings (F4 without CR LF, unknown F3
   end code, NAK of another route → `FrameMismatch`; short body → `LengthMismatch`); unimplemented

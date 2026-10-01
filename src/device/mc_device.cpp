@@ -1,6 +1,7 @@
 #include "mc/device/mc_device.h"
 
 #include "mc/device/meta_types.h"
+#include "mc/device/serial_transport.h"
 #include "mc/device/tcp_transport.h"
 
 #include <QStringList>
@@ -366,17 +367,16 @@ void McDevice::attachTransport() {
     connect(m_transport.get(), &Transport::lost, this, &McDevice::onTransportLost);
 }
 
-bool McDevice::ensureTransport() {
+void McDevice::ensureTransport() {
     if (m_transport) {
-        return true;
+        return;
     }
-    if (m_config.transport == TransportKind::Tcp) {
+    if (m_config.transport == TransportKind::Serial) {
+        m_transport = std::make_unique<SerialTransport>(m_config.serial);
+    } else {
         m_transport = std::make_unique<TcpTransport>(m_config.tcp);
-        attachTransport();
-        return true;
     }
-    failOpen(QStringLiteral("the serial transport is not available in this version"));
-    return false;
+    attachTransport();
 }
 
 void McDevice::startOpen() {
@@ -395,9 +395,7 @@ void McDevice::startOpen() {
             logLine(LogLevel::Info, QStringLiteral("Ethernet frame over a serial transport"));
         }
     }
-    if (!ensureTransport()) {
-        return;
-    }
+    ensureTransport();
     setState(LinkState::Connecting, LinkReason::Requested, m_transport->describe());
     m_transport->open(); // opened() / openFailed() arrive later, from the event loop
 }

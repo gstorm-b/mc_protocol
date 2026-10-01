@@ -35,10 +35,17 @@ INCLUDEPATH += \
     $$PWD/.. \
     $$PWD/../../src
 
+# tests/vectors, resolved from the source tree at runtime: mirrors tests/CMakeLists.txt's own
+# MC_TESTS_SOURCE_DIR compile definition (test_session_fault.cpp reads the 3C vectors through it);
+# the shared `.vec` loader is bundled as ordinary SOURCES, like mc_core_protocol_tests.pro does.
+DEFINES += MC_TESTS_SOURCE_DIR=\\\"$$PWD/..\\\"
+
 HEADERS += \
+    $$PWD/../common/vectors.h \
     $$PWD/../core/session/harness.h
 
 SOURCES += \
+    $$PWD/../common/vectors.cpp \
     $$PWD/../core/session/main.cpp \
     $$PWD/../core/session/harness.cpp \
     $$PWD/../core/session/test_range_set.cpp \

@@ -1,15 +1,16 @@
 // INT-xx of SPEC-mock-plc.md "Integration: Session <-> MockPlc": the engine against the mock, in
 // one process, over seeded fragmenting pipes and a fake clock. Every scenario runs once per cell of
-// combos() (v1 so far: 3E and 1E, each Binary and ASCII); a doctest subcase per cell names the
-// combination when something fails.
+// combos() (the 12 cells of v1: 3E and 1E, each Binary and ASCII; 3C and 1C, formats 1 to 4); a
+// doctest subcase per cell names the combination when something fails.
 //
 // Skipped on purpose: INT-04, INT-05 and INT-06 (random access, tagged v1.1) and INT-09 (4C
-// format 5, tagged v2) -- the spec keeps them out of v1, so there is no test body for them. The
-// serial halves of INT-11 and INT-12 (EOT, retries, reopen=false) join with the 3C/1C cells.
+// format 5, tagged v2) -- the spec keeps them out of v1, so there is no test body for them.
+// INT-11 and INT-12 have an Ethernet body (fault at once, reopen) and a serial body (EOT, flush,
+// retries, reopen=false); the clock is the rig's own number, so the flush windows are jumps.
 //
-// Numbers that depend on the frame (INT-07 request counts, the PLC error codes of INT-08 and INT-16)
-// are literals of the reference spec or of MockOptions, chosen per family below, never read back
-// from the code under test.
+// Numbers that depend on the frame (INT-07 request counts, the PLC error codes of INT-08 and
+// INT-16) are literals of the reference spec or of MockOptions, chosen per family below, never read
+// back from the code under test.
 #include "doctest/doctest.h"
 
 #include "rig.h"
@@ -43,6 +44,8 @@ namespace {
 Device dn(DeviceType type, uint32_t number) { return Device{type, number}; }
 
 bool is1e(const Combo& combo) { return combo.frame.frame == FrameType::F1E; }
+bool is1c(const Combo& combo) { return combo.frame.frame == FrameType::F1C; }
+bool isSerial(const Combo& combo) { return combo.frame.isSerial(); }
 
 // ---- INT-01 -----------------------------------------------------------------------------------
 
@@ -145,10 +148,18 @@ void int07(const Combo& combo) {
     // Spec §4.4, pinned here by the reference spec and not derived from chunkCount(). 3E (0401
     // word, word device, iQ-R/Q/L): 960 points for Binary and ASCII alike, so 2000 words are
     // 960 + 960 + 80. 1E (01H, word device): 256 points for both codes, so 2000 words are
-    // 7 x 256 + 208 = 8 requests.
+    // 7 x 256 + 208 = 8 requests. 3C (QnA family, same 0401 limit as 3E): 960 + 960 + 80 in every
+    // format. 1C (WR, word device): 64 points, so 2000 words are 31 x 64 + 16 = 32 requests.
     std::vector<uint32_t> specHeads;
     std::vector<uint16_t> specCounts;
-    if (is1e(combo)) {
+    if (is1c(combo)) {
+        for (uint32_t i = 0; i < 31; ++i) {
+            specHeads.push_back(i * 64);
+            specCounts.push_back(64);
+        }
+        specHeads.push_back(1984);
+        specCounts.push_back(16);
+    } else if (is1e(combo)) {
         for (uint32_t i = 0; i < 7; ++i) {
             specHeads.push_back(i * 256);
             specCounts.push_back(256);
@@ -188,8 +199,9 @@ void int07(const Combo& combo) {
 // ---- INT-08 -----------------------------------------------------------------------------------
 
 void int08(const Combo& combo) {
-    // 3E: end code C051H (V-3E-B-10). 1E: 50H (V-1E-B-12), a u8 end code with no abnormal code.
-    const uint16_t kCode = is1e(combo) ? 0x50 : 0xC051;
+    // 3E and 3C: C051H (V-3E-B-10, V-3C1-NAKWRITE). 1E: 50H (V-1E-B-12), a u8 end code with no
+    // abnormal code. 1C: a u8 NAK code, 06H (V-1C1-08).
+    const uint16_t kCode = is1e(combo) ? 0x50 : (is1c(combo) ? 0x06 : 0xC051);
     Rig rig(combo);
     rig.linkUp();
     rig.mock().failRange(DeviceType::D, 100, 100, kCode);
@@ -317,7 +329,106 @@ void int10(const Combo& combo) {
 
 // ---- INT-11 -----------------------------------------------------------------------------------
 
+// The bytes the Session sends for an EOT: 04H, and 04H 0DH 0AH in format 4 (spec 2.7).
+ByteBuf eotBytes(const Combo& combo) {
+    return combo.frame.format == SerialFormat::Format4 ? ByteBuf{0x04, 0x0D, 0x0A} : ByteBuf{0x04};
+}
+
+// Serial: the mock never answers. Each of the 1 + readRetries (= 3) attempts times out after 3000
+// ms (spec 8.3, serial), sends an EOT (which the mock counts although it is muted) and flushes for
+// serialFlushMs (50 ms); the third consecutive link error (maxConsecutiveLinkErrors = 3) is a
+// LinkFault with reopenTransport = false.
+void int11Serial(const Combo& combo) {
+    Rig rig(combo);
+    REQUIRE(rig.session().subscribe(dev("D100"), 64).hasValue());
+    rig.mock().setWord(dev("D100"), 7);
+    rig.linkUp();
+    REQUIRE(rig.cycleCount() == 1);
+    rig.clearEvents();
+    rig.mock().clearLog();
+    const uint32_t eotBefore = rig.mock().eotCount();
+
+    rig.mock().mute(true);
+    CHECK_FALSE(rig.runRound()); // the round starts, its request is swallowed, no CycleDone
+    REQUIRE(rig.mock().requests().size() == 1);
+    CHECK_FALSE(rig.mock().requests()[0].answered);
+    CHECK(rig.mock().eotCount() == eotBefore);
+    CHECK(rig.session().nextDeadline() == rig.now() + 3000);
+
+    for (uint32_t attempt = 1; attempt <= 3; ++attempt) {
+        CAPTURE(attempt);
+        REQUIRE(rig.jumpToDeadline()); // no first byte within the timeout
+        CHECK(rig.session().stats().timeouts == attempt);
+        CHECK(rig.mock().eotCount() == eotBefore + attempt);
+        if (attempt < 3) {
+            CHECK_FALSE(rig.session().isFaulted());
+            CHECK(rig.ofKind(OutputKind::LinkFault).empty());
+            CHECK(rig.session().nextDeadline() == rig.now() + 50); // serialFlushMs, no bytes
+            REQUIRE(rig.jumpToDeadline());                         // silent: the read is resent
+            CHECK(rig.session().stats().retries == attempt);
+            CHECK(rig.mock().requests().size() == attempt + 1);
+            CHECK(rig.session().nextDeadline() == rig.now() + 3000);
+        }
+    }
+
+    // The request log shows the same read three times: the original and readRetries = 2 resends.
+    const std::vector<MockRequestRecord>& log = rig.mock().requests();
+    REQUIRE(log.size() == 3);
+    for (const MockRequestRecord& r : log) {
+        CHECK(r.op == Op::ReadWords);
+        CHECK(r.head == dev("D100"));
+        CHECK(r.count == 64);
+        CHECK_FALSE(r.answered);
+    }
+
+    const std::vector<Event> faults = rig.ofKind(OutputKind::LinkFault);
+    REQUIRE(faults.size() == 1);
+    CHECK(faults[0].fault == LinkFaultKind::Timeout);
+    CHECK(faults[0].error.code == ErrorCode::Timeout);
+    CHECK_FALSE(faults[0].reopenTransport);
+    CHECK(rig.session().isFaulted());
+    CHECK(rig.session().nextDeadline() == kNoDeadline);
+    CHECK(rig.session().plan().chunk(0).state == ChunkState::Failed);
+    CHECK(rig.session().stats().retries == 2);
+    CHECK(rig.session().stats().eotsSent == 3);
+
+    // On the wire: request, EOT, request, EOT, request, EOT; nothing after the fault.
+    const ByteBuf eot = eotBytes(combo);
+    std::vector<Event> sends = rig.ofKind(OutputKind::Send);
+    REQUIRE(sends.size() == 6);
+    for (size_t i = 0; i < sends.size(); ++i) {
+        CAPTURE(i);
+        if (i % 2 == 1) {
+            CHECK(sends[i].bytes == eot);
+        } else {
+            CHECK(sends[i].bytes == sends[0].bytes);
+            CHECK(sends[i].bytes != eot);
+        }
+    }
+    rig.advance(60000);
+    rig.tick();
+    CHECK(rig.ofKind(OutputKind::Send).size() == 6);
+    CHECK(rig.mock().requests().size() == 3);
+
+    // linkDown + linkUp restart round 1.
+    rig.mock().mute(false);
+    rig.linkDown();
+    rig.clearEvents();
+    rig.linkUp();
+    const std::vector<Event> round1 = roundEvents(rig.events(), 1);
+    const std::vector<Step> expectedRound1 = {{OutputKind::Snapshot, DeviceType::D},
+                                              {OutputKind::CycleDone, DeviceType::D}};
+    CHECK(steps(round1) == expectedRound1);
+    CHECK(rig.session().values().state(dev("D100")) == PointState::Valid);
+    CHECK(rig.session().values().word(dev("D100")) == 7);
+    CHECK_FALSE(rig.session().isFaulted());
+}
+
 void int11(const Combo& combo) {
+    if (isSerial(combo)) {
+        int11Serial(combo);
+        return;
+    }
     Rig rig(combo);
     REQUIRE(rig.session().subscribe(dev("D100"), 64).hasValue());
     rig.mock().setWord(dev("D100"), 7);
@@ -368,7 +479,106 @@ void int11(const Combo& combo) {
 
 // ---- INT-12 -----------------------------------------------------------------------------------
 
+// Serial: the mock sends one response with its SUM + 1. The Session discards the exchange, sends
+// an EOT, flushes for serialFlushMs and resends the read, which now succeeds: no fault, and the
+// values and changes of the round are the right ones.
+void int12Serial(const Combo& combo) {
+    Rig rig(combo);
+    REQUIRE(rig.session().subscribe(dev("D100"), 64).hasValue());
+    rig.mock().setWord(dev("D100"), 7);
+    rig.linkUp();
+    REQUIRE(rig.cycleCount() == 1);
+    rig.clearEvents();
+    rig.mock().clearLog();
+    const uint32_t eotBefore = rig.mock().eotCount();
+    rig.mock().setWord(dev("D101"), 9);
+
+    rig.mock().corruptNext(Corruption::WrongSumCheck);
+    CHECK_FALSE(rig.runRound()); // round 2: the damaged response ends the exchange
+    CHECK(rig.mock().eotCount() == eotBefore + 1);
+    CHECK(rig.ofKind(OutputKind::LinkFault).empty());
+    CHECK_FALSE(rig.session().isFaulted());
+    CHECK(rig.session().stats().protocolErrors == 1);
+    CHECK(rig.session().stats().timeouts == 0);
+    CHECK(rig.session().nextDeadline() == rig.now() + 50); // serialFlushMs of silence
+    REQUIRE(rig.mock().requests().size() == 1);
+    CHECK(rig.mock().requests()[0].answered); // the mock answered; the damage is on the wire
+
+    REQUIRE(rig.jumpToDeadline()); // silent: the read is resent, the answer is intact
+    CHECK(rig.cycleCount() == 1);
+    CHECK(rig.ofKind(OutputKind::LinkFault).empty());
+    CHECK_FALSE(rig.session().isFaulted());
+    CHECK(rig.session().stats().retries == 1);
+    CHECK(rig.mock().eotCount() == eotBefore + 1);
+    const std::vector<MockRequestRecord>& log = rig.mock().requests();
+    REQUIRE(log.size() == 2);
+    for (const MockRequestRecord& r : log) {
+        CHECK(r.op == Op::ReadWords);
+        CHECK(r.head == dev("D100"));
+        CHECK(r.count == 64);
+        CHECK(r.answered);
+    }
+
+    const std::vector<Event> round2 = roundEvents(rig.events(), 2);
+    const std::vector<Step> expectedRound2 = {{OutputKind::ValuesChanged, DeviceType::D},
+                                              {OutputKind::Snapshot, DeviceType::D},
+                                              {OutputKind::CycleDone, DeviceType::D}};
+    CHECK(steps(round2) == expectedRound2);
+    const std::vector<Change> changes = allChanges(round2);
+    REQUIRE(changes.size() == 1);
+    CHECK(changes[0].device == dev("D101"));
+    CHECK(changes[0].oldValue == 0);
+    CHECK(changes[0].newValue == 9);
+    REQUIRE(round2.size() == 3);
+    CHECK(round2[2].cycle.requests == 2); // the resend is a request of the round
+    CHECK(round2[2].cycle.failedChunks == 0);
+    CHECK(rig.session().values().state(dev("D100")) == PointState::Valid);
+    CHECK(rig.session().values().word(dev("D100")) == 7);
+    CHECK(rig.session().values().word(dev("D101")) == 9);
+}
+
+// Serial: junk before the start byte is skipped (spec 6.3), so a response with a JunkPrefix is
+// accepted as it is: no EOT, no resend, no link error, the values arrive. Also for the largest
+// response, which the old buffer bound would have called an overflow.
+void int12JunkSerial(const Combo& combo) {
+    Rig rig(combo);
+    REQUIRE(rig.session().subscribe(dev("D100"), 64).hasValue());
+    rig.mock().setWord(dev("D100"), 7);
+    rig.linkUp();
+    REQUIRE(rig.cycleCount() == 1);
+    rig.clearEvents();
+    rig.mock().clearLog();
+    const uint32_t eotBefore = rig.mock().eotCount();
+    rig.mock().setWord(dev("D101"), 9);
+
+    rig.mock().corruptNext(Corruption::JunkPrefix);
+    REQUIRE(rig.runRound());
+    CHECK(rig.mock().eotCount() == eotBefore);
+    CHECK(rig.mock().requests().size() == 1);
+    CHECK(rig.ofKind(OutputKind::LinkFault).empty());
+    CHECK_FALSE(rig.session().isFaulted());
+    CHECK(rig.session().stats().protocolErrors == 0);
+    CHECK(rig.session().stats().timeouts == 0);
+    CHECK(rig.session().stats().retries == 0);
+    CHECK(rig.session().stats().eotsSent == 0);
+
+    const std::vector<Event> round2 = roundEvents(rig.events(), 2);
+    REQUIRE(round2.size() == 3);
+    CHECK(round2[2].cycle.requests == 1);
+    CHECK(round2[2].cycle.failedChunks == 0);
+    const std::vector<Change> changes = allChanges(round2);
+    REQUIRE(changes.size() == 1);
+    CHECK(changes[0].device == dev("D101"));
+    CHECK(changes[0].newValue == 9);
+    CHECK(rig.session().values().word(dev("D100")) == 7);
+}
+
 void int12(const Combo& combo) {
+    if (isSerial(combo)) {
+        int12Serial(combo);
+        int12JunkSerial(combo);
+        return;
+    }
     Rig rig(combo);
     REQUIRE(rig.session().subscribe(dev("D100"), 64).hasValue());
     rig.mock().setWord(dev("D100"), 7);
@@ -624,8 +834,9 @@ void int15(const Combo& combo) {
 // ---- INT-16 -----------------------------------------------------------------------------------
 
 void int16Case(const Combo& combo, bool bitsAsWords) {
-    // 3E: C051H (V-3E-B-10). 1E: end code 5BH with abnormal code 10H (V-1E-B-11).
-    const uint16_t kOutOfRange = is1e(combo) ? 0x5B : 0xC051;
+    // 3E and 3C: C051H (V-3E-B-10). 1E: end code 5BH with abnormal code 10H (V-1E-B-11). 1C: the
+    // u8 NAK code of MockOptions::outOfRange1c, 06H.
+    const uint16_t kOutOfRange = is1e(combo) ? 0x5B : (is1c(combo) ? 0x06 : 0xC051);
     SessionConfig cfg;
     cfg.plan.bitsAsWords = bitsAsWords;
     Rig rig(combo, cfg);
@@ -692,8 +903,12 @@ TEST_CASE("INT-03 odd bit count write and read") { INT_MATRIX(int03); }
 TEST_CASE("INT-07 read D0x2000 is split into chunkCount() requests") { INT_MATRIX(int07); }
 TEST_CASE("INT-08 failRange gives a PLC error and the link stays healthy") { INT_MATRIX(int08); }
 TEST_CASE("INT-10 round 1 silent, round 2 reports only what changed") { INT_MATRIX(int10); }
-TEST_CASE("INT-11 mute during polling times out and faults the link") { INT_MATRIX(int11); }
-TEST_CASE("INT-12 wrong subheader is a protocol-error link fault") { INT_MATRIX(int12); }
+TEST_CASE("INT-11 mute during polling: Ethernet faults at once, serial retries then faults") {
+    INT_MATRIX(int11);
+}
+TEST_CASE("INT-12 damaged response: Ethernet protocol-error fault, serial EOT and retry") {
+    INT_MATRIX(int12);
+}
 TEST_CASE("INT-13 bitsAsWords on and off see identical values and changes") { INT_MATRIX(int13); }
 TEST_CASE("INT-14 heartbeat writes 1,0,1,0,1 over five rounds") { INT_MATRIX(int14); }
 TEST_CASE("INT-15 twenty fragmentation seeds give identical output sequences") {

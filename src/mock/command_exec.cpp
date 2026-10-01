@@ -1,6 +1,6 @@
 // Batch read and write of a decoded request on the memory image, with the fault and limit lookups
-// that turn a request into a PLC error. One routine serves 3E and 1E: they differ only in the
-// error codes and in the size a response may have.
+// that turn a request into a PLC error. One routine serves every frame family: they differ only in
+// the error codes and in the size a response may have.
 #include "mock/mock_internal.h"
 
 #include "core/protocol/field_codec.h"
@@ -41,7 +41,7 @@ struct Failures {
     uint16_t unsupported;
     uint16_t outOfRange;
     uint8_t outOfRangeAbnormal;
-    bool truncateFaultCodeToByte; ///< 1E: the end code is a u8.
+    bool truncateFaultCodeToByte; // 1E: the end code is a u8.
     size_t maxWireData;
 };
 
@@ -125,6 +125,17 @@ Outcome executeE1(const E1Request& req, MemoryImage& memory, const std::vector<F
     const Failures fail{options.unsupported1e, options.outOfRange1e, options.outOfRange1eAbnormal,
                         true, SIZE_MAX};
     return execute(req, DataCode::Binary, memory, faults, fail);
+}
+
+Outcome executeSerial(const SerialRequest& req, FrameType frame, MemoryImage& memory,
+                      const std::vector<Fault>& faults, const MockOptions& options) {
+    // A serial response has no length field, so its size is not limited. The 1C error code is two
+    // characters, a u8.
+    const bool qna = frame == FrameType::F3C;
+    const uint16_t unsupported = qna ? options.unsupportedQna : options.unsupported1c;
+    const uint16_t outOfRange = qna ? options.outOfRangeQna : options.outOfRange1c;
+    const Failures fail{unsupported, outOfRange, 0, !qna, SIZE_MAX};
+    return execute(req, DataCode::Ascii, memory, faults, fail);
 }
 
 } // namespace mc::detail::mock

@@ -15,6 +15,8 @@ using detail::mock::Fault;
 using detail::mock::FrameStatus;
 using detail::mock::Outcome;
 using detail::mock::QnaRequest;
+using detail::mock::SerialDecodeResult;
+using detail::mock::SerialRequest;
 
 struct MockPlc::Impl {
     struct PendingCorruption {
@@ -25,8 +27,10 @@ struct MockPlc::Impl {
     Impl(const FrameConfig& c, const MockOptions& o) : cfg(c), opt(o) {}
 
     void receive(ByteView bytes);
+    void receiveSerial(ByteView bytes);
     void handle3e(const QnaRequest& request);
     void handle1e(const E1Request& request);
+    void handleSerial(const SerialRequest& request);
     bool swallowsRequest();
     void queueResponse(ByteBuf response);
     void logJunk();
@@ -40,15 +44,19 @@ struct MockPlc::Impl {
     bool muted{false};
     uint32_t muteCount{0};
     std::deque<PendingCorruption> corruptions;
-    ByteBuf rx; // request bytes received but not yet framed
-    bool inJunk{false}; // the last dropped bytes belong to a junk run already logged
+    ByteBuf rx;                    // request bytes received but not yet framed
+    bool inJunk{false};            // the last dropped bytes belong to a junk run already logged
     std::deque<ByteBuf> responses; // responses waiting for nextResponse()
-    ByteBuf current; // backing store of the view handed out by nextResponse()
+    ByteBuf current;               // backing store of the view handed out by nextResponse()
 };
 
 void MockPlc::Impl::receive(ByteView bytes) {
-    // Only the Ethernet server directions (3E, 1E) exist: for any other frame family no request is
-    // recognised, so nothing is logged and nothing is answered.
+    if (cfg.frame == FrameType::F3C || cfg.frame == FrameType::F1C) {
+        receiveSerial(bytes);
+        return;
+    }
+    // The other frame families (4E, 4C) have no server direction: no request is recognised, so
+    // nothing is logged and nothing is answered.
     if (cfg.frame != FrameType::F3E && cfg.frame != FrameType::F1E) {
         return;
     }
@@ -87,6 +95,27 @@ void MockPlc::Impl::receive(ByteView bytes) {
     rx.erase(rx.begin(), rx.begin() + static_cast<std::ptrdiff_t>(pos));
 }
 
+// Serial: bytes before the start byte are skipped without a trace (spec §6.3), and an EOT
+// cancels the partial request and is counted.
+void MockPlc::Impl::receiveSerial(ByteView bytes) {
+    rx.insert(rx.end(), bytes.data, bytes.data + bytes.size);
+    size_t pos = 0;
+    while (pos < rx.size()) {
+        SerialDecodeResult r =
+            detail::mock::decodeSerialRequest(cfg, ByteView{rx.data() + pos, rx.size() - pos});
+        if (r.status == FrameStatus::NeedMore) {
+            break;
+        }
+        pos += r.consumed;
+        if (r.status == FrameStatus::Eot) {
+            ++eot;
+        } else if (r.status == FrameStatus::Complete) {
+            handleSerial(r.request);
+        }
+    }
+    rx.erase(rx.begin(), rx.begin() + static_cast<std::ptrdiff_t>(pos));
+}
+
 // Bytes that cannot start a request are dropped one at a time; a run of them is one log record,
 // so the log does not depend on how the stream was fragmented.
 void MockPlc::Impl::logJunk() {
@@ -115,6 +144,8 @@ void MockPlc::Impl::queueResponse(ByteBuf response) {
         PendingCorruption& next = corruptions.front();
         if (cfg.frame == FrameType::F1E) {
             detail::mock::corrupt1eResponse(next.mode, cfg.code, response);
+        } else if (cfg.frame == FrameType::F3C || cfg.frame == FrameType::F1C) {
+            detail::mock::corruptSerialResponse(cfg, next.mode, response);
         } else {
             detail::mock::corrupt3eResponse(next.mode, cfg.code, response);
         }
@@ -185,6 +216,42 @@ void MockPlc::Impl::handle1e(const E1Request& request) {
     log.push_back(rec);
 
     queueResponse(detail::mock::build1eResponse(cfg.code, request, outcome));
+}
+
+// Multidrop (spec "Serial reception"): a request for another station gets no answer, and does not
+// use up a mute. Then the SUM is judged, then the command is executed.
+void MockPlc::Impl::handleSerial(const SerialRequest& request) {
+    MockRequestRecord rec;
+    rec.frame = cfg.frame;
+    rec.op = request.op;
+    rec.head = request.head;
+    rec.count = request.count;
+    rec.series = request.series;
+    if (request.station != cfg.stationNo || swallowsRequest()) {
+        log.push_back(rec);
+        return;
+    }
+
+    const bool threeC = cfg.frame == FrameType::F3C;
+    Outcome outcome;
+    if (!request.sumValid) {
+        outcome.ok = false;
+        outcome.plcCode = threeC ? opt.sumErrorQna : opt.sumError1c;
+    } else {
+        outcome = detail::mock::executeSerial(request, cfg.frame, memory, faults, opt);
+    }
+    rec.answered = true;
+    if (!outcome.ok) {
+        Error e;
+        e.category = ErrorCategory::Plc;
+        e.code = ErrorCode::PlcError;
+        e.plcCode = outcome.plcCode;
+        e.message = "mock PLC error response";
+        rec.answeredWith = e;
+    }
+    log.push_back(rec);
+
+    queueResponse(detail::mock::buildSerialResponse(cfg, request, outcome));
 }
 
 MockPlc::MockPlc(const FrameConfig& cfg, const MockOptions& opt)

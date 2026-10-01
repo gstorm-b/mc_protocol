@@ -152,7 +152,13 @@ add_executable(mc_core_session_tests
     core/session/test_session_heartbeat.cpp
     core/session/test_alloc.cpp
 )
-target_link_libraries(mc_core_session_tests PRIVATE mc::core mc_doctest)
+target_link_libraries(mc_core_session_tests PRIVATE mc::core mc_doctest mc_test_vectors)
+# test_session_fault.cpp (serial rows, T-051) reads the 3C golden vectors tests/vectors/3c_f*.vec
+# from the source tree, as mc_core_protocol_tests does above (the spec's Testing Strategy: serial
+# behaviour "uses the golden vectors directly").
+target_compile_definitions(mc_core_session_tests PRIVATE
+    MC_TESTS_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}"
+)
 # test_alloc.cpp (ALC-01/02) includes tests/common/alloc_counter.h as "common/alloc_counter.h";
 # give the binary its own include path to the tests/ root for that, mirroring
 # mc_core_model_tests/mc_core_protocol_tests above.
@@ -194,6 +200,7 @@ if(MC_BUILD_MOCK)
         mock/main.cpp
         mock/test_mock_memory.cpp
         mock/test_mock_vectors.cpp
+        mock/test_mock_stream.cpp
         mock/test_mock_faults.cpp
     )
     target_link_libraries(mc_mock_tests PRIVATE mc::mock mc_doctest mc_test_vectors)
@@ -322,6 +329,7 @@ if(MC_BUILD_DEVICE)
             device/mock_plc_server.h
             device/device_recorder.h
             device/device_test_support.h
+            device/smoke_check.h
             device/fake_transport.h)
         target_link_libraries(mc_device_tests PRIVATE mc::mock)
 
@@ -334,6 +342,22 @@ if(MC_BUILD_DEVICE)
             device/device_test_support.h
             device/fake_transport.h)
         target_link_libraries(mc_device_thread_tests PRIVATE mc::mock)
+
+        # QDV-14 (T-054): SerialTransport and McDevice over a COM port. The SER-nn tests need no
+        # hardware; the ones that need a virtual COM pair QSKIP unless MC_TEST_SERIAL_PAIR names
+        # one (e.g. "COM52,COM53"). The bridge hosting the MockPlc is why this binary links the
+        # mock.
+        mc_add_qt_test(mc_serial_tests
+            device/tst_serial.cpp
+            device/serial_bridge.cpp
+            device/serial_bridge.h
+            device/smoke_check.h
+            device/device_recorder.h
+            device/device_test_support.h)
+        target_link_libraries(mc_serial_tests PRIVATE mc::mock)
+        # Only this entry opens the COM pair; the lock keeps it from running next to any other
+        # entry that ever does (a virtual port is opened exclusively, one process at a time).
+        set_tests_properties(device.mc_serial_tests PROPERTIES RESOURCE_LOCK mc_serial_pair)
     endif()
 
     # mc_coverage_report_device (T-040, Checkpoint D): the same script as the reports above,
@@ -344,7 +368,8 @@ if(MC_BUILD_DEVICE)
     if(MC_COVERAGE AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
         set(_mc_device_coverage_deps mc_tcp_transport_tests mc_config_json_tests)
         if(MC_BUILD_MOCK)
-            list(APPEND _mc_device_coverage_deps mc_device_tests mc_device_thread_tests)
+            list(APPEND _mc_device_coverage_deps mc_device_tests mc_device_thread_tests
+                 mc_serial_tests)
         endif()
         add_custom_target(mc_coverage_report_device
             COMMAND ${CMAKE_COMMAND}

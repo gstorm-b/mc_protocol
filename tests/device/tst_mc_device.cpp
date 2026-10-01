@@ -6,6 +6,7 @@
 #include "device_test_support.h"
 #include "fake_transport.h"
 #include "mock_plc_server.h"
+#include "smoke_check.h"
 
 #include "mc/core/convert.h"
 #include "mc/device/mc_device.h"
@@ -65,41 +66,13 @@ class TstMcDevice : public QObject {
         }
     };
 
-    // QDV-13: one polling round and one write of each kind over loopback TCP on `frame`. The
-    // expected values come from the seeded image and the requests, not from the frame.
+    // QDV-13: one polling round and one write of each kind over loopback TCP on `frame` (the
+    // shared body is smoke_check.h; QDV-14 runs it over a COM port pair).
     void smokeOverTcp(const mc::FrameConfig& frame) {
         Rig rig(frame);
         QVERIFY(rig.ok());
         rig.device->connectToPlc();
-        QTRY_VERIFY_WITH_TIMEOUT(rig.recorder->hasCycle(1), kWaitMs);
-
-        // Round 1: the M snapshot (bits, one byte per point, M3 set) then the D snapshot.
-        const QVector<Event> snapshots = rig.recorder->of(Event::Kind::Snapshot);
-        QVERIFY(snapshots.size() >= 2);
-        const mc::SnapshotSegment& bits = snapshots.at(0).snapshot.segments.at(0);
-        QCOMPARE(bits.count, 16u);
-        QCOMPARE(int(bits.values.at(3)), 1);
-        QCOMPARE(int(bits.values.at(2)), 0);
-        const Event snapshotD = snapshots.at(1);
-        QCOMPARE(snapshotD.snapshot.segments.at(0).values, wordsLe({10, 20, 30, 40}));
-        QCOMPARE(int(snapshotD.snapshot.chunks.at(0).state), int(mc::ChunkState::Ok));
-
-        // A word write and an odd-count bit write (a padded last nibble on 1E Binary), each
-        // finishing once without error.
-        const mc::Expected<mc::RequestId> w = rig.device->writeWords(u"D200", {0x1234});
-        QVERIFY(w);
-        QTRY_VERIFY_WITH_TIMEOUT(rig.recorder->count(Event::Kind::Finished) == 1, kWaitMs);
-        QVERIFY(rig.recorder->of(Event::Kind::Finished).at(0).error.ok());
-        QCOMPARE(rig.server.plc()->word(dev("D200")), uint16_t{0x1234});
-
-        const mc::Expected<mc::RequestId> wb = rig.device->writeBits(u"M100", {true, false, true});
-        QVERIFY(wb);
-        QTRY_VERIFY_WITH_TIMEOUT(rig.recorder->count(Event::Kind::Finished) == 2, kWaitMs);
-        QVERIFY(rig.recorder->of(Event::Kind::Finished).at(1).error.ok());
-        QVERIFY(rig.server.plc()->bit(dev("M100")));
-        QVERIFY(!rig.server.plc()->bit(dev("M101")));
-        QVERIFY(rig.server.plc()->bit(dev("M102")));
-        QVERIFY(!rig.server.plc()->bit(dev("M103")));
+        verifySmoke(*rig.recorder, *rig.device, [&rig]() { return rig.server.plc(); });
     }
 
   private slots:
@@ -561,6 +534,12 @@ class TstMcDevice : public QObject {
 
     void QDV_13_oneEAsciiSmoke() { smokeOverTcp(mc::FrameConfig::frame1E(mc::DataCode::Ascii)); }
 
+    // A serial frame over a TCP serial-device server: the frame, not the transport, decides.
+    void QDV_13_threeCFormat1Smoke()
+    {
+        smokeOverTcp(mc::FrameConfig::frame3C(mc::SerialFormat::Format1));
+    }
+
     void QDV_16_invalidConfigPublishesOpenFailedNamingTheFieldAndOpensNoSocket() {
         MockPlcServer server;
         QVERIFY(server.listen());
@@ -719,6 +698,56 @@ class TstMcDevice : public QObject {
         QCOMPARE(rig.recorder->trace(), (QStringList{"link(Connecting,Requested)",
                                                      "link(Disconnected,OpenFailed)"}));
         QCOMPARE(rig.recorder->events.last().detail, QStringLiteral("fake: open refused"));
+    }
+
+    // A serial line that keeps sending bytes during Flushing ends the flush at its cap anyway: the
+    // device's deadline timer is armed from Session::nextDeadline() and does not wait for a quiet
+    // moment. The silent fake transport times out the first request at 200 ms; from the EOT on, it
+    // delivers a byte every 10 ms (never the 50 ms of silence that would end the flush), so the
+    // only way out is the cap: a second link error at 200 + 200 ms, which reaches the limit of 2.
+    void SER_FLUSH_01_aChatteringLineStillEndsTheFlushAtItsCapThroughTheDeadlineTimer() {
+        auto fake = std::make_unique<FakeTransport>();
+        FakeTransport* transport = fake.get();
+        mc::McDeviceConfig cfg =
+            configFor(0, mc::FrameConfig::frame3C(mc::SerialFormat::Format1), false);
+        cfg.frame.timeoutMs = 200;
+        cfg.frame.readRetries = 0;
+        cfg.session.serialFlushMs = 50;
+        cfg.session.maxConsecutiveLinkErrors = 2;
+        cfg.subscriptions = {{QStringLiteral("D100"), 4}};
+        mc::McDevice device(cfg, std::move(fake));
+        auto* recorder = new DeviceRecorder(device);
+        QCOMPARE(qint64(device.config().frame.effectiveTimeoutMs()), qint64(200));
+
+        QElapsedTimer clock;
+        qint64 faultAtMs = -1;
+        QObject::connect(&device, &mc::McDevice::linkFault, &device,
+                         [&](const mc::LinkFaultInfo&) { faultAtMs = clock.elapsed(); });
+        int chatterBytes = 0;
+        QTimer chatter;
+        chatter.setInterval(10);
+        QObject::connect(&chatter, &QTimer::timeout, &chatter, [&]() {
+            if (transport->written.contains('\x04')) { // the EOT went out: the flush has begun
+                transport->deliver(QByteArray(1, 'x'));
+                ++chatterBytes;
+            }
+        });
+
+        clock.start();
+        chatter.start();
+        device.connectToPlc();
+        QTRY_VERIFY_WITH_TIMEOUT(faultAtMs >= 0, kWaitMs);
+        chatter.stop();
+
+        // Timeout at 200 ms, cap 200 ms later; bytes alone could never have ended the flush.
+        QVERIFY2(faultAtMs >= 380, qPrintable(QString::number(faultAtMs)));
+        QVERIFY2(faultAtMs <= 400 + 300, qPrintable(QString::number(faultAtMs)));
+        QVERIFY2(chatterBytes >= 10, qPrintable(QString::number(chatterBytes)));
+        QCOMPARE(int(transport->written.at(0)), 0x05); // the request begins with ENQ
+        QVERIFY(transport->written.contains('\x04'));
+        QCOMPARE(device.linkState(), mc::LinkState::Faulted);
+        QCOMPARE(withoutCycles(recorder->traceAfterConnect()),
+                 (QStringList{"fault(Timeout,reopen=0)", "link(Faulted,Fault)"}));
     }
 
     void CFG_DEV_01_setConfigOnlyWhileDisconnectedAndOnlyIfValid() {

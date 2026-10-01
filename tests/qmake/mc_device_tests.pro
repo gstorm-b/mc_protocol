@@ -25,7 +25,8 @@ HEADERS += \
     $$PWD/../device/mock_plc_server.h \
     $$PWD/../device/device_recorder.h \
     $$PWD/../device/device_test_support.h \
-    $$PWD/../device/fake_transport.h
+    $$PWD/../device/fake_transport.h \
+    $$PWD/../device/smoke_check.h
 
 SOURCES += \
     $$PWD/../device/tst_mc_device.cpp \

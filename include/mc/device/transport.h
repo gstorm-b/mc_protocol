@@ -24,7 +24,7 @@ namespace mc {
  *
  * A transport and its helper objects form one object tree that lives on one thread.
  *
- * @see TcpTransport
+ * @see TcpTransport, SerialTransport
  */
 class Transport : public QObject {
     Q_OBJECT

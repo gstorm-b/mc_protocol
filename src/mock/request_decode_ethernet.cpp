@@ -114,7 +114,26 @@ bool asciiCodeMatches(const char* tableCode, ByteView text) {
     return true;
 }
 
-bool decodeAsciiDevice(PlcSeries series, ByteView field, Device& out) {
+} // namespace
+
+// The device and subcommand decoding below is shared with the serial decoder
+// (request_decode_serial.cpp).
+
+bool parseDeviceNumber(ByteView digits, Radix radix, uint64_t& number) {
+    number = 0;
+    for (size_t i = 0; i < digits.size; ++i) {
+        uint32_t digit = 0;
+        if (!digitValue(digits.data[i], radix, digit)) {
+            return false;
+        }
+        number = number * (radix == Radix::Hex ? 16u : 10u) + digit;
+    }
+    return true;
+}
+
+size_t qnaAsciiDeviceSize(PlcSeries series) { return deviceFieldSize(DataCode::Ascii, series); }
+
+bool decodeQnaAsciiDevice(PlcSeries series, ByteView field, Device& out) {
     const size_t codeSize = series == PlcSeries::QL ? 2 : 4;
     const ByteView codeText{field.data, codeSize};
     for (uint8_t i = 0; i < static_cast<uint8_t>(DeviceType::Count); ++i) {
@@ -124,18 +143,40 @@ bool decodeAsciiDevice(PlcSeries series, ByteView field, Device& out) {
             continue;
         }
         uint64_t number = 0;
-        for (size_t d = codeSize; d < field.size; ++d) {
-            uint32_t digit = 0;
-            if (!digitValue(field.data[d], info.radix, digit)) {
-                return false;
-            }
-            number = number * (info.radix == Radix::Hex ? 16u : 10u) + digit;
+        if (!parseDeviceNumber(ByteView{field.data + codeSize, field.size - codeSize}, info.radix,
+                               number)) {
+            return false;
         }
         out = Device{info.type, static_cast<uint32_t>(number)};
         return true;
     }
     return false;
 }
+
+bool decodeQnaSubcommand(uint16_t subcommand, PlcSeries& series, bool& bitUnit) {
+    switch (subcommand) {
+    case 0x0000:
+        series = PlcSeries::QL;
+        bitUnit = false;
+        return true;
+    case 0x0001:
+        series = PlcSeries::QL;
+        bitUnit = true;
+        return true;
+    case 0x0002:
+        series = PlcSeries::IqR;
+        bitUnit = false;
+        return true;
+    case 0x0003:
+        series = PlcSeries::IqR;
+        bitUnit = true;
+        return true;
+    default:
+        return false;
+    }
+}
+
+namespace {
 
 bool decodeBinaryDevice(PlcSeries series, ByteView field, Device& out) {
     uint32_t number = 0;
@@ -161,12 +202,14 @@ bool decodeBinaryDevice(PlcSeries series, ByteView field, Device& out) {
 }
 
 bool decodeDevice(DataCode code, PlcSeries series, ByteView field, Device& out) {
-    return code == DataCode::Ascii ? decodeAsciiDevice(series, field, out)
+    return code == DataCode::Ascii ? decodeQnaAsciiDevice(series, field, out)
                                    : decodeBinaryDevice(series, field, out);
 }
 
-// Decodes the request data of one frame (monitoring timer, command, subcommand, command data).
-template <class Codec> QnaRequest decodeBody(const Route& route, ByteView body) {
+// Decodes the request data of one frame: monitoring timer (3E only, so `withTimer`), command,
+// subcommand, command data.
+template <class Codec>
+QnaRequest decodeBody(const Route& route, ByteView body, bool withTimer) {
     QnaRequest req;
     req.route = route;
 
@@ -174,7 +217,7 @@ template <class Codec> QnaRequest decodeBody(const Route& route, ByteView body) 
     uint16_t timer = 0;
     uint16_t command = 0;
     uint16_t subcommand = 0;
-    if (!rd.u16(timer) || !rd.u16(command)) {
+    if ((withTimer && !rd.u16(timer)) || !rd.u16(command)) {
         return req;
     }
     req.command = command;
@@ -186,23 +229,9 @@ template <class Codec> QnaRequest decodeBody(const Route& route, ByteView body) 
         return req;
     }
 
-    // Spec §4.1: subcommand 0000/0001 are Q/L word/bit units, 0002/0003 iQ-R word/bit units.
     PlcSeries series = PlcSeries::QL;
     bool bitUnit = false;
-    switch (subcommand) {
-    case 0x0000:
-        break;
-    case 0x0001:
-        bitUnit = true;
-        break;
-    case 0x0002:
-        series = PlcSeries::IqR;
-        break;
-    case 0x0003:
-        series = PlcSeries::IqR;
-        bitUnit = true;
-        break;
-    default:
+    if (!decodeQnaSubcommand(subcommand, series, bitUnit)) {
         return req;
     }
 
@@ -283,7 +312,7 @@ template <class Codec> DecodeResult decodeFrame(ByteView rx) {
 
     result.status = FrameStatus::Complete;
     result.consumed = headerSize + length;
-    result.request = decodeBody<Codec>(route, ByteView{rx.data + headerSize, length});
+    result.request = decodeBody<Codec>(route, ByteView{rx.data + headerSize, length}, true);
     return result;
 }
 
@@ -442,6 +471,10 @@ DecodeResult decode3eRequest(DataCode code, ByteView rx) {
 
 DecodeResult1e decode1eRequest(DataCode code, ByteView rx) {
     return code == DataCode::Ascii ? decodeFrame1e<AsciiCodec>(rx) : decodeFrame1e<BinaryCodec>(rx);
+}
+
+QnaRequest decodeQnaAsciiRequestData(ByteView data) {
+    return decodeBody<AsciiCodec>(Route{}, data, false);
 }
 
 } // namespace mc::detail::mock

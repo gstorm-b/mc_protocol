@@ -13,6 +13,7 @@ HEADERS += \
 SOURCES += \
     $$PWD/src/mock/memory_image.cpp \
     $$PWD/src/mock/request_decode_ethernet.cpp \
+    $$PWD/src/mock/request_decode_serial.cpp \
     $$PWD/src/mock/command_exec.cpp \
     $$PWD/src/mock/response_build.cpp \
     $$PWD/src/mock/corruption.cpp \
