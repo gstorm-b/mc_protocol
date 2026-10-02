@@ -62,6 +62,12 @@ This PC has **32 logical cores**. Every build and test run uses them:
 Still **never two check scripts or two builds of the same folder at once** — parallelism
 goes inside one build, not across builds sharing a folder.
 
+The check scripts are parallel too (T-056): `check.ps1 -Jobs <n>` (default: logical
+processors) and `-JomPath` (default the Qt Creator jom; jom on PATH next; else nmake with a
+"single-threaded" note); `check.sh` reads `MC_CHECK_JOBS` (default `nproc`). Wall times on
+this PC: `check.ps1` MSVC ~70 s, MinGW ~97 s, `check.sh` ~92 s (were 320–550 s). jom (like
+nmake) writes its own link response files to `%TEMP%` — the tool's behaviour, accepted.
+
 ## MSVC — the daily loop (PowerShell, one call)
 
 ```powershell
@@ -120,7 +126,9 @@ Where the gotchas below say "`nmake`", jom does the same job.
   runs the old binary (T-022, T-026). Confirm with `--list-test-cases`.
   A change to `mc_core.pri` itself (new library source) affects every qmake
   test target — each compiles the library sources directly — so delete all
-  `Makefile.*` under `build/qmake-*/tests/qmake/` (T-026).
+  `Makefile.*` under `build/qmake-*/tests/qmake/` (T-026). A new `SUBDIRS` entry in
+  `tests/qmake/tests.pro` (e.g. `mc_replay_tests`, T-061) needs
+  `build/qmake-*/tests/qmake/Makefile.tests*` deleted before the first build.
 - **Every test `.pro` sets its own intermediate dirs** (`OBJECTS_DIR`,
   `MOC_DIR`, `RCC_DIR`, `UI_DIR` named after `$$TARGET`, split debug/release):
   the `.file`-style `SUBDIRS` builds all test projects in one folder, and a
@@ -194,12 +202,16 @@ the bar (`-D MC_MIN_COVERAGE=<n>`, default 95, total over `src/core/model`).
   agent shell. Running a Qt binary by hand needs the Qt `bin` on PATH yourself (T-035).
 - **Virtual COM pairs** (Electronic Team Virtual Serial Port, set up by the
   owner): **`COM54`↔`COM55` replaces `COM50`↔`COM51`** (owner, 2026-10-01; the
-  `COM50->COM51` device went to PnP state Error, code 43, in T-054 — do not use
-  it), and `COM52`↔`COM53`. Default:
+  `COM50->COM51` device went to PnP state Error, code 43, in T-054 — retired for
+  good, no repair, owner 2026-10-02: never use it), and `COM52`↔`COM53`. Default:
   `$env:MC_TEST_SERIAL_PAIR = "COM54,COM55"` (verified by the leader: 10 passed,
   0 skipped); `COM52,COM53` is the second pair. QDV-14 skips without the variable. Never install, reconfigure or repair serial
   software (owner only). Tests that open the pair must not run concurrently
   (ctest `RESOURCE_LOCK`): the pair broke during a `ctest -j 8` run (T-054).
+  `RESOURCE_LOCK` only works inside **one** `ctest` invocation: two agents (or the leader and
+  an agent) running serial tests at the same time collide on the port — the leader saw
+  `hil_tool.mc_hil_tool_serial` hang to the 120 s ctest timeout that way (T-063). When two
+  agents work in parallel, only one runs with `MC_TEST_SERIAL_PAIR` set at a time.
 - Windows reports a refused **loopback** connect only after 2–4 s; a test
   against a closed port ends on its own connect timer instead (T-035).
 - Mutation runs: touching a restored source with Node `fs.utimesSync` did **not**

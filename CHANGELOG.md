@@ -202,3 +202,15 @@ All notable changes to this project are documented in this file. The format foll
   and `--format`. Line coverage on MinGW: `src/core/session` 98.1 %, `src/core/protocol` 97.9 %,
   `src/mock` 97.3 %, `src/device` 91.8 % (report only). MSVC and MinGW GCC 13.1, both qmake kits,
   `scripts/check.ps1` (both kits) and `check.sh` pass.
+- `scripts/check.ps1` and `scripts/check.sh` build in parallel: `-Jobs` / `MC_CHECK_JOBS` (default: the logical processor count) for `cmake --build --parallel`, `jom -j` (MSVC qmake stages, `nmake` fallback if no jom) and `mingw32-make -j`; `ctest -j 8`.
+- Phase 7, HIL capture tooling (`SPEC-hil-capture.md`), no hardware involved: the developer tool `tools/hil_capture`
+  (`MC_BUILD_TOOLS`) loads a profile and a plan, runs a safety gate that refuses every write outside the
+  declared scratch area before anything connects (`--dry-run` prints the frames), drives `McDevice` through a
+  `RecordingTransport` (mutate and raw frames included), recovers link faults, and writes `steps.vec`,
+  `session.vec`, `run.meta` and `bench.csv`; `--report` builds the timing tables. The four plans of
+  `docs/hil/COMMAND-CATALOGUE.md` live in `tests/hil/plans`, example profiles in `tests/hil/profiles`. Test
+  binaries `mc_hil_tool_tests` (HIL-01 to HIL-06, label `hil_tool`) and the std-only `mc_replay_tests` (RPL-01
+  to RPL-06, label `replay`, with committed `virtual_plc` fixtures). Captures made against `virtual_plc` never
+  go to `tests/vectors/captured/`. A frame the gate cannot fully decode (`readOnly`) needs a `recover` step and
+  an explicit confirmation even with `--yes`, and a mutated write can never be declared `readOnly`; `run.meta`
+  is scrubbed of the profile's host, port and COM port name.

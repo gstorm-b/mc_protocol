@@ -1,0 +1,939 @@
+{
+  "schema": 1,
+  "plan": {
+    "id": "qna_ethernet",
+    "title": "Catalogue steps for 3E (QnA over Ethernet)",
+    "family": "qna-ethernet"
+  },
+  "steps": [
+    {
+      "id": "G0-01",
+      "kind": "read",
+      "device": "D@s",
+      "title": "Connect; read D@s x 1"
+    },
+    {
+      "id": "G0-02",
+      "kind": "read",
+      "device": "@scan",
+      "requires": [
+        "scanTime"
+      ],
+      "metaKey": "scan_time_raw",
+      "title": "Scan time device, value kept in run.meta"
+    },
+    {
+      "id": "GV-01",
+      "kind": "write",
+      "device": "D100",
+      "values": [
+        "0x1995",
+        "0x1202",
+        "0x1130"
+      ],
+      "mirrors": "V-3E-{x}-05/06",
+      "title": "Write D100 x 3 = 1995H, 1202H, 1130H"
+    },
+    {
+      "id": "GV-02",
+      "kind": "read",
+      "device": "D100",
+      "count": 3,
+      "expect": {
+        "kind": "ok",
+        "values": [
+          6549,
+          4610,
+          4400
+        ]
+      },
+      "mirrors": "V-3E-{x}-01/02"
+    },
+    {
+      "id": "GV-03",
+      "kind": "write",
+      "device": "M100",
+      "values": "11001100",
+      "mirrors": "V-3E-{x}-07",
+      "title": "Write M100 x 8 = 1,1,0,0,1,1,0,0"
+    },
+    {
+      "id": "GV-04",
+      "kind": "write",
+      "device": "M100",
+      "values": "00010011",
+      "readBack": true,
+      "mirrors": "V-3E-{x}-03/04",
+      "title": "Write M100 x 8 = 0,0,0,1,0,0,1,1; read M100 x 8"
+    },
+    {
+      "id": "GV-05",
+      "kind": "write",
+      "device": "M100",
+      "values": "10101",
+      "readBack": true,
+      "mirrors": "V-3E-{x}-08/09",
+      "title": "Write M100 x 5 = 1,0,1,0,1; read M100 x 5 (odd count)"
+    },
+    {
+      "id": "G1-01",
+      "kind": "write",
+      "device": "D@s",
+      "values": [
+        4660
+      ],
+      "readBack": true
+    },
+    {
+      "id": "G1-02",
+      "kind": "write",
+      "device": "D@s",
+      "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "readBack": true
+    },
+    {
+      "id": "G1-03",
+      "kind": "write",
+      "device": "D@s",
+      "values": {
+        "gen": "index",
+        "mul": 257
+      },
+      "count": "Wmax",
+      "readBack": true,
+      "scratchTooSmall": "skip",
+      "title": "Write Wmax words, word k = (k x 0101H) & FFFFH; read back"
+    },
+    {
+      "id": "G1-04",
+      "kind": "read",
+      "device": "D@s",
+      "count": "Wmax+40",
+      "scratchTooSmall": "skip",
+      "expect": {
+        "kind": "ok",
+        "frames": 2,
+        "valuesFrom": "G1-03"
+      },
+      "title": "Ad-hoc read Wmax + 40 words through McDevice: 2 frames, payload starts with the G1-03 values"
+    },
+    {
+      "id": "G1-05",
+      "kind": "write",
+      "device": "W@s",
+      "values": [
+        "0xffff",
+        "0x8000",
+        "0x1",
+        "0x0"
+      ],
+      "readBack": true,
+      "requires": [
+        "supports:W",
+        "scratch:W"
+      ]
+    },
+    {
+      "id": "G1-06",
+      "kind": "write",
+      "device": "R@s",
+      "values": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "readBack": true,
+      "requires": [
+        "supports:R",
+        "scratch:R"
+      ]
+    },
+    {
+      "id": "G1-07",
+      "kind": "write",
+      "device": "ZR@s",
+      "values": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "readBack": true,
+      "requires": [
+        "supports:ZR",
+        "scratch:ZR"
+      ]
+    },
+    {
+      "id": "G1-08",
+      "kind": "read",
+      "device": "TN0",
+      "count": 4,
+      "requires": [
+        "supports:TN",
+        "supports:CN"
+      ],
+      "then": [
+        {
+          "kind": "read",
+          "device": "CN0",
+          "count": 4
+        }
+      ],
+      "title": "Read TN0 x 4 and CN0 x 4 (current values)"
+    },
+    {
+      "id": "G1-09",
+      "kind": "read",
+      "device": "SW",
+      "count": 4,
+      "title": "Special registers (the profile's specialWord)"
+    },
+    {
+      "id": "G1-10",
+      "kind": "write",
+      "device": "D@s+20",
+      "values": [
+        {
+          "f64": 1.5
+        }
+      ],
+      "readBack": true,
+      "then": [
+        {
+          "kind": "write",
+          "device": "D@s+24",
+          "values": [
+            {
+              "i32": -2
+            }
+          ],
+          "readBack": true
+        }
+      ],
+      "title": "Float and dword helpers: 1.5 as four words, -2 as two words"
+    },
+    {
+      "id": "G2-01",
+      "kind": "write",
+      "device": "M@s",
+      "values": "1",
+      "readBack": true,
+      "then": [
+        {
+          "kind": "write",
+          "device": "M@s",
+          "values": "0",
+          "readBack": true
+        }
+      ]
+    },
+    {
+      "id": "G2-02",
+      "kind": "write",
+      "device": "M@s",
+      "values": "1010101010101010",
+      "readBack": true
+    },
+    {
+      "id": "G2-03",
+      "kind": "write",
+      "device": "M@s+5",
+      "values": "0",
+      "title": "Pre-clear M@s+5; write M@s x 5 = 1,0,1,0,1; read x 6: point 6 stays 0",
+      "then": [
+        {
+          "kind": "write",
+          "device": "M@s",
+          "values": "10101"
+        },
+        {
+          "kind": "read",
+          "device": "M@s",
+          "count": 6,
+          "expect": {
+            "kind": "ok",
+            "values": [
+              1,
+              0,
+              1,
+              0,
+              1,
+              0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "G2-04",
+      "kind": "write",
+      "device": "M@s",
+      "values": {
+        "gen": "alt",
+        "first": 1
+      },
+      "count": "BWmax",
+      "scratchTooSmall": "skip",
+      "then": [
+        {
+          "kind": "read",
+          "device": "M@s",
+          "count": "min(BRmax,BWmax)"
+        }
+      ],
+      "title": "Write BWmax bits alternating; read min(BRmax, BWmax)"
+    },
+    {
+      "id": "G2-05",
+      "kind": "write",
+      "device": "B@s",
+      "values": "1010101010101010",
+      "readBack": true,
+      "requires": [
+        "supports:B",
+        "scratch:B"
+      ]
+    },
+    {
+      "id": "G2-06",
+      "kind": "write",
+      "device": "Y@s",
+      "values": "10101010",
+      "readBack": true,
+      "requires": [
+        "supports:Y",
+        "scratch:Y"
+      ]
+    },
+    {
+      "id": "G2-07-L",
+      "kind": "write",
+      "device": "L@s",
+      "values": "1010",
+      "readBack": true,
+      "requires": [
+        "supports:L",
+        "scratch:L"
+      ],
+      "title": "Write/read x 4 of L"
+    },
+    {
+      "id": "G2-07-F",
+      "kind": "write",
+      "device": "F@s",
+      "values": "1010",
+      "readBack": true,
+      "requires": [
+        "supports:F",
+        "scratch:F"
+      ],
+      "title": "Write/read x 4 of F"
+    },
+    {
+      "id": "G2-07-S",
+      "kind": "write",
+      "device": "S@s",
+      "values": "1010",
+      "readBack": true,
+      "requires": [
+        "supports:S",
+        "scratch:S"
+      ],
+      "title": "Write/read x 4 of S"
+    },
+    {
+      "id": "G2-08",
+      "kind": "read",
+      "device": "X0",
+      "count": 16,
+      "then": [
+        {
+          "kind": "read",
+          "device": "X0",
+          "count": 64
+        }
+      ],
+      "title": "Inputs X0 x 16 and x 64 (never written)"
+    },
+    {
+      "id": "G2-09",
+      "kind": "read",
+      "device": "TS0",
+      "count": 8,
+      "requires": [
+        "supports:TS",
+        "supports:TC",
+        "supports:CS",
+        "supports:CC"
+      ],
+      "then": [
+        {
+          "kind": "read",
+          "device": "TC0",
+          "count": 8
+        },
+        {
+          "kind": "read",
+          "device": "CS0",
+          "count": 8
+        },
+        {
+          "kind": "read",
+          "device": "CC0",
+          "count": 8
+        }
+      ]
+    },
+    {
+      "id": "G2-10",
+      "kind": "read",
+      "device": "SB",
+      "count": 16,
+      "title": "Special relays (the profile's specialBit) x 16"
+    },
+    {
+      "id": "G3-01",
+      "kind": "write",
+      "device": "M@s16",
+      "values": [
+        "0x1234",
+        "0x2"
+      ],
+      "unit": "word",
+      "then": [
+        {
+          "kind": "read",
+          "device": "M@s16",
+          "count": 32,
+          "unit": "bit",
+          "expect": {
+            "kind": "ok",
+            "bitsOn": [
+              2,
+              4,
+              5,
+              9,
+              12,
+              17
+            ]
+          }
+        }
+      ],
+      "title": "Write words 1234H, 0002H; read the 32 bits"
+    },
+    {
+      "id": "G3-02",
+      "kind": "read",
+      "device": "X0",
+      "unit": "word",
+      "count": 4,
+      "expect": "record",
+      "title": "Read words X0 x 4 (compare with G2-08 bits by hand: no cross-step check)"
+    },
+    {
+      "id": "G3-03",
+      "kind": "read",
+      "device": "M@s16+3",
+      "unit": "word",
+      "count": 1,
+      "expect": "ok",
+      "title": "Word read of a bit device with a head that is not a multiple of 16"
+    },
+    {
+      "id": "G3-04",
+      "kind": "read",
+      "device": "SB",
+      "unit": "word",
+      "count": 1
+    },
+    {
+      "id": "G3-05",
+      "kind": "read",
+      "device": "M@s16",
+      "unit": "word",
+      "count": "WBRmax",
+      "scratchTooSmall": "skip",
+      "then": [
+        {
+          "kind": "write",
+          "device": "M@s16",
+          "unit": "word",
+          "count": "WBWmax",
+          "values": {
+            "gen": "index",
+            "mul": 1
+          }
+        }
+      ],
+      "title": "Read WBRmax words, write WBWmax words of a bit device"
+    },
+    {
+      "id": "G4-01",
+      "kind": "read",
+      "device": "{T}0",
+      "foreach": "supports",
+      "title": "Every supported type: one point at number 0"
+    },
+    {
+      "id": "G4-02",
+      "kind": "read",
+      "device": "{T}0",
+      "foreach": "other",
+      "expect": "record",
+      "title": "Every type the code table has and supports lacks"
+    },
+    {
+      "id": "G5-01",
+      "kind": "read",
+      "device": "D@end"
+    },
+    {
+      "id": "G5-02",
+      "kind": "read",
+      "device": "D@end+1",
+      "expect": "plcError"
+    },
+    {
+      "id": "G5-03",
+      "kind": "read",
+      "device": "D@end",
+      "count": 2,
+      "expect": "plcError"
+    },
+    {
+      "id": "G5-04",
+      "kind": "read",
+      "device": "M@end+1",
+      "count": 1,
+      "unit": "bit",
+      "expect": "plcError"
+    },
+    {
+      "id": "G5-05",
+      "kind": "poll",
+      "requires": [
+        "endNotMultiple16:M"
+      ],
+      "bitsAsWords": true,
+      "rounds": 1,
+      "expect": "record",
+      "subscribe": [
+        {
+          "name": "tail",
+          "device": "M@end-3",
+          "count": 4
+        }
+      ],
+      "title": "Last M points with bitsAsWords: the chunk fails every round"
+    },
+    {
+      "id": "G5-06",
+      "kind": "write",
+      "device": "D@s",
+      "values": [
+        1
+      ],
+      "requires": [
+        "profile:*-noonline"
+      ],
+      "expect": "plcError",
+      "title": "Write while the PLC forbids it (profile variant with online change disabled, named *-noonline)"
+    },
+    {
+      "id": "G6",
+      "kind": "poll",
+      "heartbeat": "M@s+200",
+      "rounds": 6,
+      "subscribe": [
+        {
+          "name": "d1",
+          "device": "D@s",
+          "count": 64
+        },
+        {
+          "name": "d2",
+          "device": "D@s+100",
+          "count": 10
+        },
+        {
+          "name": "m",
+          "device": "M@s",
+          "count": 64
+        },
+        {
+          "name": "x",
+          "device": "X0",
+          "count": 32,
+          "input": true
+        },
+        {
+          "name": "w",
+          "device": "W@s",
+          "count": 16
+        }
+      ],
+      "actions": [
+        {
+          "after": 2,
+          "write": {
+            "device": "D@s+5",
+            "values": [
+              4660
+            ]
+          }
+        },
+        {
+          "after": 2,
+          "write": {
+            "device": "M@s+3",
+            "values": "1"
+          }
+        },
+        {
+          "after": 4,
+          "subscribe": {
+            "name": "b",
+            "device": "B@s",
+            "count": 16
+          }
+        },
+        {
+          "after": 4,
+          "unsubscribe": "w"
+        }
+      ],
+      "title": "Polling session; the transcript goes to session.vec"
+    },
+    {
+      "id": "G7-01",
+      "kind": "mutate",
+      "request": {
+        "kind": "read",
+        "device": "D@s"
+      },
+      "edits": [
+        {
+          "truncate": 1
+        }
+      ],
+      "readOnly": true,
+      "recover": "reconnect",
+      "expect": "record",
+      "then": [
+        {
+          "kind": "read",
+          "device": "D@s",
+          "expect": "ok"
+        }
+      ],
+      "title": "Truncated request; the next read succeeds"
+    },
+    {
+      "id": "G7-02-B",
+      "kind": "mutate",
+      "requires": [
+        "code:Binary"
+      ],
+      "request": {
+        "kind": "read",
+        "device": "D@s"
+      },
+      "edits": [
+        {
+          "setByte": {
+            "at": 0,
+            "value": "0x51"
+          }
+        }
+      ],
+      "readOnly": true,
+      "recover": "reconnect",
+      "expect": "record",
+      "title": "3E subheader 50H -> 51H"
+    },
+    {
+      "id": "G7-02-A",
+      "kind": "mutate",
+      "requires": [
+        "code:Ascii"
+      ],
+      "request": {
+        "kind": "read",
+        "device": "D@s"
+      },
+      "edits": [
+        {
+          "setByte": {
+            "at": 1,
+            "value": "0x31"
+          }
+        }
+      ],
+      "readOnly": true,
+      "recover": "reconnect",
+      "expect": "record",
+      "title": "3E subheader 5000 -> 5100 (ASCII)"
+    },
+    {
+      "id": "G7-06",
+      "kind": "poll",
+      "heartbeat": "M@s+200",
+      "rounds": 8,
+      "subscribe": [
+        {
+          "name": "d",
+          "device": "D@s",
+          "count": 4
+        },
+        {
+          "name": "m",
+          "device": "M@s",
+          "count": 16
+        }
+      ],
+      "actions": [
+        {
+          "after": 2,
+          "prompt": "Pull the cable now; plug it back in after 5 s, then press Enter"
+        }
+      ],
+      "title": "Cable pulled during round 3 (manual, prompted)"
+    },
+    {
+      "id": "G8-Q4",
+      "kind": "mutate",
+      "requires": [
+        "code:Binary"
+      ],
+      "request": {
+        "kind": "write",
+        "device": "M@s",
+        "values": "10101"
+      },
+      "edits": [
+        {
+          "setNibble": {
+            "at": -1,
+            "nibble": "low",
+            "value": 1
+          }
+        }
+      ],
+      "expect": "record",
+      "then": [
+        {
+          "kind": "read",
+          "device": "M@s",
+          "count": 6,
+          "expect": "record"
+        }
+      ],
+      "title": "Binary odd bit write: padding nibble 0 -> 1; M@s+5 stays 0?"
+    },
+    {
+      "id": "G8-Q5",
+      "kind": "read",
+      "device": "D@s",
+      "frameOverride": {
+        "station": 1
+      },
+      "expect": "record",
+      "title": "Read with station 01H (if the network has another station)"
+    },
+    {
+      "id": "G8-Q6",
+      "kind": "read",
+      "device": "D@s",
+      "requires": [
+        "profile:*-q6-nothing-to-run"
+      ],
+      "title": "Nothing to run: every plcError of a run is copied to the FINDINGS error-code table by hand. The step exists only to keep the catalogue id."
+    },
+    {
+      "id": "G9-01-B",
+      "kind": "raw",
+      "requires": [
+        "code:Binary"
+      ],
+      "readOnly": true,
+      "recover": "reconnect",
+      "expect": "record",
+      "hex": "50 00 00 FF FF 03 00 18 00 10 00 03 04 00 00 03 01 64 00 00 A8 6E 00 00 A8 70 00 00 90 78 00 00 A8",
+      "title": "0403 random read D100, D110, M112 (words) and D120 (dword), literal devices"
+    },
+    {
+      "id": "G9-01-A",
+      "kind": "raw",
+      "requires": [
+        "code:Ascii"
+      ],
+      "readOnly": true,
+      "recover": "reconnect",
+      "expect": "record",
+      "hex": "35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 33 30 30 30 31 30 30 34 30 33 30 30 30 30 30 33 30 31 44 2A 30 30 30 31 30 30 44 2A 30 30 30 31 31 30 4D 2A 30 30 30 31 31 32 44 2A 30 30 30 31 32 30",
+      "title": "0403 random read (ASCII), literal devices"
+    },
+    {
+      "id": "G9-05",
+      "kind": "mutate",
+      "request": {
+        "kind": "read",
+        "device": "D@s"
+      },
+      "frameOverride": {
+        "series": "IqR"
+      },
+      "expect": "record",
+      "title": "0401 with the iQ-R subcommand 0002 (word)"
+    },
+    {
+      "id": "G9-05-M",
+      "kind": "mutate",
+      "request": {
+        "kind": "read",
+        "device": "M@s",
+        "count": 8
+      },
+      "frameOverride": {
+        "series": "IqR"
+      },
+      "expect": "record",
+      "title": "0401 with the iQ-R subcommand 0003 (bit)"
+    },
+    {
+      "id": "G9-06",
+      "kind": "raw",
+      "requests": [
+        {
+          "kind": "read",
+          "device": "D@s"
+        },
+        {
+          "kind": "read",
+          "device": "D@s+10"
+        }
+      ],
+      "expect": "record",
+      "title": "Two 3E read frames in one TCP write (pipelining probe)"
+    },
+    {
+      "id": "G9-07",
+      "kind": "raw",
+      "requires": [
+        "code:Binary"
+      ],
+      "readOnly": true,
+      "recover": "reconnect",
+      "expect": "record",
+      "hex": "54 00 34 12 00 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 01 00",
+      "title": "The read of D100 as a 4E frame (serial 1234H), literal device"
+    },
+    {
+      "id": "GB-01",
+      "kind": "bench",
+      "request": {
+        "kind": "read",
+        "device": "D@s"
+      }
+    },
+    {
+      "id": "GB-02",
+      "kind": "bench",
+      "request": {
+        "kind": "read",
+        "device": "D@s",
+        "count": 64
+      }
+    },
+    {
+      "id": "GB-03",
+      "kind": "bench",
+      "request": {
+        "kind": "read",
+        "device": "D@s",
+        "count": "Wmax"
+      },
+      "scratchTooSmall": "skip"
+    },
+    {
+      "id": "GB-04",
+      "kind": "bench",
+      "request": {
+        "kind": "read",
+        "device": "M@s",
+        "count": 64,
+        "unit": "bit"
+      }
+    },
+    {
+      "id": "GB-05",
+      "kind": "bench",
+      "request": {
+        "kind": "read",
+        "device": "M@s16",
+        "count": 4,
+        "unit": "word"
+      }
+    },
+    {
+      "id": "GB-06",
+      "kind": "bench",
+      "request": {
+        "kind": "read",
+        "device": "M@s",
+        "count": "BRmax",
+        "unit": "bit"
+      },
+      "scratchTooSmall": "skip"
+    },
+    {
+      "id": "GB-07",
+      "kind": "bench",
+      "request": {
+        "kind": "write",
+        "device": "D@s",
+        "values": [
+          1
+        ]
+      }
+    },
+    {
+      "id": "GB-08",
+      "kind": "bench",
+      "request": {
+        "kind": "write",
+        "device": "D@s",
+        "count": 64,
+        "values": {
+          "gen": "index",
+          "mul": 1
+        }
+      }
+    },
+    {
+      "id": "GB-09",
+      "kind": "bench",
+      "request": {
+        "kind": "write",
+        "device": "M@s",
+        "values": "1"
+      }
+    },
+    {
+      "id": "GB-10",
+      "kind": "bench",
+      "pollSet": "G6",
+      "title": "One polling round of the G6 subscription set"
+    }
+  ]
+}

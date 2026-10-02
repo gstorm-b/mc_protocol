@@ -1,0 +1,60 @@
+format: hil-capture-1
+tool: hil_capture
+tool_version: 0.1.0
+library_version: 0.1.0
+git_commit: 0e6053cfd4ff
+date: 2026-10-02T12:52:42Z
+operator_note: virtual_plc fixture, not hardware
+plc_state: RUN
+profile: vplc-3e-bin-drop
+plc: virtual_plc
+module: MockPlc
+firmware: n/a
+adapter: 
+plc_state_note: RUN (virtual_plc fixture, not hardware; peer closes the link while a write is outstanding, proxy)
+transport: tcp
+scratch: D100-D2099 W100-W1FF R0-R99 M100-M2099 B100-B1FF Y20-Y2F
+device_end: X=1FFF Y=1FFF M=8191 B=1FFF D=12287 W=1FFF R=32767
+supports: D W R ZR M L F B X Y TS TC TN CS CC CN SM SD
+special_bit: SM0
+special_word: SD0
+frame.aSeriesTarget: false
+frame.blockNo: 0
+frame.checkBlockNo: true
+frame.checkRoute: false
+frame.code: Binary
+frame.commandSet: ACPU
+frame.e1AliasLS: false
+frame.f3ShortResponseHasSum: false
+frame.format: Format1
+frame.frame: 3E
+frame.highPerformanceQcpu: false
+frame.io: 1023
+frame.messageWait: 0
+frame.monitoringTimer: 16
+frame.network: 0
+frame.pc: 255
+frame.readRetries: 0
+frame.selfStation: 0
+frame.sendEotOnError: true
+frame.serialStart: 0
+frame.series: QL
+frame.splitWrites: false
+frame.station: 0
+frame.stationNo: 0
+frame.sumCheck: true
+frame.targetFamily: IqR_Q_L
+frame.timeoutMs: 400
+session.adHocArenaBytes: 65536
+session.adHocCapacity: 64
+session.bitsAsWords: true
+session.cycleIntervalMs: 50
+session.cycleMode: FixedRate
+session.heartbeat.device: M2000
+session.heartbeat.enabled: false
+session.maxAdHocBurst: 4
+session.maxConsecutiveLinkErrors: 3
+session.maxGap: auto
+session.serialFlushMs: 50
+session.serialInterCharMs: 100
+recovery.1: after P-02: The remote host closed the connection (state 0); reconnected in 13 ms

@@ -3,6 +3,31 @@
 Curated by the team leader. One entry, one decision, newest first.
 Format: `- [T-xxx or date] Decision — why. (supersedes: entry, if any)`
 
+- [T-064] Safety gate tightened after the Phase 7 tester wrote outside scratch with a
+  `readOnly` truncated write (the PLC completed it with the next frame's bytes): a `mutate`
+  of a write is never `readOnly`; every `readOnly` frame needs `recover: reconnect|eot`; any
+  part a mock decodes as a write is checked; `--yes` does not skip the confirmation when
+  `readOnly` frames exist — leader, within spec decision H2 (supersedes the `--yes` half of
+  T-057 D4). `run.meta` text is scrubbed of the profile's host, port and COM name. Splitting
+  `runner.cpp` (reviewer S5) is deferred. **Owner approved 2026-10-02:** `SPEC-hil-capture.md`
+  "Safety gate" amended to these rules; catalogue G8-Q3 (b) left out of the v1 plans (note in
+  `COMMAND-CATALOGUE.md`).
+
+- [T-060] Safety gate: every write of a poll (heartbeat, ad-hoc) must lie in scratch; a poll
+  subscription outside scratch must be marked `"input": true` in the plan, otherwise it is
+  refused. `SPEC-hil-capture.md` "Safety gate" amended — owner decision 2026-10-02 (the spec
+  contradicted catalogue G6, which subscribes `X0 × 32`).
+
+- [T-060] Catalogue G9-02, G9-03, G9-04 (writes in `1402`, 1E `04H/05H`, 1C `BT/WT`) are left
+  out of the v1 capture plans: `MockPlc` cannot decode them, so the safety gate cannot prove
+  the writes stay in scratch; noted in `COMMAND-CATALOGUE.md` — owner decision 2026-10-02.
+
+- [2026-10-02] Checkpoint E approved by the owner. Delegation extended to Phase 7
+  (capture tooling against `virtual_plc` only; real-PLC work and Checkpoint F's owner gate
+  stay the owner's); `scripts/check.ps1`/`check.sh` may be made parallel (T-056) — owner
+  decisions. `COM50`↔`COM51` is retired for good (no repair); `COM54`↔`COM55` replaces it.
+  The vanished `build/Desktop_Qt_6_11_1_MSVC2022_64bit_Debug/` was deleted by the owner.
+
 - [T-055] Serial inter-character deadline is re-armed only once a start byte has been seen;
   while only junk has arrived the first-byte deadline stays, so a line sending junk forever
   still times out (SES-27 "once a response has started") — re-review should-fix, leader.
@@ -37,8 +62,8 @@ Format: `- [T-xxx or date] Decision — why. (supersedes: entry, if any)`
   accept test. `McProtocol` not re-running `FrameConfig::validate()` goes to the owner.
 - [2026-10-01] Every build and test run uses the PC's 32 cores: `cmake --build --parallel 32`,
   jom (not nmake) for qmake/MSVC, `mingw32-make -j32`, `ctest -j 8` — owner request. Commands in
-  `build-env.md`. Making `scripts/check.ps1`/`check.sh` parallel too is **pending**: the edit was
-  refused by the permission layer (T-050) and waits for the owner's permission.
+  `build-env.md`. `scripts/check.ps1`/`check.sh` made parallel in T-056 after the owner's
+  permission (2026-10-02).
 - [T-044] Batch 6a leader decisions: a non-hex 1E ASCII subheader → `FrameMismatch`
   (as 3E); `bit_payload.h` shared by QnA and A1E; `WrongRoute` leaves a 1E response
   unchanged (no route field); `chunkCount()`/`chunk()` skip rule 6 on the unsplit request

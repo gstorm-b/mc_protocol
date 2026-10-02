@@ -3,6 +3,9 @@
 # only (SPEC-build-packaging.md, "Everything, one command"). Same five stages, same stage
 # names, same "== [n/5] <name>" / "FAILED: <name>" messages and exit-code behaviour as
 # check.ps1 — see that script's header comment for what each stage does and why.
+#
+# Every build is parallel: the job count comes from the MC_CHECK_JOBS environment variable
+# (default: nproc) and feeds "cmake --build --parallel", "mingw32-make -j"; ctest runs with -j 8.
 set -u
 
 if [ "$#" -lt 1 ]; then
@@ -13,6 +16,13 @@ fi
 QT_DIR=${1%/}
 QT_DIR=${QT_DIR%\\}
 MINGW_DIR=/c/Qt/Tools/mingw1310_64/bin
+JOBS=${MC_CHECK_JOBS:-$(nproc 2>/dev/null || echo 4)}
+case "$JOBS" in
+    ''|*[!0-9]*|0*)
+        echo "MC_CHECK_JOBS must be a positive integer, got: $JOBS" >&2
+        exit 1
+        ;;
+esac
 
 REPO_ROOT=$(cd "$(dirname "$0")/.." && pwd) || exit 1
 cd "$REPO_ROOT" || exit 1
@@ -85,8 +95,8 @@ print_stage 1 cmake-full
 dir=build/check-cmake-full
 rm -rf "$dir"
 run cmake-full cmake -S . -B "$dir" -G Ninja -DCMAKE_PREFIX_PATH="$QT_DIR" -DCMAKE_BUILD_TYPE=Debug
-run cmake-full cmake --build "$dir"
-run cmake-full ctest --test-dir "$dir" --output-on-failure
+run cmake-full cmake --build "$dir" --parallel "$JOBS"
+run cmake-full ctest --test-dir "$dir" --output-on-failure -j 8
 
 header_version=$(grep '#define MC_VERSION_STRING' include/mc/version.h | sed -E 's/.*"([^"]+)".*/\1/')
 cache_version=$(grep '^CMAKE_PROJECT_VERSION:STATIC=' "$dir/CMakeCache.txt" | cut -d= -f2)
@@ -131,8 +141,8 @@ if grep -Eq '\):[[:space:]]+find_package\(Qt6' "$trace_file"; then
     fail_stage cmake-core "$trace_file contains a find_package(Qt6 call"
 fi
 
-run cmake-core cmake --build "$dir"
-run cmake-core ctest --test-dir "$dir" --output-on-failure
+run cmake-core cmake --build "$dir" --parallel "$JOBS"
+run cmake-core ctest --test-dir "$dir" --output-on-failure -j 8
 
 # ---- stage 3: qmake (BLD-03) ----
 print_stage 3 qmake
@@ -140,15 +150,15 @@ dir=build/check-qmake
 rm -rf "$dir"
 mkdir -p "$dir"
 run_in qmake "$dir" "$QMAKE_EXE" ../../mc_protocol.pro CONFIG+=debug
-run_in qmake "$dir" mingw32-make
-run_in qmake "$dir" mingw32-make check
+run_in qmake "$dir" mingw32-make "-j$JOBS"
+run_in qmake "$dir" mingw32-make "-j$JOBS" check
 
 # ---- stage 4: consumer-cmake (BLD-06) ----
 print_stage 4 consumer-cmake
 dir=build/check-consumer-cmake
 rm -rf "$dir"
 run consumer-cmake cmake -S tests/consumer_cmake -B "$dir" -G Ninja -DCMAKE_PREFIX_PATH="$QT_DIR" -DCMAKE_BUILD_TYPE=Debug
-run consumer-cmake cmake --build "$dir"
+run consumer-cmake cmake --build "$dir" --parallel "$JOBS"
 
 ctest_dry_run=$(ctest --test-dir "$dir" -N 2>&1)
 ctest_dry_run_exit=$?
@@ -176,7 +186,7 @@ dir=build/check-consumer-qmake
 rm -rf "$dir"
 mkdir -p "$dir"
 run_in consumer-qmake "$dir" "$QMAKE_EXE" ../../tests/consumer_qmake/app.pro CONFIG+=debug
-run_in consumer-qmake "$dir" mingw32-make
+run_in consumer-qmake "$dir" mingw32-make "-j$JOBS"
 
 app_exe=$(find "$dir" -iname 'app.exe' | head -n 1)
 if [ -z "$app_exe" ]; then

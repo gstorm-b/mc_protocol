@@ -158,7 +158,7 @@ One `poll` step; the whole transcript goes to `session.vec` (RPL-04 replays it).
 | G7-01 | `mutate`: a valid read with its last byte removed (truncated request) | ✓ | ✓ | ✓ | ✓ | record PLC behaviour; client: timeout → Ethernet `LinkFault` + reconnect, serial EOT + flush; the next read succeeds |
 | G7-02 | `mutate`: 3E subheader 50H → 51H; 1E command code → 7FH | ✓ | ✓ | — | — | record (silence, error or close) |
 | G7-03 | `mutate`: wrong SUM in a read request | — | — | ✓ | ✓ | NAK with an error code (record); link stays usable |
-| G7-04 | `mutate`: station number + 1 | — | — | ✓ | ✓ | noResponse (multidrop behaviour) |
+| G7-04 | `read` `D@s` with station number + 1 (`frameOverride`; a `mutate` may not change routing, spec "Safety gate") | — | — | ✓ | ✓ | noResponse (multidrop behaviour) |
 | G7-05 | `raw`: EOT (F4: EOT CR LF) while idle, then a normal read | — | — | ✓ | ✓ | read ok (C24 back in command-wait state) |
 | G7-06 | Pull the cable during G6 round 3, plug back after 5 s (manual, prompted) | ✓ | ✓ | ✓ | ✓ | Ethernet: `linkStateChanged(Disconnected, PeerClosed or TransportError)` or `linkFault`; serial: timeouts → `LinkFault` after 3; tool reconnects; round 1 restarts |
 
@@ -177,6 +177,8 @@ Each probe answers one question; the answer goes to `FINDINGS.md` whatever it is
 | G8-Q8 | Word access M9008 accepted on 1E/1C? | **none on this bench** (needs a CPU exposing M9000–M9255 through 1E/1C) | Kept for a future bench: read words `M9000` × 1; `mutate` head to M9008; read words `M9016` × 1 | M9008 accepted or rejected |
 | G8-Q6 | Error-code meanings | all | nothing to run | every `plcError` of the run is copied into the FINDINGS error-code table with its context |
 
+**Not in the v1 plans (owner decision 2026-10-02):** G8-Q3 step (b), the `mutate` that appends "0" to a 1E ASCII bit write. A mutated write can never be declared `readOnly` (spec "Safety gate"), and the safety gate cannot prove where the 6-character frame writes. G8-Q3 runs step (a) only; whether the PLC accepts 6 characters stays unanswered on hardware.
+
 ## G9 — Ahead-of-scope captures (optional, once per PLC × family)
 
 Recorded only; no library code uses them yet. They become the first real vectors for v1.1 (random access) and v2 (4E/4C, pipelining).
@@ -190,6 +192,8 @@ Recorded only; no library code uses them yet. They become the first real vectors
 | G9-05 | `raw` 0401 with iQ-R subcommand 0002 / 0003 (read `D@s` × 1, `M@s` × 8) | ✓ | — | ✓ | — |
 | G9-06 | `raw` two 3E read frames in one TCP write (pipelining probe) | ✓ | — | — | — |
 | G9-07 | `raw` the same read as 4E (serial 1234H) if the module has 4E | ✓ | — | — | — |
+
+**Not in the v1 plans (owner decision 2026-10-02):** G9-02, G9-03 and G9-04 write through frames `MockPlc` does not decode (`1402`, 1E `04H`/`05H`, 1C `BT`/`WT`), so the safety gate cannot prove the writes land in scratch. They stay listed here for v1.1 and are not captured until the gate can check them.
 
 ## GB — Timing benchmark (every profile)
 

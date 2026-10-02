@@ -1,0 +1,11 @@
+{
+  "schema": 1,
+  "plan": { "id": "e2e_fault", "title": "hil_tool end-to-end plan: virtual_plc is killed before F-03 and restarted (not a catalogue plan)", "family": "qna-ethernet" },
+  "steps": [
+    { "id": "F-01", "kind": "read", "device": "D@s", "expect": { "kind": "ok", "values": [1234] } },
+    { "id": "F-02", "kind": "write", "device": "D@s", "values": [5, 6], "readBack": true },
+    { "id": "F-03", "kind": "read", "device": "D@s", "expect": { "kind": "ok", "values": [5] } },
+    { "id": "F-04", "kind": "read", "device": "D@s", "expect": { "kind": "ok", "values": [1234] } },
+    { "id": "F-05", "kind": "write", "device": "D@s", "values": [8], "readBack": true }
+  ]
+}

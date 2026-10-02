@@ -1,0 +1,80 @@
+{
+  "schema": 1,
+  "plan": {
+    "id": "fixture_3e_drop",
+    "title": "replay fixture plan: the peer closes the link while an ad-hoc write of a poll is outstanding, then the poll reconnects and restarts, against virtual_plc behind a proxy (not a catalogue plan, not hardware)",
+    "family": "qna-ethernet"
+  },
+  "steps": [
+    {
+      "id": "P-01",
+      "kind": "read",
+      "device": "D@s",
+      "expect": {
+        "kind": "ok",
+        "values": [
+          1234
+        ]
+      }
+    },
+    {
+      "id": "P-02",
+      "kind": "poll",
+      "heartbeat": "M@s+200",
+      "rounds": 8,
+      "subscribe": [
+        {
+          "name": "d",
+          "device": "D@s",
+          "count": 4
+        },
+        {
+          "name": "m",
+          "device": "M@s+200",
+          "count": 4
+        }
+      ],
+      "actions": [
+        {
+          "after": 2,
+          "write": {
+            "device": "D@s+1",
+            "values": [
+              7
+            ]
+          }
+        },
+        {
+          "after": 5,
+          "write": {
+            "device": "D@s+2",
+            "values": [
+              9
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "P-03",
+      "kind": "read",
+      "device": "D@s",
+      "expect": {
+        "kind": "ok",
+        "values": [
+          1234
+        ]
+      }
+    },
+    {
+      "id": "P-04",
+      "kind": "write",
+      "device": "D@s+10",
+      "values": [
+        5,
+        6
+      ],
+      "readBack": true
+    }
+  ]
+}

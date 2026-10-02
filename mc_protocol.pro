@@ -9,6 +9,7 @@
 # ".subdir" would produce (verified empirically against qmake 3.1 / Qt 6.11.1).
 TEMPLATE = subdirs
 
-SUBDIRS = tests_qmake examples_qmake
+SUBDIRS = tests_qmake examples_qmake tools_qmake
 tests_qmake.file = tests/qmake/tests.pro
 examples_qmake.file = examples/qmake/examples.pro
+tools_qmake.file = tools/qmake/tools.pro

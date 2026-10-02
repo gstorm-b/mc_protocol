@@ -32,6 +32,10 @@ endif()
 
 add_subdirectory(src)
 
+if(MC_BUILD_TOOLS)
+    add_subdirectory(tools)
+endif()
+
 if(MC_BUILD_TESTS)
     enable_testing()
     add_subdirectory(tests)

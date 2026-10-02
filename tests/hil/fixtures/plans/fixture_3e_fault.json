@@ -1,0 +1,80 @@
+{
+  "schema": 1,
+  "plan": {
+    "id": "fixture_3e_fault",
+    "title": "replay fixture plan: a poll in which the link faults, reconnects and restarts (the shape of catalogue G7-06), against virtual_plc behind a delaying proxy (not a catalogue plan, not hardware)",
+    "family": "qna-ethernet"
+  },
+  "steps": [
+    {
+      "id": "L-01",
+      "kind": "read",
+      "device": "D@s",
+      "expect": {
+        "kind": "ok",
+        "values": [
+          1234
+        ]
+      }
+    },
+    {
+      "id": "L-02",
+      "kind": "poll",
+      "heartbeat": "M@s+200",
+      "rounds": 12,
+      "subscribe": [
+        {
+          "name": "d",
+          "device": "D@s",
+          "count": 4
+        },
+        {
+          "name": "m",
+          "device": "M@s+200",
+          "count": 4
+        }
+      ],
+      "actions": [
+        {
+          "after": 1,
+          "write": {
+            "device": "D@s+1",
+            "values": [
+              7
+            ]
+          }
+        },
+        {
+          "after": 8,
+          "write": {
+            "device": "D@s+2",
+            "values": [
+              9
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "L-03",
+      "kind": "read",
+      "device": "D@s",
+      "expect": {
+        "kind": "ok",
+        "values": [
+          1234
+        ]
+      }
+    },
+    {
+      "id": "L-04",
+      "kind": "write",
+      "device": "D@s+10",
+      "values": [
+        5,
+        6
+      ],
+      "readBack": true
+    }
+  ]
+}

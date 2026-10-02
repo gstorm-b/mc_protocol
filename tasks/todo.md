@@ -845,22 +845,22 @@
 
 ### Checkpoint E: all four frames through every layer (baton T-055; batch 6c)
 - [x] `scripts/check.ps1` green with both compilers; `check.sh` in Git Bash; coverage targets of every std module met.
-- [ ] Owner review before the tooling phase.
+- [x] Owner review before the tooling phase. (owner approved 2026-10-02)
 
 ---
 
 ## Phase 7: Hardware capture tooling (`SPEC-hil-capture.md`)
 
-### T47: `tools/` wiring, profile and plan loading
+### T47: `tools/` wiring, profile and plan loading (baton T-057)
 
 **Description:** `MC_BUILD_TOOLS`, `tools/hil_capture` target, profile JSON (identity, scratch, `deviceEnd`, `supports`, `specialBit`/`specialWord`, embedded `McDeviceConfig`), plan JSON with device references (`D@s`, `M@s16`, `D@end+1`), example profiles.
 
 **Acceptance criteria:**
-- [ ] HIL-01 passes (example profiles load; bad radix or unknown type rejected with its path).
-- [ ] Every device reference form resolves against an example profile.
+- [x] HIL-01 passes (example profiles load; bad radix or unknown type rejected with its path).
+- [x] Every device reference form resolves against an example profile.
 
 **Verification:**
-- [ ] `ctest -L hil_tool`.
+- [x] `ctest -L hil_tool`.
 
 **Dependencies:** Checkpoint E
 
@@ -868,15 +868,15 @@
 
 **Scope:** M
 
-### T48: Safety gate and dry run
+### T48: Safety gate and dry run (baton T-058)
 
 **Description:** Scratch checks for `write`, `poll`, `mutate` and `raw` steps (the last two decoded through `MockPlc`), whole-run refusal, profile-id confirmation, `--dry-run` printing the encoded frames.
 
 **Acceptance criteria:**
-- [ ] HIL-02 and HIL-03 pass; there is no flag that bypasses the gate.
+- [x] HIL-02 and HIL-03 pass; there is no flag that bypasses the gate.
 
 **Verification:**
-- [ ] `ctest -L hil_tool`.
+- [x] `ctest -L hil_tool`.
 
 **Dependencies:** T47
 
@@ -884,16 +884,16 @@
 
 **Scope:** M
 
-### T49: `RecordingTransport` and capture writer
+### T49: `RecordingTransport` and capture writer (baton T-059)
 
 **Description:** The recording decorator (nanosecond stamps on every chunk) and the writers for `steps.vec`, `session.vec`, `run.meta` (no IP, TCP port or COM name) and `bench.csv`.
 
 **Acceptance criteria:**
-- [ ] HIL-05 passes: the shared loader reads every written file with all metadata keys intact.
-- [ ] `run.meta` contains every `FrameConfig` and `SessionConfig` field and no network or port identifier.
+- [x] HIL-05 passes: the shared loader reads every written file with all metadata keys intact.
+- [x] `run.meta` contains every `FrameConfig` and `SessionConfig` field and no network or port identifier.
 
 **Verification:**
-- [ ] `ctest -L hil_tool`.
+- [x] `ctest -L hil_tool`.
 
 **Dependencies:** T48
 
@@ -901,15 +901,15 @@
 
 **Scope:** M
 
-### T50: Step runner and end-to-end run against `virtual_plc`
+### T50: Step runner and end-to-end run against `virtual_plc` (baton T-060)
 
 **Description:** Execution of `write`, `read`, `poll`, `mutate`, `raw` steps with expectations, reconnect after faults, the console summary.
 
 **Acceptance criteria:**
-- [ ] HIL-04: a 3E Binary profile against `virtual_plc` writes a full capture set.
+- [x] HIL-04: a 3E Binary profile against `virtual_plc` writes a full capture set.
 
 **Verification:**
-- [ ] `ctest -L hil_tool`; manual `hil_capture --dry-run` then a real run against `virtual_plc`.
+- [x] `ctest -L hil_tool`; manual `hil_capture --dry-run` then a real run against `virtual_plc`.
 
 **Dependencies:** T49
 
@@ -917,15 +917,15 @@
 
 **Scope:** M
 
-### T51: Replay tests `mc_replay_tests`
+### T51: Replay tests `mc_replay_tests` (baton T-061)
 
 **Description:** The std-only replay binary (label `replay`): re-encode, parse, mock conformance, session replay, capture sanity, divergence bookkeeping; skips cleanly when no capture exists.
 
 **Acceptance criteria:**
-- [ ] RPL-01…06 pass on the capture set produced in T50; with an empty `tests/vectors/captured/` the binary passes with a "no captures" note.
+- [x] RPL-01…06 pass on the capture set produced in T50; with an empty `tests/vectors/captured/` the binary passes with a "no captures" note.
 
 **Verification:**
-- [ ] `ctest -L replay` (both compilers).
+- [x] `ctest -L replay` (both compilers).
 
 **Dependencies:** T50
 
@@ -933,15 +933,15 @@
 
 **Scope:** S
 
-### T52: Timing benchmark and `BENCH.md`
+### T52: Timing benchmark and `BENCH.md` (baton T-062)
 
 **Description:** `bench` steps (200 repetitions, 1 warm-up, spacing by `cycleIntervalMs`, `--plc-state`), `bench.csv`, `hil_capture --report` generating `docs/hil/BENCH.md` with RUN and STOP columns and the measurement caveats.
 
 **Acceptance criteria:**
-- [ ] HIL-06 passes; a bench run against `virtual_plc` produces a readable `BENCH.md`.
+- [x] HIL-06 passes; a bench run against `virtual_plc` produces a readable `BENCH.md`.
 
 **Verification:**
-- [ ] `ctest -L hil_tool`; manual `--only GB` run against `virtual_plc`, then `--report`.
+- [x] `ctest -L hil_tool`; manual `--only GB` run against `virtual_plc`, then `--report`.
 
 **Dependencies:** T50
 
@@ -949,15 +949,15 @@
 
 **Scope:** M
 
-### T53: Plans for the four frame families
+### T53: Plans for the four frame families (baton T-063)
 
 **Description:** `tests/hil/plans/{qna_ethernet,a1e,qna_serial,a1c}.json`, the machine form of `docs/hil/COMMAND-CATALOGUE.md` with identical step ids.
 
 **Acceptance criteria:**
-- [ ] Every catalogue step id appears in exactly one plan (checked by a test); each plan passes `--dry-run` against a matching example profile.
+- [x] Every catalogue step id appears in exactly one plan (checked by a test); each plan passes `--dry-run` against a matching example profile.
 
 **Verification:**
-- [ ] `ctest -L hil_tool`; four dry runs.
+- [x] `ctest -L hil_tool`; four dry runs.
 
 **Dependencies:** T51, T52
 
@@ -965,8 +965,8 @@
 
 **Scope:** M
 
-### Checkpoint F: tooling ready
-- [ ] `scripts/check.ps1` green; the whole capture flow proven against `virtual_plc` (Ethernet and serial).
+### Checkpoint F: tooling ready (baton T-064; parallel check scripts T-056)
+- [x] `scripts/check.ps1` green; the whole capture flow proven against `virtual_plc` (Ethernet and serial). (T-064)
 - [ ] **Owner gate (open by choice until now):** scratch area decided for each PLC; FX3 manual checked (special relay/register addresses through 1E/1C; computer link formats 1 and 4).
 
 ---

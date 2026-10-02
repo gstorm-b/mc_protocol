@@ -1,0 +1,519 @@
+# id: CAP-vplc-3e-bin-drop-P-02-T0001
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: tx  t_ns: 63700300  seq: 5
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0002
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: rx  t_ns: 64612300  seq: 7
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0003
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: tx  t_ns: 64655500  seq: 8
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 20 01 00 90 01 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0004
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: rx  t_ns: 65313100  seq: 9
+D0 00 00 FF FF 03 00 04 00 00 00 00 10
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0005
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: tx  t_ns: 65352100  seq: 10
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0006
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: rx  t_ns: 65894800  seq: 11
+D0 00 00 FF FF 03 00 0A 00 00 00 D2 04 00 00 00 00 00 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0007
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: tx  t_ns: 113117300  seq: 15
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0008
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: rx  t_ns: 114070000  seq: 16
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0009
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: tx  t_ns: 114156400  seq: 17
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 20 01 00 90 01 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0010
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: rx  t_ns: 114817800  seq: 18
+D0 00 00 FF FF 03 00 04 00 00 00 00 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0011
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: tx  t_ns: 114852800  seq: 19
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0012
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: rx  t_ns: 115529100  seq: 22
+D0 00 00 FF FF 03 00 0A 00 00 00 D2 04 00 00 00 00 00 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0013
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: tx  t_ns: 118126700  seq: 25
+50 00 00 FF FF 03 00 0E 00 10 00 01 14 00 00 65 00 00 A8 01 00 07 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0014
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: tx  t_ns: 132101800  seq: 30
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0015
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: rx  t_ns: 134299000  seq: 32
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0016
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: tx  t_ns: 134349300  seq: 33
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 20 01 00 90 01 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0017
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: rx  t_ns: 135344800  seq: 34
+D0 00 00 FF FF 03 00 04 00 00 00 00 10
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0018
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: tx  t_ns: 135369100  seq: 35
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0019
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: rx  t_ns: 135772500  seq: 36
+D0 00 00 FF FF 03 00 0A 00 00 00 D2 04 00 00 00 00 00 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0020
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: tx  t_ns: 183438700  seq: 40
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0021
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: rx  t_ns: 184474000  seq: 41
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0022
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: tx  t_ns: 184506400  seq: 42
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 20 01 00 90 01 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0023
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: rx  t_ns: 184854200  seq: 43
+D0 00 00 FF FF 03 00 04 00 00 00 00 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0024
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: tx  t_ns: 184884100  seq: 44
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0025
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: rx  t_ns: 185305800  seq: 47
+D0 00 00 FF FF 03 00 0A 00 00 00 D2 04 00 00 00 00 00 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0026
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: tx  t_ns: 234189900  seq: 50
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0027
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: rx  t_ns: 234889500  seq: 51
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0028
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: tx  t_ns: 234928500  seq: 52
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 20 01 00 90 01 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0029
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: rx  t_ns: 235786800  seq: 53
+D0 00 00 FF FF 03 00 04 00 00 00 00 10
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0030
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: tx  t_ns: 235816000  seq: 54
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0031
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: rx  t_ns: 236624300  seq: 57
+D0 00 00 FF FF 03 00 0A 00 00 00 D2 04 00 00 00 00 00 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0032
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: tx  t_ns: 237732400  seq: 60
+50 00 00 FF FF 03 00 0E 00 10 00 01 14 00 00 66 00 00 A8 01 00 09 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0033
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: rx  t_ns: 238747000  seq: 62
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0034
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: tx  t_ns: 284421300  seq: 64
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0035
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: rx  t_ns: 285599800  seq: 65
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0036
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: tx  t_ns: 285629200  seq: 66
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 20 01 00 90 01 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0037
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: rx  t_ns: 286401300  seq: 67
+D0 00 00 FF FF 03 00 04 00 00 00 00 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0038
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: tx  t_ns: 286439000  seq: 68
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0039
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: rx  t_ns: 287257800  seq: 71
+D0 00 00 FF FF 03 00 0A 00 00 00 D2 04 00 00 09 00 00 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0040
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: tx  t_ns: 334330800  seq: 75
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0041
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: rx  t_ns: 334912300  seq: 76
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0042
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: tx  t_ns: 334939600  seq: 77
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 20 01 00 90 01 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0043
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: rx  t_ns: 335797500  seq: 78
+D0 00 00 FF FF 03 00 04 00 00 00 00 10
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0044
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: tx  t_ns: 335858200  seq: 79
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0045
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: rx  t_ns: 336879300  seq: 82
+D0 00 00 FF FF 03 00 0A 00 00 00 D2 04 00 00 09 00 00 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0046
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: tx  t_ns: 384388600  seq: 85
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0047
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: rx  t_ns: 385102700  seq: 86
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0048
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: tx  t_ns: 385126300  seq: 87
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 20 01 00 90 01 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0049
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: rx  t_ns: 385837300  seq: 88
+D0 00 00 FF FF 03 00 04 00 00 00 00 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0050
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: tx  t_ns: 385879300  seq: 89
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-T0051
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: rx  t_ns: 386724300  seq: 92
+D0 00 00 FF FF 03 00 0A 00 00 00 D2 04 00 00 09 00 00 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-I0001
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: input  input: heartbeat  t_ns: 52252800  seq: 1
+# enabled: true  device: M300
+07 01 04 2C 01 00 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-I0002
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: input  input: subscribe  t_ns: 52279300  seq: 2
+# name: d  device: D100  count: 4
+08 09 64 00 00 00 04 00 00 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-I0003
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: input  input: subscribe  t_ns: 52291700  seq: 3
+# name: m  device: M300  count: 4
+08 04 2C 01 00 00 04 00 00 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-E0001
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: event  event: linkState  t_ns: 63342600  seq: 4
+# state: Connecting  reason: Requested
+05 01 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-E0002
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: event  event: linkState  t_ns: 63733700  seq: 6
+# state: Connected  reason: Requested
+05 02 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-E0003
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: event  event: snapshot  t_ns: 65982300  seq: 12
+# type: M  round: 1  segments: M300x4  chunks: ok
+01 2C 01 00 00 04 00 00 00 01 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3e-bin-drop-P-02-E0004
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: event  event: snapshot  t_ns: 66038900  seq: 13
+# type: D  round: 1  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 D2 04 00 00 00 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3e-bin-drop-P-02-E0005
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: event  event: cycleDone  t_ns: 66053600  seq: 14
+# round: 1  duration_ms: 3  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 01 00 00 00 1D 00 00 00 00 00 00 00 03 00 00 00 03 00 00 00 01
+
+# id: CAP-vplc-3e-bin-drop-P-02-E0006
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: event  event: valuesChanged  t_ns: 114881900  seq: 20
+# type: M  round: 2  changes: 1
+02 2C 01 00 00 01 00 00 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-E0007
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: event  event: snapshot  t_ns: 114911200  seq: 21
+# type: M  round: 2  segments: M300x4  chunks: ok
+01 2C 01 00 00 04 00 00 00 00 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3e-bin-drop-P-02-E0008
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: event  event: snapshot  t_ns: 115650500  seq: 23
+# type: D  round: 2  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 D2 04 00 00 00 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3e-bin-drop-P-02-E0009
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: event  event: cycleDone  t_ns: 115715400  seq: 24
+# round: 2  duration_ms: 2  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 02 00 00 00 4F 00 00 00 00 00 00 00 02 00 00 00 03 00 00 00 01
+
+# id: CAP-vplc-3e-bin-drop-P-02-I0004
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: input  input: write  t_ns: 118151200  seq: 26
+# op: WriteWords  device: D101  count: 1
+0A 03 09 65 00 00 00 01 00 07 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-E0010
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: event  event: requestFinished  t_ns: 119453400  seq: 27
+# request_id: 1  outcome: transportError LinkDown  bytes: 0
+04
+
+# id: CAP-vplc-3e-bin-drop-P-02-E0011
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: event  event: linkState  t_ns: 119468300  seq: 28
+# state: Disconnected  reason: PeerClosed
+05 00 02
+
+# id: CAP-vplc-3e-bin-drop-P-02-E0012
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: event  event: linkState  t_ns: 131879300  seq: 29
+# state: Connecting  reason: Requested
+05 01 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-E0013
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: event  event: linkState  t_ns: 132137600  seq: 31
+# state: Connected  reason: Requested
+05 02 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-E0014
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: event  event: snapshot  t_ns: 135859200  seq: 37
+# type: M  round: 1  segments: M300x4  chunks: ok
+01 2C 01 00 00 04 00 00 00 01 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3e-bin-drop-P-02-E0015
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: event  event: snapshot  t_ns: 135905900  seq: 38
+# type: D  round: 1  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 D2 04 00 00 00 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3e-bin-drop-P-02-E0016
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: event  event: cycleDone  t_ns: 135922500  seq: 39
+# round: 1  duration_ms: 4  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 01 00 00 00 62 00 00 00 00 00 00 00 04 00 00 00 03 00 00 00 01
+
+# id: CAP-vplc-3e-bin-drop-P-02-E0017
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: event  event: valuesChanged  t_ns: 184908100  seq: 45
+# type: M  round: 2  changes: 1
+02 2C 01 00 00 01 00 00 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-E0018
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: event  event: snapshot  t_ns: 184933200  seq: 46
+# type: M  round: 2  segments: M300x4  chunks: ok
+01 2C 01 00 00 04 00 00 00 00 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3e-bin-drop-P-02-E0019
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: event  event: snapshot  t_ns: 185367300  seq: 48
+# type: D  round: 2  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 D2 04 00 00 00 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3e-bin-drop-P-02-E0020
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: event  event: cycleDone  t_ns: 185396200  seq: 49
+# round: 2  duration_ms: 2  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 02 00 00 00 95 00 00 00 00 00 00 00 02 00 00 00 03 00 00 00 01
+
+# id: CAP-vplc-3e-bin-drop-P-02-E0021
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: event  event: valuesChanged  t_ns: 235836400  seq: 55
+# type: M  round: 3  changes: 1
+02 2C 01 00 00 00 00 01 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-E0022
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: event  event: snapshot  t_ns: 235860000  seq: 56
+# type: M  round: 3  segments: M300x4  chunks: ok
+01 2C 01 00 00 04 00 00 00 01 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3e-bin-drop-P-02-E0023
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: event  event: snapshot  t_ns: 236683800  seq: 58
+# type: D  round: 3  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 D2 04 00 00 00 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3e-bin-drop-P-02-E0024
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: event  event: cycleDone  t_ns: 236715100  seq: 59
+# round: 3  duration_ms: 3  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 03 00 00 00 C8 00 00 00 00 00 00 00 03 00 00 00 03 00 00 00 01
+
+# id: CAP-vplc-3e-bin-drop-P-02-I0005
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: input  input: write  t_ns: 237756800  seq: 61
+# op: WriteWords  device: D102  count: 1
+0A 03 09 66 00 00 00 01 00 09 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-E0025
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: event  event: requestFinished  t_ns: 238790400  seq: 63
+# request_id: 2  outcome: ok  bytes: 0
+04
+
+# id: CAP-vplc-3e-bin-drop-P-02-E0026
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: event  event: valuesChanged  t_ns: 286463000  seq: 69
+# type: M  round: 4  changes: 1
+02 2C 01 00 00 01 00 00 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-E0027
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: event  event: snapshot  t_ns: 286488800  seq: 70
+# type: M  round: 4  segments: M300x4  chunks: ok
+01 2C 01 00 00 04 00 00 00 00 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3e-bin-drop-P-02-E0028
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: event  event: valuesChanged  t_ns: 287302300  seq: 72
+# type: D  round: 4  changes: 1
+02 66 00 00 00 00 00 09 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-E0029
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: event  event: snapshot  t_ns: 287314600  seq: 73
+# type: D  round: 4  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 D2 04 00 00 09 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3e-bin-drop-P-02-E0030
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: event  event: cycleDone  t_ns: 287339100  seq: 74
+# round: 4  duration_ms: 3  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 04 00 00 00 FA 00 00 00 00 00 00 00 03 00 00 00 03 00 00 00 01
+
+# id: CAP-vplc-3e-bin-drop-P-02-E0031
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: event  event: valuesChanged  t_ns: 335900000  seq: 80
+# type: M  round: 5  changes: 1
+02 2C 01 00 00 00 00 01 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-E0032
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: event  event: snapshot  t_ns: 335937800  seq: 81
+# type: M  round: 5  segments: M300x4  chunks: ok
+01 2C 01 00 00 04 00 00 00 01 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3e-bin-drop-P-02-E0033
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: event  event: snapshot  t_ns: 336921200  seq: 83
+# type: D  round: 5  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 D2 04 00 00 09 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3e-bin-drop-P-02-E0034
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: event  event: cycleDone  t_ns: 336952700  seq: 84
+# round: 5  duration_ms: 3  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 05 00 00 00 2C 01 00 00 00 00 00 00 03 00 00 00 03 00 00 00 01
+
+# id: CAP-vplc-3e-bin-drop-P-02-E0035
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: event  event: valuesChanged  t_ns: 385903700  seq: 90
+# type: M  round: 6  changes: 1
+02 2C 01 00 00 01 00 00 00
+
+# id: CAP-vplc-3e-bin-drop-P-02-E0036
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: event  event: snapshot  t_ns: 385926600  seq: 91
+# type: M  round: 6  segments: M300x4  chunks: ok
+01 2C 01 00 00 04 00 00 00 00 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3e-bin-drop-P-02-E0037
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: event  event: snapshot  t_ns: 386782500  seq: 93
+# type: D  round: 6  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 D2 04 00 00 09 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3e-bin-drop-P-02-E0038
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: event  event: cycleDone  t_ns: 386820700  seq: 94
+# round: 6  duration_ms: 3  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 06 00 00 00 5E 01 00 00 00 00 00 00 03 00 00 00 03 00 00 00 01
+
+# id: CAP-vplc-3e-bin-drop-P-02-E0039
+# source: plc  profile: vplc-3e-bin-drop  step: P-02
+# kind: event  event: linkState  t_ns: 388514500  seq: 95
+# state: Disconnected  reason: Requested
+05 00 00
+

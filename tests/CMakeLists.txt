@@ -283,6 +283,35 @@ if(MC_BUILD_MOCK)
     endif()
 endif()
 
+# mc_replay_tests (SPEC-hil-capture.md "Replay tests", label `replay`): RPL-01..06 on capture
+# folders, no hardware. Std-only: links mc::mock (and through it mc::core) and the .vec loader,
+# never Qt. The committed fixtures (tests/hil/fixtures/, captures of examples/virtual_plc, not
+# hardware) keep the checks running on every build; MC_REPLAY_SCRATCH_DIR is where the negative
+# tests damage their copies.
+if(MC_BUILD_MOCK)
+    add_executable(mc_replay_tests
+        hil/replay/replay_main.cpp
+        hil/replay/replay_options.h
+        hil/replay/replay.h
+        hil/replay/replay.cpp
+        hil/replay/replay_session.cpp
+        hil/replay/replay_util.h
+        hil/replay/replay_util.cpp
+        hil/test_replay.cpp
+    )
+    target_link_libraries(mc_replay_tests PRIVATE mc::mock mc::core mc_doctest mc_test_vectors)
+    target_include_directories(mc_replay_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/hil)
+    target_compile_definitions(mc_replay_tests PRIVATE
+        MC_TESTS_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}"
+        MC_REPLAY_SCRATCH_DIR="${CMAKE_CURRENT_BINARY_DIR}/replay_scratch"
+    )
+    mc_apply_warnings(mc_replay_tests)
+    mc_apply_coverage(mc_replay_tests)
+
+    add_test(NAME replay.mc_replay_tests COMMAND mc_replay_tests)
+    set_tests_properties(replay.mc_replay_tests PROPERTIES LABELS "replay")
+endif()
+
 # Device layer tests (SPEC-qt-device.md, label `device`): QtTest binaries, one per tests/device/
 # tst_*.cpp (each has its own QTEST_GUILESS_MAIN), all loopback on 127.0.0.1. Built only when the
 # device layer is, so a core-only configure (-DMC_BUILD_DEVICE=OFF) never searches for Qt.
@@ -301,15 +330,22 @@ if(MC_BUILD_DEVICE)
         mc_apply_warnings(${target})
         mc_apply_coverage(${target})
 
-        add_test(NAME device.${target} COMMAND ${target})
-        set_tests_properties(device.${target} PROPERTIES LABELS "device" TIMEOUT 120)
+        # MC_QT_TEST_GROUP (set by the caller before the call) names the ctest prefix and label;
+        # the device tests keep the default, the tool tests (tests/hil) use hil_tool.
+        set(_mc_group device)
+        if(DEFINED MC_QT_TEST_GROUP)
+            set(_mc_group ${MC_QT_TEST_GROUP})
+        endif()
+        add_test(NAME ${_mc_group}.${target} COMMAND ${target})
+        set_tests_properties(${_mc_group}.${target} PROPERTIES LABELS "${_mc_group}" TIMEOUT 120)
         # QT_ASSUME_STDERR_HAS_CONSOLE: without it QtTest prints nothing when its output is a
         # pipe (ctest, an IDE, an agent shell) on Windows, so a failing test would say nothing.
         if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.22)
-            set_tests_properties(device.${target} PROPERTIES ENVIRONMENT_MODIFICATION
-                "PATH=path_list_prepend:$<TARGET_FILE_DIR:Qt6::Core>;QT_ASSUME_STDERR_HAS_CONSOLE=set:1")
+            set(_mc_qt_env "PATH=path_list_prepend:$<TARGET_FILE_DIR:Qt6::Core>")
+            set_tests_properties(${_mc_group}.${target} PROPERTIES ENVIRONMENT_MODIFICATION
+                "${_mc_qt_env};QT_ASSUME_STDERR_HAS_CONSOLE=set:1")
         else()
-            set_tests_properties(device.${target} PROPERTIES
+            set_tests_properties(${_mc_group}.${target} PROPERTIES
                 ENVIRONMENT "QT_ASSUME_STDERR_HAS_CONSOLE=1")
         endif()
     endfunction()
@@ -358,6 +394,69 @@ if(MC_BUILD_DEVICE)
         # Only this entry opens the COM pair; the lock keeps it from running next to any other
         # entry that ever does (a virtual port is opened exclusively, one process at a time).
         set_tests_properties(device.mc_serial_tests PROPERTIES RESOURCE_LOCK mc_serial_pair)
+
+        # mc_hil_tool_tests (SPEC-hil-capture.md "Testing the tool itself", label hil_tool): the
+        # logic of tools/hil_capture, no hardware. Built only with the tool, because it links the
+        # tool's own static library (mc_hil_tool, which holds every source except main.cpp). One
+        # binary, one QtTest class per tests/hil/tst_*.cpp, run in turn by
+        # tests/hil/hil_tests_main.cpp.
+        if(MC_BUILD_TOOLS)
+            set(MC_QT_TEST_GROUP hil_tool)
+            mc_add_qt_test(mc_hil_tool_tests
+                hil/hil_tests_main.cpp
+                hil/hil_suites.h
+                hil/hil_test_support.h
+                hil/tst_hil_profile.cpp
+                hil/tst_hil_gate.cpp
+                hil/tst_hil_capture.cpp
+                hil/tst_hil_plans.cpp
+                hil/tst_hil_run.cpp)
+            unset(MC_QT_TEST_GROUP)
+            target_link_libraries(mc_hil_tool_tests PRIVATE mc_hil_tool mc::mock mc_test_vectors)
+            target_include_directories(mc_hil_tool_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/hil)
+            # Profiles and plans are read from the source tree, never through the working directory.
+            # What a test writes goes under the build tree, never to tests/vectors/captured/.
+            target_compile_definitions(mc_hil_tool_tests PRIVATE
+                MC_TESTS_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}"
+                MC_HIL_OUTPUT_DIR="${CMAKE_CURRENT_BINARY_DIR}/hil_out")
+            # The end-to-end tests start examples/virtual_plc (a separate program, built when the
+            # examples are); without it they skip. The serial suite is its own ctest entry: it opens
+            # the virtual COM pair, so it holds the same RESOURCE_LOCK as every other entry that
+            # does.
+            if(MC_BUILD_EXAMPLES)
+                target_compile_definitions(mc_hil_tool_tests PRIVATE
+                    "MC_VIRTUAL_PLC_PATH=\"$<TARGET_FILE:virtual_plc>\"")
+                add_dependencies(mc_hil_tool_tests virtual_plc)
+            else()
+                target_compile_definitions(mc_hil_tool_tests PRIVATE MC_VIRTUAL_PLC_PATH="")
+            endif()
+            # HIL-04, replay half: the end-to-end test runs mc_replay_tests on the capture it wrote.
+            if(TARGET mc_replay_tests)
+                target_compile_definitions(mc_hil_tool_tests PRIVATE
+                    "MC_REPLAY_TESTS_PATH=\"$<TARGET_FILE:mc_replay_tests>\"")
+                add_dependencies(mc_hil_tool_tests mc_replay_tests)
+            else()
+                target_compile_definitions(mc_hil_tool_tests PRIVATE MC_REPLAY_TESTS_PATH="")
+            endif()
+            add_test(NAME hil_tool.mc_hil_tool_serial COMMAND mc_hil_tool_tests --suite serial)
+            set_tests_properties(hil_tool.mc_hil_tool_serial PROPERTIES
+                LABELS "hil_tool" TIMEOUT 120 RESOURCE_LOCK mc_serial_pair)
+            if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.22)
+                set(_mc_qt_env "PATH=path_list_prepend:$<TARGET_FILE_DIR:Qt6::Core>")
+                set_tests_properties(hil_tool.mc_hil_tool_serial PROPERTIES
+                    ENVIRONMENT_MODIFICATION "${_mc_qt_env};QT_ASSUME_STDERR_HAS_CONSOLE=set:1")
+            else()
+                set_tests_properties(hil_tool.mc_hil_tool_serial PROPERTIES
+                    ENVIRONMENT "QT_ASSUME_STDERR_HAS_CONSOLE=1")
+            endif()
+
+            # hil_fault_proxy: a fixture-generation helper (tests/hil/fixtures/make), not a test. It
+            # makes a link fault on purpose when a replay fixture has to be captured again. Built so
+            # it cannot rot; no ctest entry and no qmake twin.
+            add_executable(hil_fault_proxy hil/fixtures/make/fault_proxy.cpp)
+            target_link_libraries(hil_fault_proxy PRIVATE Qt6::Core Qt6::Network)
+            mc_apply_warnings(hil_fault_proxy)
+        endif()
     endif()
 
     # mc_coverage_report_device (T-040, Checkpoint D): the same script as the reports above,

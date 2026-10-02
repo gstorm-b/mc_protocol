@@ -125,11 +125,16 @@ Expectations: `ok`, `ok + values`, `plcError` (any PLC error, code recorded), `t
 
 Before connecting, the tool resolves every step of the run and checks every write:
 
-- `write` and `poll` steps: head … head + count − 1 must lie inside one scratch range of that type.
-- `mutate` and `raw` steps: the tool feeds the frame to an `mc::MockPlc` configured like the profile and reads `requests()` to learn what the frame asks for; a write outside scratch refuses the run. A frame the mock cannot decode must be declared `readOnly: true` in the plan, and the tool asks for confirmation before sending it.
+- `write` steps and every write of a `poll` step (heartbeat, ad-hoc writes): head … head + count − 1 must lie inside one scratch range of that type. A poll subscription only reads: one outside scratch (e.g. inputs `X0` × 32 in catalogue G6) must be marked `"input": true` in the plan, otherwise it is refused like a write (amended 2026-10-02, owner decision).
+- `mutate` and `raw` steps: the tool feeds the frame to an `mc::MockPlc` configured like the profile and reads `requests()` to learn what the frame asks for; a write outside scratch refuses the run. Every part of a frame the mock decodes as a write (words or bits, also one starting mid-frame) is checked by the point numbers it covers. A frame the mock cannot fully decode must be declared `readOnly: true` in the plan and is listed for confirmation before sending (amended 2026-10-02, owner decision, after a truncated write declared `readOnly` was completed by the next frame's bytes and wrote outside scratch):
+  - a `mutate` whose base request is a write can never be `readOnly`;
+  - a `readOnly` frame must carry `recover: reconnect` (Ethernet) or `recover: eot` (serial); the tool performs that recovery before the next frame, so no later byte can complete it or be swallowed by it;
+  - **default deny** (amended 2026-10-03, enforcing decision H2): in every `raw` and `mutate` frame, `readOnly` or not, the tool itself locates every command at every frame start the port could accept (Ethernet: 3E and 4E in both codes at any offset, 1E on a 1E profile; serial: every ENQ/STX with any frame ID, after EOT too). Each command must be either in the family's allow-list of read-only commands (the batch, random and block reads the reference spec lists) or a write the mock decodes at that offset with every covered point in scratch; anything else refuses the run. A frame with no locatable command is a fragment and relies on the `recover` rule above. Catalogue steps that write through commands the mock does not decode stay out of the plans (G9-02…04, G8-Q3 (b)).
+  - `frameOverride` may not change `frame`, `code`, `format`, `sumCheck` or routing (network, PC, I/O, station, `stationNo`, `selfStation`) on `raw` and `mutate` steps, and no step that writes may change routing: a write must reach the PLC whose scratch was declared. Reads may change routing (e.g. catalogue G7-04).
+  - Residual risk, documented in `tools/hil_capture/safety_gate.h`: the gate knows the command sets of the reference spec; a vendor command outside them that writes is out of its sight.
 - Any violation refuses the **whole run** and prints every offending step. There is no override flag.
 
-The tool then prints the PLC identity, transport and scratch area, and waits for the operator to type the profile id (`--yes` skips the prompt for repeated runs of an already-checked profile).
+The tool then prints the PLC identity, transport and scratch area, and waits for the operator to type the profile id. `--yes` skips the prompt for repeated runs of an already-checked profile, **except** when the run contains `readOnly` frames: then the profile id must always be typed (amended 2026-10-02, owner decision).
 
 ## The capture tool: `tools/hil_capture`
 

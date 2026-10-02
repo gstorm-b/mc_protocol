@@ -1,0 +1,12 @@
+{
+  "schema": 1,
+  "plan": { "id": "e2e_bench", "title": "hil_tool bench steps against virtual_plc (not a catalogue plan)", "family": "qna-ethernet" },
+  "steps": [
+    { "id": "GB-01", "kind": "bench", "request": { "kind": "read", "device": "D@s" } },
+    { "id": "GB-02", "kind": "bench", "request": { "kind": "read", "device": "D@s", "count": 64 } },
+    { "id": "GB-07", "kind": "bench", "request": { "kind": "write", "device": "D@s", "values": [1] } },
+    { "id": "G6", "kind": "poll", "heartbeat": "M@s+200", "rounds": 2,
+      "subscribe": [ { "name": "d", "device": "D@s", "count": 4 }, { "name": "m", "device": "M@s+200", "count": 4 } ] },
+    { "id": "GB-10", "kind": "bench", "pollSet": "G6" }
+  ]
+}

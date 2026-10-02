@@ -1,0 +1,119 @@
+{
+  "schema": 1,
+  "profile": {
+    "id": "vplc-3c-f4",
+    "plc": "virtual_plc",
+    "module": "MockPlc",
+    "firmware": "n/a",
+    "adapter": "",
+    "plcState": "RUN (virtual_plc fixture, not hardware)",
+    "scratch": [
+      "D100-D2099",
+      "W100-W1FF",
+      "R0-R99",
+      "M100-M2099",
+      "B100-B1FF",
+      "Y20-Y2F"
+    ],
+    "deviceEnd": {
+      "D": 12287,
+      "M": 8191,
+      "W": "1FFF",
+      "B": "1FFF",
+      "X": "1FFF",
+      "Y": "1FFF",
+      "R": 32767
+    },
+    "supports": [
+      "D",
+      "W",
+      "R",
+      "ZR",
+      "M",
+      "L",
+      "F",
+      "B",
+      "X",
+      "Y",
+      "TS",
+      "TC",
+      "TN",
+      "CS",
+      "CC",
+      "CN",
+      "SM",
+      "SD"
+    ],
+    "scanTimeDevice": "",
+    "specialBit": "SM0",
+    "specialWord": "SD0",
+    "families": [
+      "qna-serial"
+    ]
+  },
+  "device": {
+    "schema": 1,
+    "frame": {
+      "frame": "3C",
+      "code": "Ascii",
+      "network": 0,
+      "pc": 255,
+      "io": 1023,
+      "station": 0,
+      "monitoringTimer": 16,
+      "series": "QL",
+      "checkRoute": true,
+      "serialStart": 0,
+      "format": "Format4",
+      "stationNo": 0,
+      "selfStation": 0,
+      "sumCheck": true,
+      "blockNo": 0,
+      "checkBlockNo": true,
+      "sendEotOnError": true,
+      "f3ShortResponseHasSum": false,
+      "messageWait": 0,
+      "commandSet": "ACPU",
+      "e1AliasLS": false,
+      "targetFamily": "IqR_Q_L",
+      "highPerformanceQcpu": false,
+      "aSeriesTarget": false,
+      "splitWrites": false,
+      "timeoutMs": 0,
+      "readRetries": 0
+    },
+    "session": {
+      "cycleIntervalMs": 100,
+      "cycleMode": "FixedRate",
+      "bitsAsWords": true,
+      "maxGap": "auto",
+      "adHocCapacity": 64,
+      "adHocArenaBytes": 65536,
+      "maxAdHocBurst": 4,
+      "maxConsecutiveLinkErrors": 3,
+      "serialInterCharMs": 100,
+      "serialFlushMs": 50,
+      "heartbeat": {
+        "enabled": false,
+        "device": "M2000"
+      }
+    },
+    "transport": {
+      "kind": "Serial",
+      "tcp": {
+        "host": "192.0.2.10",
+        "port": 5000,
+        "connectTimeoutMs": 2000
+      },
+      "serial": {
+        "portName": "COM54",
+        "baudRate": 9600,
+        "dataBits": 7,
+        "parity": "Even",
+        "stopBits": "1",
+        "flowControl": "None"
+      }
+    },
+    "subscriptions": []
+  }
+}

@@ -1,0 +1,576 @@
+# id: CAP-vplc-3c-f4-E-12-T0001
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: tx  t_ns: 8499241200  seq: 6
+05 46 39 30 30 30 30 46 46 30 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 31 33 45 0D 0A
+
+# id: CAP-vplc-3c-f4-E-12-T0002
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 8532358200  seq: 8
+06 46 39 30 30 30 30 46 46 30 30 0D
+
+# id: CAP-vplc-3c-f4-E-12-T0003
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 8547860200  seq: 9
+0A
+
+# id: CAP-vplc-3c-f4-E-12-T0004
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: tx  t_ns: 8547908200  seq: 10
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 58 2A 30 30 30 30 30 30 30 30 30 31 31 33 0D 0A
+
+# id: CAP-vplc-3c-f4-E-12-T0005
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 8579752900  seq: 11
+02 46 39 30 30 30 30 46 46 30 30 30 30 30
+
+# id: CAP-vplc-3c-f4-E-12-T0006
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 8595375000  seq: 12
+30 03 45 45 0D 0A
+
+# id: CAP-vplc-3c-f4-E-12-T0007
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: tx  t_ns: 8595438900  seq: 13
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 32 38 38 30 30 30 31 31 41 0D 0A
+
+# id: CAP-vplc-3c-f4-E-12-T0008
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 8643564800  seq: 14
+02 46 39 30 30 30 30 46 46
+
+# id: CAP-vplc-3c-f4-E-12-T0009
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 8660005800  seq: 15
+30 30 31 30 30 30 03 45 46 0D 0A
+
+# id: CAP-vplc-3c-f4-E-12-T0010
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: tx  t_ns: 8660031700  seq: 16
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34 30 33 0D 0A
+
+# id: CAP-vplc-3c-f4-E-12-T0011
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 8692775500  seq: 17
+02 46 39 30
+
+# id: CAP-vplc-3c-f4-E-12-T0012
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 8708407900  seq: 18
+30 30 30 46 46 30 30 30 30 30 31 30 30 30 32
+
+# id: CAP-vplc-3c-f4-E-12-T0013
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 8724537900  seq: 19
+30 30 30 33 30 30 30 30 03 33 34 0D 0A
+
+# id: CAP-vplc-3c-f4-E-12-T0014
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: tx  t_ns: 8724605900  seq: 20
+05 46 39 30 30 30 30 46 46 30 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 30 33 44 0D 0A
+
+# id: CAP-vplc-3c-f4-E-12-T0015
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 8756985000  seq: 26
+06 46
+
+# id: CAP-vplc-3c-f4-E-12-T0016
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 8772715800  seq: 27
+39 30 30 30 30 46 46 30 30 0D 0A
+
+# id: CAP-vplc-3c-f4-E-12-T0017
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: tx  t_ns: 8772740100  seq: 28
+05 46 39 30 30 30 30 46 46 30 30 31 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 31 30 30 30 31 30 30 30 37 43 39 0D 0A
+
+# id: CAP-vplc-3c-f4-E-12-T0018
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 8821337600  seq: 29
+06 46 39 30
+
+# id: CAP-vplc-3c-f4-E-12-T0019
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 8837307600  seq: 30
+30 30 30 46 46 30 30 0D 0A
+
+# id: CAP-vplc-3c-f4-E-12-T0020
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: tx  t_ns: 8837341300  seq: 31
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 58 2A 30 30 30 30 30 30 30 30 30 31 31 33 0D 0A
+
+# id: CAP-vplc-3c-f4-E-12-T0021
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 8869706800  seq: 33
+02 46 39 30 30 30
+
+# id: CAP-vplc-3c-f4-E-12-T0022
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 8886016200  seq: 34
+30 46 46 30 30 30 30 30 30 03 45 45 0D 0A
+
+# id: CAP-vplc-3c-f4-E-12-T0023
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: tx  t_ns: 8886051300  seq: 35
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 32 38 38 30 30 30 31 31 41 0D 0A
+
+# id: CAP-vplc-3c-f4-E-12-T0024
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 8933972100  seq: 37
+02
+
+# id: CAP-vplc-3c-f4-E-12-T0025
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 8949662200  seq: 38
+46 39 30 30 30 30 46 46 30 30 30 30 30 30 03
+
+# id: CAP-vplc-3c-f4-E-12-T0026
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 8965927400  seq: 39
+45 45 0D 0A
+
+# id: CAP-vplc-3c-f4-E-12-T0027
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: tx  t_ns: 8966049700  seq: 40
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34 30 33 0D 0A
+
+# id: CAP-vplc-3c-f4-E-12-T0028
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 8998459300  seq: 43
+02 46 39 30 30 30 30 46 46 30 30
+
+# id: CAP-vplc-3c-f4-E-12-T0029
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 9014547100  seq: 44
+30 30 30 31 30 30 30 37 30 30 30 33 30 30 30
+
+# id: CAP-vplc-3c-f4-E-12-T0030
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 9030590500  seq: 45
+30 03 33 39 0D 0A
+
+# id: CAP-vplc-3c-f4-E-12-T0031
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: tx  t_ns: 9030656200  seq: 46
+05 46 39 30 30 30 30 46 46 30 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 31 33 45 0D 0A
+
+# id: CAP-vplc-3c-f4-E-12-T0032
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 9063262900  seq: 50
+06 46 39 30 30 30 30 46 46
+
+# id: CAP-vplc-3c-f4-E-12-T0033
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 9078770700  seq: 51
+30 30 0D 0A
+
+# id: CAP-vplc-3c-f4-E-12-T0034
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: tx  t_ns: 9078830600  seq: 52
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 58 2A 30 30 30 30 30 30 30 30 30 31 31 33 0D 0A
+
+# id: CAP-vplc-3c-f4-E-12-T0035
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 9127567700  seq: 53
+02 46 39 30 30 30 30 46 46 30 30
+
+# id: CAP-vplc-3c-f4-E-12-T0036
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 9143545100  seq: 54
+30 30 30 30 03 45 45 0D 0A
+
+# id: CAP-vplc-3c-f4-E-12-T0037
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: tx  t_ns: 9143617600  seq: 55
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 32 38 38 30 30 30 31 31 41 0D 0A
+
+# id: CAP-vplc-3c-f4-E-12-T0038
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 9175575600  seq: 57
+02 46 39 30 30 30
+
+# id: CAP-vplc-3c-f4-E-12-T0039
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 9191239500  seq: 58
+30 46 46 30 30 31 30 30 30 03 45 46 0D 0A
+
+# id: CAP-vplc-3c-f4-E-12-T0040
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: tx  t_ns: 9191312400  seq: 59
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34 30 33 0D 0A
+
+# id: CAP-vplc-3c-f4-E-12-T0041
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 9224065500  seq: 62
+02
+
+# id: CAP-vplc-3c-f4-E-12-T0042
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 9239680300  seq: 63
+46 39 30 30 30 30 46 46 30 30 30 30 30 31 30
+
+# id: CAP-vplc-3c-f4-E-12-T0043
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 9256227700  seq: 64
+30 30 37 30 30 30 33 30 30 30 30 03 33 39 0D
+
+# id: CAP-vplc-3c-f4-E-12-T0044
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 9272329600  seq: 65
+0A
+
+# id: CAP-vplc-3c-f4-E-12-T0045
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: tx  t_ns: 9272404000  seq: 66
+05 46 39 30 30 30 30 46 46 30 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 30 33 44 0D 0A
+
+# id: CAP-vplc-3c-f4-E-12-T0046
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 9320028600  seq: 71
+06 46 39 30 30 30 30 46 46 30 30 0D 0A
+
+# id: CAP-vplc-3c-f4-E-12-T0047
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: tx  t_ns: 9320090400  seq: 72
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 58 2A 30 30 30 30 30 30 30 30 30 31 31 33 0D 0A
+
+# id: CAP-vplc-3c-f4-E-12-T0048
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 9352634800  seq: 73
+02
+
+# id: CAP-vplc-3c-f4-E-12-T0049
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 9368722200  seq: 74
+46 39 30 30 30 30 46 46 30 30 30 30 30 30 03
+
+# id: CAP-vplc-3c-f4-E-12-T0050
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 9384793800  seq: 75
+45 45 0D 0A
+
+# id: CAP-vplc-3c-f4-E-12-T0051
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: tx  t_ns: 9384855400  seq: 76
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 32 38 38 30 30 30 31 31 41 0D 0A
+
+# id: CAP-vplc-3c-f4-E-12-T0052
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 9417218700  seq: 78
+02 46 39 30 30 30 30 46 46 30 30
+
+# id: CAP-vplc-3c-f4-E-12-T0053
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 9433189800  seq: 79
+30 30 30 30 03 45 45 0D 0A
+
+# id: CAP-vplc-3c-f4-E-12-T0054
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: tx  t_ns: 9433262800  seq: 80
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34 30 33 0D 0A
+
+# id: CAP-vplc-3c-f4-E-12-T0055
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 9481752100  seq: 83
+02 46 39 30 30 30
+
+# id: CAP-vplc-3c-f4-E-12-T0056
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 9497581200  seq: 84
+30 46 46 30 30 30 30 30 31 30 30 30 37 30 30
+
+# id: CAP-vplc-3c-f4-E-12-T0057
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 9513799300  seq: 85
+30 33 30 30 30 30 03 33 39 0D 0A
+
+# id: CAP-vplc-3c-f4-E-12-T0058
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: tx  t_ns: 9514415500  seq: 88
+05 46 39 30 30 30 30 46 46 30 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 31 33 45 0D 0A
+
+# id: CAP-vplc-3c-f4-E-12-T0059
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 9547661100  seq: 89
+06 46 39 30
+
+# id: CAP-vplc-3c-f4-E-12-T0060
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 9564040600  seq: 90
+30 30 30 46 46 30 30 0D 0A
+
+# id: CAP-vplc-3c-f4-E-12-T0061
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: tx  t_ns: 9564132100  seq: 91
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 58 2A 30 30 30 30 30 30 30 30 30 31 31 33 0D 0A
+
+# id: CAP-vplc-3c-f4-E-12-T0062
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 9596334900  seq: 92
+02 46 39 30 30 30
+
+# id: CAP-vplc-3c-f4-E-12-T0063
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 9612136600  seq: 93
+30 46 46 30 30 30 30 30 30 03 45 45 0D 0A
+
+# id: CAP-vplc-3c-f4-E-12-T0064
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: tx  t_ns: 9612242000  seq: 94
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 32 38 38 30 30 30 31 31 41 0D 0A
+
+# id: CAP-vplc-3c-f4-E-12-T0065
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 9660948600  seq: 96
+02
+
+# id: CAP-vplc-3c-f4-E-12-T0066
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 9676803300  seq: 97
+46 39 30 30 30 30 46 46 30 30 31 30 30 30 03
+
+# id: CAP-vplc-3c-f4-E-12-T0067
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 9693553600  seq: 98
+45 46 0D 0A
+
+# id: CAP-vplc-3c-f4-E-12-T0068
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: tx  t_ns: 9693613300  seq: 99
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 57 2A 30 30 30 31 30 30 30 30 30 34 31 36 0D 0A
+
+# id: CAP-vplc-3c-f4-E-12-T0069
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 9725931800  seq: 102
+02 46 39 30 30 30 30 46 46 30 30
+
+# id: CAP-vplc-3c-f4-E-12-T0070
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 9741621600  seq: 103
+30 30 30 30 30 30 30 30 30 30 30 30 30 30 30
+
+# id: CAP-vplc-3c-f4-E-12-T0071
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: rx  t_ns: 9757603400  seq: 104
+30 03 32 45 0D 0A
+
+# id: CAP-vplc-3c-f4-E-12-T0072
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: tx  t_ns: 9757660600  seq: 105
+05 46 39 30 30 30 30 46 46 30 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 30 33 44 0D 0A
+
+# id: CAP-vplc-3c-f4-E-12-I0001
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: input  input: heartbeat  t_ns: 8498846600  seq: 1
+# enabled: true  device: M300
+07 01 04 2C 01 00 00
+
+# id: CAP-vplc-3c-f4-E-12-I0002
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: input  input: subscribe  t_ns: 8498877800  seq: 2
+# name: d  device: D100  count: 4
+08 09 64 00 00 00 04 00 00 00
+
+# id: CAP-vplc-3c-f4-E-12-I0003
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: input  input: subscribe  t_ns: 8498891300  seq: 3
+# name: m  device: M300  count: 4
+08 04 2C 01 00 00 04 00 00 00
+
+# id: CAP-vplc-3c-f4-E-12-I0004
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: input  input: subscribe  t_ns: 8498898900  seq: 4
+# name: x  device: X0  count: 8
+08 02 00 00 00 00 08 00 00 00
+
+# id: CAP-vplc-3c-f4-E-12-E0001
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: event  event: linkState  t_ns: 8498929600  seq: 5
+# state: Connecting  reason: Requested
+05 01 00
+
+# id: CAP-vplc-3c-f4-E-12-E0002
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: event  event: linkState  t_ns: 8499320500  seq: 7
+# state: Connected  reason: Requested
+05 02 00
+
+# id: CAP-vplc-3c-f4-E-12-E0003
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: event  event: snapshot  t_ns: 8724635800  seq: 21
+# type: X  round: 1  segments: X0x8  chunks: ok
+01 00 00 00 00 08 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02
+
+# id: CAP-vplc-3c-f4-E-12-E0004
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: event  event: snapshot  t_ns: 8724702100  seq: 22
+# type: M  round: 1  segments: M300x4  chunks: ok
+01 2C 01 00 00 04 00 00 00 01 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3c-f4-E-12-E0005
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: event  event: snapshot  t_ns: 8724716700  seq: 23
+# type: D  round: 1  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 01 00 02 00 03 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3c-f4-E-12-E0006
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: event  event: cycleDone  t_ns: 8724729800  seq: 24
+# round: 1  duration_ms: 226  requests: 4  failed_chunks: 0  heartbeat_ok: true
+03 01 00 00 00 19 21 00 00 00 00 00 00 E2 00 00 00 04 00 00 00 01
+
+# id: CAP-vplc-3c-f4-E-12-I0005
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: input  input: write  t_ns: 8726381300  seq: 25
+# op: WriteWords  device: D101  count: 1
+0A 03 09 65 00 00 00 01 00 07 00
+
+# id: CAP-vplc-3c-f4-E-12-E0007
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: event  event: requestFinished  t_ns: 8837376100  seq: 32
+# request_id: 1  outcome: ok  bytes: 0
+04
+
+# id: CAP-vplc-3c-f4-E-12-E0008
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: event  event: snapshot  t_ns: 8886074700  seq: 36
+# type: X  round: 2  segments: X0x8  chunks: ok
+01 00 00 00 00 08 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02
+
+# id: CAP-vplc-3c-f4-E-12-E0009
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: event  event: valuesChanged  t_ns: 8966121100  seq: 41
+# type: M  round: 2  changes: 1
+02 2C 01 00 00 01 00 00 00
+
+# id: CAP-vplc-3c-f4-E-12-E0010
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: event  event: snapshot  t_ns: 8966168000  seq: 42
+# type: M  round: 2  segments: M300x4  chunks: ok
+01 2C 01 00 00 04 00 00 00 00 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3c-f4-E-12-E0011
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: event  event: valuesChanged  t_ns: 9030690700  seq: 47
+# type: D  round: 2  changes: 1
+02 65 00 00 00 02 00 07 00
+
+# id: CAP-vplc-3c-f4-E-12-E0012
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: event  event: snapshot  t_ns: 9030717100  seq: 48
+# type: D  round: 2  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 01 00 07 00 03 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3c-f4-E-12-E0013
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: event  event: cycleDone  t_ns: 9030756300  seq: 49
+# round: 2  duration_ms: 306  requests: 5  failed_chunks: 0  heartbeat_ok: true
+03 02 00 00 00 FB 21 00 00 00 00 00 00 32 01 00 00 05 00 00 00 01
+
+# id: CAP-vplc-3c-f4-E-12-E0014
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: event  event: snapshot  t_ns: 9143653400  seq: 56
+# type: X  round: 3  segments: X0x8  chunks: ok
+01 00 00 00 00 08 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02
+
+# id: CAP-vplc-3c-f4-E-12-E0015
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: event  event: valuesChanged  t_ns: 9191348900  seq: 60
+# type: M  round: 3  changes: 1
+02 2C 01 00 00 00 00 01 00
+
+# id: CAP-vplc-3c-f4-E-12-E0016
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: event  event: snapshot  t_ns: 9191372300  seq: 61
+# type: M  round: 3  segments: M300x4  chunks: ok
+01 2C 01 00 00 04 00 00 00 01 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3c-f4-E-12-E0017
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: event  event: snapshot  t_ns: 9272442600  seq: 67
+# type: D  round: 3  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 01 00 07 00 03 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3c-f4-E-12-E0018
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: event  event: cycleDone  t_ns: 9272499300  seq: 68
+# round: 3  duration_ms: 241  requests: 4  failed_chunks: 0  heartbeat_ok: true
+03 03 00 00 00 2D 23 00 00 00 00 00 00 F1 00 00 00 04 00 00 00 01
+
+# id: CAP-vplc-3c-f4-E-12-I0006
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: input  input: subscribe  t_ns: 9274292200  seq: 69
+# name: w  device: W100  count: 4
+08 0A 00 01 00 00 04 00 00 00
+
+# id: CAP-vplc-3c-f4-E-12-I0007
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: input  input: unsubscribe  t_ns: 9274346900  seq: 70
+# name: d
+09 64
+
+# id: CAP-vplc-3c-f4-E-12-E0019
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: event  event: snapshot  t_ns: 9384891200  seq: 77
+# type: X  round: 4  segments: X0x8  chunks: ok
+01 00 00 00 00 08 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02
+
+# id: CAP-vplc-3c-f4-E-12-E0020
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: event  event: valuesChanged  t_ns: 9433301800  seq: 81
+# type: M  round: 4  changes: 1
+02 2C 01 00 00 01 00 00 00
+
+# id: CAP-vplc-3c-f4-E-12-E0021
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: event  event: snapshot  t_ns: 9433324500  seq: 82
+# type: M  round: 4  segments: M300x4  chunks: ok
+01 2C 01 00 00 04 00 00 00 00 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3c-f4-E-12-E0022
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: event  event: snapshot  t_ns: 9513947000  seq: 86
+# type: D  round: 4  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 01 00 07 00 03 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3c-f4-E-12-E0023
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: event  event: cycleDone  t_ns: 9514039200  seq: 87
+# round: 4  duration_ms: 242  requests: 4  failed_chunks: 0  heartbeat_ok: true
+03 04 00 00 00 1E 24 00 00 00 00 00 00 F2 00 00 00 04 00 00 00 01
+
+# id: CAP-vplc-3c-f4-E-12-E0024
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: event  event: snapshot  t_ns: 9612306600  seq: 95
+# type: X  round: 5  segments: X0x8  chunks: ok
+01 00 00 00 00 08 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02
+
+# id: CAP-vplc-3c-f4-E-12-E0025
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: event  event: valuesChanged  t_ns: 9693649400  seq: 100
+# type: M  round: 5  changes: 1
+02 2C 01 00 00 00 00 01 00
+
+# id: CAP-vplc-3c-f4-E-12-E0026
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: event  event: snapshot  t_ns: 9693696500  seq: 101
+# type: M  round: 5  segments: M300x4  chunks: ok
+01 2C 01 00 00 04 00 00 00 01 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3c-f4-E-12-E0027
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: event  event: snapshot  t_ns: 9757694300  seq: 106
+# type: W  round: 5  segments: W100x4  chunks: ok
+01 00 01 00 00 04 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3c-f4-E-12-E0028
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: event  event: cycleDone  t_ns: 9757740900  seq: 107
+# round: 5  duration_ms: 244  requests: 4  failed_chunks: 0  heartbeat_ok: true
+03 05 00 00 00 10 25 00 00 00 00 00 00 F4 00 00 00 04 00 00 00 01
+
+# id: CAP-vplc-3c-f4-E-12-E0029
+# source: plc  profile: vplc-3c-f4  step: E-12
+# kind: event  event: linkState  t_ns: 9775947500  seq: 108
+# state: Disconnected  reason: Requested
+05 00 00
+

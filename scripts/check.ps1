@@ -13,8 +13,9 @@
       2. cmake-core     — MC_BUILD_DEVICE=OFF, CMAKE_PREFIX_PATH unset and the Qt kit's own
                            directory removed from PATH; configure, build, ctest; fails if the
                            --trace-expand output contains "find_package(Qt6" (BLD-02).
-      3. qmake          — <kit>/bin/qmake.exe mc_protocol.pro, then nmake (MSVC) or
-                           mingw32-make (MinGW), then the same tool with "check" (BLD-03).
+      3. qmake          — <kit>/bin/qmake.exe mc_protocol.pro, then jom (MSVC; nmake if no jom
+                           is found) or mingw32-make (MinGW), then the same tool with "check"
+                           (BLD-03).
       4. consumer-cmake — configures, builds and runs tests/consumer_cmake as its own project;
                            fails if its build tree registers any library test (BLD-06).
       5. consumer-qmake — builds and runs tests/consumer_qmake/app.pro (BLD-07).
@@ -22,6 +23,9 @@
     The toolchain is picked from the -QtDir kit name: a name containing "msvc" dot-sources
     scripts/vsdev.ps1 (the VS developer environment); a name containing "mingw" prepends
     -MinGWDir, plus the Qt-bundled CMake and Ninja, to PATH.
+
+    Every build is parallel: -Jobs (default: the logical processor count) feeds
+    "cmake --build --parallel", "jom -j" and "mingw32-make -j"; ctest runs with -j 8.
 
 .PARAMETER QtDir
     Path to the Qt kit to build against, e.g. C:/Qt/6.11.1/msvc2022_64 or
@@ -31,13 +35,29 @@
 .PARAMETER MinGWDir
     MinGW bin directory, used only when -QtDir names a mingw kit. Defaults to this machine's
     known MinGW GCC 13.1 install (agent-team/project/build-env.md).
+
+.PARAMETER Jobs
+    Parallel job count for every build and test step. Defaults to the logical processor count
+    ([Environment]::ProcessorCount). CMake stages run "cmake --build --parallel <Jobs>"; ctest
+    runs with -j 8 (device tests use OS-chosen ports; serial tests share a RESOURCE_LOCK).
+
+.PARAMETER JomPath
+    jom.exe used for the qmake stages with the MSVC kit (jom -j <Jobs>). Defaults to the Qt
+    Creator copy. If that file is missing, a jom on PATH is used; if there is none either, the
+    script falls back to single-threaded nmake and prints a note. MinGW kits use
+    "mingw32-make -j<Jobs>" and ignore this parameter.
 #>
 [CmdletBinding()]
 param(
     [Parameter(Mandatory = $true)]
     [string]$QtDir,
 
-    [string]$MinGWDir = 'C:\Qt\Tools\mingw1310_64\bin'
+    [string]$MinGWDir = 'C:\Qt\Tools\mingw1310_64\bin',
+
+    [ValidateRange(1, 1024)]
+    [int]$Jobs = [Environment]::ProcessorCount,
+
+    [string]$JomPath = 'C:\Qt\Tools\QtCreator\bin\jom\jom.exe'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -91,11 +111,26 @@ if (-not $isMsvc -and -not $isMingw) {
 
 if ($isMsvc) {
     . "$PSScriptRoot\vsdev.ps1"
-    $makeTool = 'nmake'
+    # jom is an nmake-compatible parallel make: the given path first, then PATH, else nmake.
+    if (Test-Path -LiteralPath $JomPath -PathType Leaf) {
+        $makeTool = $JomPath
+        $makeArgs = @('-j', "$Jobs")
+    }
+    elseif (Get-Command 'jom' -ErrorAction SilentlyContinue) {
+        $makeTool = 'jom'
+        $makeArgs = @('-j', "$Jobs")
+    }
+    else {
+        Write-Host ("check.ps1: jom not found ('$JomPath' or on PATH); " +
+            "qmake stages use nmake, single-threaded.")
+        $makeTool = 'nmake'
+        $makeArgs = @()
+    }
 }
 else {
     $env:PATH = "$MinGWDir;C:\Qt\Tools\CMake_64\bin;C:\Qt\Tools\Ninja;$env:PATH"
     $makeTool = 'mingw32-make'
+    $makeArgs = @("-j$Jobs")
 }
 
 # Never inherited from env for any stage below: every CMake configure passes
@@ -112,8 +147,10 @@ Invoke-Checked -StageName 'cmake-full' -Exe 'cmake' -Arguments @(
     '-S', '.', '-B', $dir, '-G', 'Ninja',
     "-DCMAKE_PREFIX_PATH=$QtDir", '-DCMAKE_BUILD_TYPE=Debug'
 )
-Invoke-Checked -StageName 'cmake-full' -Exe 'cmake' -Arguments @('--build', $dir)
-Invoke-Checked -StageName 'cmake-full' -Exe 'ctest' -Arguments @('--test-dir', $dir, '--output-on-failure')
+Invoke-Checked -StageName 'cmake-full' -Exe 'cmake' `
+    -Arguments @('--build', $dir, '--parallel', "$Jobs")
+Invoke-Checked -StageName 'cmake-full' -Exe 'ctest' `
+    -Arguments @('--test-dir', $dir, '--output-on-failure', '-j', '8')
 
 $versionHeader = Get-Content 'include/mc/version.h' -Raw
 if ($versionHeader -notmatch '#define MC_VERSION_STRING "([^"]+)"') {
@@ -162,8 +199,10 @@ try {
         Stop-Stage -Name 'cmake-core' -Detail "$traceFile contains a find_package(Qt6 call"
     }
 
-    Invoke-Checked -StageName 'cmake-core' -Exe 'cmake' -Arguments @('--build', $dir)
-    Invoke-Checked -StageName 'cmake-core' -Exe 'ctest' -Arguments @('--test-dir', $dir, '--output-on-failure')
+    Invoke-Checked -StageName 'cmake-core' -Exe 'cmake' `
+        -Arguments @('--build', $dir, '--parallel', "$Jobs")
+    Invoke-Checked -StageName 'cmake-core' -Exe 'ctest' `
+        -Arguments @('--test-dir', $dir, '--output-on-failure', '-j', '8')
 }
 finally {
     $env:PATH = $originalPath
@@ -177,8 +216,8 @@ New-Item -ItemType Directory -Force -Path $dir | Out-Null
 Push-Location $dir
 try {
     Invoke-Checked -StageName 'qmake' -Exe $qmakeExe -Arguments @('../../mc_protocol.pro', 'CONFIG+=debug')
-    Invoke-Checked -StageName 'qmake' -Exe $makeTool -Arguments @()
-    Invoke-Checked -StageName 'qmake' -Exe $makeTool -Arguments @('check')
+    Invoke-Checked -StageName 'qmake' -Exe $makeTool -Arguments $makeArgs
+    Invoke-Checked -StageName 'qmake' -Exe $makeTool -Arguments ($makeArgs + @('check'))
 }
 finally {
     Pop-Location
@@ -192,7 +231,8 @@ Invoke-Checked -StageName 'consumer-cmake' -Exe 'cmake' -Arguments @(
     '-S', 'tests/consumer_cmake', '-B', $dir, '-G', 'Ninja',
     "-DCMAKE_PREFIX_PATH=$QtDir", '-DCMAKE_BUILD_TYPE=Debug'
 )
-Invoke-Checked -StageName 'consumer-cmake' -Exe 'cmake' -Arguments @('--build', $dir)
+Invoke-Checked -StageName 'consumer-cmake' -Exe 'cmake' `
+    -Arguments @('--build', $dir, '--parallel', "$Jobs")
 
 # No "2>&1" here: with $ErrorActionPreference = 'Stop', merging a native command's stderr
 # into the success stream can promote a routine stderr line into a terminating exception in
@@ -230,7 +270,7 @@ New-Item -ItemType Directory -Force -Path $dir | Out-Null
 Push-Location $dir
 try {
     Invoke-Checked -StageName 'consumer-qmake' -Exe $qmakeExe -Arguments @('../../tests/consumer_qmake/app.pro', 'CONFIG+=debug')
-    Invoke-Checked -StageName 'consumer-qmake' -Exe $makeTool -Arguments @()
+    Invoke-Checked -StageName 'consumer-qmake' -Exe $makeTool -Arguments $makeArgs
 }
 finally {
     Pop-Location

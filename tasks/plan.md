@@ -132,15 +132,15 @@ Baton tasks are created one phase ahead.
 
 ### Phase 7: Hardware capture tooling (`hil-capture`)
 
-- [ ] T47 `tools/` wiring, profile and plan loading
-- [ ] T48 Safety gate and dry run
-- [ ] T49 `RecordingTransport` and capture writer
-- [ ] T50 Step runner and end-to-end run against `virtual_plc`
-- [ ] T51 Replay tests `mc_replay_tests`
-- [ ] T52 Timing benchmark and `BENCH.md`
-- [ ] T53 Plans for the four frame families
+- [x] T47 `tools/` wiring, profile and plan loading → T-057
+- [x] T48 Safety gate and dry run → T-058
+- [x] T49 `RecordingTransport` and capture writer → T-059
+- [x] T50 Step runner and end-to-end run against `virtual_plc` → T-060
+- [x] T51 Replay tests `mc_replay_tests` → T-061
+- [x] T52 Timing benchmark and `BENCH.md` → T-062
+- [x] T53 Plans for the four frame families → T-063
 
-**Checkpoint F:** tooling proven against `virtual_plc`. **Owner gate:** scratch areas decided; FX3 manual checked.
+**Checkpoint F** → T-064: tooling proven against `virtual_plc`. **Owner gate:** scratch areas decided; FX3 manual checked.
 
 ### Phase 8: Bench and release
 

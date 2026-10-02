@@ -1,0 +1,4 @@
+profile,plc_state,step,op,device,count,req_bytes,resp_bytes,rep,ttfb_ms,rx_ms,rtt_ms,scan_ms
+e2e-3e-bin,RUN,E-14,ReadWords,D100,1,21,13,1,0.375,0.000,0.375,
+e2e-3e-bin,RUN,E-14,ReadWords,D100,1,21,13,2,0.498,0.000,0.498,
+e2e-3e-bin,RUN,E-14,ReadWords,D100,1,21,13,3,0.344,0.000,0.344,

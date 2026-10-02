@@ -50,6 +50,17 @@ contradict `agent-team/core/`, this file wins.
   tester and reviewer per batch, one commit per batch after its checkpoint
   passes. The "owner review before the tooling phase" item of Checkpoint E
   stays the owner's. Phase 7 waits for the owner.
+- **Checkpoint E approved; delegation extended to Phase 7, owner 2026-10-02:**
+  "Duyệt checkpoint E, giao quyền phase 7 như phase 4-6. Cho phép sửa script
+  để build song song." Same terms and exclusions as Phases 4–6 (leader chooses
+  how many developers and when; fresh tester and reviewer; one commit after
+  Checkpoint F's first item passes). The "any `hil` work" exclusion is narrowed
+  for Phase 7 only: the capture **tooling** (todo T47–T53, `tools/hil_capture`,
+  replay tests, plans, `BENCH.md` generation) built and run against
+  `virtual_plc`/`MockPlc` is delegated; anything that talks to a real PLC, any
+  capture run on hardware, and Checkpoint F's owner gate (scratch areas, FX3
+  manual) stay the owner's. Also delegated: making `scripts/check.ps1` and
+  `scripts/check.sh` build in parallel (T-056). Phase 8 waits for the owner.
 - Work on `main` unless the owner says otherwise.
 
 ## Phase-batched verification (owner decision 2026-09-27)
@@ -65,6 +76,12 @@ nữa." From T-008 on, this overrides the per-task flow of
   developer, a new tester and a new reviewer; within the phase each one is
   re-used (resumed) for all its work. No agent carries over into the next
   phase, and no agent ever holds two roles.
+- **Fresh agent per task when context is heavy** (owner, 2026-10-02: "sub agent
+  bạn gọi đã chứa quá nhiều context nên trong lần implement tiếp task tiếp theo
+  mình nghĩ bạn nên gọi sub agent mới"): a new task gets a newly spawned
+  developer; resuming is only for the current task's rework and re-checks. The
+  task file and project docs must carry everything the new agent needs. This
+  overrides "kept alive and re-used between tasks" below.
 - **Within a phase**, one developer implements the tasks one after another
   (kept alive and re-used between tasks). Each task still has its own task
   file, Plan and Dev notes, and must build and pass its own tests.

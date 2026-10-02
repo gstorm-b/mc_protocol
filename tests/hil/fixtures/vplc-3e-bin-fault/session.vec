@@ -1,0 +1,763 @@
+# id: CAP-vplc-3e-bin-fault-L-02-T0001
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: tx  t_ns: 65924300  seq: 5
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0002
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: rx  t_ns: 66620000  seq: 7
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0003
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: tx  t_ns: 66660400  seq: 8
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 20 01 00 90 01 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0004
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: rx  t_ns: 67140300  seq: 9
+D0 00 00 FF FF 03 00 04 00 00 00 00 10
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0005
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: tx  t_ns: 67160700  seq: 10
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0006
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: rx  t_ns: 67724200  seq: 11
+D0 00 00 FF FF 03 00 0A 00 00 00 D2 04 00 00 00 00 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0007
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: tx  t_ns: 68011300  seq: 15
+50 00 00 FF FF 03 00 0E 00 10 00 01 14 00 00 65 00 00 A8 01 00 07 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0008
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: rx  t_ns: 68712400  seq: 17
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0009
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: tx  t_ns: 115525100  seq: 19
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0010
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: rx  t_ns: 116395800  seq: 20
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0011
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: tx  t_ns: 116445200  seq: 21
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 20 01 00 90 01 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0012
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: rx  t_ns: 116870300  seq: 22
+D0 00 00 FF FF 03 00 04 00 00 00 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0013
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: tx  t_ns: 116927000  seq: 23
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0014
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: rx  t_ns: 117330900  seq: 26
+D0 00 00 FF FF 03 00 0A 00 00 00 D2 04 07 00 00 00 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0015
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: tx  t_ns: 165940300  seq: 30
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0016
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: rx  t_ns: 167730200  seq: 31
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0017
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: tx  t_ns: 167800000  seq: 32
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 20 01 00 90 01 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0018
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: rx  t_ns: 169158100  seq: 33
+D0 00 00 FF FF 03 00 04 00 00 00 00 10
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0019
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: tx  t_ns: 169241100  seq: 34
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0020
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: rx  t_ns: 170403700  seq: 37
+D0 00 00 FF FF 03 00 0A 00 00 00 D2 04 07 00 00 00 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0021
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: tx  t_ns: 216078000  seq: 40
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0022
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: rx  t_ns: 217154900  seq: 41
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0023
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: tx  t_ns: 217210000  seq: 42
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 20 01 00 90 01 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0024
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: rx  t_ns: 217945700  seq: 43
+D0 00 00 FF FF 03 00 04 00 00 00 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0025
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: tx  t_ns: 218070700  seq: 44
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0026
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: rx  t_ns: 218933900  seq: 47
+D0 00 00 FF FF 03 00 0A 00 00 00 D2 04 07 00 00 00 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0027
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: tx  t_ns: 266414400  seq: 50
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0028
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: rx  t_ns: 267144300  seq: 51
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0029
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: tx  t_ns: 267219600  seq: 52
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 20 01 00 90 01 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0030
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: rx  t_ns: 267710600  seq: 53
+D0 00 00 FF FF 03 00 04 00 00 00 00 10
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0031
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: tx  t_ns: 267763700  seq: 54
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0032
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: rx  t_ns: 268248600  seq: 57
+D0 00 00 FF FF 03 00 0A 00 00 00 D2 04 07 00 00 00 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0033
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: tx  t_ns: 317032400  seq: 60
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0034
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: rx  t_ns: 317542600  seq: 61
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0035
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: tx  t_ns: 317585100  seq: 62
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 20 01 00 90 01 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0036
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: rx  t_ns: 317923300  seq: 63
+D0 00 00 FF FF 03 00 04 00 00 00 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0037
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: tx  t_ns: 317971000  seq: 64
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0038
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: rx  t_ns: 318416100  seq: 67
+D0 00 00 FF FF 03 00 0A 00 00 00 D2 04 07 00 00 00 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0039
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: tx  t_ns: 366721400  seq: 70
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0040
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: tx  t_ns: 778603500  seq: 75
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0041
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: rx  t_ns: 780706500  seq: 77
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0042
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: tx  t_ns: 780743300  seq: 78
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 20 01 00 90 01 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0043
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: rx  t_ns: 781097700  seq: 79
+D0 00 00 FF FF 03 00 04 00 00 00 00 10
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0044
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: tx  t_ns: 781135300  seq: 80
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0045
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: rx  t_ns: 781834000  seq: 81
+D0 00 00 FF FF 03 00 0A 00 00 00 D2 04 00 00 00 00 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0046
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: tx  t_ns: 829176100  seq: 85
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0047
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: rx  t_ns: 830046800  seq: 86
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0048
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: tx  t_ns: 830089800  seq: 87
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 20 01 00 90 01 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0049
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: rx  t_ns: 830752700  seq: 88
+D0 00 00 FF FF 03 00 04 00 00 00 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0050
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: tx  t_ns: 830807000  seq: 89
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0051
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: rx  t_ns: 831309200  seq: 92
+D0 00 00 FF FF 03 00 0A 00 00 00 D2 04 00 00 00 00 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0052
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: tx  t_ns: 831668900  seq: 95
+50 00 00 FF FF 03 00 0E 00 10 00 01 14 00 00 66 00 00 A8 01 00 09 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0053
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: rx  t_ns: 832094400  seq: 97
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0054
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: tx  t_ns: 878815100  seq: 99
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0055
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: rx  t_ns: 879673000  seq: 100
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0056
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: tx  t_ns: 879721400  seq: 101
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 20 01 00 90 01 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0057
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: rx  t_ns: 880066900  seq: 102
+D0 00 00 FF FF 03 00 04 00 00 00 00 10
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0058
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: tx  t_ns: 880111900  seq: 103
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0059
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: rx  t_ns: 880518100  seq: 106
+D0 00 00 FF FF 03 00 0A 00 00 00 D2 04 00 00 09 00 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0060
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: tx  t_ns: 929956400  seq: 110
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0061
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: rx  t_ns: 930770800  seq: 111
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0062
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: tx  t_ns: 930821600  seq: 112
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 20 01 00 90 01 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0063
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: rx  t_ns: 931210100  seq: 113
+D0 00 00 FF FF 03 00 04 00 00 00 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0064
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: tx  t_ns: 931251300  seq: 114
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0065
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: rx  t_ns: 931645000  seq: 117
+D0 00 00 FF FF 03 00 0A 00 00 00 D2 04 00 00 09 00 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0066
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: tx  t_ns: 980049200  seq: 120
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0067
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: rx  t_ns: 980652500  seq: 121
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0068
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: tx  t_ns: 980683900  seq: 122
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 20 01 00 90 01 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0069
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: rx  t_ns: 981076500  seq: 123
+D0 00 00 FF FF 03 00 04 00 00 00 00 10
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0070
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: tx  t_ns: 981115600  seq: 124
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0071
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: rx  t_ns: 981528100  seq: 127
+D0 00 00 FF FF 03 00 0A 00 00 00 D2 04 00 00 09 00 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0072
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: tx  t_ns: 1029731400  seq: 130
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0073
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: rx  t_ns: 1030262500  seq: 131
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0074
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: tx  t_ns: 1030309500  seq: 132
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 20 01 00 90 01 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0075
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: rx  t_ns: 1030681100  seq: 133
+D0 00 00 FF FF 03 00 04 00 00 00 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0076
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: tx  t_ns: 1030723000  seq: 134
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-T0077
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: rx  t_ns: 1031206100  seq: 137
+D0 00 00 FF FF 03 00 0A 00 00 00 D2 04 00 00 09 00 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-I0001
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: input  input: heartbeat  t_ns: 54268500  seq: 1
+# enabled: true  device: M300
+07 01 04 2C 01 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-I0002
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: input  input: subscribe  t_ns: 54298200  seq: 2
+# name: d  device: D100  count: 4
+08 09 64 00 00 00 04 00 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-I0003
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: input  input: subscribe  t_ns: 54311400  seq: 3
+# name: m  device: M300  count: 4
+08 04 2C 01 00 00 04 00 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0001
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: linkState  t_ns: 65570800  seq: 4
+# state: Connecting  reason: Requested
+05 01 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0002
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: linkState  t_ns: 65955200  seq: 6
+# state: Connected  reason: Requested
+05 02 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0003
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: snapshot  t_ns: 67794800  seq: 12
+# type: M  round: 1  segments: M300x4  chunks: ok
+01 2C 01 00 00 04 00 00 00 01 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0004
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: snapshot  t_ns: 67836800  seq: 13
+# type: D  round: 1  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 D2 04 00 00 00 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0005
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: cycleDone  t_ns: 67851200  seq: 14
+# round: 1  duration_ms: 2  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 01 00 00 00 1C 00 00 00 00 00 00 00 02 00 00 00 03 00 00 00 01
+
+# id: CAP-vplc-3e-bin-fault-L-02-I0004
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: input  input: write  t_ns: 68041000  seq: 16
+# op: WriteWords  device: D101  count: 1
+0A 03 09 65 00 00 00 01 00 07 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0006
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: requestFinished  t_ns: 68780100  seq: 18
+# request_id: 1  outcome: ok  bytes: 0
+04
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0007
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: valuesChanged  t_ns: 116948300  seq: 24
+# type: M  round: 2  changes: 1
+02 2C 01 00 00 01 00 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0008
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: snapshot  t_ns: 116977100  seq: 25
+# type: M  round: 2  segments: M300x4  chunks: ok
+01 2C 01 00 00 04 00 00 00 00 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0009
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: valuesChanged  t_ns: 117391700  seq: 27
+# type: D  round: 2  changes: 1
+02 65 00 00 00 00 00 07 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0010
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: snapshot  t_ns: 117403900  seq: 28
+# type: D  round: 2  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 D2 04 07 00 00 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0011
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: cycleDone  t_ns: 117451200  seq: 29
+# round: 2  duration_ms: 2  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 02 00 00 00 4E 00 00 00 00 00 00 00 02 00 00 00 03 00 00 00 01
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0012
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: valuesChanged  t_ns: 169277500  seq: 35
+# type: M  round: 3  changes: 1
+02 2C 01 00 00 00 00 01 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0013
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: snapshot  t_ns: 169307400  seq: 36
+# type: M  round: 3  segments: M300x4  chunks: ok
+01 2C 01 00 00 04 00 00 00 01 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0014
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: snapshot  t_ns: 170494000  seq: 38
+# type: D  round: 3  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 D2 04 07 00 00 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0015
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: cycleDone  t_ns: 170538800  seq: 39
+# round: 3  duration_ms: 5  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 03 00 00 00 80 00 00 00 00 00 00 00 05 00 00 00 03 00 00 00 01
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0016
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: valuesChanged  t_ns: 218120600  seq: 45
+# type: M  round: 4  changes: 1
+02 2C 01 00 00 01 00 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0017
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: snapshot  t_ns: 218162500  seq: 46
+# type: M  round: 4  segments: M300x4  chunks: ok
+01 2C 01 00 00 04 00 00 00 00 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0018
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: snapshot  t_ns: 219024600  seq: 48
+# type: D  round: 4  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 D2 04 07 00 00 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0019
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: cycleDone  t_ns: 219091700  seq: 49
+# round: 4  duration_ms: 3  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 04 00 00 00 B2 00 00 00 00 00 00 00 03 00 00 00 03 00 00 00 01
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0020
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: valuesChanged  t_ns: 267785300  seq: 55
+# type: M  round: 5  changes: 1
+02 2C 01 00 00 00 00 01 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0021
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: snapshot  t_ns: 267818900  seq: 56
+# type: M  round: 5  segments: M300x4  chunks: ok
+01 2C 01 00 00 04 00 00 00 01 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0022
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: snapshot  t_ns: 268380600  seq: 58
+# type: D  round: 5  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 D2 04 07 00 00 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0023
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: cycleDone  t_ns: 268453600  seq: 59
+# round: 5  duration_ms: 2  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 05 00 00 00 E5 00 00 00 00 00 00 00 02 00 00 00 03 00 00 00 01
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0024
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: valuesChanged  t_ns: 317991400  seq: 65
+# type: M  round: 6  changes: 1
+02 2C 01 00 00 01 00 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0025
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: snapshot  t_ns: 318016500  seq: 66
+# type: M  round: 6  segments: M300x4  chunks: ok
+01 2C 01 00 00 04 00 00 00 00 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0026
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: snapshot  t_ns: 318472400  seq: 68
+# type: D  round: 6  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 D2 04 07 00 00 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0027
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: cycleDone  t_ns: 318501200  seq: 69
+# round: 6  duration_ms: 2  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 06 00 00 00 17 01 00 00 00 00 00 00 02 00 00 00 03 00 00 00 01
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0028
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: linkFault  t_ns: 767425700  seq: 71
+# fault: Timeout  error: Timeout  reopen: true
+06 00 08 00 00 00 01
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0029
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: linkState  t_ns: 767455900  seq: 72
+# state: Faulted  reason: Fault
+05 03 04
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0030
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: linkState  t_ns: 767615600  seq: 73
+# state: Disconnected  reason: Requested
+05 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0031
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: linkState  t_ns: 778381600  seq: 74
+# state: Connecting  reason: Requested
+05 01 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0032
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: linkState  t_ns: 778629300  seq: 76
+# state: Connected  reason: Requested
+05 02 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0033
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: snapshot  t_ns: 781900800  seq: 82
+# type: M  round: 1  segments: M300x4  chunks: ok
+01 2C 01 00 00 04 00 00 00 01 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0034
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: snapshot  t_ns: 781933600  seq: 83
+# type: D  round: 1  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 D2 04 00 00 00 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0035
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: cycleDone  t_ns: 781947300  seq: 84
+# round: 1  duration_ms: 3  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 01 00 00 00 E5 02 00 00 00 00 00 00 03 00 00 00 03 00 00 00 01
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0036
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: valuesChanged  t_ns: 830827600  seq: 90
+# type: M  round: 2  changes: 1
+02 2C 01 00 00 01 00 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0037
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: snapshot  t_ns: 830852800  seq: 91
+# type: M  round: 2  segments: M300x4  chunks: ok
+01 2C 01 00 00 04 00 00 00 00 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0038
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: snapshot  t_ns: 831369100  seq: 93
+# type: D  round: 2  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 D2 04 00 00 00 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0039
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: cycleDone  t_ns: 831407700  seq: 94
+# round: 2  duration_ms: 3  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 02 00 00 00 17 03 00 00 00 00 00 00 03 00 00 00 03 00 00 00 01
+
+# id: CAP-vplc-3e-bin-fault-L-02-I0005
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: input  input: write  t_ns: 831692800  seq: 96
+# op: WriteWords  device: D102  count: 1
+0A 03 09 66 00 00 00 01 00 09 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0040
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: requestFinished  t_ns: 832158400  seq: 98
+# request_id: 2  outcome: ok  bytes: 0
+04
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0041
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: valuesChanged  t_ns: 880131000  seq: 104
+# type: M  round: 3  changes: 1
+02 2C 01 00 00 00 00 01 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0042
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: snapshot  t_ns: 880146700  seq: 105
+# type: M  round: 3  segments: M300x4  chunks: ok
+01 2C 01 00 00 04 00 00 00 01 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0043
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: valuesChanged  t_ns: 880574200  seq: 107
+# type: D  round: 3  changes: 1
+02 66 00 00 00 00 00 09 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0044
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: snapshot  t_ns: 880585600  seq: 108
+# type: D  round: 3  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 D2 04 00 00 09 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0045
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: cycleDone  t_ns: 880607500  seq: 109
+# round: 3  duration_ms: 2  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 03 00 00 00 49 03 00 00 00 00 00 00 02 00 00 00 03 00 00 00 01
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0046
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: valuesChanged  t_ns: 931271300  seq: 115
+# type: M  round: 4  changes: 1
+02 2C 01 00 00 01 00 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0047
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: snapshot  t_ns: 931287600  seq: 116
+# type: M  round: 4  segments: M300x4  chunks: ok
+01 2C 01 00 00 04 00 00 00 00 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0048
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: snapshot  t_ns: 931700900  seq: 118
+# type: D  round: 4  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 D2 04 00 00 09 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0049
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: cycleDone  t_ns: 931729300  seq: 119
+# round: 4  duration_ms: 2  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 04 00 00 00 7C 03 00 00 00 00 00 00 02 00 00 00 03 00 00 00 01
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0050
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: valuesChanged  t_ns: 981135500  seq: 125
+# type: M  round: 5  changes: 1
+02 2C 01 00 00 00 00 01 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0051
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: snapshot  t_ns: 981148300  seq: 126
+# type: M  round: 5  segments: M300x4  chunks: ok
+01 2C 01 00 00 04 00 00 00 01 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0052
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: snapshot  t_ns: 981595100  seq: 128
+# type: D  round: 5  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 D2 04 00 00 09 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0053
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: cycleDone  t_ns: 981622700  seq: 129
+# round: 5  duration_ms: 2  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 05 00 00 00 AE 03 00 00 00 00 00 00 02 00 00 00 03 00 00 00 01
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0054
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: valuesChanged  t_ns: 1030741600  seq: 135
+# type: M  round: 6  changes: 1
+02 2C 01 00 00 01 00 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0055
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: snapshot  t_ns: 1030757200  seq: 136
+# type: M  round: 6  segments: M300x4  chunks: ok
+01 2C 01 00 00 04 00 00 00 00 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0056
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: snapshot  t_ns: 1031259200  seq: 138
+# type: D  round: 6  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 D2 04 00 00 09 00 00 00 02 02 02 02
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0057
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: cycleDone  t_ns: 1031287900  seq: 139
+# round: 6  duration_ms: 1  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 06 00 00 00 E0 03 00 00 00 00 00 00 01 00 00 00 03 00 00 00 01
+
+# id: CAP-vplc-3e-bin-fault-L-02-E0058
+# source: plc  profile: vplc-3e-bin-fault  step: L-02
+# kind: event  event: linkState  t_ns: 1034244600  seq: 140
+# state: Disconnected  reason: Requested
+05 00 00
+

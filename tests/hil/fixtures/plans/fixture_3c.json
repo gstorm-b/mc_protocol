@@ -1,0 +1,179 @@
+{
+  "schema": 1,
+  "plan": {
+    "id": "fixture_3c",
+    "title": "replay fixture plan against virtual_plc over a virtual COM pair, 3C format 4 (not a catalogue plan, not hardware)",
+    "family": "qna-serial"
+  },
+  "steps": [
+    {
+      "id": "E-01",
+      "kind": "read",
+      "device": "D@s",
+      "expect": {
+        "kind": "ok",
+        "values": [
+          1234
+        ]
+      }
+    },
+    {
+      "id": "E-02",
+      "kind": "write",
+      "device": "D@s",
+      "values": [
+        1,
+        2,
+        3
+      ],
+      "readBack": true,
+      "mirrors": "V-3E-{x}-05/06"
+    },
+    {
+      "id": "E-03",
+      "kind": "write",
+      "device": "M@s",
+      "values": "11001100",
+      "readBack": true
+    },
+    {
+      "id": "E-04",
+      "kind": "read",
+      "device": "D@s",
+      "count": 3,
+      "expect": {
+        "kind": "ok",
+        "values": [
+          1,
+          2,
+          3
+        ]
+      }
+    },
+    {
+      "id": "E-05",
+      "kind": "write",
+      "device": "D@s+10",
+      "values": [
+        {
+          "f64": 1.5
+        }
+      ],
+      "readBack": true
+    },
+    {
+      "id": "E-06",
+      "kind": "read",
+      "device": "D@s",
+      "count": "Wmax+40",
+      "expect": {
+        "kind": "ok",
+        "frames": 2,
+        "valuesFrom": "E-02"
+      }
+    },
+    {
+      "id": "E-07",
+      "kind": "read",
+      "device": "X0",
+      "count": 8,
+      "expect": "record"
+    },
+    {
+      "id": "E-08",
+      "kind": "read",
+      "device": "M@s16+3",
+      "unit": "word"
+    },
+    {
+      "id": "E-10",
+      "kind": "mutate",
+      "request": {
+        "kind": "read",
+        "device": "D@s"
+      },
+      "edits": [
+        {
+          "truncate": 1
+        }
+      ],
+      "readOnly": true,
+      "recover": "eot",
+      "expect": "record",
+      "then": [
+        {
+          "kind": "read",
+          "device": "D@s",
+          "expect": {
+            "kind": "ok",
+            "values": [
+              1
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "E-11",
+      "kind": "raw",
+      "requests": [
+        {
+          "kind": "read",
+          "device": "D@s"
+        },
+        {
+          "kind": "read",
+          "device": "D@s+1"
+        }
+      ],
+      "expect": "record"
+    },
+    {
+      "id": "E-12",
+      "kind": "poll",
+      "heartbeat": "M@s+200",
+      "rounds": 5,
+      "subscribe": [
+        {
+          "name": "d",
+          "device": "D@s",
+          "count": 4
+        },
+        {
+          "name": "m",
+          "device": "M@s+200",
+          "count": 4
+        },
+        {
+          "name": "x",
+          "device": "X0",
+          "count": 8,
+          "input": true
+        }
+      ],
+      "actions": [
+        {
+          "after": 1,
+          "write": {
+            "device": "D@s+1",
+            "values": [
+              7
+            ]
+          }
+        },
+        {
+          "after": 3,
+          "subscribe": {
+            "name": "w",
+            "device": "W@s",
+            "count": 4
+          }
+        },
+        {
+          "after": 3,
+          "unsubscribe": "d"
+        }
+      ]
+    }
+  ]
+}

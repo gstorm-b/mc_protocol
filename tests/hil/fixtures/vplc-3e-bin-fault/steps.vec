@@ -1,0 +1,48 @@
+# id: CAP-vplc-3e-bin-fault-L-01
+# source: plc  profile: vplc-3e-bin-fault  step: L-01
+# frame: 3E  code: Binary  op: ReadWords  device: D100  count: 1  via: api
+# kind: request
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 01 00
+
+# id: CAP-vplc-3e-bin-fault-L-01-R
+# kind: response  of: CAP-vplc-3e-bin-fault-L-01
+# outcome: ok  expect: words 4D2  verdict: passed
+# ttfb_ms: 1.060  rx_ms: 0.000  rtt_ms: 1.060
+D0 00 00 FF FF 03 00 04 00 00 00 D2 04
+
+# id: CAP-vplc-3e-bin-fault-L-03
+# source: plc  profile: vplc-3e-bin-fault  step: L-03
+# frame: 3E  code: Binary  op: ReadWords  device: D100  count: 1  via: api
+# kind: request
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 01 00
+
+# id: CAP-vplc-3e-bin-fault-L-03-R
+# kind: response  of: CAP-vplc-3e-bin-fault-L-03
+# outcome: ok  expect: words 4D2  verdict: passed
+# ttfb_ms: 0.666  rx_ms: 0.000  rtt_ms: 0.666
+D0 00 00 FF FF 03 00 04 00 00 00 D2 04
+
+# id: CAP-vplc-3e-bin-fault-L-04
+# source: plc  profile: vplc-3e-bin-fault  step: L-04
+# frame: 3E  code: Binary  op: WriteWords  device: D110  count: 2  via: api
+# kind: request
+50 00 00 FF FF 03 00 10 00 10 00 01 14 00 00 6E 00 00 A8 02 00 05 00 06 00
+
+# id: CAP-vplc-3e-bin-fault-L-04-R
+# kind: response  of: CAP-vplc-3e-bin-fault-L-04
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 0.529  rx_ms: 0.000  rtt_ms: 0.529
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-vplc-3e-bin-fault-L-04.2
+# source: plc  profile: vplc-3e-bin-fault  step: L-04.2
+# frame: 3E  code: Binary  op: ReadWords  device: D110  count: 2  via: api
+# kind: request
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 6E 00 00 A8 02 00
+
+# id: CAP-vplc-3e-bin-fault-L-04.2-R
+# kind: response  of: CAP-vplc-3e-bin-fault-L-04.2
+# outcome: ok  expect: words 5 6  verdict: passed
+# ttfb_ms: 0.478  rx_ms: 0.000  rtt_ms: 0.478
+D0 00 00 FF FF 03 00 06 00 00 00 05 00 06 00
+

@@ -1,0 +1,103 @@
+{
+  "schema": 1,
+  "profile": {
+    "id": "fx3-eth-1e-bin",
+    "plc": "FX3U-32M",
+    "module": "FX3U-ENET",
+    "firmware": "placeholder",
+    "adapter": "",
+    "plcState": "RUN",
+    "scratch": [
+      "D100-D999",
+      "M100-M999"
+    ],
+    "deviceEnd": {
+      "D": 7999,
+      "M": 7679
+    },
+    "supports": [
+      "D",
+      "M",
+      "X",
+      "Y",
+      "S",
+      "TS",
+      "TC",
+      "TN",
+      "CS",
+      "CC",
+      "CN"
+    ],
+    "scanTimeDevice": "",
+    "specialBit": "M8000",
+    "specialWord": "D8000",
+    "families": [
+      "a1e"
+    ]
+  },
+  "device": {
+    "schema": 1,
+    "frame": {
+      "frame": "1E",
+      "code": "Binary",
+      "network": 0,
+      "pc": 255,
+      "io": 1023,
+      "station": 0,
+      "monitoringTimer": 10,
+      "series": "QL",
+      "checkRoute": false,
+      "serialStart": 0,
+      "format": "Format1",
+      "stationNo": 0,
+      "selfStation": 0,
+      "sumCheck": true,
+      "blockNo": 0,
+      "checkBlockNo": true,
+      "sendEotOnError": true,
+      "f3ShortResponseHasSum": false,
+      "messageWait": 0,
+      "commandSet": "ACPU",
+      "e1AliasLS": false,
+      "targetFamily": "A",
+      "highPerformanceQcpu": false,
+      "aSeriesTarget": false,
+      "splitWrites": false,
+      "timeoutMs": 0,
+      "readRetries": 0
+    },
+    "session": {
+      "cycleIntervalMs": 100,
+      "cycleMode": "FixedRate",
+      "bitsAsWords": true,
+      "maxGap": "auto",
+      "adHocCapacity": 64,
+      "adHocArenaBytes": 65536,
+      "maxAdHocBurst": 4,
+      "maxConsecutiveLinkErrors": 3,
+      "serialInterCharMs": 100,
+      "serialFlushMs": 50,
+      "heartbeat": {
+        "enabled": false,
+        "device": "M2000"
+      }
+    },
+    "transport": {
+      "kind": "Tcp",
+      "tcp": {
+        "host": "192.0.2.10",
+        "port": 5000,
+        "connectTimeoutMs": 2000
+      },
+      "serial": {
+        "portName": "COM1",
+        "baudRate": 9600,
+        "dataBits": 7,
+        "parity": "Even",
+        "stopBits": "1",
+        "flowControl": "None"
+      }
+    },
+    "subscriptions": []
+  }
+}
