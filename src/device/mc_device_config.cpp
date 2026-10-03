@@ -451,7 +451,9 @@ Expected<void> McDeviceConfig::validate(QString* where) const {
         return r;
     }
     if (const Expected<void> r = session.validate(frame); !r) {
-        setWhere(where, QStringLiteral("session.heartbeat.device"));
+        setWhere(where, session.maxConsecutiveLinkErrors == 0
+                            ? QStringLiteral("session.maxConsecutiveLinkErrors")
+                            : QStringLiteral("session.heartbeat.device"));
         return r;
     }
     for (int i = 0; i < subscriptions.size(); ++i) {

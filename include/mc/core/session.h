@@ -74,7 +74,8 @@ struct SessionConfig {
     uint8_t maxAdHocBurst{4};              ///< During a round, at most this many ad-hoc frames
                                             ///< between two polling chunks; 0 = strict priority.
     uint8_t maxConsecutiveLinkErrors{3};   ///< Serial only: timeouts/protocol errors in a row
-                                            ///< before `LinkFault`.
+                                            ///< before `LinkFault`; at least 1 (0 is rejected by
+                                            ///< `validate()` on every frame).
     uint16_t serialInterCharMs{100};       ///< Serial only: once a response's first byte has
                                             ///< arrived, the deadline is last byte + this.
     uint16_t serialFlushMs{50};            ///< Serial only: after EOT, discard bytes until the
@@ -89,8 +90,8 @@ struct SessionConfig {
      * @param[in] frame Frame this session would run on; `heartbeat.device` is checked against it
      * when `heartbeat.enabled`.
      * @return Success when every check passes.
-     * @retval ErrorCode::InvalidConfig `heartbeat.enabled` and `heartbeat.device` is not a bit
-     * device supported by `frame`.
+     * @retval ErrorCode::InvalidConfig `maxConsecutiveLinkErrors` is 0, or `heartbeat.enabled` and
+     * `heartbeat.device` is not a bit device supported by `frame`.
      * @par Complexity
      * O(1); no allocation.
      */

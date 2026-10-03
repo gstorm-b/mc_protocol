@@ -7,6 +7,7 @@
 
 #include "mc/core/device.h"
 #include "mc/core/frame_config.h"
+#include "mc/core/log.h"
 #include "mc/core/request.h"
 #include "mc/core/result.h"
 #include "mc/core/types.h"
@@ -20,7 +21,8 @@ namespace mc {
 
 /**
  * @struct MockOptions
- * @brief Error codes the mock answers with when a test does not choose one.
+ * @brief Error codes the mock answers with when a test does not choose one, and an optional log
+ * sink.
  *
  * These are TEST VALUES: where a golden vector carries an error code it is reused (C051H, 50H,
  * 5BH + 10H, 7151H, 06H); C059H is an arbitrary choice. The library asserts nothing about their
@@ -38,6 +40,9 @@ struct MockOptions {
     uint8_t outOfRange1e{0x5B};      ///< 1E end code for a device beyond the limit (as V-1E-B-11).
     uint8_t outOfRange1eAbnormal{0x10}; ///< 1E abnormal code sent with outOfRange1e (as V-1E-B-11).
     uint8_t outOfRange1c{0x06};      ///< 1C NAK code for a device beyond the limit.
+    LogSink* log{nullptr};           ///< Not owned; null = no logging. Category `"mc.mock"`: one
+                                     ///< `Trace` line per skipped serial byte, with the running
+                                     ///< MockPlc::skippedBytes().
 };
 
 /**
@@ -109,8 +114,8 @@ struct MockRequestRecord {
  * nextResponse() and nothing is added to requests().
  *
  * A serial request is received as the PLC side of reference spec §6.3 does:
- *  - Bytes before the start byte (ENQ; STX in format 3) are skipped without a trace: they add
- *    nothing to requests().
+ *  - Bytes before the start byte (ENQ; STX in format 3) are skipped: they add nothing to
+ *    requests() and are counted by skippedBytes().
  *  - Formats 1, 2 and 4 have no terminator before the SUM, so a request ends where its command
  *    and point count say (§4.1, §4.3); format 3 ends at ETX. A format 1, 2 or 4 request whose
  *    layout cannot be followed (a command the mock has no layout for, a route that is not
@@ -321,7 +326,20 @@ public:
     /// @return Number of EOT (or EOT CR LF) received, whatever mute() says; 0 on Ethernet frames.
     uint32_t eotCount() const;
 
-    /// @brief Empties the request log.
+    /**
+     * @brief Counts the serial bytes skipped as junk, to help debug traces.
+     *
+     * Counts the bytes dropped before a start byte (ENQ; STX in format 3) and the start byte of a
+     * request whose layout cannot be followed, since the last clearLog(). A skipped byte adds
+     * nothing to requests(). EOT is not counted here (see eotCount()), nor the CR LF that
+     * follows it in format 4; there a CR after an EOT is absorbed even when no LF follows it.
+     * Each skipped byte is also written at `Trace` to MockOptions::log.
+     *
+     * @return The number of bytes skipped; 0 on Ethernet frames.
+     */
+    uint64_t skippedBytes() const;
+
+    /// @brief Empties the request log and resets skippedBytes() to 0.
     void clearLog();
     /// @}
 

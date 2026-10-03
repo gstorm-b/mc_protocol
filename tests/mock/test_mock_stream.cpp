@@ -11,6 +11,7 @@
 
 #include "mc/core/device.h"
 #include "mc/core/frame_config.h"
+#include "mc/core/log.h"
 #include "mc/core/request.h"
 #include "mc/mock/mock_plc.h"
 
@@ -18,6 +19,7 @@
 #include <cstdint>
 #include <filesystem>
 #include <string>
+#include <string_view>
 #include <vector>
 
 using mc::ByteView;
@@ -134,6 +136,23 @@ Bytes eotFrame(const FrameConfig& cfg) {
     return eot;
 }
 
+struct CapturingSink : mc::LogSink {
+    struct Line {
+        mc::LogLevel level;
+        std::string category;
+        std::string message;
+    };
+    bool traceOn{true};
+    std::vector<Line> lines;
+    bool enabled(mc::LogLevel level) const noexcept override {
+        return traceOn && level >= mc::LogLevel::Trace;
+    }
+    void write(mc::LogLevel level, std::string_view category,
+               std::string_view message) noexcept override {
+        lines.push_back(Line{level, std::string(category), std::string(message)});
+    }
+};
+
 } // namespace
 
 TEST_CASE("MCK-01 the hand-built serial frames of these tests equal the golden vectors") {
@@ -198,7 +217,7 @@ TEST_CASE("MCK-05 serial: responses come out in request order, one per request")
     }
 }
 
-TEST_CASE("MCK-06 serial: bytes before ENQ (STX in format 3) are skipped without a trace") {
+TEST_CASE("MCK-06 serial: bytes before ENQ (STX in format 3) are skipped") {
     for (const Cell& cell : cells()) {
         INFO(cell.name);
         // Not a start byte for this format: STX before an ENQ, ENQ before an STX; and no EOT.
@@ -228,6 +247,199 @@ TEST_CASE("MCK-06 serial: bytes before ENQ (STX in format 3) are skipped without
         feed(alone, junk);
         CHECK(alone.requests().empty());
         CHECK(drainAll(alone).empty());
+    }
+}
+
+TEST_CASE("MCK-06 skippedBytes: counts the junk bytes of every serial family and format") {
+    for (const Cell& cell : cells()) {
+        INFO(cell.name);
+        const Bytes prefix = {0x55, 0x55, 0x55}; // what Corruption::JunkPrefix puts in front
+        for (size_t chunk : {size_t{256}, size_t{1}}) {
+            INFO("chunk ", chunk);
+            MockPlc plc = seeded(cell.cfg);
+            CHECK(plc.skippedBytes() == 0);
+            feedInChunks(plc, concat(prefix, readRequest(cell.cfg)), chunk);
+            CHECK(plc.skippedBytes() == 3);
+            CHECK(plc.requests().size() == 1);
+            CHECK(drainAll(plc).size() == 1);
+        }
+
+        // The ten junk bytes of the MCK-06 case above (the other format's start byte among them),
+        // twice around a request.
+        const Bytes junk = {0x55,    'x',     0x00,
+                            0xFF,    0x20,    0x7E,
+                            sf::kCr, sf::kLf, format3(cell.cfg) ? sf::kEnq : sf::kStx,
+                            'A'};
+        MockPlc both = seeded(cell.cfg);
+        Bytes stream = junk;
+        sf::append(stream, readRequest(cell.cfg));
+        sf::append(stream, junk);
+        sf::append(stream, readRequest(cell.cfg));
+        feedInChunks(both, stream, 4);
+        CHECK(both.skippedBytes() == 20);
+        CHECK(both.requests().size() == 2);
+    }
+}
+
+TEST_CASE("MCK-06 skippedBytes: junk split over several feeds adds up, and a clean request adds "
+          "nothing") {
+    for (const Cell& cell : cells()) {
+        INFO(cell.name);
+        MockPlc plc = seeded(cell.cfg);
+        plc.bytesIn(ByteView{Bytes{0x55, 0x55}.data(), 2});
+        CHECK(plc.skippedBytes() == 2);
+        const Bytes one = {0x55};
+        plc.bytesIn(ByteView{one.data(), 1});
+        CHECK(plc.skippedBytes() == 3);
+        feed(plc, readRequest(cell.cfg));
+        CHECK(plc.skippedBytes() == 3);
+        CHECK(plc.requests().size() == 1);
+    }
+}
+
+TEST_CASE("MCK-06 skippedBytes: an unframable run is skipped one byte at a time and counted") {
+    for (const Cell& cell : cells()) {
+        INFO(cell.name);
+        // A start byte followed by a control code (01H) cannot begin a request in any format: the
+        // start byte is dropped, then 01H is not a start byte either.
+        const Bytes unframable = {format3(cell.cfg) ? sf::kStx : sf::kEnq, 0x01};
+        MockPlc plc = seeded(cell.cfg);
+        feed(plc, concat(unframable, readRequest(cell.cfg)));
+        CHECK(plc.skippedBytes() == 2);
+        CHECK(plc.requests().size() == 1);
+        CHECK(drainAll(plc).size() == 1);
+    }
+}
+
+TEST_CASE("MCK-06 skippedBytes: formats 1 to 3 count a CR LF after an EOT as 2 skipped bytes") {
+    for (const Cell& cell : cells()) {
+        if (cell.cfg.format == SerialFormat::Format4) {
+            continue;
+        }
+        INFO(cell.name);
+        MockPlc plc(cell.cfg);
+        feed(plc, Bytes{sf::kEot, sf::kCr, sf::kLf});
+        CHECK(plc.eotCount() == 1);
+        CHECK(plc.skippedBytes() == 2);
+    }
+}
+
+TEST_CASE("MCK-06 skippedBytes: the count is 64 bits wide") {
+    MockPlc plc(FrameConfig::frame3C(SerialFormat::Format1));
+    const Bytes junk(70001, 0x55); // more than 65535, so a 16-bit counter would show 4465
+    feed(plc, junk);
+    CHECK(plc.skippedBytes() == 70001);
+}
+
+TEST_CASE("MCK-06 skippedBytes: an EOT is not a skipped byte") {
+    for (const Cell& cell : cells()) {
+        INFO(cell.name);
+        MockPlc plc(cell.cfg);
+        feed(plc, eotFrame(cell.cfg)); // EOT CR LF in format 4
+        CHECK(plc.eotCount() == 1);
+        CHECK(plc.skippedBytes() == 0);
+    }
+}
+
+TEST_CASE("MCK-06 skippedBytes format 4: the CR LF of an EOT is not skipped, however it arrives") {
+    const FrameConfig cfg = FrameConfig::frame3C(SerialFormat::Format4);
+    const Bytes eotCrLf = {sf::kEot, sf::kCr, sf::kLf};
+
+    SUBCASE("in one feed") {
+        MockPlc plc(cfg);
+        feed(plc, eotCrLf);
+        CHECK(plc.skippedBytes() == 0);
+        CHECK(plc.eotCount() == 1);
+    }
+    SUBCASE("split over three feeds") {
+        MockPlc plc(cfg);
+        feed(plc, Bytes{sf::kEot});
+        CHECK(plc.skippedBytes() == 0);
+        feed(plc, Bytes{sf::kCr});
+        CHECK(plc.skippedBytes() == 0);
+        feed(plc, Bytes{sf::kLf});
+        CHECK(plc.skippedBytes() == 0);
+        CHECK(plc.eotCount() == 1);
+    }
+    SUBCASE("EOT followed by junk counts only the junk") {
+        MockPlc plc(cfg);
+        feed(plc, Bytes{sf::kEot, sf::kCr, sf::kLf, 0x55, 0x55});
+        CHECK(plc.skippedBytes() == 2);
+        feed(plc, Bytes{sf::kEot, 0x55, 0x55, 0x55}); // no CR LF: the 55H bytes are junk
+        CHECK(plc.skippedBytes() == 5);
+        feed(plc, Bytes{sf::kEot, sf::kCr, 0x55}); // CR, then something that is not LF
+        CHECK(plc.skippedBytes() == 6);
+        CHECK(plc.eotCount() == 3);
+    }
+    SUBCASE("an EOT in the middle of a request, then its CR LF") {
+        MockPlc plc = seeded(cfg);
+        const Bytes frame = readRequest(cfg);
+        Bytes stream(frame.begin(), frame.begin() + 5);
+        sf::append(stream, eotCrLf);
+        sf::append(stream, frame);
+        feedInChunks(plc, stream, 1);
+        CHECK(plc.skippedBytes() == 0);
+        CHECK(plc.eotCount() == 1);
+        CHECK(plc.requests().size() == 1);
+    }
+}
+
+TEST_CASE("MCK-06 skippedBytes: one Trace line per skipped byte through MockOptions::log") {
+    CapturingSink sink;
+    MockOptions opt;
+    opt.log = &sink;
+    const FrameConfig cfg = FrameConfig::frame3C(SerialFormat::Format1);
+    MockPlc plc(cfg, opt);
+    feed(plc, Bytes{0x55, 0x55});
+    feed(plc, Bytes{0x55});
+    REQUIRE(sink.lines.size() == 3);
+    CHECK(sink.lines[0].message == "serial byte skipped; 1 in all");
+    CHECK(sink.lines[1].message == "serial byte skipped; 2 in all");
+    CHECK(sink.lines[2].message == "serial byte skipped; 3 in all");
+    for (const auto& line : sink.lines) {
+        CHECK(line.level == mc::LogLevel::Trace);
+        CHECK(line.category == "mc.mock");
+    }
+
+    SUBCASE("a clean request and an EOT log nothing") {
+        sink.lines.clear();
+        feed(plc, readRequest(cfg));
+        feed(plc, eotFrame(cfg));
+        CHECK(sink.lines.empty());
+    }
+    SUBCASE("clearLog() restarts the running count") {
+        plc.clearLog();
+        sink.lines.clear();
+        feed(plc, Bytes{0x55});
+        REQUIRE(sink.lines.size() == 1);
+        CHECK(sink.lines[0].message == "serial byte skipped; 1 in all");
+    }
+    SUBCASE("a sink that disables Trace gets nothing, the count still runs") {
+        sink.lines.clear();
+        sink.traceOn = false;
+        feed(plc, Bytes{0x55});
+        CHECK(sink.lines.empty());
+        CHECK(plc.skippedBytes() == 4);
+    }
+}
+
+TEST_CASE("MCK-06 skippedBytes: clearLog() resets it and counting starts again") {
+    const FrameConfig cfg = FrameConfig::frame3C(SerialFormat::Format1);
+    MockPlc plc = seeded(cfg);
+    const Bytes junk = {0x55, 0x55, 0x55, 0x55};
+    feed(plc, junk);
+    CHECK(plc.skippedBytes() == 4);
+    plc.clearLog();
+    CHECK(plc.skippedBytes() == 0);
+    feed(plc, Bytes{0x55, 0x55});
+    CHECK(plc.skippedBytes() == 2);
+}
+
+TEST_CASE("MCK-06 skippedBytes: Ethernet frames leave it at 0") {
+    for (const FrameConfig& cfg : {FrameConfig::frame3E(), FrameConfig::frame1E()}) {
+        MockPlc plc(cfg);
+        feed(plc, Bytes{0x55, 0x55, 0x55});
+        CHECK(plc.skippedBytes() == 0);
     }
 }
 

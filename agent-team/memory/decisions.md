@@ -3,6 +3,32 @@
 Curated by the team leader. One entry, one decision, newest first.
 Format: `- [T-xxx or date] Decision — why. (supersedes: entry, if any)`
 
+- [2026-10-03] Owner (scratch file answers): FX3 computer link **does** offer 1C formats 1 and 4 (the
+  three 1C profiles stay); FX5U built-in RS-485 is added with 3C (profiles F1 sum on and F4 proposed
+  by the leader, owner to confirm), `SPEC-hil-capture.md` tables amended (16 profiles); Q CPU and
+  Q + C24 share one scratch; Y goes into scratch by default, the owner decides at capture time.
+  (supersedes: the "computer link supports neither format" note of the same day)
+- [2026-10-03] Owner: Q CPU scratch stays `D100-D2099` (GV steps unchanged). FX3 and FX5 number
+  X/Y in **octal** (X0–X7, X10–X17) and the PLC does not convert (owner checked the vendor manuals).
+  The manuals added to `docs/mc_reference/` say: FX5 `Binary` / `ASCII (X,Y HEX)` carry the point
+  index in hex, `ASCII (X,Y OCT)` carries octal digits; FX3 computer link 1C always carries octal
+  digits. The library reads and encodes X/Y as hex (Q style) → an X/Y octal option is proposed to
+  the owner (library change, owner decision).
+
+- [2026-10-03] Owner decisions: `maxConsecutiveLinkErrors` default 3, `validate()` rejects 0
+  (`SPEC-core-session.md` amended); `MockPlc::skippedBytes()` counts serial junk, mainly for debug
+  traces (`SPEC-mock-plc.md` amended) — both in T-065. FX3 computer link: see the next entry (superseded). Phase 7 Checkpoint F owner gate: scratch proposal in `temp-docs/hil-scratch-areas.md`
+  for the owner to correct. New phase requested: a Qt GUI tool (tests, debug trace, frame capture,
+  HIL, MockPlc; qmake + CMake; qpb property browser; a docking system from `C:\build_packages`
+  via a local path; tabs; parallel McDevice/MockPlc; every McDevice on a runner thread) — spec to
+  be drafted for the owner.
+- [2026-10-03] Owner: `MockOptions` gains `LogSink* log{nullptr}` (category `mc.mock`, Trace line
+  per skipped junk byte run); in format 4 the `CR LF` of `EOT CR LF` is not counted as skipped
+  (leader); `.gitignore` gains `mc_local.pri`; GUI may require Qt 6.5 (library stays 6.2); qpb
+  vendored as `components/qpb`; GUI is Phase 8, bench and release move to Phase 9; plan and todo
+  use the baton ids only. Commit allowed for T-065 after tester and reviewer pass; the docs
+  changes (renumbering, `components/qpb`, the GUI spec draft) wait for a later owner OK.
+
 - [T-064] Safety gate tightened after the Phase 7 tester wrote outside scratch with a
   `readOnly` truncated write (the PLC completed it with the next frame's bytes): a `mutate`
   of a write is never `readOnly`; every `readOnly` frame needs `recover: reconnect|eot`; any

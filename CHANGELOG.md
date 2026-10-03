@@ -8,6 +8,12 @@ All notable changes to this project are documented in this file. The format foll
 
 ### Added
 
+- `MockPlc::skippedBytes()`: serial bytes skipped before a start byte or as unframable, reset by
+  `clearLog()`. `SessionConfig::validate()` (so `Session::create()` and
+  `McDeviceConfig::validate()`) rejects `maxConsecutiveLinkErrors == 0` with `InvalidConfig`; the
+  default stays 3.
+  `MockOptions::log` writes one `Trace` line per skipped serial byte; the `CR LF` of a format 4
+  `EOT CR LF` is not counted as skipped.
 - CMake build skeleton: `mc::core` static library, the `MC_BUILD_*` option set, warning and
   version helpers, vendored doctest, and the first test binary (BLD-01, BLD-08, BLD-09).
 - qmake mirror: `mc_core.pri`, `mc_device.pri`, `mc_mock.pri`, `mc_protocol.pri`, and the

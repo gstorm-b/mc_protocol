@@ -685,6 +685,20 @@ class TstConfigJson : public QObject {
         QVERIFY2(r.hasValue(), qPrintable(where));
     }
 
+    void QDV_16_maxConsecutiveLinkErrorsZeroNamesItsPath() {
+        mc::McDeviceConfig c;
+        c.tcp.host = QStringLiteral("192.168.0.10");
+        c.session.maxConsecutiveLinkErrors = 0;
+        QString where;
+        const auto r = c.validate(&where);
+        QVERIFY(!r.hasValue());
+        QCOMPARE(r.error().code, mc::ErrorCode::InvalidConfig);
+        QCOMPARE(where, QStringLiteral("session.maxConsecutiveLinkErrors"));
+
+        c.session.maxConsecutiveLinkErrors = 1;
+        QVERIFY2(c.validate(&where).hasValue(), qPrintable(where));
+    }
+
     void QDV_16_anInvalidSubscriptionNamesItsDevicePath() {
         mc::McDeviceConfig c;
         c.subscriptions = {

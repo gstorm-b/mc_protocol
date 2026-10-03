@@ -80,6 +80,7 @@ struct MockOptions {
     uint16_t outOfRangeQna{0xC051};    ///< Device beyond setDeviceLimit() (code as in V-3E-B-10).
     uint8_t  outOfRange1e{0x5B};  uint8_t outOfRange1eAbnormal{0x10};   ///< as V-1E-B-11
     uint8_t  outOfRange1c{0x06};
+    LogSink* log{nullptr};             ///< Optional log sink (category "mc.mock"); nullptr = no logging. Owner decision 2026-10-03.
 };
 
 /// Ways to damage the next response(s), for protocol-error tests.
@@ -149,6 +150,7 @@ public:
     // ---- observation -------------------------------------------------------------------
     const std::vector<MockRequestRecord>& requests() const;
     uint32_t eotCount() const;                   ///< EOT (or EOT CR LF) received.
+    uint64_t skippedBytes() const;               ///< Serial: bytes skipped before a start byte or as unframable (junk); for debug traces (owner 2026-10-03).
     void clearLog();
 };
 }
@@ -167,7 +169,7 @@ public:
 
 ### Serial reception (server side of spec §6.3)
 
-- **Start:** F1, F2, F4 skip bytes until `ENQ`; F3 skips until `STX`. Skipped bytes are counted (visible in the request log as nothing, and in `Trace` logs of tests).
+- **Start:** F1, F2, F4 skip bytes until `ENQ`; F3 skips until `STX`. Skipped bytes are counted in `skippedBytes()` (cleared by `clearLog()`; not in the request log) and logged at `Trace` through `MockOptions::log` (category `"mc.mock"`) with the running count, to help debug traces (owner decision 2026-10-03). In format 4 the `CR LF` of an `EOT CR LF` belongs to the EOT and is not counted as skipped.
 - **Length:** F1, F2 and F4 requests have no terminator before SUM (F4 ends in `CR LF` after it), so the decoder computes the request-data length from the command and the point count, exactly as the tables of spec §4.1–4.3 define it. F3 reads up to `ETX`.
 - **Sum check:** verified when `cfg.sumCheck`; wrong → NAK (F3: `QNAK` / `NN`) with `sumError*`.
 - **Station:** a request whose station number differs from `cfg.stationNo` gets **no response** (multidrop behaviour).

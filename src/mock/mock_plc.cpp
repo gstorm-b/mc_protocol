@@ -3,10 +3,16 @@
 #include "mock/memory_image.h"
 #include "mock/mock_internal.h"
 
+#include <cstdio>
 #include <deque>
 #include <utility>
 
 namespace mc {
+
+namespace {
+constexpr uint8_t kCr = 0x0D;
+constexpr uint8_t kLf = 0x0A;
+} // namespace
 
 using detail::mock::DecodeResult;
 using detail::mock::DecodeResult1e;
@@ -34,12 +40,15 @@ struct MockPlc::Impl {
     bool swallowsRequest();
     void queueResponse(ByteBuf response);
     void logJunk();
+    void logSkipped();
 
     FrameConfig cfg;
     MockOptions opt;
     detail::mock::MemoryImage memory;
     std::vector<MockRequestRecord> log;
     uint32_t eot{0};
+    uint64_t skipped{0};           // serial bytes dropped before a start byte or as unframable
+    uint8_t eotTail{0};            // format 4: CR (2) and LF (1) still to come after an EOT
     std::vector<Fault> faults;
     bool muted{false};
     uint32_t muteCount{0};
@@ -95,12 +104,22 @@ void MockPlc::Impl::receive(ByteView bytes) {
     rx.erase(rx.begin(), rx.begin() + static_cast<std::ptrdiff_t>(pos));
 }
 
-// Serial: bytes before the start byte are skipped without a trace (spec §6.3), and an EOT
-// cancels the partial request and is counted.
+// Serial: bytes before the start byte are skipped and counted (spec §6.3), and an EOT cancels the
+// partial request and is counted. In format 4 the CR LF of an EOT CR LF belongs to the EOT, also when
+// it arrives in a later call.
 void MockPlc::Impl::receiveSerial(ByteView bytes) {
     rx.insert(rx.end(), bytes.data, bytes.data + bytes.size);
     size_t pos = 0;
     while (pos < rx.size()) {
+        if (eotTail > 0) {
+            const uint8_t expected = eotTail == 2 ? kCr : kLf;
+            if (rx[pos] == expected) {
+                --eotTail;
+                ++pos;
+                continue;
+            }
+            eotTail = 0;
+        }
         SerialDecodeResult r =
             detail::mock::decodeSerialRequest(cfg, ByteView{rx.data() + pos, rx.size() - pos});
         if (r.status == FrameStatus::NeedMore) {
@@ -109,11 +128,26 @@ void MockPlc::Impl::receiveSerial(ByteView bytes) {
         pos += r.consumed;
         if (r.status == FrameStatus::Eot) {
             ++eot;
+            eotTail = cfg.format == SerialFormat::Format4 ? 2 : 0;
         } else if (r.status == FrameStatus::Complete) {
             handleSerial(r.request);
+        } else if (r.status == FrameStatus::Junk) {
+            skipped += r.consumed;
+            logSkipped();
         }
     }
     rx.erase(rx.begin(), rx.begin() + static_cast<std::ptrdiff_t>(pos));
+}
+
+// One Trace line per skipped serial byte, with the running count.
+void MockPlc::Impl::logSkipped() {
+    if (opt.log == nullptr || !opt.log->enabled(LogLevel::Trace)) {
+        return;
+    }
+    char text[64];
+    std::snprintf(text, sizeof text, "serial byte skipped; %llu in all",
+                  static_cast<unsigned long long>(skipped));
+    opt.log->write(LogLevel::Trace, "mc.mock", text);
 }
 
 // Bytes that cannot start a request are dropped one at a time; a run of them is one log record,
@@ -323,6 +357,11 @@ const std::vector<MockRequestRecord>& MockPlc::requests() const { return m_impl-
 
 uint32_t MockPlc::eotCount() const { return m_impl->eot; }
 
-void MockPlc::clearLog() { m_impl->log.clear(); }
+uint64_t MockPlc::skippedBytes() const { return m_impl->skipped; }
+
+void MockPlc::clearLog() {
+    m_impl->log.clear();
+    m_impl->skipped = 0;
+}
 
 } // namespace mc

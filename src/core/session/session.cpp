@@ -78,6 +78,9 @@ size_t ringCapacityFor(const SessionConfig& cfg) noexcept {
 } // namespace
 
 Expected<void> SessionConfig::validate(const FrameConfig& frame) const noexcept {
+    if (maxConsecutiveLinkErrors == 0) {
+        return Expected<void>(invalidConfigError("maxConsecutiveLinkErrors must be at least 1"));
+    }
     if (heartbeat.enabled) {
         if (deviceInfo(heartbeat.device.type).kind != DeviceKind::Bit) {
             return Expected<void>(

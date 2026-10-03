@@ -15,6 +15,7 @@
 #include "mc/core/protocol.h"
 #include "mc/core/session.h"
 
+#include <string_view>
 #include <utility>
 #include <vector>
 
@@ -32,6 +33,7 @@ using mc::LinkFaultKind;
 using mc::McProtocol;
 using mc::OutputKind;
 using mc::PlanOptions;
+using mc::SerialFormat;
 using mc::Session;
 using mc::SessionConfig;
 using mc::TimeMs;
@@ -744,6 +746,28 @@ TEST_CASE("Session::create(): SessionConfig/FrameConfig own error paths (Checkpo
         auto created = Session::create(FrameConfig::frame1E(), cfg);
         CHECK_FALSE(created.hasValue());
         CHECK(created.error().code == ErrorCode::InvalidDevice);
+    }
+
+    SUBCASE("maxConsecutiveLinkErrors: default 3, 0 rejected on every frame, 1 and 255 accepted") {
+        CHECK(SessionConfig{}.maxConsecutiveLinkErrors == 3);
+
+        for (const FrameConfig& f :
+             {FrameConfig::frame3E(), FrameConfig::frame3C(SerialFormat::Format1)}) {
+            SessionConfig cfg;
+            cfg.maxConsecutiveLinkErrors = 0;
+            auto rejected = Session::create(f, cfg);
+            REQUIRE_FALSE(rejected.hasValue());
+            CHECK(rejected.error().code == ErrorCode::InvalidConfig);
+            CHECK(rejected.error().category == ErrorCategory::Config);
+            CHECK(std::string_view(rejected.error().message).find("maxConsecutiveLinkErrors") !=
+                  std::string_view::npos);
+            CHECK_FALSE(cfg.validate(f).hasValue());
+
+            cfg.maxConsecutiveLinkErrors = 1;
+            CHECK(Session::create(f, cfg).hasValue());
+            cfg.maxConsecutiveLinkErrors = 255;
+            CHECK(Session::create(f, cfg).hasValue());
+        }
     }
 
     SUBCASE("an invalid FrameConfig propagates FrameConfig::validate()'s own error") {
