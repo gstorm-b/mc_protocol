@@ -3,9 +3,9 @@
 - **Plan:** `tasks/plan.md` · **Specs:** `docs/spec/`
 - **Conventions for every task**
   - Done = acceptance criteria met **and** the Definition of Done (`agent-team/project/definition-of-done.md`): runs, tests fail without the change and pass with it, no regressions, scoped, documented per `docs/rules/doc_comment_style.md` (`/** */` + tags on every public symbol, `@par Complexity` with allocation on every public `core-*` function).
-  - Adding a source file updates `CMakeLists.txt` **and** the matching `.pri` in the same task (BLD-04 enforces it from T03 on).
-  - `cmake`/`ctest` = `C:\Qt\Tools\CMake_64\bin\*.exe`. `build/cmake-debug` = MSVC, the daily loop of every task (VS 2026 environment via `. scripts/vsdev.ps1` from T01, `-DCMAKE_PREFIX_PATH=C:/Qt/6.11.1/msvc2022_64`), `build/cmake-mingw` = MinGW 13.1 (`C:/Qt/6.11.1/mingw_64`), run at checkpoints. "Both compilers" means both folders.
-  - v1 is verified on Windows only (owner decision 1); nothing touches a real PLC before T54 (owner decision 5); Qt APIs stay within 6.2 (owner decision 4, checked in review).
+  - Adding a source file updates `CMakeLists.txt` **and** the matching `.pri` in the same task (BLD-04 enforces it from T-004 on).
+  - `cmake`/`ctest` = `C:\Qt\Tools\CMake_64\bin\*.exe`. `build/cmake-debug` = MSVC, the daily loop of every task (VS 2026 environment via `. scripts/vsdev.ps1` from T-002, `-DCMAKE_PREFIX_PATH=C:/Qt/6.11.1/msvc2022_64`), `build/cmake-mingw` = MinGW 13.1 (`C:/Qt/6.11.1/mingw_64`), run at checkpoints. "Both compilers" means both folders.
+  - v1 is verified on Windows only (owner decision 1); nothing touches a real PLC before P9-1 (owner decision 5); Qt APIs stay within 6.2 (owner decision 4, checked in review).
   - One commit per task, only after the owner approves it; author `dev28`, no AI trailer.
 - **Size:** S = 1–2 files · M = 3–5 files · a task listing more files counts small boilerplate or data files.
 
@@ -13,7 +13,7 @@
 
 ## Phase 0: Build skeleton (`SPEC-build-packaging.md`)
 
-### T01: CMake skeleton with `mc::core`, version header and doctest (baton T-002)
+### T-002: CMake skeleton with `mc::core`, version header and doctest
 
 **Description:** Root and `src/` CMake projects that define `mc_core` / `mc::core` (static, C++17, `include/` public, `src/` private), the option set of the spec (`MC_BUILD_*`, top-level detection for 3.16), warning and version helpers, the vendored doctest header, and the first test binary with the version test. Also `scripts/vsdev.ps1`, dot-sourced to load the VS developer environment (x64) found by `vswhere` into the current PowerShell; it does nothing when `cl.exe` is already on `PATH`.
 
@@ -32,7 +32,7 @@
 
 **Scope:** M (boilerplate)
 
-### T02: qmake mirror (baton T-003)
+### T-003: qmake mirror
 
 **Description:** `mc_core.pri`, `mc_device.pri`, `mc_mock.pri`, `mc_protocol.pri` with include guards and `$$PWD` paths, and the dev-only `mc_protocol.pro` (`subdirs`) that builds the test binaries through the `.pri` files.
 
@@ -44,13 +44,13 @@
 **Verification:**
 - [ ] In `build/qmake-debug`: `qmake ../../mc_protocol.pro CONFIG+=debug; nmake; nmake check` (MSVC dev shell).
 
-**Dependencies:** T01
+**Dependencies:** T-002
 
 **Files likely touched:** `mc_core.pri`, `mc_device.pri`, `mc_mock.pri`, `mc_protocol.pri`, `mc_protocol.pro`, `tests/qmake/tests.pro`, `tests/qmake/core_version.pro`
 
 **Scope:** M (boilerplate)
 
-### T03: Build guard tests (baton T-004)
+### T-004: Build guard tests
 
 **Description:** The ctest scripts that keep the build honest: `pri_sync` (BLD-04), `include_hygiene` (BLD-05 a–d), and the two consumer smoke projects (BLD-06 CMake, BLD-07 qmake). The qmake consumer links QtCore, which also proves early that MSVC 2026 links the Qt `msvc2022_64` kit.
 
@@ -62,13 +62,13 @@
 **Verification:**
 - [ ] `ctest -L build` green; the two negative checks above done by hand once and reverted.
 
-**Dependencies:** T01, T02
+**Dependencies:** T-002, T-003
 
 **Files likely touched:** `cmake/check_pri_sync.cmake`, `cmake/check_include_hygiene.cmake`, `tests/consumer_cmake/CMakeLists.txt`, `tests/consumer_cmake/main.cpp`, `tests/consumer_qmake/app.pro`, `tests/consumer_qmake/main.cpp`
 
 **Scope:** M
 
-### T04: `check` scripts, formatting and repository documents (baton T-005)
+### T-005: `check` scripts, formatting and repository documents
 
 **Description:** `scripts/check.ps1` and `scripts/check.sh` running every stage in order and stopping at the first failure (full CMake build, core-only build with Qt removed from the environment, qmake build, consumer smokes); `.clang-format`; README (three consumption paths, version policy), CHANGELOG (Keep a Changelog, `Unreleased`), LICENSE (MIT, decided).
 
@@ -80,7 +80,7 @@
 **Verification:**
 - [ ] Run `scripts/check.ps1`; run `scripts/check.sh` in Git Bash with MinGW on `PATH`.
 
-**Dependencies:** T03
+**Dependencies:** T-004
 
 **Files likely touched:** `scripts/check.ps1`, `scripts/check.sh`, `.clang-format`, `README.md`, `CHANGELOG.md`, `LICENSE`
 
@@ -94,7 +94,7 @@
 
 ## Phase 1: Data layer (`SPEC-core-model.md`)
 
-### T05: `Error`, `Expected<T>`, byte views (baton T-006)
+### T-006: `Error`, `Expected<T>`, byte views
 
 **Description:** `types.h` (`ByteView`, `MutableByteView`, `ByteBuf`, `kNoCode`) and `result.h` (`ErrorCategory`, `ErrorCode` including `NotSubscribed`, `ErrorInfo`, `Error`, `Expected<T>` and `Expected<void>`, move-only `T` supported), header-only.
 
@@ -105,13 +105,13 @@
 **Verification:**
 - [ ] `cmake --build build/cmake-debug --target mc_core_model_tests; ctest --test-dir build/cmake-debug -L core_model`
 
-**Dependencies:** T01
+**Dependencies:** T-002
 
 **Files likely touched:** `include/mc/core/types.h`, `include/mc/core/result.h`, `tests/core/model/test_result.cpp`, `tests/CMakeLists.txt`
 
 **Scope:** S
 
-### T06: Device table, parsing, formatting, ordering (baton T-007)
+### T-007: Device table, parsing, formatting, ordering
 
 **Description:** The constexpr table of all 29 symbols of spec §3.2 with every code column and footnote, `deviceInfo()`, `parseDevice()` (case-insensitive, longest match, radix per symbol), `formatDevice()`, and `Device` `==`/`!=`/`<`.
 
@@ -122,13 +122,13 @@
 **Verification:**
 - [ ] `ctest -L core_model` (both compilers).
 
-**Dependencies:** T05
+**Dependencies:** T-006
 
 **Files likely touched:** `include/mc/core/device.h`, `src/core/model/device_table.cpp`, `src/core/model/device_parse.cpp`, `tests/core/model/test_device.cpp`
 
 **Scope:** M
 
-### T07: `FrameConfig`, `Request`, `validate()` (baton T-008)
+### T-008: `FrameConfig`, `Request`, `validate()`
 
 **Description:** `FrameConfig` with the named constructors and spec §8.3 defaults (`checkRoute` true for 3C/1C), `validate()` and `effectiveTimeoutMs()`; `Request` with its builders; `validate(Request, FrameConfig)` implementing the seven rules in order.
 
@@ -139,13 +139,13 @@
 **Verification:**
 - [ ] `ctest -L core_model` (both compilers).
 
-**Dependencies:** T06
+**Dependencies:** T-007
 
 **Files likely touched:** `include/mc/core/frame_config.h`, `include/mc/core/request.h`, `src/core/model/frame_config.cpp`, `src/core/model/validate.cpp`, `tests/core/model/test_frame_config.cpp`
 
 **Scope:** M
 
-### T08: Limits table and `chunk()` (baton T-009)
+### T-009: Limits table and `chunk()`
 
 **Description:** The full constexpr transcription of spec §4.4 (random-access rows included for v1.1), `maxPoints()`, `chunkCount()` and `chunk()` per spec §8.5 (step 16 for word access to bit devices, `splitWrites` policy).
 
@@ -156,13 +156,13 @@
 **Verification:**
 - [ ] `ctest -L core_model` (both compilers).
 
-**Dependencies:** T07
+**Dependencies:** T-008
 
 **Files likely touched:** `include/mc/core/limits.h`, `src/core/model/limits_table.cpp`, `src/core/model/chunk.cpp`, `tests/core/model/test_limits.cpp`, `tests/core/model/test_chunk.cpp`
 
 **Scope:** M
 
-### T09: `convert` helpers (baton T-010)
+### T-010: `convert` helpers
 
 **Description:** Word/dword/float/string accessors and writers, bit packing, words ↔ bits, owning `from*` builders, all bounds-checked (spec §2.3, §2.4, §8.7).
 
@@ -172,13 +172,13 @@
 **Verification:**
 - [ ] `ctest -L core_model` (both compilers).
 
-**Dependencies:** T05
+**Dependencies:** T-006
 
 **Files likely touched:** `include/mc/core/convert.h`, `src/core/model/convert.cpp`, `tests/core/model/test_convert.cpp`
 
 **Scope:** S
 
-### T10: `LogSink`, `hexDump`, zero-allocation test (baton T-011)
+### T-011: `LogSink`, `hexDump`, zero-allocation test
 
 **Description:** `LogSink`, `NullLogSink`, `hexDump` with control-code names; a counting global `operator new` shared by every later allocation test; ALC-01 for core-model.
 
@@ -189,7 +189,7 @@
 **Verification:**
 - [ ] `ctest -L core_model` (both compilers).
 
-**Dependencies:** T06–T09
+**Dependencies:** T-007–T-010
 
 **Files likely touched:** `include/mc/core/log.h`, `src/core/model/log.cpp`, `tests/core/model/test_log.cpp`, `tests/common/alloc_counter.h`, `tests/core/model/test_alloc.cpp`
 
@@ -203,7 +203,7 @@
 
 ## Phase 2: Wire codec, 3E first (`SPEC-core-protocol.md`)
 
-### T11: Vector loader and `.vec` format (baton T-013)
+### T-013: Vector loader and `.vec` format
 
 **Description:** `tests/common/vectors.h/.cpp`: parses `# key: value` metadata, one hex line per vector, `<STX>`-style names, tags (`v1.1`, `v2`), and exposes every metadata key as data for the mock and replay tests. Every vector carries `bytes:` transcribed from its reference-spec heading.
 
@@ -214,13 +214,13 @@
 **Verification:**
 - [ ] `ctest -L core_protocol`.
 
-**Dependencies:** T10
+**Dependencies:** T-011
 
 **Files likely touched:** `tests/common/vectors.h`, `tests/common/vectors.cpp`, `tests/core/protocol/test_vectors_format.cpp`, `tests/vectors/sample.vec`
 
 **Scope:** M
 
-### T12: Primitives (baton T-014)
+### T-014: Primitives
 
 **Description:** Hex-ASCII (upper-case encode, lower-case accepted on decode), 8-bit sum check, `AsciiCodec` / `BinaryCodec` field codecs (byte-wise, no `reinterpret_cast`), with PRIM vectors in `prim.vec`.
 
@@ -231,13 +231,13 @@
 **Verification:**
 - [ ] `ctest -L core_protocol` (both compilers).
 
-**Dependencies:** T11
+**Dependencies:** T-013
 
 **Files likely touched:** `src/core/protocol/hexascii.h/.cpp`, `src/core/protocol/sumcheck.h/.cpp`, `src/core/protocol/field_codec.h`, `tests/vectors/prim.vec`, `tests/core/protocol/test_primitives.cpp`
 
 **Scope:** M
 
-### T13: Device encoding for all eight families (baton T-015)
+### T-015: Device encoding for all eight families
 
 **Description:** `qnaDevice()`, `e1Device()`, `c1Device()` per spec §3.3 (QnA ASCII/Binary × Q/L/iQ-R, 1E ASCII/Binary, 1C ACPU/AnA).
 
@@ -248,13 +248,13 @@
 **Verification:**
 - [ ] `ctest -L core_protocol`.
 
-**Dependencies:** T12
+**Dependencies:** T-014
 
 **Files likely touched:** `src/core/protocol/device_encode.h/.cpp`, `tests/core/protocol/test_device_encode.cpp`
 
 **Scope:** S
 
-### T14: QnA batch read/write commands (baton T-016)
+### T-016: QnA batch read/write commands
 
 **Description:** 0401/1401 request data and response decoding written once against the field codec (no ASCII/Binary branches except device encoding); 0403/1402 tables present but unreachable in v1.
 
@@ -265,13 +265,13 @@
 **Verification:**
 - [ ] `ctest -L core_protocol`.
 
-**Dependencies:** T13
+**Dependencies:** T-015
 
 **Files likely touched:** `src/core/protocol/command_qna.h/.cpp`, `tests/vectors/cmd.vec`, `tests/vectors/cmdd.vec`, `tests/core/protocol/test_commands.cpp`
 
 **Scope:** M
 
-### T15: `McProtocol` and `Parser` facade with 3E Binary (baton T-017)
+### T-017: `McProtocol` and `Parser` facade with 3E Binary
 
 **Description:** The public `protocol.h` (`McProtocol`, `Parser`, `ParseStatus`), dispatch by `FrameType`, and the 3E envelope and response parse for Binary. First end-to-end slice of the codec.
 
@@ -283,13 +283,13 @@
 **Verification:**
 - [ ] `ctest -L core_protocol` (both compilers).
 
-**Dependencies:** T14
+**Dependencies:** T-016
 
 **Files likely touched:** `include/mc/core/protocol.h`, `src/core/protocol/protocol.cpp`, `src/core/protocol/frame_3e.h/.cpp`, `tests/vectors/3e_binary.vec`, `tests/core/protocol/test_frame_3e.cpp`
 
 **Scope:** M
 
-### T16: 3E ASCII, streaming, sizes, zero allocation (baton T-018)
+### T-018: 3E ASCII, streaming, sizes, zero allocation
 
 **Description:** 3E ASCII, byte-at-a-time and coalesced parsing, `reset()`, the 4E vectors transcribed and tagged `v2`, and ALC-01 for the codec.
 
@@ -301,7 +301,7 @@
 **Verification:**
 - [ ] `ctest -L core_protocol` (both compilers).
 
-**Dependencies:** T15
+**Dependencies:** T-017
 
 **Files likely touched:** `tests/vectors/3e_ascii.vec`, `tests/vectors/4e_binary.vec`, `tests/vectors/4e_ascii.vec`, `tests/core/protocol/test_parser_stream.cpp`, `tests/core/protocol/test_alloc.cpp`
 
@@ -315,24 +315,24 @@
 
 ## Phase 3: Engine on 3E (`SPEC-core-session.md`)
 
-### T17: `RangeSet` and `ReadPlan` (baton T-020)
+### T-020: `RangeSet` and `ReadPlan`
 
 **Description:** Subscription bookkeeping and the planner: bits-as-words alignment (incl. M9000 + 16k on 1E/1C), union, gap merge with `autoGap()`, chunking with `chunk()`, per-type contiguous chunk order.
 
 **Acceptance criteria:**
-- [ ] PLN-01, 02, 04…10 pass; PLN-03 passes for the 3E values (1E value added in T37).
+- [ ] PLN-01, 02, 04…10 pass; PLN-03 passes for the 3E values (1E value added in T-043).
 - [ ] `build()` failure keeps the previous plan and names the failing subscription's error.
 
 **Verification:**
 - [ ] `ctest -L core_session`.
 
-**Dependencies:** T16
+**Dependencies:** T-018
 
 **Files likely touched:** `include/mc/core/poll_plan.h`, `src/core/session/range_set.cpp`, `src/core/session/read_plan.cpp`, `tests/core/session/test_range_set.cpp`
 
 **Scope:** M
 
-### T18: `ValueStore` (baton T-021)
+### T-021: `ValueStore`
 
 **Description:** Per-type segments with contiguous value and state arrays, `apply()` with silent baselines, `markFailed`, `markStale`, `resetBaselines`, `rebuild()` carry-over, bulk reads in the normalized layout.
 
@@ -343,13 +343,13 @@
 **Verification:**
 - [ ] `ctest -L core_session`.
 
-**Dependencies:** T17
+**Dependencies:** T-020
 
 **Files likely touched:** `include/mc/core/value_store.h`, `src/core/session/value_store.cpp`, `tests/core/session/test_value_store.cpp`
 
 **Scope:** M
 
-### T19: `Session` scheduling skeleton and test harness (baton T-022)
+### T-022: `Session` scheduling skeleton and test harness
 
 **Description:** `Session::create`, `linkUp` / `linkDown`, round scheduling (`FixedRate`, `FixedDelay`, interval 0), pre-encoded frames, `nextDeadline`, output ring and `nextOutput`; the harness (`FakeClock`, 3E `ScriptedPeer`, `OutputRecorder`).
 
@@ -360,13 +360,13 @@
 **Verification:**
 - [ ] `ctest -L core_session`.
 
-**Dependencies:** T18
+**Dependencies:** T-021
 
 **Files likely touched:** `include/mc/core/session.h`, `src/core/session/session.cpp`, `src/core/session/output_ring.h`, `tests/core/session/harness.h/.cpp`, `tests/core/session/test_session_poll.cpp`
 
 **Scope:** M
 
-### T20: Receive path and value publishing (baton T-023)
+### T-023: Receive path and value publishing
 
 **Description:** Receive buffer, `Parser` driving, decode into the store, `ValuesChanged` per response from round 2, `Snapshot` per device type (held back to the end of round 1), `CycleDone`.
 
@@ -377,7 +377,7 @@
 **Verification:**
 - [ ] `ctest -L core_session`.
 
-**Dependencies:** T19
+**Dependencies:** T-022
 
 **Files likely touched:** `src/core/session/session_rx.cpp`, `src/core/session/session.cpp`, `tests/core/session/test_session_poll.cpp`
 
@@ -386,7 +386,7 @@
 ### Checkpoint C1: polling path (inside baton T-023)
 - [x] The engine polls, publishes and schedules on 3E with a fake clock. Quick owner look at the harness style before the remaining engine tasks.
 
-### T21: Dynamic subscriptions (baton T-024)
+### T-024: Dynamic subscriptions
 
 **Description:** `subscribe` / `unsubscribe` at run time, deferred re-plan at the next round boundary, carry-over of values and baselines.
 
@@ -396,13 +396,13 @@
 **Verification:**
 - [ ] `ctest -L core_session`.
 
-**Dependencies:** T20
+**Dependencies:** T-023
 
 **Files likely touched:** `src/core/session/session.cpp`, `tests/core/session/test_session_poll.cpp`
 
 **Scope:** S
 
-### T22: Ad-hoc requests (baton T-025)
+### T-025: Ad-hoc requests
 
 **Description:** Ad-hoc arena (FIFO ring, `adHocArenaBytes`), queue with `adHocCapacity`, `maxAdHocBurst` dispatch, chunked ad-hoc reads and split writes, exactly-once `RequestDone`.
 
@@ -413,13 +413,13 @@
 **Verification:**
 - [ ] `ctest -L core_session`.
 
-**Dependencies:** T21
+**Dependencies:** T-024
 
 **Files likely touched:** `src/core/session/adhoc_queue.h/.cpp`, `src/core/session/session.cpp`, `tests/core/session/test_session_adhoc.cpp`
 
 **Scope:** M
 
-### T23: Ethernet faults, drain contract, heartbeat (baton T-026)
+### T-026: Ethernet faults, drain contract, heartbeat
 
 **Description:** The Ethernet column of the fault table (timeout, protocol error, unsolicited bytes, overflow → `LinkFault{…, reopen}`), the drain-contract check, the optional heartbeat.
 
@@ -430,13 +430,13 @@
 **Verification:**
 - [ ] `ctest -L core_session`.
 
-**Dependencies:** T22
+**Dependencies:** T-025
 
 **Files likely touched:** `src/core/session/session.cpp`, `src/core/session/session_rx.cpp`, `tests/core/session/test_session_fault.cpp`, `tests/core/session/test_session_heartbeat.cpp`
 
 **Scope:** M
 
-### T24: Steady-state zero allocation and session benchmark (baton T-027)
+### T-027: Steady-state zero allocation and session benchmark
 
 **Description:** ALC-01 for the engine and the regression benchmark (`MC_BUILD_BENCH`).
 
@@ -447,7 +447,7 @@
 **Verification:**
 - [ ] `ctest -L core_session`; Release build of `build/cmake-bench` runs the benchmark.
 
-**Dependencies:** T23
+**Dependencies:** T-026
 
 **Files likely touched:** `tests/core/session/test_alloc.cpp`, `tests/bench/bench_session.cpp`, `tests/bench/CMakeLists.txt`
 
@@ -459,9 +459,9 @@
 
 ---
 
-## Phase 4: Mock PLC on 3E (`SPEC-mock-plc.md`). T25–T27 can run in parallel with Phase 3.
+## Phase 4: Mock PLC on 3E (`SPEC-mock-plc.md`). T-029–T-031 can run in parallel with Phase 3.
 
-### T25: `MockPlc` facade and memory image (baton T-029)
+### T-029: `MockPlc` facade and memory image
 
 **Description:** `mc_mock` target (CMake + `mc_mock.pri`), public `mock_plc.h`, sparse per-type memory where word access to a bit device sees 16 points per word, device limits, request log.
 
@@ -472,13 +472,13 @@
 **Verification:**
 - [x] `ctest -L mock`.
 
-**Dependencies:** T16
+**Dependencies:** T-018
 
 **Files likely touched:** `include/mc/mock/mock_plc.h`, `src/mock/memory_image.h/.cpp`, `src/mock/mock_plc.cpp`, `tests/mock/test_mock_memory.cpp`
 
 **Scope:** M
 
-### T26: 3E server direction against the vectors (baton T-030)
+### T-030: 3E server direction against the vectors
 
 **Description:** 3E request decoding and response building from the spec tables, reusing only the allowed primitives (independence rule), echoing the request route.
 
@@ -489,13 +489,13 @@
 **Verification:**
 - [x] `ctest -L mock`.
 
-**Dependencies:** T25
+**Dependencies:** T-029
 
 **Files likely touched:** `src/mock/request_decode_ethernet.cpp`, `src/mock/command_exec.cpp`, `src/mock/response_build.cpp`, `tests/mock/test_mock_vectors.cpp`, `tests/mock/check_mock_includes.cmake`
 
 **Scope:** M
 
-### T27: Fault injection and corruption (Ethernet) (baton T-031)
+### T-031: Fault injection and corruption (Ethernet)
 
 **Description:** `failRange`, `mute`, `muteNext`, `corruptNext` for the Ethernet modes, unsupported commands.
 
@@ -505,13 +505,13 @@
 **Verification:**
 - [x] `ctest -L mock`.
 
-**Dependencies:** T26
+**Dependencies:** T-030
 
 **Files likely touched:** `src/mock/corruption.cpp`, `src/mock/mock_plc.cpp`, `tests/mock/test_mock_faults.cpp`
 
 **Scope:** S
 
-### T28: Integration rig and the 3E part of the matrix (baton T-032)
+### T-032: Integration rig and the 3E part of the matrix
 
 **Description:** In-memory pipe with seeded fragmentation, the rig (`Session` + `MockPlc` + fake clock), `mc_integration_tests` (label `integration`), scenarios on 3E Binary and 3E ASCII.
 
@@ -522,13 +522,13 @@
 **Verification:**
 - [x] `ctest -L integration` (both compilers).
 
-**Dependencies:** T24, T27
+**Dependencies:** T-027, T-031
 
 **Files likely touched:** `tests/mock/integration/pipe.h`, `tests/mock/integration/rig.h/.cpp`, `tests/mock/integration/test_integration.cpp`, `tests/CMakeLists.txt`
 
 **Scope:** M
 
-### T29: `examples/session_loop` (baton T-033)
+### T-033: `examples/session_loop`
 
 **Description:** The non-Qt usage example of the core-session spec, driving `Session` against `MockPlc` through an in-memory pipe with `std::chrono::steady_clock`.
 
@@ -538,7 +538,7 @@
 **Verification:**
 - [x] Build and run `build/cmake-core/examples/session_loop` (core-only configure).
 
-**Dependencies:** T28
+**Dependencies:** T-032
 
 **Files likely touched:** `examples/session_loop/main.cpp`, `examples/CMakeLists.txt`, `examples/qmake/session_loop.pro`
 
@@ -552,7 +552,7 @@
 
 ## Phase 5: Qt device over TCP (`SPEC-qt-device.md`)
 
-### T30: `Transport`, `TcpTransport`, meta types (baton T-035)
+### T-035: `Transport`, `TcpTransport`, meta types
 
 **Description:** `mc_device` target (CMake + `mc_device.pri`, `AUTOMOC`), the abstract `Transport`, `TcpTransport` (async connect with timeout timer, `LowDelayOption`, `KeepAliveOption`, `lost()`), `meta_types.h` with `registerMetaTypes()`.
 
@@ -563,13 +563,13 @@
 **Verification:**
 - [x] `ctest -L device` (MSVC and MinGW Qt kits).
 
-**Dependencies:** T24
+**Dependencies:** T-027
 
 **Files likely touched:** `include/mc/device/transport.h`, `include/mc/device/tcp_transport.h`, `src/device/tcp_transport.cpp`, `include/mc/device/meta_types.h`, `src/device/meta_types.cpp`
 
 **Scope:** M
 
-### T31: `McDeviceConfig` and JSON (baton T-036)
+### T-036: `McDeviceConfig` and JSON
 
 **Description:** The plain config struct, `validate(where)`, `toJson` / `fromJson` with `"schema": 1`, every `FrameConfig` and `SessionConfig` key, `QSerialPort` enums as strings.
 
@@ -580,13 +580,13 @@
 **Verification:**
 - [x] `ctest -L device`.
 
-**Dependencies:** T30
+**Dependencies:** T-035
 
 **Files likely touched:** `include/mc/device/mc_device_config.h`, `src/device/mc_device_config.cpp`, `include/mc/device/serial_transport.h` (settings struct only), `tests/device/tst_config_json.cpp`
 
 **Scope:** M
 
-### T32: `McDevice` link state, pump and signal queue (baton T-037)
+### T-037: `McDevice` link state, pump and signal queue
 
 **Description:** The link state machine, drain → FIFO signal queue → emit at the outermost call, single-shot deadline timer on `QElapsedTimer`, conversion of outputs to Qt value types; the `MockPlcServer` test helper.
 
@@ -597,13 +597,13 @@
 **Verification:**
 - [x] `ctest -L device` (both kits).
 
-**Dependencies:** T31, T28
+**Dependencies:** T-036, T-032
 
 **Files likely touched:** `include/mc/device/mc_device.h`, `src/device/mc_device.cpp`, `tests/device/mock_plc_server.h/.cpp`, `tests/device/tst_mc_device.cpp`
 
 **Scope:** M
 
-### T33: `McDevice` faults, re-entrancy, threads, destructor (baton T-038)
+### T-038: `McDevice` faults, re-entrancy, threads, destructor
 
 **Description:** `linkFault` without auto-reconnect, reconnect from `Faulted`, re-entrant slots, `moveToThread`, destructor warning log.
 
@@ -613,13 +613,13 @@
 **Verification:**
 - [x] `ctest -L device` (both kits).
 
-**Dependencies:** T32
+**Dependencies:** T-037
 
 **Files likely touched:** `src/device/mc_device.cpp`, `tests/device/tst_mc_device.cpp`, `tests/device/tst_mc_device_thread.cpp`
 
 **Scope:** M
 
-### T34: Examples `qt_console_poller` and `virtual_plc` (baton T-039)
+### T-039: Examples `qt_console_poller` and `virtual_plc`
 
 **Description:** The Qt console poller (host, port, frame, subscriptions from arguments) and the virtual PLC (`QTcpServer` in front of `MockPlc`, `--set`, `--wiggle`).
 
@@ -629,7 +629,7 @@
 **Verification:**
 - [x] Manual run of both programs (MSVC build); both also build through qmake.
 
-**Dependencies:** T33
+**Dependencies:** T-038
 
 **Files likely touched:** `examples/qt_console_poller/main.cpp`, `examples/virtual_plc/main.cpp`, `examples/CMakeLists.txt`, `examples/qmake/*.pro`
 
@@ -643,7 +643,7 @@
 
 ## Phase 6: Frames 1E, 3C, 1C through every layer
 
-### T35: 1E commands (A1E) (baton T-041)
+### T-041: 1E commands (A1E)
 
 **Description:** 00H–03H request data (command code goes to the subheader), response sizes computed from the request, dummy character and padding rules; 04H/05H tables present, unreachable.
 
@@ -659,7 +659,7 @@
 
 **Scope:** M
 
-### T36: 1E frame and vectors (baton T-042)
+### T-042: 1E frame and vectors
 
 **Description:** 1E envelope and response parse (5BH + abnormal code; other end codes stop after 2 bytes / 4 characters).
 
@@ -669,13 +669,13 @@
 **Verification:**
 - [x] `ctest -L core_protocol` (both compilers).
 
-**Dependencies:** T35
+**Dependencies:** T-041
 
 **Files likely touched:** `src/core/protocol/frame_1e.h/.cpp`, `src/core/protocol/protocol.cpp`, `tests/vectors/1e_binary.vec`, `tests/vectors/1e_ascii.vec`, `tests/core/protocol/test_frame_1e.cpp`
 
 **Scope:** M
 
-### T37: 1E in the mock, integration, planner and device (baton T-043)
+### T-043: 1E in the mock, integration, planner and device
 
 **Description:** 1E server direction in the mock; 1E Binary/ASCII rows of the integration matrix; PLN-03's 1E `autoGap` value; QDV-13's 1E cases.
 
@@ -686,7 +686,7 @@
 **Verification:**
 - [x] `ctest -L "mock|integration|core_session|device"`.
 
-**Dependencies:** T36
+**Dependencies:** T-042
 
 **Files likely touched:** `src/mock/request_decode_ethernet.cpp`, `src/mock/response_build.cpp`, `tests/mock/test_mock_vectors.cpp`, `tests/mock/integration/test_integration.cpp`, `tests/device/tst_mc_device.cpp`
 
@@ -695,7 +695,7 @@
 ### Checkpoint E1: 1E complete (baton T-044; batch 6a)
 - [x] Both Ethernet frames through every layer; `scripts/check.ps1` green. (T-044)
 
-### T38: Serial receive state machine (baton T-045)
+### T-045: Serial receive state machine
 
 **Description:** The incremental F1–F4 receive parser of spec §6.3 (STX/ACK/NAK start, junk skipping, ETX scan over new bytes only, SUM, CR LF), shared by 3C and 1C.
 
@@ -705,13 +705,13 @@
 **Verification:**
 - [x] `ctest -L core_protocol`.
 
-**Dependencies:** T36
+**Dependencies:** T-042
 
 **Files likely touched:** `src/core/protocol/serial_parser.h/.cpp`, `tests/core/protocol/test_serial_parser.cpp`
 
 **Scope:** S
 
-### T39: 3C formats 1 and 4 (baton T-046)
+### T-046: 3C formats 1 and 4
 
 **Description:** 3C envelopes (frame ID F9, route, sum-check ranges of spec §2.5) for formats 1 and 4 over the shared QnA commands.
 
@@ -721,13 +721,13 @@
 **Verification:**
 - [x] `ctest -L core_protocol`.
 
-**Dependencies:** T38
+**Dependencies:** T-045
 
 **Files likely touched:** `src/core/protocol/frame_serial.h/.cpp`, `src/core/protocol/protocol.cpp`, `tests/vectors/3c_f1.vec`, `tests/vectors/3c_f4.vec`, `tests/core/protocol/test_frame_serial.cpp`
 
 **Scope:** M
 
-### T40: 3C formats 2 and 3, serial options, 4C vectors (baton T-047)
+### T-047: 3C formats 2 and 3, serial options, 4C vectors
 
 **Description:** Format 2 (block number, `checkBlockNo`), format 3 (`QACK`/`QNAK`, `f3ShortResponseHasSum`), format 5 rejected (3C-03), 4C vectors transcribed and tagged `v2`.
 
@@ -737,13 +737,13 @@
 **Verification:**
 - [x] `ctest -L core_protocol`.
 
-**Dependencies:** T39
+**Dependencies:** T-046
 
 **Files likely touched:** `src/core/protocol/frame_serial.cpp`, `tests/vectors/3c_f2.vec`, `tests/vectors/3c_f3.vec`, `tests/vectors/4c_f1.vec … 4c_f5.vec`, `tests/core/protocol/test_frame_serial.cpp`
 
 **Scope:** M (data-heavy)
 
-### T41: 1C commands, formats 1 and 4 (baton T-048)
+### T-048: 1C commands, formats 1 and 4
 
 **Description:** BR/WR/BW/WW over ASCII with message wait, 1C envelopes for F1 and F4 (2-character NAK codes).
 
@@ -753,13 +753,13 @@
 **Verification:**
 - [x] `ctest -L core_protocol`.
 
-**Dependencies:** T40
+**Dependencies:** T-047
 
 **Files likely touched:** `src/core/protocol/command_a1c.h/.cpp`, `src/core/protocol/frame_serial.cpp`, `tests/vectors/1c_f1.vec`, `tests/vectors/1c_f4.vec`, `tests/core/protocol/test_frame_serial.cpp`
 
 **Scope:** M
 
-### T42: 1C formats 2 and 3, AnA command set, message wait (baton T-049)
+### T-049: 1C formats 2 and 3, AnA command set, message wait
 
 **Description:** 1C F2/F3 (`GG`/`NN`), JR/QR/JW/QW, message-wait character, 256 points as `"00"`, ALC-01 over every family.
 
@@ -769,7 +769,7 @@
 **Verification:**
 - [x] `ctest -L core_protocol` (both compilers).
 
-**Dependencies:** T41
+**Dependencies:** T-048
 
 **Files likely touched:** `src/core/protocol/command_a1c.cpp`, `src/core/protocol/frame_serial.cpp`, `tests/vectors/1c_f2.vec`, `tests/vectors/1c_f3.vec`, `tests/core/protocol/test_frame_serial.cpp`
 
@@ -778,7 +778,7 @@
 ### Checkpoint E2: codec complete (baton T-050; batch 6b)
 - [x] Every enabled Appendix A vector round-trips (core-protocol success criteria 1–5). (T-050; VEC-RT 309/309)
 
-### T43: Session serial behaviour (baton T-051)
+### T-051: Session serial behaviour
 
 **Description:** The serial column of the fault table: EOT (F4: EOT CR LF), silence-based flush capped at `effectiveTimeoutMs()`, first-byte + inter-character deadlines, read retries, never retried writes, `maxConsecutiveLinkErrors`.
 
@@ -788,13 +788,13 @@
 **Verification:**
 - [x] `ctest -L core_session` (both compilers).
 
-**Dependencies:** T42
+**Dependencies:** T-049
 
 **Files likely touched:** `src/core/session/session_rx.cpp`, `src/core/session/session.cpp`, `tests/core/session/test_session_fault.cpp`
 
 **Scope:** M
 
-### T44: Mock serial server direction (baton T-052)
+### T-052: Mock serial server direction
 
 **Description:** 3C and 1C request decoding for F1–F4 (command-aware length for F1/F2/F4, ETX for F3), station filtering, EOT reset, junk skipping, SUM verification, serial corruption modes.
 
@@ -804,13 +804,13 @@
 **Verification:**
 - [x] `ctest -L mock`.
 
-**Dependencies:** T42, T27
+**Dependencies:** T-049, T-031
 
 **Files likely touched:** `src/mock/request_decode_serial.cpp`, `src/mock/response_build.cpp`, `src/mock/corruption.cpp`, `tests/mock/test_mock_stream.cpp`, `tests/mock/test_mock_vectors.cpp`
 
 **Scope:** M
 
-### T45: Integration matrix complete (baton T-053)
+### T-053: Integration matrix complete
 
 **Description:** Add 3C F1–F4 and 1C F1–F4 to the matrix, with the serial variants of INT-11 (EOT, retries) and INT-12 (sum-check corruption retried).
 
@@ -820,13 +820,13 @@
 **Verification:**
 - [x] `ctest -L integration` (both compilers).
 
-**Dependencies:** T43, T44
+**Dependencies:** T-051, T-052
 
 **Files likely touched:** `tests/mock/integration/test_integration.cpp`, `tests/mock/integration/rig.cpp`
 
 **Scope:** S
 
-### T46: `SerialTransport` and serial loopback (baton T-054)
+### T-054: `SerialTransport` and serial loopback
 
 **Description:** `SerialTransport` (open completes on the next event-loop turn, `lost()` on port errors), `virtual_plc --serial`, the serial bridge helper, QDV-13 for 3C F1 over TCP, QDV-14.
 
@@ -837,7 +837,7 @@
 **Verification:**
 - [x] `ctest -L device`; QDV-14 once with a virtual COM pair if the owner installs one (installing is ask-first).
 
-**Dependencies:** T45, T34
+**Dependencies:** T-053, T-039
 
 **Files likely touched:** `src/device/serial_transport.cpp`, `include/mc/device/serial_transport.h`, `tests/device/serial_bridge.h/.cpp`, `tests/device/tst_serial.cpp`, `examples/virtual_plc/main.cpp`
 
@@ -851,7 +851,7 @@
 
 ## Phase 7: Hardware capture tooling (`SPEC-hil-capture.md`)
 
-### T47: `tools/` wiring, profile and plan loading (baton T-057)
+### T-057: `tools/` wiring, profile and plan loading
 
 **Description:** `MC_BUILD_TOOLS`, `tools/hil_capture` target, profile JSON (identity, scratch, `deviceEnd`, `supports`, `specialBit`/`specialWord`, embedded `McDeviceConfig`), plan JSON with device references (`D@s`, `M@s16`, `D@end+1`), example profiles.
 
@@ -868,7 +868,7 @@
 
 **Scope:** M
 
-### T48: Safety gate and dry run (baton T-058)
+### T-058: Safety gate and dry run
 
 **Description:** Scratch checks for `write`, `poll`, `mutate` and `raw` steps (the last two decoded through `MockPlc`), whole-run refusal, profile-id confirmation, `--dry-run` printing the encoded frames.
 
@@ -878,13 +878,13 @@
 **Verification:**
 - [x] `ctest -L hil_tool`.
 
-**Dependencies:** T47
+**Dependencies:** T-057
 
 **Files likely touched:** `tools/hil_capture/safety_gate.h/.cpp`, `tools/hil_capture/main.cpp`, `tests/hil/test_tool.cpp`
 
 **Scope:** M
 
-### T49: `RecordingTransport` and capture writer (baton T-059)
+### T-059: `RecordingTransport` and capture writer
 
 **Description:** The recording decorator (nanosecond stamps on every chunk) and the writers for `steps.vec`, `session.vec`, `run.meta` (no IP, TCP port or COM name) and `bench.csv`.
 
@@ -895,13 +895,13 @@
 **Verification:**
 - [x] `ctest -L hil_tool`.
 
-**Dependencies:** T48
+**Dependencies:** T-058
 
 **Files likely touched:** `tools/hil_capture/recording_transport.h/.cpp`, `tools/hil_capture/capture_writer.h/.cpp`, `tests/hil/test_tool.cpp`
 
 **Scope:** M
 
-### T50: Step runner and end-to-end run against `virtual_plc` (baton T-060)
+### T-060: Step runner and end-to-end run against `virtual_plc`
 
 **Description:** Execution of `write`, `read`, `poll`, `mutate`, `raw` steps with expectations, reconnect after faults, the console summary.
 
@@ -911,29 +911,29 @@
 **Verification:**
 - [x] `ctest -L hil_tool`; manual `hil_capture --dry-run` then a real run against `virtual_plc`.
 
-**Dependencies:** T49
+**Dependencies:** T-059
 
 **Files likely touched:** `tools/hil_capture/runner.h/.cpp`, `tools/hil_capture/main.cpp`, `tests/hil/test_tool.cpp`
 
 **Scope:** M
 
-### T51: Replay tests `mc_replay_tests` (baton T-061)
+### T-061: Replay tests `mc_replay_tests`
 
 **Description:** The std-only replay binary (label `replay`): re-encode, parse, mock conformance, session replay, capture sanity, divergence bookkeeping; skips cleanly when no capture exists.
 
 **Acceptance criteria:**
-- [x] RPL-01…06 pass on the capture set produced in T50; with an empty `tests/vectors/captured/` the binary passes with a "no captures" note.
+- [x] RPL-01…06 pass on the capture set produced in T-060; with an empty `tests/vectors/captured/` the binary passes with a "no captures" note.
 
 **Verification:**
 - [x] `ctest -L replay` (both compilers).
 
-**Dependencies:** T50
+**Dependencies:** T-060
 
 **Files likely touched:** `tests/hil/test_replay.cpp`, `tests/CMakeLists.txt`
 
 **Scope:** S
 
-### T52: Timing benchmark and `BENCH.md` (baton T-062)
+### T-062: Timing benchmark and `BENCH.md`
 
 **Description:** `bench` steps (200 repetitions, 1 warm-up, spacing by `cycleIntervalMs`, `--plc-state`), `bench.csv`, `hil_capture --report` generating `docs/hil/BENCH.md` with RUN and STOP columns and the measurement caveats.
 
@@ -943,13 +943,13 @@
 **Verification:**
 - [x] `ctest -L hil_tool`; manual `--only GB` run against `virtual_plc`, then `--report`.
 
-**Dependencies:** T50
+**Dependencies:** T-060
 
 **Files likely touched:** `tools/hil_capture/bench_report.h/.cpp`, `tools/hil_capture/runner.cpp`, `tests/hil/test_tool.cpp`
 
 **Scope:** M
 
-### T53: Plans for the four frame families (baton T-063)
+### T-063: Plans for the four frame families
 
 **Description:** `tests/hil/plans/{qna_ethernet,a1e,qna_serial,a1c}.json`, the machine form of `docs/hil/COMMAND-CATALOGUE.md` with identical step ids.
 
@@ -959,7 +959,7 @@
 **Verification:**
 - [x] `ctest -L hil_tool`; four dry runs.
 
-**Dependencies:** T51, T52
+**Dependencies:** T-061, T-062
 
 **Files likely touched:** `tests/hil/plans/qna_ethernet.json`, `tests/hil/plans/a1e.json`, `tests/hil/plans/qna_serial.json`, `tests/hil/plans/a1c.json`, `tests/hil/test_tool.cpp`
 
@@ -971,9 +971,18 @@
 
 ---
 
-## Phase 8: Bench and release
+## Phase 8: GUI tool (`gui-tool`)
 
-### T54: Capture the 14 bench profiles
+Planned once `docs/spec/SPEC-gui-tool.md` is approved by the owner; tasks get baton ids then.
+
+### Checkpoint H: GUI tool ready
+- [ ] GUI tool proven against `virtual_plc` and MockPlc on MSVC (CMake and qmake); owner demo.
+
+---
+
+## Phase 9: Bench and release
+
+### P9-1: Capture the 14 bench profiles
 
 **Description:** The owner runs the operator procedure of `SPEC-hil-capture.md` for each of the 14 profiles (RUN pass, then `GB` in STOP); the agent helps write profiles, reads summaries and prepares FINDINGS entries.
 
@@ -990,7 +999,7 @@
 
 **Scope:** owner-operated, spread over bench sessions
 
-### T55: Findings triage
+### P9-2: Findings triage
 
 **Description:** Walk through every FINDINGS entry with the owner; each decided change (codec, `FrameConfig` default, documentation) becomes its own follow-up task.
 
@@ -1000,13 +1009,13 @@
 **Verification:**
 - [ ] `ctest -L replay` and `scripts/check.ps1` green after the follow-up tasks.
 
-**Dependencies:** T54
+**Dependencies:** P9-1
 
 **Files likely touched:** `docs/hil/FINDINGS.md`, `tests/vectors/captured/*/divergences.txt`, follow-up task files
 
 **Scope:** S (+ follow-ups)
 
-### T56: Release 1.0
+### P9-3: Release 1.0
 
 **Description:** Public API review against the capability-map boundary rules, README (consumption paths, version policy, `bitsAsWords` risk, verified platforms), CHANGELOG, version 1.0.0, tag.
 
@@ -1017,7 +1026,7 @@
 **Verification:**
 - [ ] Full check; consumer build; owner sign-off.
 
-**Dependencies:** T55
+**Dependencies:** P9-2
 
 **Files likely touched:** `include/mc/version.h`, `CHANGELOG.md`, `README.md`
 

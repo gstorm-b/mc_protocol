@@ -22,3 +22,6 @@ compile_commands.json
 # HIL bench profiles: real ones hold IP addresses and COM port names (SPEC-hil-capture)
 tests/hil/profiles/*.json
 !tests/hil/profiles/*.example.json
+
+# Per-machine local paths for qmake (template: mc_local.pri.example; SPEC-gui-tool) - owner 2026-10-03
+mc_local.pri

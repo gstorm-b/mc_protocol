@@ -4,8 +4,8 @@ Curated by the team leader. One entry, one decision, newest first.
 Format: `- [T-xxx or date] Decision — why. (supersedes: entry, if any)`
 
 - [2026-10-03] Owner (scratch file answers): FX3 computer link **does** offer 1C formats 1 and 4 (the
-  three 1C profiles stay); FX5U built-in RS-485 is added with 3C (profiles F1 sum on and F4 proposed
-  by the leader, owner to confirm), `SPEC-hil-capture.md` tables amended (16 profiles); Q CPU and
+  three 1C profiles stay); FX5U built-in RS-485 is added with 3C (the owner creates its profiles when
+  needed, e.g. in the GUI), `SPEC-hil-capture.md` tables amended; Q CPU and
   Q + C24 share one scratch; Y goes into scratch by default, the owner decides at capture time.
   (supersedes: the "computer link supports neither format" note of the same day)
 - [2026-10-03] Owner: Q CPU scratch stays `D100-D2099` (GV steps unchanged). FX3 and FX5 number

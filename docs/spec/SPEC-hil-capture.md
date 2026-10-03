@@ -45,15 +45,15 @@ The library does not assume which module speaks which frame. The owner fills thi
 | Q, Ethernet module (E71) | | — | — | — | — | — | — | |
 | Q, serial module (C24) | | — | — | — | — | O | — | |
 | FX5U, built-in Ethernet | | O | O | — | — | — | — | |
-| FX5U, serial (built-in / ADP) | | — | — | — | — | — | — | |
+| FX5U, serial (built-in RS-485) | | — | — | — | — | O | — | |
 | FX3, Ethernet adapter | | — | — | O | O | — | — | |
 | FX3, serial adapter / computer link | | — | — | — | — | — | O | |
 
-Rows 2 (Q + E71) and 5 (FX5U serial) are not tested: the owner judged them unnecessary (2026-09-26).
+Row 2 (Q + E71) is not tested: the owner judged it unnecessary (2026-09-26). Row 5 (FX5U built-in RS-485, 3C) was added by the owner on 2026-10-03.
 
 ### Profiles on this bench (decided 2026-09-26)
 
-Fourteen profiles, one parameter download each:
+Fourteen profiles, one parameter download each, plus row 6 (added by the owner 2026-10-03), whose profiles the owner creates when needed (e.g. from the GUI tool):
 
 | # | PLC / module | Frame | Profiles |
 |---|---|---|---|
@@ -62,14 +62,16 @@ Fourteen profiles, one parameter download each:
 | 3 | FX5U, built-in Ethernet | 3E | Binary · ASCII |
 | 4 | FX3, Ethernet adapter | 1E | Binary · ASCII |
 | 5 | FX3, serial / computer link | 1C | F1 sum on · F1 sum off · F4 |
+| 6 | FX5U, built-in serial (RS-485) | 3C | defined by the owner when needed |
 
 **Coverage consequences, recorded so nobody reads more into a green run than it proves:**
 
-- 1E and 1C run only on FX3. 1C formats 2 and 3 stay **wire-unverified**.
+- 1E and 1C run only on FX3 (owner confirmed 2026-10-03 that its computer link offers formats 1 and 4). 1C formats 2 and 3 stay **wire-unverified**. 3C runs on two CPUs (Q + C24, FX5U built-in RS-485).
 - §10.1 Q1 (F3 short-response SUM) and Q2 (F2 block echo) are answered for **3C only**.
 - §10.1 Q8 (M9008 word access) is **not testable on this bench**: it needs a CPU exposing M9000–M9255 through 1E/1C, and FX3 uses its own special-device range. The library keeps the spec rule (9000 + 16k).
 - The 1E limit table (Q7) is checked on FX3, which may differ from the A-series figures in the PDF; either result is a finding.
 - iQ-R subcommands and the "A-series target via QnA" rules are not verified on hardware (decision H1).
+- **X/Y numbering on FX5 and FX3 is open** (2026-10-03): GX Works numbers their X/Y in octal, the library reads X/Y numbers in hex (Q style), and the reference spec does not say which value the frame must carry for these CPUs. Numbers 0–7 are the same either way; scratch and expectations on FX use only X/Y 0–7 until a capture (G2, G6) settles it, and the result is a finding.
 
 ## Concepts
 
