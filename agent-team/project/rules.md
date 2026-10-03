@@ -61,6 +61,12 @@ contradict `agent-team/core/`, this file wins.
   capture run on hardware, and Checkpoint F's owner gate (scratch areas, FX3
   manual) stay the owner's. Also delegated: making `scripts/check.ps1` and
   `scripts/check.sh` build in parallel (T-056). Phase 8 waits for the owner.
+- **Delegation extended to Phase 8 (GUI tool), owner 2026-10-03:** `SPEC-gui-tool.md` approved;
+  "Duyệt spec, giao Phase 8" — same terms and exclusions as Phases 4–7 (leader plans the tasks,
+  chooses how many developers and when, fresh tester and reviewer, one commit after Checkpoint H's
+  first item passes). A fresh agent per task (rule above). The Checkpoint H demo is the owner's.
+  Writing outside the project is still excluded: ADS for MinGW is built into `build/` only.
+  Phase 9 (bench and release) waits for the owner.
 - Work on `main` unless the owner says otherwise.
 
 ## Phase-batched verification (owner decision 2026-09-27)

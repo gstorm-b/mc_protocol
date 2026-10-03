@@ -3,6 +3,12 @@
 Curated by the team leader. One entry, one decision, newest first.
 Format: `- [T-xxx or date] Decision — why. (supersedes: entry, if any)`
 
+- [2026-10-03] `SPEC-gui-tool.md` approved by the owner; delegation extended to Phase 8. Owner
+  answers: no unit tests from the GUI — it exports real-PLC captures as replay test data; GUI on
+  MSVC **and** MinGW (ADS built from source for MinGW, into `build/` only); name `mc_workbench`;
+  `examples/virtual_plc` stays unchanged, the GUI has its own mock serving code; a small custom
+  trend widget (no Qt Charts). X/Y octal numbering for FX (T-066) is implemented before Phase 8.
+
 - [2026-10-03] Owner (scratch file answers): FX3 computer link **does** offer 1C formats 1 and 4 (the
   three 1C profiles stay); FX5U built-in RS-485 is added with 3C (the owner creates its profiles when
   needed, e.g. in the GUI), `SPEC-hil-capture.md` tables amended; Q CPU and

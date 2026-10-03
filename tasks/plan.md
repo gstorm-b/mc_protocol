@@ -33,7 +33,7 @@ T-002–T-005 build skeleton ── A0
                                         └── T-045–T-049 serial codec 3C, 1C ── E2
                                                └── T-051–T-054 serial session, mock, matrix, SerialTransport ── E
                                                       └── T-056–T-063 hil-capture tool + replay ── F (+ owner gate)
-                                                             └── P8-x GUI tool (McDevice in an app) ── H
+                                                             └── T-066 X/Y octal, T-067–T-073 GUI tool (McDevice in an app) ── H
                                                                     └── P9-1–P9-2 bench captures, findings
                                                                            └── P9-3 release 1.0 ── G
 ```
@@ -145,14 +145,18 @@ created before 2026-10-03 still name the old plan numbers (`T01`…`T56`) in `Pl
 
 **Checkpoint F** → T-064: tooling proven against `virtual_plc`. **Owner gate:** scratch areas decided; FX3 manual checked.
 
-### Phase 8: GUI tool (`gui-tool`, spec draft pending owner approval)
+### Phase 8: GUI tool `mc_workbench` (`gui-tool`, spec approved 2026-10-03)
 
-- [ ] P8-x Tasks are planned once `docs/spec/SPEC-gui-tool.md` is approved (owner request 2026-10-03:
-  Qt GUI for tests, debug trace, frame capture, HIL and MockPlc; qmake + CMake; `components/qpb`
-  property browser; Qt Advanced Docking System via a local path; tabs; several McDevice and MockPlc
-  in parallel; every McDevice on a runner thread). First use of `McDevice` in an application.
+- [x] T-066 X/Y octal numbering for FX CPUs (library, before the GUI)
+- [ ] T-067 Wiring: build options, ADS local path and MinGW build script, qpb, empty main window
+- [ ] T-068 Runner threads: DeviceRunner, MockRunner, containment, shutdown
+- [ ] T-069 Device tab: config grid, connect, subscriptions, trend, ad-hoc console
+- [ ] T-070 Mock PLC tab: TCP and COM serving, memory editor, faults, request log
+- [ ] T-071 Frame trace, debug log, back-pressure, capture and export
+- [ ] T-072 HIL runner view
+- [ ] T-073 Workspace save / load and dock layout
 
-**Checkpoint H:** GUI tool proven against `virtual_plc` and MockPlc (owner demo).
+**Checkpoint H** → T-074: GUI proven against MockPlc and `virtual_plc` on MSVC and MinGW; owner demo.
 
 ### Phase 9: Bench and release
 

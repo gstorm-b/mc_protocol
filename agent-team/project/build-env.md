@@ -175,6 +175,16 @@ the bar (`-D MC_MIN_COVERAGE=<n>`, default 95, total over `src/core/model`).
 - Build guards `BLD-04` / `BLD-05` read `build/<dir>/mc_sources.txt`, written at
   configure time; a new source file needs a (re)configure before they see it.
 
+## Other tools on this PC (T-065, T-066)
+
+- Vendor manuals (PDF) are in `docs/mc_reference/`. Extract text with Git Bash's
+  `/mingw64/bin/pdftotext -layout <pdf> build/_scratch-<task>/<name>.txt` (the Read tool cannot
+  render PDFs here: no `pdftoppm`). Python 3.12 is installed (`pypdf` available) for scratch scripts.
+- `.vec` files accept no free comment lines (the loader rejects them): explanations go in the tests
+  or in a `source:` metadata key.
+- A mutant that stops using a parameter fails to compile under `/WX` / `-Werror`
+  (unused parameter): mark it `(void)param;` in the mutant.
+
 ## Tests
 
 - doctest v2.5.3 at `tests/third_party/doctest/doctest.h`; one

@@ -971,12 +971,23 @@
 
 ---
 
-## Phase 8: GUI tool (`gui-tool`)
+## Phase 8: GUI tool `mc_workbench` (`gui-tool`, spec approved 2026-10-03)
 
-Planned once `docs/spec/SPEC-gui-tool.md` is approved by the owner; tasks get baton ids then.
+Task details live in the baton files `tasks/active/T-066.md` (X/Y octal numbering, library) and
+`T-067.md` … `T-074.md` (GUI), each with its acceptance criteria; the spec's GUI-01…09 map onto them.
 
-### Checkpoint H: GUI tool ready
-- [ ] GUI tool proven against `virtual_plc` and MockPlc on MSVC (CMake and qmake); owner demo.
+- [x] T-066 X/Y octal numbering for FX CPUs
+- [ ] T-067 Wiring (GUI-09)
+- [ ] T-068 Runner threads (GUI-01, 03, 04)
+- [ ] T-069 Device tab (GUI-06)
+- [ ] T-070 Mock PLC tab (GUI-02)
+- [ ] T-071 Trace, log, capture and export (GUI-05)
+- [ ] T-072 HIL runner view (GUI-07)
+- [ ] T-073 Workspace (GUI-08)
+
+### Checkpoint H: GUI tool ready (baton T-074)
+- [ ] GUI proven against MockPlc and `virtual_plc` on MSVC and MinGW (CMake and qmake); full verification.
+- [ ] Owner demo.
 
 ---
 
