@@ -97,9 +97,9 @@ std::optional<DeviceType> typeBySymbol(const std::string& symbol) {
     return std::nullopt;
 }
 
-std::string deviceText(const Device& d) {
+std::string deviceText(const Device& d, XyNumbering xy) {
     char buf[32];
-    const size_t n = formatDevice(d, buf, sizeof buf);
+    const size_t n = formatDevice(d, buf, sizeof buf, xy);
     return std::string(buf, std::min(n, sizeof buf - 1));
 }
 
@@ -150,6 +150,11 @@ std::vector<Decoded> decode(const FrameConfig& cfg, const std::vector<uint8_t>& 
     MockPlc mock(cfg);
     mock.bytesIn(view(bytes));
     for (const MockRequestRecord& rec : mock.requests()) {
+        if (rec.count == 0) {
+            // A request the mock could not read (a bad device number, a short frame, ...) is logged
+            // with default fields; a decoded request always has at least one point.
+            continue;
+        }
         Decoded d;
         d.op = rec.op;
         d.head = rec.head;

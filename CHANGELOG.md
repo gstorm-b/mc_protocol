@@ -8,6 +8,15 @@ All notable changes to this project are documented in this file. The format foll
 
 ### Added
 
+- X/Y numbering for FX CPUs: `XyNumbering { Hex, Octal }`, `FrameConfig::xyNotation` (how X/Y
+  numbers are written as text) and `FrameConfig::xyAsciiDigits` (the digits of X/Y numbers inside
+  ASCII frames: 3E, 1E, 3C, 1C), both defaulting to `Hex`, and the overloads
+  `parseDevice(text, XyNumbering)` and `formatDevice(d, out, capacity, XyNumbering)`. A `Device`
+  keeps holding the point index and Binary frames always carry it. `validate()` counts the digits
+  actually written, `MockPlc` reads them the same way, `McDeviceConfig` gets the JSON keys
+  `frame.xyNotation` and `frame.xyAsciiDigits` (`"Hex"` or `"Octal"`; a missing key is `Hex`) and
+  reads its text devices (subscriptions, heartbeat, `McDevice` text arguments) in `xyNotation`.
+  `virtual_plc` and `qt_console_poller` take `--xy` and `--xy-ascii` (`octal` or `hex`).
 - `MockPlc::skippedBytes()`: serial bytes skipped before a start byte or as unframable, reset by
   `clearLog()`. `SessionConfig::validate()` (so `Session::create()` and
   `McDeviceConfig::validate()`) rejects `maxConsecutiveLinkErrors == 0` with `InvalidConfig`; the

@@ -46,8 +46,8 @@ Expected<size_t> frame1eEncode(const Request& r, const FrameConfig& cfg,
     (void)Codec::putU16(cfg.monitoringTimer, MutableByteView{out.data + offset, Codec::u16Size()});
     offset += Codec::u16Size();
 
-    auto dataResult =
-        a1eRequestData<Codec>(r, MutableByteView{out.data + offset, out.size - offset});
+    auto dataResult = a1eRequestData<Codec>(
+        r, MutableByteView{out.data + offset, out.size - offset}, cfg.xyAsciiDigits);
     if (!dataResult.hasValue()) {
         return Expected<size_t>(dataResult.error());
     }

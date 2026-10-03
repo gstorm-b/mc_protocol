@@ -13,14 +13,14 @@
       "R0-R99",
       "M100-M2099",
       "B100-B1FF",
-      "Y20-Y2F"
+      "Y20-Y37"
     ],
     "deviceEnd": {
       "D": 7999,
       "M": 7679,
       "W": "1FF",
       "B": "1FF",
-      "Y": "1FF",
+      "Y": "1777",
       "R": 32767
     },
     "supports": [
@@ -78,7 +78,9 @@
       "aSeriesTarget": false,
       "splitWrites": false,
       "timeoutMs": 0,
-      "readRetries": 0
+      "readRetries": 0,
+      "xyNotation": "Octal",
+      "xyAsciiDigits": "Hex"
     },
     "session": {
       "cycleIntervalMs": 100,

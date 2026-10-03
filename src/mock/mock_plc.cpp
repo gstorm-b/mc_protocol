@@ -77,7 +77,7 @@ void MockPlc::Impl::receive(ByteView bytes) {
         FrameStatus status = FrameStatus::NeedMore;
         size_t consumed = 0;
         if (cfg.frame == FrameType::F3E) {
-            DecodeResult r = detail::mock::decode3eRequest(cfg.code, pending);
+            DecodeResult r = detail::mock::decode3eRequest(cfg.code, cfg.xyAsciiDigits, pending);
             status = r.status;
             consumed = r.consumed;
             if (status == FrameStatus::Complete) {
@@ -85,7 +85,7 @@ void MockPlc::Impl::receive(ByteView bytes) {
                 handle3e(r.request);
             }
         } else {
-            DecodeResult1e r = detail::mock::decode1eRequest(cfg.code, pending);
+            DecodeResult1e r = detail::mock::decode1eRequest(cfg.code, cfg.xyAsciiDigits, pending);
             status = r.status;
             consumed = r.consumed;
             if (status == FrameStatus::Complete) {

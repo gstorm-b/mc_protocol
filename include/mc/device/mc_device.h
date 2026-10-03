@@ -235,7 +235,8 @@ class McDevice : public QObject {
 
     /**
      * @brief Subscribes using the text form of the head device.
-     * @param[in] device Head device such as "D2000".
+     * @param[in] device Head device such as "D2000"; X and Y are read in
+     *            `config().frame.xyNotation`.
      * @param[in] count Number of points.
      * @return The new subscription's id.
      * @retval ErrorCode::InvalidDevice The text is not a device, or the device is not usable.
@@ -276,7 +277,7 @@ class McDevice : public QObject {
 
     /**
      * @brief Writes consecutive words.
-     * @param[in] head First word device, e.g. "D100".
+     * @param[in] head First word device, e.g. "D100" (X/Y in `config().frame.xyNotation`).
      * @param[in] values Values to write, in device order; at most 65535.
      * @return The request's id; errors as submit(), plus ErrorCode::InvalidDevice for a text that
      *         is not a device.
@@ -286,7 +287,7 @@ class McDevice : public QObject {
 
     /**
      * @brief Writes consecutive bit points.
-     * @param[in] head First bit device, e.g. "M100".
+     * @param[in] head First bit device, e.g. "M100" (X/Y in `config().frame.xyNotation`).
      * @param[in] values Values to write, in device order; at most 65535.
      * @return The request's id; errors as submit(), plus ErrorCode::InvalidDevice for a text that
      *         is not a device.
@@ -296,7 +297,7 @@ class McDevice : public QObject {
 
     /**
      * @brief Reads consecutive words.
-     * @param[in] head First word device, e.g. "D100".
+     * @param[in] head First word device, e.g. "D100" (X/Y in `config().frame.xyNotation`).
      * @param[in] count Number of words.
      * @return The request's id; errors as submit(), plus ErrorCode::InvalidDevice for a text that
      *         is not a device.
@@ -307,7 +308,7 @@ class McDevice : public QObject {
 
     /**
      * @brief Reads consecutive bit points.
-     * @param[in] head First bit device, e.g. "M100".
+     * @param[in] head First bit device, e.g. "M100" (X/Y in `config().frame.xyNotation`).
      * @param[in] count Number of points.
      * @return The request's id; errors as submit(), plus ErrorCode::InvalidDevice for a text that
      *         is not a device.
@@ -441,7 +442,7 @@ class McDevice : public QObject {
     void finishCall();
     void logLine(LogLevel level, const QString& text) const;
     Error configError() const;
-    static Expected<Device> parseHead(QStringView text);
+    static Expected<Device> parseHead(QStringView text, XyNumbering xy);
 
     void onTransportOpened();
     void onTransportOpenFailed(const QString& reason);

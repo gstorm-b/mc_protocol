@@ -217,6 +217,78 @@ class TstMcDevice : public QObject {
         QCOMPARE(rig.recorder->count(Event::Kind::Finished), 0);
     }
 
+    // XYN: text device arguments are read in frame.xyNotation, and the frame carries the
+    // X/Y digits as frame.xyAsciiDigits says (3E ASCII, octal both: an FX5 with "ASCII (X,Y OCT)").
+    void XYN_40_textDevicesAndFrameDigitsFollowTheFrameConfig() {
+        mc::FrameConfig frame = mc::FrameConfig::frame3E(mc::DataCode::Ascii);
+        frame.xyNotation = mc::XyNumbering::Octal;
+        frame.xyAsciiDigits = mc::XyNumbering::Octal;
+        Rig rig(frame, /*subscribe=*/false);
+        QVERIFY(rig.ok());
+        rig.device->connectToPlc();
+        QTRY_COMPARE_WITH_TIMEOUT(rig.device->linkState(), mc::LinkState::Connected, kWaitMs);
+
+        const auto finishedFor = [&rig](mc::RequestId id) -> const Event* {
+            for (const Event& e : rig.recorder->events) {
+                if (e.kind == Event::Kind::Finished && e.id == id) {
+                    return &e;
+                }
+            }
+            return nullptr;
+        };
+
+        // X10 octal is index 8; the mock reads the octal digits "000010" of the frame.
+        const mc::Expected<mc::RequestId> wb = rig.device->writeBits(u"X10", {true, false, true});
+        QVERIFY(wb);
+        QTRY_VERIFY_WITH_TIMEOUT(finishedFor(wb.value()) != nullptr, kWaitMs);
+        QVERIFY(finishedFor(wb.value())->error.ok());
+        QVERIFY(rig.server.plc()->bit(mc::Device{mc::DeviceType::X, 8}));
+        QVERIFY(!rig.server.plc()->bit(mc::Device{mc::DeviceType::X, 9}));
+        QVERIFY(rig.server.plc()->bit(mc::Device{mc::DeviceType::X, 10}));
+        QVERIFY(!rig.server.plc()->bit(mc::Device{mc::DeviceType::X, 16}));
+
+        const mc::Expected<mc::RequestId> rb = rig.device->readBits(u"X10", 3);
+        QVERIFY(rb);
+        QTRY_VERIFY_WITH_TIMEOUT(finishedFor(rb.value()) != nullptr, kWaitMs);
+        QCOMPARE(finishedFor(rb.value())->payload, QByteArray::fromHex("010001"));
+
+        // A digit 8 is no octal number: refused before anything is sent.
+        const mc::Expected<mc::RequestId> bad = rig.device->readBits(u"X18", 1);
+        QVERIFY(!bad);
+        QCOMPARE(bad.error().code, mc::ErrorCode::InvalidDevice);
+        QVERIFY(!rig.device->subscribe(u"Y9", 1));
+        QVERIFY(rig.device->subscribe(u"Y10", 8));
+    }
+
+    // XYN: a subscription of the config is parsed in frame.xyNotation when the device is built:
+    // "X10" under Octal is index 8, and the mock's bit 8 (not bit 16) shows in the snapshot.
+    void XYN_41_configSubscriptionsAreReadInTheConfiguredNotation() {
+        mc::FrameConfig frame = mc::FrameConfig::frame3E(mc::DataCode::Ascii);
+        frame.xyNotation = mc::XyNumbering::Octal;
+        frame.xyAsciiDigits = mc::XyNumbering::Octal;
+        Rig rig(frame, /*subscribe=*/false, /*mute=*/false, [](mc::McDeviceConfig& cfg) {
+            cfg.subscriptions = {{QStringLiteral("X10"), 8}};
+        });
+        QVERIFY(rig.ok());
+        QVERIFY(rig.device->configStatus());
+        rig.server.setInit([](mc::MockPlc& plc) {
+            plc.setBit(mc::Device{mc::DeviceType::X, 8}, true);  // X10 octal
+            plc.setBit(mc::Device{mc::DeviceType::X, 16}, true); // X20 octal, and X10 hex
+        });
+        rig.device->connectToPlc();
+        QTRY_VERIFY_WITH_TIMEOUT(rig.recorder->hasCycle(1), kWaitMs);
+
+        const QVector<Event> snapshots = rig.recorder->of(Event::Kind::Snapshot);
+        QVERIFY(!snapshots.isEmpty()); // round 1 (a later round may already have run)
+        QCOMPARE(snapshots.at(0).snapshot.type, mc::DeviceType::X);
+        QCOMPARE(snapshots.at(0).snapshot.round, 1u);
+        const mc::SnapshotSegment& seg = snapshots.at(0).snapshot.segments.at(0);
+        QCOMPARE(seg.head.number, 8u);
+        QCOMPARE(seg.count, 8u);
+        QCOMPARE(int(seg.values.at(0)), 1); // index 8
+        QCOMPARE(int(seg.values.at(1)), 0);
+    }
+
     void QDV_04_serverClosesWithRequestsInFlightAndQueued() {
         Rig rig(mc::FrameConfig::frame3E(), /*subscribe=*/false, /*mute=*/true);
         QVERIFY(rig.ok());

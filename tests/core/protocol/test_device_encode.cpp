@@ -326,3 +326,141 @@ TEST_CASE("DEV-07: BufferTooSmall when the destination is short of the field's o
         checkBufferTooSmall(c1Device(Device{DeviceType::D, 100}, C1CommandSet::ACPU, tooSmall));
     }
 }
+
+// XYN-10..13: X and Y on an FX CPU. The device holds the point index; the ASCII digits are
+// octal when xyAsciiDigits says so. Expected texts are worked out by hand from the vendor tables
+// (X10 octal = index 8, X377 = index 255 = 00FFH; fx3-enet-adp.pdf 7.5, fx3-data-communication.pdf,
+// fx5-ethernet-communication.pdf 5.3 *3), not produced by the encoder.
+TEST_CASE(
+    "XYN-10 qnaDevice: octal ASCII digits for X and Y only, Binary and other devices unchanged") {
+    using mc::XyNumbering;
+    const Device x8{DeviceType::X, 8};
+    const Device x255{DeviceType::X, 255};
+    const Device y16{DeviceType::Y, 16};
+    uint8_t buf[16];
+    MutableByteView out{buf, sizeof(buf)};
+
+    SUBCASE("X10 octal, Q/L") {
+        auto r = qnaDevice(x8, DataCode::Ascii, PlcSeries::QL, out, XyNumbering::Octal);
+        REQUIRE(r.hasValue());
+        checkAscii(ByteView{buf, r.value()}, "X*000010");
+    }
+    SUBCASE("X377 octal, Q/L") {
+        auto r = qnaDevice(x255, DataCode::Ascii, PlcSeries::QL, out, XyNumbering::Octal);
+        REQUIRE(r.hasValue());
+        checkAscii(ByteView{buf, r.value()}, "X*000377");
+    }
+    SUBCASE("X10 octal, iQ-R") {
+        auto r = qnaDevice(x8, DataCode::Ascii, PlcSeries::IqR, out, XyNumbering::Octal);
+        REQUIRE(r.hasValue());
+        checkAscii(ByteView{buf, r.value()}, "X***00000010");
+    }
+    SUBCASE("Y20 octal is index 16") {
+        auto r = qnaDevice(y16, DataCode::Ascii, PlcSeries::QL, out, XyNumbering::Octal);
+        REQUIRE(r.hasValue());
+        checkAscii(ByteView{buf, r.value()}, "Y*000020");
+    }
+    SUBCASE("hex digits, the default, write index 8 as 8") {
+        auto r = qnaDevice(x8, DataCode::Ascii, PlcSeries::QL, out, XyNumbering::Hex);
+        REQUIRE(r.hasValue());
+        checkAscii(ByteView{buf, r.value()}, "X*000008");
+        auto d = qnaDevice(x8, DataCode::Ascii, PlcSeries::QL, out);
+        REQUIRE(d.hasValue());
+        checkAscii(ByteView{buf, d.value()}, "X*000008");
+    }
+    SUBCASE("Binary carries the index whatever the setting") {
+        auto r = qnaDevice(x255, DataCode::Binary, PlcSeries::QL, out, XyNumbering::Octal);
+        REQUIRE(r.hasValue());
+        checkBinary(ByteView{buf, r.value()}, {0xFF, 0x00, 0x00, 0x9C});
+        auto i = qnaDevice(x8, DataCode::Binary, PlcSeries::IqR, out, XyNumbering::Octal);
+        REQUIRE(i.hasValue());
+        checkBinary(ByteView{buf, i.value()}, {0x08, 0x00, 0x00, 0x00, 0x9C, 0x00});
+    }
+    SUBCASE("devices other than X and Y keep their own radix") {
+        auto m = qnaDevice(Device{DeviceType::M, 100}, DataCode::Ascii, PlcSeries::QL, out,
+                           XyNumbering::Octal);
+        REQUIRE(m.hasValue());
+        checkAscii(ByteView{buf, m.value()}, "M*000100");
+        auto w = qnaDevice(Device{DeviceType::W, 0x1F}, DataCode::Ascii, PlcSeries::QL, out,
+                           XyNumbering::Octal);
+        REQUIRE(w.hasValue());
+        checkAscii(ByteView{buf, w.value()}, "W*00001F");
+        auto b = qnaDevice(Device{DeviceType::B, 0x1F}, DataCode::Ascii, PlcSeries::QL, out,
+                           XyNumbering::Octal);
+        REQUIRE(b.hasValue());
+        checkAscii(ByteView{buf, b.value()}, "B*00001F");
+    }
+}
+
+TEST_CASE("XYN-11 e1Device: 1E ASCII digits follow the setting, 1E Binary never does") {
+    using mc::XyNumbering;
+    const Device x8{DeviceType::X, 8};
+    uint8_t buf[16];
+    MutableByteView out{buf, sizeof(buf)};
+
+    SUBCASE("hex digits (FX3 Ethernet adapter): index 8 is 00000008") {
+        auto r = e1Device(x8, DataCode::Ascii, out, XyNumbering::Hex);
+        REQUIRE(r.hasValue());
+        checkAscii(ByteView{buf, r.value()}, "582000000008");
+    }
+    SUBCASE("octal digits: index 8 is 00000010") {
+        auto r = e1Device(x8, DataCode::Ascii, out, XyNumbering::Octal);
+        REQUIRE(r.hasValue());
+        checkAscii(ByteView{buf, r.value()}, "582000000010");
+    }
+    SUBCASE("octal digits, index 255 is 00000377") {
+        auto r = e1Device(Device{DeviceType::X, 255}, DataCode::Ascii, out, XyNumbering::Octal);
+        REQUIRE(r.hasValue());
+        checkAscii(ByteView{buf, r.value()}, "582000000377");
+    }
+    SUBCASE("Binary: 08 00 00 00 + 5820H whatever the setting") {
+        for (XyNumbering xy : {XyNumbering::Hex, XyNumbering::Octal}) {
+            auto r = e1Device(x8, DataCode::Binary, out, xy);
+            REQUIRE(r.hasValue());
+            checkBinary(ByteView{buf, r.value()}, {0x08, 0x00, 0x00, 0x00, 0x20, 0x58});
+        }
+    }
+    SUBCASE("a device other than X and Y is hex whatever the setting") {
+        auto r = e1Device(Device{DeviceType::D, 100}, DataCode::Ascii, out, XyNumbering::Octal);
+        REQUIRE(r.hasValue());
+        checkAscii(ByteView{buf, r.value()}, "442000000064");
+    }
+}
+
+TEST_CASE("XYN-12 c1Device: octal digits for X and Y, 4 characters (ACPU) or 6 (AnA)") {
+    using mc::XyNumbering;
+    uint8_t buf[16];
+    MutableByteView out{buf, sizeof(buf)};
+
+    SUBCASE("index 8 ACPU is X0010, index 255 is X0377 (fx3-data-communication.pdf)") {
+        auto r = c1Device(Device{DeviceType::X, 8}, C1CommandSet::ACPU, out, XyNumbering::Octal);
+        REQUIRE(r.hasValue());
+        checkAscii(ByteView{buf, r.value()}, "X0010");
+        auto s = c1Device(Device{DeviceType::X, 255}, C1CommandSet::ACPU, out, XyNumbering::Octal);
+        REQUIRE(s.hasValue());
+        checkAscii(ByteView{buf, s.value()}, "X0377");
+    }
+    SUBCASE("AnA is X000377 for index 255") {
+        auto r = c1Device(Device{DeviceType::X, 255}, C1CommandSet::AnA, out, XyNumbering::Octal);
+        REQUIRE(r.hasValue());
+        checkAscii(ByteView{buf, r.value()}, "X000377");
+    }
+    SUBCASE("Y octal: index 15 is Y0017") {
+        auto r = c1Device(Device{DeviceType::Y, 15}, C1CommandSet::ACPU, out, XyNumbering::Octal);
+        REQUIRE(r.hasValue());
+        checkAscii(ByteView{buf, r.value()}, "Y0017");
+    }
+    SUBCASE("hex, the default, writes index 255 as X00FF") {
+        auto r = c1Device(Device{DeviceType::X, 255}, C1CommandSet::ACPU, out);
+        REQUIRE(r.hasValue());
+        checkAscii(ByteView{buf, r.value()}, "X00FF");
+    }
+    SUBCASE("M100 and D100 are decimal whatever the setting") {
+        auto m = c1Device(Device{DeviceType::M, 100}, C1CommandSet::ACPU, out, XyNumbering::Octal);
+        REQUIRE(m.hasValue());
+        checkAscii(ByteView{buf, m.value()}, "M0100");
+        auto t = c1Device(Device{DeviceType::TN, 10}, C1CommandSet::ACPU, out, XyNumbering::Octal);
+        REQUIRE(t.hasValue());
+        checkAscii(ByteView{buf, t.value()}, "TN010");
+    }
+}

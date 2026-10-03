@@ -34,7 +34,8 @@ enum class TransportKind : uint8_t {
  * @brief One subscription as text: a head device such as "D2000" and a point count.
  */
 struct SubscriptionSpec {
-    QString device;   ///< Head device, in the form parseDevice() accepts ("D2000", "x1F").
+    QString device;   ///< Head device, in the form parseDevice() accepts ("D2000", "x1F"); X/Y read
+                      ///< in `frame.xyNotation`.
     quint32 count{1}; ///< Number of consecutive points starting at the head device.
 };
 
@@ -84,8 +85,8 @@ struct McDeviceConfig {
      * @brief Serialises this configuration to the version 1 JSON schema.
      *
      * Enums are strings, `session.maxGap` is "auto" or a number, the device of the heartbeat is
-     * its canonical text, and `session.log` is not written. The object always carries
-     * `"schema": 1`.
+     * its canonical text (X/Y written in `frame.xyNotation`), and `session.log` is not written.
+     * The object always carries `"schema": 1`.
      *
      * @return The JSON object.
      * @see fromJson

@@ -103,13 +103,19 @@ struct SerialDecodeResult {
 /// request, not judged here.
 SerialDecodeResult decodeSerialRequest(const FrameConfig& cfg, ByteView rx);
 
-/// Parses `digits` as a device number in `radix` (spec §3.2: leading zeros of an ASCII number may
-/// be spaces). Fails on any other character.
-bool parseDeviceNumber(ByteView digits, Radix radix, uint64_t& number);
+/// The base (8, 10 or 16) of the ASCII digits of device `info`'s number: its radix, or octal for X
+/// and Y when `xy` is Octal (FrameConfig::xyAsciiDigits). The mock's own copy: it does not call the
+/// core (MCK-HYG).
+uint32_t asciiNumberBase(const DeviceInfo& info, XyNumbering xy);
 
-/// Decodes a QnA ASCII device field: the text code and a number in the device's radix, 8
-/// characters for Q/L and 12 for iQ-R (spec §3.3). The `*` of the code may be a space.
-bool decodeQnaAsciiDevice(PlcSeries series, ByteView field, Device& out);
+/// Parses `digits` as a device number in `base` (8, 10 or 16; spec §3.2: leading zeros of an ASCII
+/// number may be spaces). Fails on any other character, including a digit outside the base.
+bool parseDeviceNumber(ByteView digits, uint32_t base, uint64_t& number);
+
+/// Decodes a QnA ASCII device field: the text code and a number in the device's radix (octal for
+/// X and Y when `xy` is Octal), 8 characters for Q/L and 12 for iQ-R (spec §3.3). The `*` of the
+/// code may be a space.
+bool decodeQnaAsciiDevice(PlcSeries series, ByteView field, XyNumbering xy, Device& out);
 
 /// Characters of a QnA ASCII device field.
 size_t qnaAsciiDeviceSize(PlcSeries series);
@@ -119,17 +125,19 @@ size_t qnaAsciiDeviceSize(PlcSeries series);
 bool decodeQnaSubcommand(uint16_t subcommand, PlcSeries& series, bool& bitUnit);
 
 /// Decodes the request data of a QnA command in ASCII with no monitoring timer in front (3C: spec
-/// §4.1 after the access route). The route fields of the result are left at zero.
-QnaRequest decodeQnaAsciiRequestData(ByteView data);
+/// §4.1 after the access route). The route fields of the result are left at zero. `xy` is the base
+/// of the digits of an X/Y number (FrameConfig::xyAsciiDigits).
+QnaRequest decodeQnaAsciiRequestData(ByteView data, XyNumbering xy);
 
-/// Frames and decodes one 3E request from the start of `rx` (spec §5.1, §4.1.1, §4.1.2).
-DecodeResult decode3eRequest(DataCode code, ByteView rx);
+/// Frames and decodes one 3E request from the start of `rx` (spec §5.1, §4.1.1, §4.1.2). `xy` is
+/// the base of the ASCII digits of an X/Y number; Binary carries the index whatever it says.
+DecodeResult decode3eRequest(DataCode code, XyNumbering xy, ByteView rx);
 
 /// Frames and decodes one 1E request from the start of `rx` (spec §5.3, §4.2). There is no length
 /// field: the frame ends where the command's fixed layout plus its point count say (00H-03H batch
 /// access; 04H/05H by their n x item layout). A first byte that is not a command code 00H-05H is
-/// Junk.
-DecodeResult1e decode1eRequest(DataCode code, ByteView rx);
+/// Junk. `xy` is the base of the 8 ASCII digits of an X/Y number; Binary carries the index.
+DecodeResult1e decode1eRequest(DataCode code, XyNumbering xy, ByteView rx);
 
 /// A failRange() fault.
 struct Fault {

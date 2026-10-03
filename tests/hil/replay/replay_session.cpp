@@ -285,8 +285,8 @@ std::vector<Seg> segmentsOf(const mc::test::Vector& v) {
 void PollReplay::subscribe(const Seg& s) {
     const Expected<SubscriptionId> id = m_session->subscribe(Device{s.type, s.head}, s.count);
     if (!id) {
-        failure("cannot subscribe " + deviceText(Device{s.type, s.head}) + " x" +
-                std::to_string(s.count) + " (rebuilt from the snapshots)");
+        failure("cannot subscribe " + deviceText(Device{s.type, s.head}, m_c.frame.xyNotation) +
+                " x" + std::to_string(s.count) + " (rebuilt from the snapshots)");
         m_stop = true;
         return;
     }
@@ -592,8 +592,8 @@ void PollReplay::compare() {
 void PollReplay::subscribeNamed(const std::string& name, Device head, uint32_t count) {
     const Expected<SubscriptionId> id = m_session->subscribe(head, count);
     if (!id) {
-        failure("cannot subscribe " + deviceText(head) + " x" + std::to_string(count) +
-                " (recorded input '" + name + "')");
+        failure("cannot subscribe " + deviceText(head, m_c.frame.xyNotation) + " x" +
+                std::to_string(count) + " (recorded input '" + name + "')");
         m_stop = true;
         return;
     }

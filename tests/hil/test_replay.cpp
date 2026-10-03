@@ -946,3 +946,103 @@ TEST_CASE(
     CHECK(r.of("RPL-05").front().text().find("V-3E-B-02") != std::string::npos);
     CHECK_FALSE(hasFailure(r, "RPL-02", "GV-02"));
 }
+
+// ---- X/Y numbering of an FX capture: run.meta carries frame.xyNotation and
+// frame.xyAsciiDigits; a capture without them is hex (every other fixture).
+
+namespace {
+
+void replaceInFile(const fs::path& file, const std::string& from, const std::string& to) {
+    std::string text = slurp(file);
+    const size_t at = text.find(from);
+    REQUIRE_MESSAGE(at != std::string::npos, "no '" << from << "' in " << file.string());
+    text.replace(at, from.size(), to);
+    spit(file, text);
+}
+
+} // namespace
+
+TEST_CASE("XYN-R1 the FX fixture (octal X/Y, octal digits in 3E ASCII) replays green") {
+    const fs::path dir = fixturesDir() / "vplc-fx-3e-ascii-oct";
+    const Capture c = loadCapture(dir);
+    CHECK(c.frame.xyNotation == mc::XyNumbering::Octal);
+    CHECK(c.frame.xyAsciiDigits == mc::XyNumbering::Octal);
+    bool y10 = false;
+    for (const Record& rec : c.records) {
+        y10 = y10 || rec.device == "Y10";
+    }
+    CHECK(y10);
+    const Report r = checkAll(c, realEnv());
+    CHECK_MESSAGE(r.failures.empty(), dump(r));
+    CHECK(r.checks > 0);
+    // The other fixtures have no such keys and stay hex.
+    const Capture hex = loadCapture(fixturesDir() / "vplc-3e-bin");
+    CHECK(hex.frame.xyNotation == mc::XyNumbering::Hex);
+    CHECK(hex.frame.xyAsciiDigits == mc::XyNumbering::Hex);
+}
+
+TEST_CASE("XYN-R2 negative: the FX capture read as hex fails") {
+    // keys removed: Y10 would be index 16 and the digits would be read as hex
+    const fs::path dir = scratchCopy("vplc-fx-3e-ascii-oct", "xyn_nokeys");
+    replaceInFile(dir / "run.meta", "frame.xyAsciiDigits: Octal\n", "");
+    replaceInFile(dir / "run.meta", "frame.xyNotation: Octal\n", "");
+    const Report r = checkAll(loadCapture(dir), realEnv());
+    CHECK_MESSAGE(!r.failures.empty(), "a capture replayed as hex must not pass");
+}
+
+TEST_CASE("XYN-R3 negative: octal text with hex digits in the frame fails") {
+    const fs::path dir = scratchCopy("vplc-fx-3e-ascii-oct", "xyn_digits");
+    replaceInFile(dir / "run.meta", "frame.xyAsciiDigits: Octal", "frame.xyAsciiDigits: Hex");
+    const Report r = checkAll(loadCapture(dir), realEnv());
+    const bool found = hasFailure(r, "RPL-01", "F-02") || hasFailure(r, "RPL-03", "F-02");
+    CHECK_MESSAGE(found, dump(r));
+}
+
+TEST_CASE("XYN-R4 negative: a damaged digit of the Y10 request fails") {
+    const fs::path dir = scratchCopy("vplc-fx-3e-ascii-oct", "xyn_damaged");
+    // the octal digit "1" of Y*000010 (byte 36 of the ASCII frame) becomes "2": Y20
+    editByte(dir / "steps.vec", "CAP-vplc-fx-3e-ascii-oct-F-02", 36, "32");
+    const Report r = checkAll(loadCapture(dir), realEnv());
+    const bool found = hasFailure(r, "RPL-01", "F-02") || hasFailure(r, "RPL-03", "F-02");
+    CHECK_MESSAGE(found, dump(r));
+}
+
+TEST_CASE("XYN-R5 negative: a request with a non-octal X/Y digit is reported as undecodable") {
+    const fs::path dir = scratchCopy("vplc-fx-3e-ascii-oct", "xyn_nodecode");
+    // the octal digit "1" of Y*000010 (byte 36) becomes "8": the mock cannot read the device
+    editByte(dir / "steps.vec", "CAP-vplc-fx-3e-ascii-oct-F-02", 36, "38");
+    const Report r = checkAll(loadCapture(dir), realEnv());
+    REQUIRE_MESSAGE(hasFailure(r, "RPL-01", "F-02"), dump(r));
+    for (const Failure& f : r.of("RPL-01")) {
+        if (f.step == "F-02") {
+            const std::string text = f.text();
+            CHECK_MESSAGE(text.find("cannot decode") != std::string::npos, text);
+            CHECK_MESSAGE(text.find("asks for") == std::string::npos, text);
+        }
+    }
+}
+
+TEST_CASE("XYN-R6 the device_end of an octal capture is read in octal") {
+    const Capture c = loadCapture(fixturesDir() / "vplc-fx-3e-ascii-oct");
+    uint32_t xEnd = 0;
+    uint32_t yEnd = 0;
+    uint32_t dEnd = 0;
+    for (const auto& end : c.deviceEnd) {
+        xEnd = end.first == mc::DeviceType::X ? end.second : xEnd;
+        yEnd = end.first == mc::DeviceType::Y ? end.second : yEnd;
+        dEnd = end.first == mc::DeviceType::D ? end.second : dEnd;
+    }
+    CHECK(xEnd == 1023u); // "1777" octal, not 0x1777
+    CHECK(yEnd == 1023u);
+    CHECK(dEnd == 12287u); // D stays decimal
+
+    // The declared end reaches the mock: X10 octal (index 8) as the last input makes the capture's
+    // read of X10 x8 run past it, which the mock answers with an error; read as 0x10 the end would
+    // be index 16 and nothing would fail.
+    const fs::path dir = scratchCopy("vplc-fx-3e-ascii-oct", "xyn_deviceend");
+    replaceInFile(dir / "run.meta", "device_end: X=1777 Y=1777", "device_end: X=10 Y=10");
+    const Capture shortEnd = loadCapture(dir);
+    CHECK(shortEnd.deviceEnd.front().second == 8u);
+    const Report r = checkAll(shortEnd, realEnv());
+    CHECK_MESSAGE(!r.failures.empty(), "a read past the declared end must not replay green");
+}

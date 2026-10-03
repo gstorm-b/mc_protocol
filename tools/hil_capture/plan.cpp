@@ -916,6 +916,9 @@ bool parseDeviceRef(const QString& textIn, DeviceRef& out, QString& why) {
         }
         return true;
     }
+    // The plan does not know the PLC's X/Y notation: a literal is only checked for being a device
+    // here (any digit a notation allows passes), and resolveRef() reads its number in the
+    // profile's xyNotation.
     const QByteArray bytes = text.toLatin1();
     const Expected<Device> d =
         parseDevice(std::string_view(bytes.constData(), static_cast<size_t>(bytes.size())));
@@ -927,7 +930,6 @@ bool parseDeviceRef(const QString& textIn, DeviceRef& out, QString& why) {
     }
     out.base = DeviceRef::Base::Literal;
     out.type = d.value().type;
-    out.number = d.value().number;
     return true;
 }
 

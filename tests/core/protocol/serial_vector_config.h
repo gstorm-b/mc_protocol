@@ -5,7 +5,9 @@
 //
 // Optional keys on a record: `series: IqR` (default Q/L), `sum: off` (sumCheck false), `block: 3A`
 // (hex block number, Format 2), `checkroute: off`, `blockcheck: off`, `f3shortsum: on`, and for 1C
-// `commandset: ana` (AnA/AnU command letters) and `wait: A` (message wait, one hex digit).
+// `commandset: ana` (AnA/AnU command letters) and `wait: A` (message wait, one hex digit). On a
+// record of any family `xy: octal` is FrameConfig::xyNotation (the text of `device:`) and `xyascii:
+// octal` is FrameConfig::xyAsciiDigits; both default to hex (tests/vectors/fx_xy.vec).
 #pragma once
 
 #include "doctest/doctest.h"
@@ -39,6 +41,11 @@ inline SerialFormat serialFormatOf(const std::string& text) {
     return SerialFormat::Format1;
 }
 
+// The numbering a record's `xy:` / `xyascii:` key names: Octal for "octal", else Hex.
+inline XyNumbering xyOf(const Vector& v, const char* key) {
+    return v.field(key) == "octal" ? XyNumbering::Octal : XyNumbering::Hex;
+}
+
 inline FrameConfig serialConfigFromVector(const Vector& v) {
     const SerialFormat format = serialFormatOf(v.field("format"));
     FrameConfig cfg =
@@ -59,6 +66,8 @@ inline FrameConfig serialConfigFromVector(const Vector& v) {
     if (!v.field("wait").empty()) {
         cfg.messageWait = static_cast<uint8_t>(std::stoul(v.field("wait"), nullptr, 16));
     }
+    cfg.xyNotation = xyOf(v, "xy");
+    cfg.xyAsciiDigits = xyOf(v, "xyascii");
     return cfg;
 }
 
@@ -83,6 +92,8 @@ inline FrameConfig frameConfigFromVector(const Vector& v) {
     if (!v.field("io").empty()) {
         cfg.io = static_cast<uint16_t>(std::stoul(v.field("io"), nullptr, 16));
     }
+    cfg.xyNotation = xyOf(v, "xy");
+    cfg.xyAsciiDigits = xyOf(v, "xyascii");
     return cfg;
 }
 
@@ -109,7 +120,7 @@ inline std::vector<uint32_t> csvHex(const std::string& s) {
 // (Request::data is a non-owning view).
 inline Request serialRequestFromVector(const Vector& v, std::vector<uint8_t>& writeStorage) {
     const std::string op = v.field("op");
-    auto head = mc::parseDevice(v.field("device"));
+    auto head = mc::parseDevice(v.field("device"), xyOf(v, "xy"));
     REQUIRE(head.hasValue());
     const uint16_t count = static_cast<uint16_t>(std::stoul(v.field("count")));
 

@@ -136,10 +136,11 @@ struct DeviceRef {
     };
     Base base{Base::Literal};       ///< Which form.
     DeviceType type{DeviceType::D}; ///< Device type (Literal, ScratchStart, ScratchAligned, End).
-    uint32_t number{0};             ///< Literal number.
     uint32_t align{1};              ///< ScratchAligned: align the first scratch number up to this.
     int64_t offset{0};              ///< Added to the base number.
-    QString text; ///< As written; may hold "{T}" until a foreach expansion substitutes it.
+    QString text; ///< As written; may hold "{T}" until a foreach expansion substitutes it. A
+                  ///< Literal's number is read from it at resolve time, in the profile's
+                  ///< `xyNotation`.
     bool hasTemplate{false}; ///< True while `text` still holds "{T}".
 };
 

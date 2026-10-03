@@ -895,7 +895,54 @@ void int16(const Combo& combo) {
     int16Case(combo, false);
 }
 
+// ---- XYN: X/Y numbering for FX CPUs --------------------------------------------------
+
+// The same write and read of X64..X71 (index 64: X100 octal, X40 hex) on every frame with the
+// X/Y digits in hex and in octal: client and mock agree, the bits land on index 64.
+void intXyn(const Combo& base) {
+    for (XyNumbering digits : {XyNumbering::Hex, XyNumbering::Octal}) {
+        Combo combo = base;
+        combo.frame.xyNotation = digits;
+        combo.frame.xyAsciiDigits = digits;
+        INFO("digits ", digits == XyNumbering::Octal ? "octal" : "hex");
+        Rig rig(combo);
+        rig.linkUp();
+
+        const ByteBuf bits = {1, 0, 1, 1, 0, 0, 1, 0};
+        Expected<RequestId> wrote =
+            rig.submit(Request::writeBits(dn(DeviceType::X, 64), view(bits)));
+        REQUIRE(wrote.hasValue());
+        const std::vector<Event> writeDone = rig.requestDones(wrote.value());
+        REQUIRE(writeDone.size() == 1);
+        CHECK(writeDone[0].error.ok());
+        for (uint32_t i = 0; i < bits.size(); ++i) {
+            CHECK(rig.mock().bit(dn(DeviceType::X, 64 + i)) == (bits[i] != 0));
+        }
+        CHECK_FALSE(rig.mock().bit(dn(DeviceType::X, 40)));
+        CHECK_FALSE(rig.mock().bit(dn(DeviceType::X, 100)));
+
+        Expected<RequestId> read = rig.submit(Request::readBits(dn(DeviceType::X, 64), 8));
+        REQUIRE(read.hasValue());
+        const std::vector<Event> readDone = rig.requestDones(read.value());
+        REQUIRE(readDone.size() == 1);
+        CHECK(readDone[0].error.ok());
+        CHECK(readDone[0].payload == bits);
+
+        // A word of bits: X64..X79 as one word, bit k of the word is point 64 + k.
+        Expected<RequestId> word = rig.submit(Request::readWords(dn(DeviceType::X, 64), 1));
+        REQUIRE(word.hasValue());
+        const std::vector<Event> wordDone = rig.requestDones(word.value());
+        REQUIRE(wordDone.size() == 1);
+        CHECK(wordDone[0].error.ok());
+        CHECK(wordDone[0].payload == (ByteBuf{0x4D, 0x00}));
+    }
+}
+
 } // namespace
+
+TEST_CASE("INT-XYN X/Y digits in hex and in octal, write and read back, on every frame") {
+    INT_MATRIX(intXyn);
+}
 
 TEST_CASE("INT-01 ad-hoc word write then read, one RequestDone each") { INT_MATRIX(int01); }
 TEST_CASE("INT-02 ad-hoc bit write then read") { INT_MATRIX(int02); }

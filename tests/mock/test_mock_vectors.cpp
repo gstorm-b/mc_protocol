@@ -43,8 +43,9 @@ const char* const k1eVectorFiles[] = {"1e_binary.vec", "1e_ascii.vec"};
 const char* const kSerialVectorFiles[] = {"3c_f1.vec", "3c_f2.vec", "3c_f3.vec", "3c_f4.vec",
                                           "1c_f1.vec", "1c_f2.vec", "1c_f3.vec", "1c_f4.vec"};
 const char* const kAllVectorFiles[] = {
-    "3e_binary.vec", "3e_ascii.vec", "1e_binary.vec", "1e_ascii.vec", "3c_f1.vec", "3c_f2.vec",
-    "3c_f3.vec",     "3c_f4.vec",    "1c_f1.vec",     "1c_f2.vec",    "1c_f3.vec", "1c_f4.vec"};
+    "3e_binary.vec", "3e_ascii.vec", "1e_binary.vec", "1e_ascii.vec", "3c_f1.vec",
+    "3c_f2.vec",     "3c_f3.vec",    "3c_f4.vec",     "1c_f1.vec",    "1c_f2.vec",
+    "1c_f3.vec",     "1c_f4.vec",    "fx_xy.vec"};
 
 std::filesystem::path vectorsRoot() {
     return std::filesystem::path(MC_TESTS_SOURCE_DIR) / "vectors";
@@ -115,7 +116,14 @@ std::string settingOf(const Vector& request, const Vector* response, const char*
     return request.field(key);
 }
 
-FrameConfig configFor(const Vector& v, const Vector* response = nullptr) {
+// `xy: octal` / `xyascii: octal` on a record (tests/vectors/fx_xy.vec): the notation of its
+// `device:` text and the digits of X/Y numbers in its ASCII frame.
+mc::XyNumbering xyOf(const Vector& v, const char* key) {
+    return v.field(key) == "octal" ? mc::XyNumbering::Octal : mc::XyNumbering::Hex;
+}
+
+// The frame a vector's metadata names, without the X/Y numbering keys.
+FrameConfig baseConfigFor(const Vector& v, const Vector* response) {
     const mc::FrameType frame = frameOf(v);
     if (frame == mc::FrameType::F3C || frame == mc::FrameType::F1C) {
         const std::string f = v.field("format"); // "F1" .. "F4"
@@ -141,6 +149,13 @@ FrameConfig configFor(const Vector& v, const Vector* response = nullptr) {
     return cfg;
 }
 
+FrameConfig configFor(const Vector& v, const Vector* response = nullptr) {
+    FrameConfig cfg = baseConfigFor(v, response);
+    cfg.xyNotation = xyOf(v, "xy");
+    cfg.xyAsciiDigits = xyOf(v, "xyascii");
+    return cfg;
+}
+
 // What a request vector's metadata says the mock must have decoded.
 struct Meta {
     Op op;
@@ -163,7 +178,7 @@ Meta metaOf(const Vector& v) {
     } else {
         FAIL("vector ", v.id, " has unrecognized op '", op, "'");
     }
-    auto head = mc::parseDevice(v.field("device"));
+    auto head = mc::parseDevice(v.field("device"), xyOf(v, "xy"));
     REQUIRE(head.hasValue());
     m.head = head.value();
     m.count = static_cast<uint16_t>(std::stoul(v.field("count")));
@@ -411,7 +426,7 @@ TEST_CASE("MCK-02 with memory seeded from the metadata, every success response v
     // `checkroute: off` (8) or `blockcheck: off` (2), and every other untagged success response is
     // reproduced.
     CHECK(skipped == 10);
-    CHECK(reproduced == 86);
+    CHECK(reproduced == 93); // 86 of the Appendix A files, 7 of fx_xy.vec
 }
 
 TEST_CASE("MCK-03 the 3E error vectors are reproduced with failRange") {
@@ -1470,5 +1485,155 @@ TEST_CASE("MCK-01 1C: a write with points 00 carries 256 points, and the next re
         size_t responses = 0;
         drain(plc, &responses);
         CHECK(responses == 3);
+    }
+}
+
+// ---- XYN-20..22: the mock reads the digits of X and Y as FrameConfig::xyAsciiDigits says
+// (its own decoder, not the codec). Expected indices are worked out by hand: X10 octal is index 8,
+// X377 octal is 255, 0x377 is 887. The same bytes decode to two different devices under the two
+// settings, so a mock that ignores the setting fails on one of them.
+
+namespace {
+
+FrameConfig withDigits(FrameConfig cfg, mc::XyNumbering digits) {
+    cfg.xyAsciiDigits = digits;
+    return cfg;
+}
+
+// The head the mock decoded for the one request `frameBytes`, under `cfg`.
+Device decodedHead(const FrameConfig& cfg, const Bytes& frameBytes) {
+    MockPlc plc(cfg);
+    feed(plc, frameBytes);
+    REQUIRE(plc.requests().size() == 1);
+    CHECK(plc.requests()[0].answeredWith.ok());
+    return plc.requests()[0].head;
+}
+
+} // namespace
+
+TEST_CASE("XYN-20 mock: the X/Y digits of 3E ASCII, 3C, 1C and 1E ASCII follow xyAsciiDigits") {
+    namespace sf = mc::test::serial;
+    const auto octal = mc::XyNumbering::Octal;
+    const auto hex = mc::XyNumbering::Hex;
+    const auto x = [](uint32_t n) { return Device{DeviceType::X, n}; };
+
+    SUBCASE("3E ASCII Q/L") {
+        const Bytes frame = asc3e(0x0401, 0x0001, "X*000010", 8);
+        CHECK(decodedHead(withDigits(FrameConfig::frame3E(DataCode::Ascii), octal), frame) == x(8));
+        CHECK(decodedHead(withDigits(FrameConfig::frame3E(DataCode::Ascii), hex), frame) == x(16));
+    }
+    SUBCASE("3E ASCII iQ-R (8 digits)") {
+        FrameConfig cfg = FrameConfig::frame3E(DataCode::Ascii);
+        cfg.series = PlcSeries::IqR;
+        const Bytes frame = asc3e(0x0401, 0x0003, "X***00000377", 1);
+        CHECK(decodedHead(withDigits(cfg, octal), frame) == x(255));
+        CHECK(decodedHead(withDigits(cfg, hex), frame) == x(0x377));
+    }
+    SUBCASE("3C format 1") {
+        for (mc::SerialFormat format : {mc::SerialFormat::Format1, mc::SerialFormat::Format3}) {
+            const FrameConfig cfg = FrameConfig::frame3C(format);
+            const Bytes frame = sf::request(cfg, sf::data3c(0x0401, 0x0001, "Y*000377", 1));
+            CHECK(decodedHead(withDigits(cfg, octal), frame) == Device{DeviceType::Y, 255});
+            CHECK(decodedHead(withDigits(cfg, hex), frame) == Device{DeviceType::Y, 0x377});
+        }
+    }
+    SUBCASE("1C ACPU (4 digits) and AnA (6 digits)") {
+        const FrameConfig acpu = FrameConfig::frame1C();
+        const Bytes a = sf::request(acpu, sf::data1c("BR", '0', "X0377", 1));
+        CHECK(decodedHead(withDigits(acpu, octal), a) == x(255));
+        CHECK(decodedHead(withDigits(acpu, hex), a) == x(0x377));
+        const Bytes b = sf::request(acpu, sf::data1c("BR", '0', "X0010", 8));
+        CHECK(decodedHead(withDigits(acpu, octal), b) == x(8));
+        CHECK(decodedHead(withDigits(acpu, hex), b) == x(16));
+        const Bytes c = sf::request(acpu, sf::data1c("JR", '0', "X000377", 1));
+        CHECK(decodedHead(withDigits(acpu, octal), c) == x(255));
+        CHECK(decodedHead(withDigits(acpu, hex), c) == x(0x377));
+    }
+    SUBCASE("1E ASCII (8 digits)") {
+        const FrameConfig cfg = FrameConfig::frame1E(DataCode::Ascii);
+        const Bytes frame = asc1e(0x00, "582000000010", 8);
+        CHECK(decodedHead(withDigits(cfg, octal), frame) == x(8));
+        CHECK(decodedHead(withDigits(cfg, hex), frame) == x(16));
+    }
+    SUBCASE("a device other than X and Y keeps its own radix whatever the setting") {
+        const FrameConfig acpu = FrameConfig::frame1C();
+        const Bytes m = sf::request(acpu, sf::data1c("BR", '0', "M0100", 1));
+        CHECK(decodedHead(withDigits(acpu, octal), m) == Device{DeviceType::M, 100});
+        const Bytes w = sf::request(acpu, sf::data1c("WR", '0', "W0010", 1));
+        CHECK(decodedHead(withDigits(acpu, octal), w) == Device{DeviceType::W, 16});
+        const FrameConfig e1 = FrameConfig::frame1E(DataCode::Ascii);
+        CHECK(decodedHead(withDigits(e1, octal), asc1e(0x01, "442000000064", 1)) ==
+              Device{DeviceType::D, 100});
+    }
+}
+
+TEST_CASE("XYN-21 mock: Binary frames carry the index whatever xyAsciiDigits says") {
+    for (mc::XyNumbering digits : {mc::XyNumbering::Hex, mc::XyNumbering::Octal}) {
+        const Bytes x10 = bin3e(0x0401, 0x0001, {0x08, 0x00, 0x00, 0x9C}, 8); // index 8
+        CHECK(decodedHead(withDigits(FrameConfig::frame3E(DataCode::Binary), digits), x10) ==
+              Device{DeviceType::X, 8});
+        const Bytes e1 = bin1e(0x00, {0x08, 0x00, 0x00, 0x00, 0x20, 0x58}, 8);
+        CHECK(decodedHead(withDigits(FrameConfig::frame1E(DataCode::Binary), digits), e1) ==
+              Device{DeviceType::X, 8});
+    }
+}
+
+TEST_CASE("XYN-22 mock: an 8 or 9 in an octal X/Y number is a malformed number, like any other") {
+    namespace sf = mc::test::serial;
+    const auto octal = mc::XyNumbering::Octal;
+    const auto hex = mc::XyNumbering::Hex;
+
+    // 1C: the same bytes are a valid X0018 in hex, an error in octal; a write is not executed.
+    {
+        const FrameConfig acpu = FrameConfig::frame1C();
+        const Bytes write = sf::request(acpu, sf::data1c("BW", '0', "X0018", 1, "1"));
+        MockPlc bad(withDigits(acpu, octal));
+        feed(bad, write);
+        REQUIRE(bad.requests().size() == 1);
+        CHECK_FALSE(bad.requests()[0].answeredWith.ok());
+        CHECK_FALSE(bad.bit(Device{DeviceType::X, 24}));
+        CHECK_FALSE(bad.bit(Device{DeviceType::X, 18}));
+        CHECK(drain(bad).size() > 0);
+
+        MockPlc good(withDigits(acpu, hex));
+        feed(good, write);
+        REQUIRE(good.requests().size() == 1);
+        CHECK(good.requests()[0].answeredWith.ok());
+        CHECK(good.bit(Device{DeviceType::X, 0x18}));
+    }
+    // 1C: a letter is rejected under octal and accepted under hex, X001F.
+    {
+        const FrameConfig acpu = FrameConfig::frame1C();
+        const Bytes read = sf::request(acpu, sf::data1c("BR", '0', "X001F", 1));
+        MockPlc bad(withDigits(acpu, octal));
+        feed(bad, read);
+        REQUIRE(bad.requests().size() == 1);
+        CHECK_FALSE(bad.requests()[0].answeredWith.ok());
+        MockPlc good(withDigits(acpu, hex));
+        feed(good, read);
+        CHECK(good.requests().back().answeredWith.ok());
+    }
+    // 3E ASCII and 1E ASCII.
+    {
+        const FrameConfig cfg = FrameConfig::frame3E(DataCode::Ascii);
+        const Bytes read = asc3e(0x0401, 0x0001, "X*000018", 1);
+        MockPlc bad(withDigits(cfg, octal));
+        feed(bad, read);
+        REQUIRE(bad.requests().size() == 1);
+        CHECK(bad.requests()[0].answeredWith.plcCode == 0xC059);
+        MockPlc good(withDigits(cfg, hex));
+        feed(good, read);
+        CHECK(good.requests().back().answeredWith.ok());
+    }
+    {
+        const FrameConfig cfg = FrameConfig::frame1E(DataCode::Ascii);
+        const Bytes read = asc1e(0x00, "582000000019", 1);
+        MockPlc bad(withDigits(cfg, octal));
+        feed(bad, read);
+        REQUIRE(bad.requests().size() == 1);
+        CHECK_FALSE(bad.requests()[0].answeredWith.ok());
+        MockPlc good(withDigits(cfg, hex));
+        feed(good, read);
+        CHECK(good.requests().back().answeredWith.ok());
     }
 }

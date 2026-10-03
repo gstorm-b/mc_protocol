@@ -1,0 +1,118 @@
+# id: V-FXY-01
+# frame: 1E  code: Binary  op: ReadBits  device: X10  count: 8  xy: octal
+# source: fx3-enet-adp.pdf 7.5 (X000-X377 = 0000-00FFH)
+# kind: request  bytes: 12
+00 FF 0A 00 08 00 00 00 20 58 08 00
+
+# id: V-FXY-02
+# frame: 1E  code: Binary  op: ReadBits  device: X10  count: 8  xy: octal
+# kind: response  of: V-FXY-01  expect: 1,0,0,0,0,0,0,1  bytes: 6
+80 00 10 00 00 01
+
+# id: V-FXY-03
+# frame: 1E  code: Binary  op: ReadBits  device: X377  count: 1  xy: octal
+# source: fx3-enet-adp.pdf 7.5 (X000-X377 = 0000-00FFH)
+# kind: request  bytes: 12
+00 FF 0A 00 FF 00 00 00 20 58 01 00
+
+# id: V-FXY-04
+# frame: 1E  code: Binary  op: WriteBits  device: Y20  count: 2  xy: octal
+# source: fx3-enet-adp.pdf 7.5 (X000-X377 = 0000-00FFH)
+# kind: request  write: 1,0  bytes: 13
+02 FF 0A 00 10 00 00 00 20 59 02 00 10
+
+# id: V-FXY-05
+# frame: 1E  code: Binary  op: WriteBits  device: Y20  count: 2  xy: octal
+# kind: response  of: V-FXY-04  expect:   bytes: 2
+82 00
+
+# id: V-FXY-06
+# frame: 1E  code: Ascii  op: ReadBits  device: X10  count: 8  xy: octal
+# source: fx3-enet-adp.pdf 7.5 (X000-X377 = 0000-00FFH)
+# kind: request  bytes: 24
+30 30 46 46 30 30 30 41 35 38 32 30 30 30 30 30 30 30 30 38 30 38 30 30
+00FF000A5820000000080800
+
+# id: V-FXY-07
+# frame: 1E  code: Ascii  op: ReadBits  device: X10  count: 8  xy: octal
+# kind: response  of: V-FXY-06  expect: 1,0,0,0,0,0,0,1  bytes: 12
+38 30 30 30 31 30 30 30 30 30 30 31
+800010000001
+
+# id: V-FXY-08
+# frame: 1C  code: Ascii  format: F1  op: ReadBits  device: X10  count: 8  xy: octal  xyascii: octal
+# source: fx3-data-communication.pdf device table (X0000-X0377 octal)
+# kind: request  bytes: 17
+05 30 30 46 46 42 52 30 58 30 30 31 30 30 38 33 31
+<ENQ>00FFBR0X00100831
+
+# id: V-FXY-09
+# frame: 1C  code: Ascii  format: F1  op: ReadBits  device: X10  count: 8  xy: octal  xyascii: octal
+# kind: response  of: V-FXY-08  expect: 1,0,0,0,0,0,0,1  bytes: 16
+02 30 30 46 46 31 30 30 30 30 30 30 31 03 37 31
+<STX>00FF10000001<ETX>71
+
+# id: V-FXY-10
+# frame: 1C  code: Ascii  format: F1  op: ReadBits  device: X377  count: 1  xy: octal  xyascii: octal
+# source: fx3-data-communication.pdf device table (X0000-X0377 octal)
+# kind: request  bytes: 17
+05 30 30 46 46 42 52 30 58 30 33 37 37 30 31 33 41
+<ENQ>00FFBR0X0377013A
+
+# id: V-FXY-11
+# frame: 1C  code: Ascii  format: F1  op: ReadBits  device: X377  count: 1  xy: octal  xyascii: octal  commandset: ana
+# source: fx3-data-communication.pdf device table (X0000-X0377 octal)
+# kind: request  bytes: 19
+05 30 30 46 46 4A 52 30 58 30 30 30 33 37 37 30 31 41 32
+<ENQ>00FFJR0X00037701A2
+
+# id: V-FXY-12
+# frame: 1C  code: Ascii  format: F1  op: WriteBits  device: Y10  count: 2  xy: octal  xyascii: octal
+# source: fx3-data-communication.pdf device table (X0000-X0377 octal)
+# kind: request  write: 1,0  bytes: 19
+05 30 30 46 46 42 57 30 59 30 30 31 30 30 32 31 30 39 32
+<ENQ>00FFBW0Y0010021092
+
+# id: V-FXY-13
+# frame: 3C  code: Ascii  format: F1  op: ReadBits  device: X10  count: 8  xy: octal  xyascii: octal
+# source: fx5-serial-communication.pdf / fx5-ethernet-communication.pdf (X,Y OCT = octal)
+# kind: request  bytes: 33
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 31 58 2A 30 30 30 30 31 30 30 30 30 38 31 43
+<ENQ>F90000FF0004010001X*00001000081C
+
+# id: V-FXY-14
+# frame: 3C  code: Ascii  format: F1  op: ReadBits  device: X10  count: 8  xy: octal  xyascii: octal
+# kind: response  of: V-FXY-13  expect: 1,0,0,0,0,0,0,1  bytes: 22
+02 46 39 30 30 30 30 46 46 30 30 31 30 30 30 30 30 30 31 03 42 30
+<STX>F90000FF0010000001<ETX>B0
+
+# id: V-FXY-15
+# frame: 3E  code: Ascii  op: ReadBits  device: X10  count: 8  series: QL  xy: octal  xyascii: octal
+# source: fx5-serial-communication.pdf / fx5-ethernet-communication.pdf (X,Y OCT = octal)
+# kind: request  bytes: 42
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 31 58 2A 30 30 30 30 31 30 30 30 30 38
+500000FF03FF000018001004010001X*0000100008
+
+# id: V-FXY-16
+# frame: 3E  code: Ascii  op: ReadBits  device: X10  count: 8  series: QL  xy: octal  xyascii: octal
+# kind: response  of: V-FXY-15  expect: 1,0,0,0,0,0,0,1  bytes: 30
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 31 30 30 30 30 30 30 31
+D00000FF03FF00000C000010000001
+
+# id: V-FXY-17
+# frame: 3E  code: Ascii  op: ReadBits  device: X10  count: 8  series: QL  xy: octal
+# source: fx5-serial-communication.pdf / fx5-ethernet-communication.pdf, the "ASCII (X,Y HEX)" footnote only: X and Y digits in hex (not evidence for octal digits)
+# kind: request  bytes: 42
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 31 58 2A 30 30 30 30 30 38 30 30 30 38
+500000FF03FF000018001004010001X*0000080008
+
+# id: V-FXY-18
+# frame: 3E  code: Binary  op: ReadBits  device: X10  count: 8  series: QL  xy: octal  xyascii: octal
+# source: fx5-ethernet-communication.pdf 5.3 (Binary = index)
+# kind: request  bytes: 21
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 01 00 08 00 00 9C 08 00
+
+# id: V-FXY-19
+# frame: 3E  code: Binary  op: ReadBits  device: X10  count: 8  series: QL  xy: octal  xyascii: octal
+# kind: response  of: V-FXY-18  expect: 1,0,0,0,0,0,0,1  bytes: 15
+D0 00 00 FF FF 03 00 06 00 00 00 10 00 00 01

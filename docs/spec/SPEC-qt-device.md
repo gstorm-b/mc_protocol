@@ -205,9 +205,10 @@ JSON shape (every `FrameConfig` and `SessionConfig` field has a key of the same 
 | `frame.format` | `"Format1"` … `"Format5"` |
 | `frame.targetFamily` | `"IqR_Q_L"`, `"QnA"`, `"A"` |
 | `frame.commandSet` | `"ACPU"`, `"AnA"` |
+| `frame.xyNotation`, `frame.xyAsciiDigits` | `"Hex"`, `"Octal"`; missing = `"Hex"` (amended 2026-10-03, T-066; see `SPEC-core-model.md` "X/Y numbering for FX CPUs") |
 | `session.cycleMode` | `"FixedRate"`, `"FixedDelay"` |
 | `session.maxGap` | `"auto"` or a number (the sentinel value itself is refused; `"auto"` is its only spelling) |
-| `session.heartbeat.device` | device text in canonical `formatDevice()` spelling |
+| `session.heartbeat.device` | device text in canonical `formatDevice()` spelling, X/Y written in `frame.xyNotation` |
 | `transport.kind` | `"Tcp"`, `"Serial"` |
 | `transport.serial.dataBits` | a number, 5 … 8 |
 | `transport.serial.parity` | `"None"`, `"Even"`, `"Odd"`, `"Space"`, `"Mark"` |

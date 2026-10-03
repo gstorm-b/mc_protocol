@@ -170,8 +170,8 @@ void walkData3c(Walk& w) {
     }
 }
 
-void decodeData3c(ByteView data, SerialRequest& req) {
-    QnaRequest q = decodeQnaAsciiRequestData(data);
+void decodeData3c(ByteView data, XyNumbering xy, SerialRequest& req) {
+    QnaRequest q = decodeQnaAsciiRequestData(data, xy);
     req.executable = q.executable;
     req.op = q.op;
     req.head = q.head;
@@ -207,7 +207,7 @@ Command1c commandOf(uint8_t first, uint8_t second) {
 // for the AnA/AnU commands.
 size_t deviceSize1c(const Command1c& c) { return c.ana ? 7 : 5; }
 
-bool decodeDevice1c(ByteView field, Device& out) {
+bool decodeDevice1c(ByteView field, XyNumbering xy, Device& out) {
     for (uint8_t i = 0; i < static_cast<uint8_t>(DeviceType::Count); ++i) {
         const DeviceInfo& info = deviceInfo(static_cast<DeviceType>(i));
         const size_t codeSize = std::strlen(info.c1Code);
@@ -215,8 +215,8 @@ bool decodeDevice1c(ByteView field, Device& out) {
             continue;
         }
         uint64_t number = 0;
-        if (!parseDeviceNumber(ByteView{field.data + codeSize, field.size - codeSize}, info.radix,
-                               number)) {
+        if (!parseDeviceNumber(ByteView{field.data + codeSize, field.size - codeSize},
+                               asciiNumberBase(info, xy), number)) {
             return false;
         }
         out = Device{info.type, static_cast<uint32_t>(number)};
@@ -255,7 +255,7 @@ void walkData1c(Walk& w) {
     }
 }
 
-void decodeData1c(ByteView data, SerialRequest& req) {
+void decodeData1c(ByteView data, XyNumbering xy, SerialRequest& req) {
     if (data.size < 3 || !isHexChar(data.data[2])) {
         return;
     }
@@ -270,7 +270,7 @@ void decodeData1c(ByteView data, SerialRequest& req) {
     }
     Device head;
     auto points = AsciiCodec::getU8(ByteView{area.data + device, 2});
-    if (!decodeDevice1c(ByteView{area.data, device}, head) || !points.hasValue()) {
+    if (!decodeDevice1c(ByteView{area.data, device}, xy, head) || !points.hasValue()) {
         return;
     }
     const size_t count = points1c(points.value());
@@ -356,9 +356,9 @@ Frame frameEnq(const FrameConfig& cfg, ByteView bytes, SerialRequest& req, size_
     end = w.pos();
     const ByteView data{bytes.data + dataBegin, dataEnd - dataBegin};
     if (threeC) {
-        decodeData3c(data, req);
+        decodeData3c(data, cfg.xyAsciiDigits, req);
     } else {
-        decodeData1c(data, req);
+        decodeData1c(data, cfg.xyAsciiDigits, req);
     }
     // F1, F2 and F4 sum from after the ENQ to the end of the request data (spec §2.5).
     req.sumValid = !cfg.sumCheck || sumMatches(ByteView{bytes.data + 1, dataEnd - 1}, sumText);
@@ -401,9 +401,9 @@ Frame frameStx(const FrameConfig& cfg, ByteView bytes, SerialRequest& req, size_
     end = tail.pos();
     const ByteView data{bytes.data + dataBegin, etx - dataBegin};
     if (threeC) {
-        decodeData3c(data, req);
+        decodeData3c(data, cfg.xyAsciiDigits, req);
     } else {
-        decodeData1c(data, req);
+        decodeData1c(data, cfg.xyAsciiDigits, req);
     }
     // F3 sums from after the STX to and including the ETX (spec §2.5).
     req.sumValid = !cfg.sumCheck || sumMatches(ByteView{bytes.data + 1, etx}, sumText);

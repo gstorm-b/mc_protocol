@@ -27,8 +27,6 @@ const char* opName(Op op) {
 
 namespace {
 
-QString deviceName(const Device& d) { return deviceText(d); }
-
 // Everything a resolution function needs about the step it works for.
 struct Ctx {
     const Profile& profile;
@@ -87,9 +85,19 @@ bool resolveRef(const DeviceRef& ref, const Profile& p, Device& out, bool& scrat
     scratchRelative = false;
     int64_t number = 0;
     switch (ref.base) {
-    case DeviceRef::Base::Literal:
-        out = Device{ref.type, ref.number};
+    case DeviceRef::Base::Literal: {
+        const QByteArray bytes = ref.text.toLatin1();
+        const Expected<Device> d =
+            parseDevice(std::string_view(bytes.constData(), static_cast<size_t>(bytes.size())),
+                        p.device.frame.xyNotation);
+        if (!d) {
+            why = QStringLiteral("'%1' is not a device number under the profile's X/Y notation")
+                      .arg(ref.text);
+            return false;
+        }
+        out = d.value();
         return true;
+    }
     case DeviceRef::Base::ScratchStart:
     case DeviceRef::Base::ScratchAligned: {
         const ScratchRange* r = p.firstScratch(ref.type);
@@ -224,9 +232,9 @@ bool buildData(const ValuesSpec& v, bool wordUnit, uint16_t count, bool countFro
     return false;
 }
 
-QString opDescription(const ResolvedRequest& r) {
+QString opDescription(const ResolvedRequest& r, XyNumbering xy) {
     return QStringLiteral("%1 %2 x%3")
-        .arg(QLatin1String(opName(r.op)), deviceName(r.head))
+        .arg(QLatin1String(opName(r.op)), deviceText(r.head, xy))
         .arg(r.count);
 }
 
@@ -359,7 +367,8 @@ bool resolveOp(const OpSpec& spec, const Ctx& ctx, ResolvedOp& op, QString& why)
     const bool wordUnit =
         spec.unit == QLatin1String("word") || (spec.unit.isEmpty() && kind == DeviceKind::Word);
     if (!wordUnit && kind != DeviceKind::Bit) {
-        why = QStringLiteral("unit bit on word device %1").arg(deviceName(head));
+        why = QStringLiteral("unit bit on word device %1")
+                  .arg(deviceText(head, ctx.profile.device.frame.xyNotation));
         return false;
     }
     int64_t count = 1;
@@ -389,7 +398,7 @@ bool resolveOp(const OpSpec& spec, const Ctx& ctx, ResolvedOp& op, QString& why)
     op.metaKey = spec.metaKey;
     op.scratchMisfit = scratchRelative &&
                        !ctx.profile.inScratch(head.type, head.number, op.request.numbersCovered());
-    op.description = opDescription(op.request);
+    op.description = opDescription(op.request, ctx.profile.device.frame.xyNotation);
     encodeApi(op);
     return true;
 }
@@ -420,7 +429,8 @@ bool resolvePoll(const PollSpec& spec, const Ctx& ctx, ResolvedPoll& out, QStrin
             return false;
         }
         if (deviceInfo(hb.type).kind != DeviceKind::Bit) {
-            why = QStringLiteral("the heartbeat must be a bit device, got %1").arg(deviceName(hb));
+            why = QStringLiteral("the heartbeat must be a bit device, got %1")
+                      .arg(deviceText(hb, ctx.profile.device.frame.xyNotation));
             return false;
         }
         out.heartbeat = hb;
@@ -627,7 +637,7 @@ bool resolveStep(const Step& step, const Ctx& ctxIn, const Profile& profile, Res
             op.readOnly = step.readOnly;
             op.recover = step.recover;
             op.description = QStringLiteral("mutate %1, %2 edit(s)")
-                                 .arg(opDescription(op.request))
+                                 .arg(opDescription(op.request, profile.device.frame.xyNotation))
                                  .arg(step.edits.size());
             finishOp(op, index++);
             rs.ops.push_back(op);

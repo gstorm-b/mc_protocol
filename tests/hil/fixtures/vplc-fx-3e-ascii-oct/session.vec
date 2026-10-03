@@ -1,0 +1,166 @@
+# id: CAP-vplc-fx-3e-ascii-oct-F-04-T0001
+# source: plc  profile: vplc-fx-3e-ascii-oct  step: F-04
+# kind: tx  t_ns: 78164400  seq: 4
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 59 2A 30 30 30 30 32 30 30 30 30 31
+
+# id: CAP-vplc-fx-3e-ascii-oct-F-04-T0002
+# source: plc  profile: vplc-fx-3e-ascii-oct  step: F-04
+# kind: rx  t_ns: 78472500  seq: 6
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 38 30 30 30 30 30 30 30 30
+
+# id: CAP-vplc-fx-3e-ascii-oct-F-04-T0003
+# source: plc  profile: vplc-fx-3e-ascii-oct  step: F-04
+# kind: tx  t_ns: 78508900  seq: 7
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 32
+
+# id: CAP-vplc-fx-3e-ascii-oct-F-04-T0004
+# source: plc  profile: vplc-fx-3e-ascii-oct  step: F-04
+# kind: rx  t_ns: 78730800  seq: 8
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 30 34 44 32 30 30 30 30
+
+# id: CAP-vplc-fx-3e-ascii-oct-F-04-T0005
+# source: plc  profile: vplc-fx-3e-ascii-oct  step: F-04
+# kind: tx  t_ns: 80544400  seq: 12
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 32 30 30 30 31 30 31 34 30 31 30 30 30 31 59 2A 30 30 30 30 31 30 30 30 30 38 31 31 31 31 30 30 30 30
+
+# id: CAP-vplc-fx-3e-ascii-oct-F-04-T0006
+# source: plc  profile: vplc-fx-3e-ascii-oct  step: F-04
+# kind: rx  t_ns: 80995700  seq: 14
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-vplc-fx-3e-ascii-oct-F-04-T0007
+# source: plc  profile: vplc-fx-3e-ascii-oct  step: F-04
+# kind: tx  t_ns: 179157300  seq: 16
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 59 2A 30 30 30 30 32 30 30 30 30 31
+
+# id: CAP-vplc-fx-3e-ascii-oct-F-04-T0008
+# source: plc  profile: vplc-fx-3e-ascii-oct  step: F-04
+# kind: rx  t_ns: 179596200  seq: 17
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 38 30 30 30 30 30 30 30 30
+
+# id: CAP-vplc-fx-3e-ascii-oct-F-04-T0009
+# source: plc  profile: vplc-fx-3e-ascii-oct  step: F-04
+# kind: tx  t_ns: 179658200  seq: 18
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 32
+
+# id: CAP-vplc-fx-3e-ascii-oct-F-04-T0010
+# source: plc  profile: vplc-fx-3e-ascii-oct  step: F-04
+# kind: rx  t_ns: 179958300  seq: 20
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 30 34 44 32 30 30 30 30
+
+# id: CAP-vplc-fx-3e-ascii-oct-F-04-T0011
+# source: plc  profile: vplc-fx-3e-ascii-oct  step: F-04
+# kind: tx  t_ns: 279184500  seq: 23
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 59 2A 30 30 30 30 32 30 30 30 30 31
+
+# id: CAP-vplc-fx-3e-ascii-oct-F-04-T0012
+# source: plc  profile: vplc-fx-3e-ascii-oct  step: F-04
+# kind: rx  t_ns: 279533000  seq: 24
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 38 30 30 30 30 30 30 30 30
+
+# id: CAP-vplc-fx-3e-ascii-oct-F-04-T0013
+# source: plc  profile: vplc-fx-3e-ascii-oct  step: F-04
+# kind: tx  t_ns: 279595900  seq: 25
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 32
+
+# id: CAP-vplc-fx-3e-ascii-oct-F-04-T0014
+# source: plc  profile: vplc-fx-3e-ascii-oct  step: F-04
+# kind: rx  t_ns: 279887500  seq: 27
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 30 34 44 32 30 30 30 30
+
+# id: CAP-vplc-fx-3e-ascii-oct-F-04-I0001
+# source: plc  profile: vplc-fx-3e-ascii-oct  step: F-04
+# kind: input  input: subscribe  t_ns: 67457400  seq: 1
+# name: d  device: D100  count: 2
+08 09 64 00 00 00 02 00 00 00
+
+# id: CAP-vplc-fx-3e-ascii-oct-F-04-I0002
+# source: plc  profile: vplc-fx-3e-ascii-oct  step: F-04
+# kind: input  input: subscribe  t_ns: 67474600  seq: 2
+# name: y  device: Y20  count: 16
+08 03 10 00 00 00 10 00 00 00
+
+# id: CAP-vplc-fx-3e-ascii-oct-F-04-E0001
+# source: plc  profile: vplc-fx-3e-ascii-oct  step: F-04
+# kind: event  event: linkState  t_ns: 77902300  seq: 3
+# state: Connecting  reason: Requested
+05 01 00
+
+# id: CAP-vplc-fx-3e-ascii-oct-F-04-E0002
+# source: plc  profile: vplc-fx-3e-ascii-oct  step: F-04
+# kind: event  event: linkState  t_ns: 78194400  seq: 5
+# state: Connected  reason: Requested
+05 02 00
+
+# id: CAP-vplc-fx-3e-ascii-oct-F-04-E0003
+# source: plc  profile: vplc-fx-3e-ascii-oct  step: F-04
+# kind: event  event: snapshot  t_ns: 78798700  seq: 9
+# type: Y  round: 1  segments: Y20x16  chunks: ok
+01 10 00 00 00 10 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-vplc-fx-3e-ascii-oct-F-04-E0004
+# source: plc  profile: vplc-fx-3e-ascii-oct  step: F-04
+# kind: event  event: snapshot  t_ns: 78835000  seq: 10
+# type: D  round: 1  segments: D100x2  chunks: ok
+01 64 00 00 00 02 00 00 00 D2 04 00 00 02 02
+
+# id: CAP-vplc-fx-3e-ascii-oct-F-04-E0005
+# source: plc  profile: vplc-fx-3e-ascii-oct  step: F-04
+# kind: event  event: cycleDone  t_ns: 78852600  seq: 11
+# round: 1  duration_ms: 1  requests: 2  failed_chunks: 0  heartbeat_ok: true
+03 01 00 00 00 29 00 00 00 00 00 00 00 01 00 00 00 02 00 00 00 01
+
+# id: CAP-vplc-fx-3e-ascii-oct-F-04-I0003
+# source: plc  profile: vplc-fx-3e-ascii-oct  step: F-04
+# kind: input  input: write  t_ns: 80591800  seq: 13
+# op: WriteBits  device: Y10  count: 8
+0A 02 03 08 00 00 00 08 00 01 01 01 01 00 00 00 00
+
+# id: CAP-vplc-fx-3e-ascii-oct-F-04-E0006
+# source: plc  profile: vplc-fx-3e-ascii-oct  step: F-04
+# kind: event  event: requestFinished  t_ns: 81124200  seq: 15
+# request_id: 6  outcome: ok  bytes: 0
+04
+
+# id: CAP-vplc-fx-3e-ascii-oct-F-04-E0007
+# source: plc  profile: vplc-fx-3e-ascii-oct  step: F-04
+# kind: event  event: snapshot  t_ns: 179680900  seq: 19
+# type: Y  round: 2  segments: Y20x16  chunks: ok
+01 10 00 00 00 10 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-vplc-fx-3e-ascii-oct-F-04-E0008
+# source: plc  profile: vplc-fx-3e-ascii-oct  step: F-04
+# kind: event  event: snapshot  t_ns: 180022200  seq: 21
+# type: D  round: 2  segments: D100x2  chunks: ok
+01 64 00 00 00 02 00 00 00 D2 04 00 00 02 02
+
+# id: CAP-vplc-fx-3e-ascii-oct-F-04-E0009
+# source: plc  profile: vplc-fx-3e-ascii-oct  step: F-04
+# kind: event  event: cycleDone  t_ns: 180057500  seq: 22
+# round: 2  duration_ms: 1  requests: 2  failed_chunks: 0  heartbeat_ok: true
+03 02 00 00 00 8E 00 00 00 00 00 00 00 01 00 00 00 02 00 00 00 01
+
+# id: CAP-vplc-fx-3e-ascii-oct-F-04-E0010
+# source: plc  profile: vplc-fx-3e-ascii-oct  step: F-04
+# kind: event  event: snapshot  t_ns: 279617500  seq: 26
+# type: Y  round: 3  segments: Y20x16  chunks: ok
+01 10 00 00 00 10 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-vplc-fx-3e-ascii-oct-F-04-E0011
+# source: plc  profile: vplc-fx-3e-ascii-oct  step: F-04
+# kind: event  event: snapshot  t_ns: 279946100  seq: 28
+# type: D  round: 3  segments: D100x2  chunks: ok
+01 64 00 00 00 02 00 00 00 D2 04 00 00 02 02
+
+# id: CAP-vplc-fx-3e-ascii-oct-F-04-E0012
+# source: plc  profile: vplc-fx-3e-ascii-oct  step: F-04
+# kind: event  event: cycleDone  t_ns: 279977900  seq: 29
+# round: 3  duration_ms: 1  requests: 2  failed_chunks: 0  heartbeat_ok: true
+03 03 00 00 00 F2 00 00 00 00 00 00 00 01 00 00 00 02 00 00 00 01
+
+# id: CAP-vplc-fx-3e-ascii-oct-F-04-E0013
+# source: plc  profile: vplc-fx-3e-ascii-oct  step: F-04
+# kind: event  event: linkState  t_ns: 280328300  seq: 30
+# state: Disconnected  reason: Requested
+05 00 00
+

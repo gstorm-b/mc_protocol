@@ -284,7 +284,7 @@ struct Runner::Impl {
                 pollEvent(changesEvent(t, round, changes, clock->nowNs()));
             });
         QObject::connect(d, &McDevice::snapshotReady, &ctx, [this](const mc::DeviceSnapshot& s) {
-            pollEvent(snapshotEvent(s, clock->nowNs()));
+            pollEvent(snapshotEvent(s, clock->nowNs(), profile.device.frame.xyNotation));
         });
         QObject::connect(d, &McDevice::cycleDone, &ctx, [this](const mc::CycleInfo& c) {
             ++cycles;
@@ -458,7 +458,7 @@ struct Runner::Impl {
             }
             if (fm != nullptr) {
                 r.op = QLatin1String(opName(fm->op));
-                r.device = deviceText(fm->head);
+                r.device = deviceText(fm->head, profile.device.frame.xyNotation);
                 r.count = fm->count;
             } else {
                 r.op = QStringLiteral("Raw");
@@ -863,7 +863,8 @@ struct Runner::Impl {
         pollOutstanding.clear();
         // The inputs the session gets are on record: the heartbeat, then the initial subscriptions.
         if (pollSpec.heartbeat) {
-            pollEvent(heartbeatInput(true, *pollSpec.heartbeat, clock->nowNs()));
+            pollEvent(heartbeatInput(true, *pollSpec.heartbeat, clock->nowNs(),
+                                     profile.device.frame.xyNotation));
         }
         QMap<QString, SubscriptionId> ids;
         for (const ResolvedSub& s : pollSpec.subs) {
@@ -874,7 +875,8 @@ struct Runner::Impl {
                                     .arg(s.name, describeError(id.error())));
             }
             ids.insert(s.name, id.value());
-            pollEvent(subscribeInput(s.name, s.head, s.count, clock->nowNs()));
+            pollEvent(subscribeInput(s.name, s.head, s.count, clock->nowNs(),
+                                     profile.device.frame.xyNotation));
         }
         const auto finish = [&]() {
             device->disconnectFromPlc();
@@ -941,7 +943,7 @@ struct Runner::Impl {
                     const Expected<RequestId> id = device->submit(r);
                     if (id) {
                         pollEvent(writeInput(r.op, r.head, r.count, act.write.request.data,
-                                             clock->nowNs()));
+                                             clock->nowNs(), profile.device.frame.xyNotation));
                         pollOutstanding.insert(id.value());
                     } else {
                         verdict.category = Category::Failed;
@@ -956,7 +958,7 @@ struct Runner::Impl {
                     if (id) {
                         ids.insert(act.sub.name, id.value());
                         pollEvent(subscribeInput(act.sub.name, act.sub.head, act.sub.count,
-                                                 clock->nowNs()));
+                                                 clock->nowNs(), profile.device.frame.xyNotation));
                     } else {
                         verdict.category = Category::Failed;
                         verdict.note =
@@ -1125,7 +1127,7 @@ struct Runner::Impl {
                 row.plcState = settings.plcState;
                 row.step = step.id;
                 row.op = QLatin1String(opName(op.request.op));
-                row.device = deviceText(op.request.head);
+                row.device = deviceText(op.request.head, profile.device.frame.xyNotation);
                 row.count = op.request.count;
                 row.rep = i - warm + 1;
                 row.scanMs = scan;

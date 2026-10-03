@@ -13,6 +13,7 @@ their negative tests run on every build, with no PLC.
 | `vplc-3e-bin-drop/` | 3E Binary | loopback TCP through a proxy that closes the poll's connection while an ad-hoc write is outstanding (peer closed, then a reconnect and a restart) | `plans/fixture_3e_drop.json` | `profiles/vplc-3e-bin-drop.json` |
 | `e2e-3e-bin-20ms/` | 3E Binary | loopback TCP, cycle interval 20 ms, timeout 400 ms | `tests/hil/e2e/plan_3e.json` (with the E-10 reconnect) | the e2e test profile |
 | `vplc-3c-f4/` | 3C format 4 | virtual COM pair `COM54` / `COM55`, 9600 baud 7E1 | `plans/fixture_3c.json` | `profiles/vplc-3c-f4.json` |
+| `vplc-fx-3e-ascii-oct/` | 3E ASCII, X/Y octal (`frame.xyNotation` and `frame.xyAsciiDigits` `Octal`) | loopback TCP | `plans/fixture_fx_3e_oct.json` | `profiles/vplc-fx-3e-ascii-oct.json` |
 
 The plans derive from the end-to-end plans of `tests/hil/e2e/`: `fixture_3e` adds the Appendix A
 mirror steps `GV-01` to `GV-05`; neither has a reconnect step (virtual_plc gives every TCP connection a
@@ -40,6 +41,13 @@ copy the folders here (`tests/vectors/captured/` must stay empty of virtual_plc 
 examples/virtual_plc --frame 3E --code Binary --port 5061 --set D100=1234
 "vplc-3e-bin" | tools/hil_capture --profile tests/hil/fixtures/profiles/vplc-3e-bin.json `
     --plan tests/hil/fixtures/plans/fixture_3e.json --output-root build/_scratch-fixtures `
+    --note "virtual_plc fixture, not hardware"
+
+# FX numbering: 3E ASCII with octal X/Y text and octal digits (port 5065); step F-01 reads X10, so
+# virtual_plc is started with X10 and X12 set
+examples/virtual_plc --frame 3E --code ASCII --xy octal --xy-ascii octal --port 5065 --set D100=1234 --set X10=1 --set X12=1
+"vplc-fx-3e-ascii-oct" | tools/hil_capture --profile tests/hil/fixtures/profiles/vplc-fx-3e-ascii-oct.json `
+    --plan tests/hil/fixtures/plans/fixture_fx_3e_oct.json --output-root build/_scratch-fixtures `
     --note "virtual_plc fixture, not hardware"
 
 # 3C format 4 over the virtual COM pair (virtual_plc answers on COM55, the tool opens COM54)

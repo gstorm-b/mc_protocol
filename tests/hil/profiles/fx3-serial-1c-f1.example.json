@@ -64,7 +64,9 @@
       "aSeriesTarget": false,
       "splitWrites": false,
       "timeoutMs": 0,
-      "readRetries": 0
+      "readRetries": 0,
+      "xyNotation": "Octal",
+      "xyAsciiDigits": "Octal"
     },
     "session": {
       "cycleIntervalMs": 100,

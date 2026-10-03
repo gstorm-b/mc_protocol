@@ -30,8 +30,8 @@ std::string hex(ByteView bytes, size_t limit = 40);
 std::optional<uint32_t> number(const std::string& s, int base);
 /// The device type whose symbol is @p symbol ("D", "TN"); nullopt when none.
 std::optional<DeviceType> typeBySymbol(const std::string& symbol);
-/// The canonical text of a device ("D100", "X1F").
-std::string deviceText(const Device& d);
+/// The canonical text of a device ("D100", "X1F"; "X37" for index 31 under an Octal @p xy).
+std::string deviceText(const Device& d, XyNumbering xy);
 /// "ReadWords" -> Op::ReadWords; nullopt for anything else (e.g. "Raw").
 std::optional<Op> opByName(const std::string& name);
 /// True for ReadBits / WriteBits.
@@ -57,7 +57,8 @@ struct Decoded {
 };
 
 /// Feeds @p bytes to a fresh MockPlc speaking @p cfg and returns every request it decoded, in
-/// order. The data of a write is read back from the mock's memory.
+/// order. The data of a write is read back from the mock's memory. A request the mock could not
+/// decode (no points) is left out, so an undecodable frame gives an empty result.
 std::vector<Decoded> decode(const FrameConfig& cfg, const std::vector<uint8_t>& bytes);
 
 /// The `Request` of a decoded request (its data view points into @p d).

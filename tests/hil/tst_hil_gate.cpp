@@ -367,6 +367,43 @@ class HilGateTests : public QObject {
         QVERIFY2(!v.gate.refused(), qPrintable(refusalText(v.gate)));
     }
 
+    // XYN: the gate counts indices, and its texts use the profile's notation.
+    void HIL_XYN_05_theGateChecksIndicesAndNamesRangesInOctal() {
+        const Profile fx = loadExample(QStringLiteral("fx5u-eth-3e-ascii")); // Y20-Y37 = 16..31
+        const Verdict ok = gateOf(R"JSON(
+            {"id":"OK-01","kind":"write","device":"Y@s","unit":"bit","count":16,
+                "values":{"gen":"fill","value":1}},
+            {"id":"OK-02","kind":"write","device":"Y30","unit":"bit","count":8,
+                "values":{"gen":"fill","value":1}},
+            {"id":"OK-03","kind":"read","device":"X0","unit":"bit","count":16}
+        )JSON",
+                                  fx);
+        QVERIFY2(ok.planError.isEmpty() && ok.resolved.ok(), qPrintable(ok.planError));
+        QVERIFY2(!ok.gate.refused(), qPrintable(refusalText(ok.gate)));
+
+        const Verdict bad = gateOf(R"JSON(
+            {"id":"W-01","kind":"write","device":"Y40","unit":"bit","count":1,
+                "values":{"gen":"fill","value":1}},
+            {"id":"W-02","kind":"write","device":"Y@s","unit":"bit","count":17,
+                "values":{"gen":"fill","value":1}},
+            {"id":"W-03","kind":"write","device":"Y17","unit":"bit","count":1,
+                "values":{"gen":"fill","value":1}}
+        )JSON",
+                                   fx);
+        QVERIFY2(bad.planError.isEmpty() && bad.resolved.ok(), qPrintable(bad.planError));
+        QCOMPARE(stepsOf(bad.gate), (QStringList{"W-01", "W-02", "W-03"}));
+        // Y40 octal is index 32, one past Y37; the range and the scratch list are in octal.
+        QCOMPARE(bad.gate.violations[0].range, QStringLiteral("Y40-Y40 (1 point)"));
+        QVERIFY2(bad.gate.violations[0].why.contains(QStringLiteral("Y20-Y37")),
+                 qPrintable(bad.gate.violations[0].why));
+        // 17 points from Y20 run to Y40.
+        QCOMPARE(bad.gate.violations[1].range, QStringLiteral("Y20-Y40 (17 points)"));
+        QVERIFY2(bad.gate.violations[1].why.contains(QStringLiteral("runs past the end")),
+                 qPrintable(bad.gate.violations[1].why));
+        // Y17 octal is index 15, one below the scratch start.
+        QCOMPARE(bad.gate.violations[2].range, QStringLiteral("Y17-Y17 (1 point)"));
+    }
+
     void HIL_02_aWriteOutsideScratchIsRefused() {
         const Verdict v = gateOf(R"JSON(
             {"id":"W-01","kind":"write","device":"D3000","values":[1]},

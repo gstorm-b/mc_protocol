@@ -15,7 +15,10 @@
 //     connectToPlc() again instead.
 //
 // Options: --serial PORT [--baud N] talks over a COM port instead of TCP (--host and --port are
-// then ignored); --format 1..4 picks the envelope of a 3C or 1C frame. --rounds N exits with 0
+// then ignored); --format 1..4 picks the envelope of a 3C or 1C frame. --xy octal|hex (default hex)
+// is the base of X/Y numbers in --sub and in the output (an FX CPU numbers them in octal);
+// --xy-ascii octal|hex (default hex) is the base of the X/Y digits inside ASCII frames (the FX3
+// computer link, 1C, uses octal digits). --rounds N exits with 0
 // after N polling rounds (1 on a link fault or when the connection cannot be opened), so a script
 // can run it; without it the program runs until Ctrl+C.
 #include "mc/core/device.h"
@@ -29,6 +32,7 @@
 
 #include <cstdint>
 #include <cstdio>
+#include <utility>
 
 namespace {
 
@@ -37,9 +41,9 @@ void say(const QString& line) {
     std::fflush(stdout);
 }
 
-QString nameOf(mc::Device d) {
+QString nameOf(mc::Device d, mc::XyNumbering xy) {
     char text[16];
-    mc::formatDevice(d, text, sizeof text);
+    mc::formatDevice(d, text, sizeof text, xy);
     return QString::fromLatin1(text);
 }
 
@@ -66,10 +70,11 @@ const char* reasonName(mc::LinkReason r) {
 
 // One snapshot segment as rows of eight points: words as decimal, bits as 0/1. `values` uses the
 // normalized layout of the library: two bytes little-endian per word, one byte per bit.
-void printSegment(const mc::SnapshotSegment& seg) {
+void printSegment(const mc::SnapshotSegment& seg, mc::XyNumbering xy) {
     const bool words = mc::deviceInfo(seg.head.type).kind != mc::DeviceKind::Bit;
     for (quint32 row = 0; row < seg.count; row += 8) {
-        QString line = QStringLiteral("  %1:").arg(nameOf(mc::Device{seg.head.type, seg.head.number + row}), -8);
+        QString line = QStringLiteral("  %1:").arg(
+            nameOf(mc::Device{seg.head.type, seg.head.number + row}, xy), -8);
         for (quint32 k = row; k < seg.count && k < row + 8; ++k) {
             if (words) {
                 const auto lo = static_cast<uint8_t>(seg.values.at(static_cast<qsizetype>(k) * 2));
@@ -125,6 +130,12 @@ int main(int argc, char** argv) {
                       QStringLiteral("PORT")});
     parser.addOption({QStringLiteral("baud"), QStringLiteral("Baud rate with --serial."),
                       QStringLiteral("N"), QStringLiteral("9600")});
+    parser.addOption({QStringLiteral("xy"),
+                      QStringLiteral("Base of X/Y numbers in --sub and the output (FX: octal)."),
+                      QStringLiteral("octal|hex"), QStringLiteral("hex")});
+    parser.addOption({QStringLiteral("xy-ascii"),
+                      QStringLiteral("Base of X/Y digits inside ASCII frames (FX3 1C: octal)."),
+                      QStringLiteral("octal|hex"), QStringLiteral("hex")});
     parser.addOption({QStringLiteral("sub"), QStringLiteral("Subscribe to COUNT points from DEV."),
                       QStringLiteral("DEV:COUNT")});
     parser.addOption({QStringLiteral("rounds"), QStringLiteral("Exit 0 after N rounds."),
@@ -162,6 +173,19 @@ int main(int argc, char** argv) {
         std::fprintf(stderr, "qt_console_poller: --frame is 3E, 1E, 3C or 1C.\n");
         return 2;
     }
+    for (const auto& option :
+         {std::make_pair(QStringLiteral("xy"), &cfg.frame.xyNotation),
+          std::make_pair(QStringLiteral("xy-ascii"), &cfg.frame.xyAsciiDigits)}) {
+        const QString value = parser.value(option.first);
+        if (value.compare(QLatin1String("octal"), Qt::CaseInsensitive) == 0) {
+            *option.second = mc::XyNumbering::Octal;
+        } else if (value.compare(QLatin1String("hex"), Qt::CaseInsensitive) != 0) {
+            std::fprintf(stderr, "qt_console_poller: --%s is octal or hex, got \"%s\".\n",
+                         qPrintable(option.first), qPrintable(value));
+            return 2;
+        }
+    }
+    const mc::XyNumbering xy = cfg.frame.xyNotation;
     bool portOk = false;
     const int port = parser.value(QStringLiteral("port")).toInt(&portOk);
     if (!portOk || port <= 0 || port > 65535) {
@@ -233,7 +257,8 @@ int main(int argc, char** argv) {
                      QString::fromUtf8(fault.error.message)));
         QCoreApplication::exit(1);
     });
-    QObject::connect(&device, &mc::McDevice::snapshotReady, &app, [](const mc::DeviceSnapshot& snap) {
+    QObject::connect(&device, &mc::McDevice::snapshotReady, &app,
+                     [xy](const mc::DeviceSnapshot& snap) {
         if (snap.round != 1) { // later rounds would print the same values again
             return;
         }
@@ -241,20 +266,20 @@ int main(int argc, char** argv) {
         for (const mc::ChunkStatus& chunk : snap.chunks) {
             if (chunk.state == mc::ChunkState::Failed) {
                 say(QStringLiteral("  chunk %1 x%2 failed: %3")
-                        .arg(nameOf(chunk.request.head))
+                        .arg(nameOf(chunk.request.head, xy))
                         .arg(chunk.request.count)
                         .arg(QString::fromUtf8(chunk.error.message)));
             }
         }
         for (const mc::SnapshotSegment& seg : snap.segments) {
-            printSegment(seg);
+            printSegment(seg, xy);
         }
     });
     QObject::connect(&device, &mc::McDevice::valuesChanged, &app,
-                     [](mc::DeviceType, quint32 round, const QVector<mc::Change>& changes) {
+                     [xy](mc::DeviceType, quint32 round, const QVector<mc::Change>& changes) {
                          for (const mc::Change& c : changes) {
                              say(QStringLiteral("changed %1: %2 -> %3 (round %4)")
-                                     .arg(nameOf(c.device))
+                                     .arg(nameOf(c.device, xy))
                                      .arg(c.oldValue)
                                      .arg(c.newValue)
                                      .arg(round));

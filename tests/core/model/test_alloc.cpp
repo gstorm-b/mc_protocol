@@ -149,3 +149,20 @@ TEST_CASE("ALC-01 formatDevice: zero allocations") {
     CHECK(len == 6); // "TN1234".
     CHECK(count == 0);
 }
+
+TEST_CASE("ALC-01 XYN parseDevice and formatDevice with Octal: zero allocations") {
+    (void)mc::parseDevice("X10", mc::XyNumbering::Octal);
+    char out[16];
+    (void)mc::formatDevice(Device{DeviceType::X, 8}, out, sizeof(out), mc::XyNumbering::Octal);
+
+    mc::test::resetAllocCount();
+    auto parsed = mc::parseDevice("Y377", mc::XyNumbering::Octal);
+    size_t len =
+        mc::formatDevice(Device{DeviceType::X, 255}, out, sizeof(out), mc::XyNumbering::Octal);
+    size_t count = mc::test::allocCount();
+
+    REQUIRE(parsed.hasValue());
+    CHECK(parsed.value().number == 255u);
+    CHECK(len == 4); // "X377".
+    CHECK(count == 0);
+}

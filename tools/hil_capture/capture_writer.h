@@ -217,7 +217,9 @@ QString outcomeText(const Error& error);
 QString expectText(const Expect& expect, bool bitUnit);
 
 /// @brief Event of a snapshot signal.
-SessionEvent snapshotEvent(const DeviceSnapshot& snapshot, qint64 tNs);
+/// @param[in] xy Base of X and Y numbers in the event's text (the profile's `xyNotation`).
+SessionEvent snapshotEvent(const DeviceSnapshot& snapshot, qint64 tNs,
+                           XyNumbering xy);
 /// @brief Event of a valuesChanged signal.
 SessionEvent changesEvent(DeviceType type, quint32 round, const QVector<Change>& changes,
                           qint64 tNs);
@@ -232,13 +234,16 @@ SessionEvent linkStateEvent(LinkState state, LinkReason reason, qint64 tNs);
 SessionEvent linkFaultEvent(const LinkFaultInfo& fault, qint64 tNs);
 
 /// @brief Input record: the heartbeat of the session (`enabled`, `device`).
-SessionEvent heartbeatInput(bool enabled, const Device& device, qint64 tNs);
+SessionEvent heartbeatInput(bool enabled, const Device& device, qint64 tNs,
+                            XyNumbering xy);
 /// @brief Input record: a subscription made (at the start or between rounds).
-SessionEvent subscribeInput(const QString& name, const Device& head, quint32 count, qint64 tNs);
+SessionEvent subscribeInput(const QString& name, const Device& head, quint32 count, qint64 tNs,
+                            XyNumbering xy);
 /// @brief Input record: a subscription removed.
 SessionEvent unsubscribeInput(const QString& name, qint64 tNs);
 /// @brief Input record: an ad-hoc request submitted during the poll (its data in the payload).
-SessionEvent writeInput(Op op, const Device& head, quint16 count, const ByteBuf& data, qint64 tNs);
+SessionEvent writeInput(Op op, const Device& head, quint16 count, const ByteBuf& data, qint64 tNs,
+                        XyNumbering xy);
 
 /// @brief The text of steps.vec for @p records (records with no request bytes are skipped).
 QString stepsText(const QString& profileId, const QVector<StepRecord>& records);

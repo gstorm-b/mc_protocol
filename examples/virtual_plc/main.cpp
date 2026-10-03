@@ -3,6 +3,7 @@
 //
 //   virtual_plc --frame 3E --code Binary --port 5000 --set D100=1234 --wiggle D105
 //   virtual_plc --frame 3C --format 4 --serial COM50 --set D100=1234 --wiggle D105
+//   virtual_plc --frame 1C --xy octal --xy-ascii octal --set X10=1   (an FX3 computer link)
 //
 // What it does:
 //   * Over TCP, every accepted connection gets its own mc::MockPlc, built from the same frame
@@ -14,6 +15,10 @@
 //     TCP port is opened. Pair it with a virtual COM pair (the other end of PORT) and
 //     `qt_console_poller --serial OTHER`.
 //   * --set DEV=VALUE (repeatable) sets a word, or a bit when DEV is a bit device.
+//   * --xy octal|hex (default hex) is the base of X and Y numbers in --set, --wiggle and the
+//     wiggle log lines: an FX CPU numbers them in octal (X10 is the ninth input). --xy-ascii
+//     octal|hex (default hex) is the base of the X/Y digits the mock reads inside ASCII frames
+//     (the FX3 computer link, 1C, uses octal digits).
 //   * --wiggle DEV (repeatable) changes DEV once a second (a word counts up, a bit toggles), in
 //     every live connection, so a poller sees a change each second. It starts from the value
 //     --set gave the same device (0 when there is none), so --set keeps its meaning.
@@ -51,9 +56,9 @@ void say(const QString& line) {
     std::fflush(stdout);
 }
 
-QString nameOf(mc::Device d) {
+QString nameOf(mc::Device d, mc::XyNumbering xy) {
     char text[16];
-    mc::formatDevice(d, text, sizeof text);
+    mc::formatDevice(d, text, sizeof text, xy);
     return QString::fromLatin1(text);
 }
 
@@ -188,7 +193,9 @@ class VirtualPlc {
             if (m_serialPlc) {
                 apply(*m_serialPlc, p);
             }
-            say(QStringLiteral("wiggle %1 = %2").arg(nameOf(p.device)).arg(p.value));
+            say(QStringLiteral("wiggle %1 = %2")
+                    .arg(nameOf(p.device, m_frame.xyNotation))
+                    .arg(p.value));
         }
     }
 
@@ -204,14 +211,14 @@ class VirtualPlc {
 };
 
 // "D100=1234" -> a point; false (with a message) when it is not.
-bool parseSet(const QString& text, Point& out, QString& why) {
+bool parseSet(const QString& text, mc::XyNumbering xy, Point& out, QString& why) {
     const qsizetype eq = text.indexOf(QLatin1Char('='));
     if (eq <= 0) {
         why = QStringLiteral("--set expects DEVICE=VALUE, got \"%1\"").arg(text);
         return false;
     }
     const QByteArray name = text.left(eq).toLatin1();
-    const auto device = mc::parseDevice(std::string_view(name.constData(), name.size()));
+    const auto device = mc::parseDevice(std::string_view(name.constData(), name.size()), xy);
     bool ok = false;
     const int value = text.mid(eq + 1).toInt(&ok, 0);
     if (!device || !ok || value < 0 || value > 0xFFFF) {
@@ -244,6 +251,12 @@ int main(int argc, char** argv) {
                       QStringLiteral("DEV=VALUE")});
     parser.addOption({QStringLiteral("wiggle"), QStringLiteral("Change DEV once a second, from its --set value (0 if none)."),
                       QStringLiteral("DEV")});
+    parser.addOption({QStringLiteral("xy"),
+                      QStringLiteral("Base of X/Y numbers in --set and --wiggle (FX: octal)."),
+                      QStringLiteral("octal|hex"), QStringLiteral("hex")});
+    parser.addOption({QStringLiteral("xy-ascii"),
+                      QStringLiteral("Base of X/Y digits inside ASCII frames (FX3 1C: octal)."),
+                      QStringLiteral("octal|hex"), QStringLiteral("hex")});
     parser.addOption({QStringLiteral("serial"),
                       QStringLiteral("Answer on this COM port (7E1) instead of a TCP port."),
                       QStringLiteral("PORT")});
@@ -306,6 +319,19 @@ int main(int argc, char** argv) {
         std::fprintf(stderr, "virtual_plc: --code is Binary or ASCII, got \"%s\".\n", qPrintable(codeText));
         return 2;
     }
+    mc::XyNumbering xyText = mc::XyNumbering::Hex;
+    mc::XyNumbering xyAscii = mc::XyNumbering::Hex;
+    for (const auto& option : {std::make_pair(QStringLiteral("xy"), &xyText),
+                               std::make_pair(QStringLiteral("xy-ascii"), &xyAscii)}) {
+        const QString value = parser.value(option.first);
+        if (value.compare(QLatin1String("octal"), Qt::CaseInsensitive) == 0) {
+            *option.second = mc::XyNumbering::Octal;
+        } else if (value.compare(QLatin1String("hex"), Qt::CaseInsensitive) != 0) {
+            std::fprintf(stderr, "virtual_plc: --%s is octal or hex, got \"%s\".\n",
+                         qPrintable(option.first), qPrintable(value));
+            return 2;
+        }
+    }
     bool portOk = false;
     const int port = parser.value(QStringLiteral("port")).toInt(&portOk);
     if (!portOk || port < 0 || port > 65535) {
@@ -317,7 +343,7 @@ int main(int argc, char** argv) {
     for (const QString& text : parser.values(QStringLiteral("set"))) {
         Point p{};
         QString why;
-        if (!parseSet(text, p, why)) {
+        if (!parseSet(text, xyText, p, why)) {
             std::fprintf(stderr, "virtual_plc: %s\n", qPrintable(why));
             return 2;
         }
@@ -326,7 +352,8 @@ int main(int argc, char** argv) {
     std::vector<Point> wiggles;
     for (const QString& text : parser.values(QStringLiteral("wiggle"))) {
         const QByteArray name = text.toLatin1();
-        const auto device = mc::parseDevice(std::string_view(name.constData(), name.size()));
+        const auto device =
+            mc::parseDevice(std::string_view(name.constData(), name.size()), xyText);
         if (!device) {
             std::fprintf(stderr, "virtual_plc: --wiggle: \"%s\" is not a device.\n", qPrintable(text));
             return 2;
@@ -350,6 +377,8 @@ int main(int argc, char** argv) {
     } else if (is1c) {
         frame = mc::FrameConfig::frame1C(format);
     }
+    frame.xyNotation = xyText;
+    frame.xyAsciiDigits = xyAscii;
     VirtualPlc plc(frame, image, wiggles);
     const QString shape = serialFrame ? QStringLiteral("format %1").arg(formatNumber)
                           : code == mc::DataCode::Binary ? QStringLiteral("Binary")

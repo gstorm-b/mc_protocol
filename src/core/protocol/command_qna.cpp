@@ -16,7 +16,8 @@ Error lengthMismatchError() noexcept {
 } // namespace
 
 template <class Codec>
-Expected<size_t> qnaRequestData(const Request& r, PlcSeries series, MutableByteView out) noexcept {
+Expected<size_t> qnaRequestData(const Request& r, PlcSeries series, MutableByteView out,
+                                XyNumbering xyDigits) noexcept {
     size_t needed = qnaRequestDataSize<Codec>(r, series);
     if (out.size < needed) {
         return Expected<size_t>(fieldBufferTooSmallError());
@@ -33,7 +34,7 @@ Expected<size_t> qnaRequestData(const Request& r, PlcSeries series, MutableByteV
 
     size_t deviceSize = qnaDeviceSize(Codec::kDataCode, series);
     auto deviceResult = qnaDevice(r.head, Codec::kDataCode, series,
-                                  MutableByteView{out.data + offset, deviceSize});
+                                  MutableByteView{out.data + offset, deviceSize}, xyDigits);
     if (!deviceResult.hasValue()) {
         return Expected<size_t>(deviceResult.error());
     }
@@ -76,10 +77,10 @@ Expected<size_t> qnaResponseData(const Request& r, ByteView in,
 // matching the module spec's Project Structure (this file has its own .cpp, unlike header-only
 // field_codec.h). qnaRequestDataSize()/qnaResponseDataSize() are fully defined in the header
 // already (plain constexpr-friendly arithmetic) and need no instantiation here.
-template Expected<size_t> qnaRequestData<AsciiCodec>(const Request&, PlcSeries,
-                                                      MutableByteView) noexcept;
-template Expected<size_t> qnaRequestData<BinaryCodec>(const Request&, PlcSeries,
-                                                       MutableByteView) noexcept;
+template Expected<size_t> qnaRequestData<AsciiCodec>(const Request&, PlcSeries, MutableByteView,
+                                                      XyNumbering) noexcept;
+template Expected<size_t> qnaRequestData<BinaryCodec>(const Request&, PlcSeries, MutableByteView,
+                                                       XyNumbering) noexcept;
 template Expected<size_t> qnaResponseData<AsciiCodec>(const Request&, ByteView,
                                                         MutableByteView) noexcept;
 template Expected<size_t> qnaResponseData<BinaryCodec>(const Request&, ByteView,

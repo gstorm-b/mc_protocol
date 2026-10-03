@@ -52,7 +52,9 @@ const QStringList kFrameKeys = {"frame",
                                 "aSeriesTarget",
                                 "splitWrites",
                                 "timeoutMs",
-                                "readRetries"};
+                                "readRetries",
+                                "xyNotation",
+                                "xyAsciiDigits"};
 
 // SessionConfig without `log` (never serialised) and with PlanOptions and HeartbeatConfig
 // flattened as the spec's JSON shows: heartbeat is a nested object.
@@ -110,6 +112,8 @@ mc::McDeviceConfig nonDefaultConfig() {
     c.frame.splitWrites = true;
     c.frame.timeoutMs = 4321;
     c.frame.readRetries = 2;
+    c.frame.xyNotation = mc::XyNumbering::Octal;
+    c.frame.xyAsciiDigits = mc::XyNumbering::Octal;
 
     c.session.cycleIntervalMs = 250;
     c.session.cycleMode = mc::CycleMode::FixedDelay;
@@ -169,6 +173,8 @@ void expectSameFrame(const mc::FrameConfig& a, const mc::FrameConfig& b) {
     QCOMPARE(a.splitWrites, b.splitWrites);
     QCOMPARE(a.timeoutMs, b.timeoutMs);
     QCOMPARE(a.readRetries, b.readRetries);
+    QCOMPARE(a.xyNotation, b.xyNotation);
+    QCOMPARE(a.xyAsciiDigits, b.xyAsciiDigits);
 }
 
 void expectSameSession(const mc::SessionConfig& a, const mc::SessionConfig& b) {
@@ -524,7 +530,7 @@ class TstConfigJson : public QObject {
 
         // A struct that grew without this file being updated changes size (best effort; see the
         // comment above the lists).
-        QCOMPARE(kFrameKeys.size(), 27);
+        QCOMPARE(kFrameKeys.size(), 29);
 #if defined(_WIN64) || defined(__x86_64__)
         // 64-bit MSVC and MinGW GCC 13 agree on these sizes (checked on both).
         QCOMPARE(sizeof(mc::FrameConfig), size_t{40});
@@ -571,6 +577,14 @@ class TstConfigJson : public QObject {
             mc::McDeviceConfig c;
             c.frame.commandSet = v;
             roundTrip(c);
+        }
+        for (auto v : {mc::XyNumbering::Hex, mc::XyNumbering::Octal}) {
+            mc::McDeviceConfig c;
+            c.frame.xyNotation = v;
+            roundTrip(c);
+            mc::McDeviceConfig d;
+            d.frame.xyAsciiDigits = v;
+            roundTrip(d);
         }
         for (auto v : {mc::CycleMode::FixedRate, mc::CycleMode::FixedDelay}) {
             mc::McDeviceConfig c;
@@ -633,6 +647,115 @@ class TstConfigJson : public QObject {
                      .value("device")
                      .toString(),
                  QStringLiteral("M2000"));
+    }
+
+    // XYN: the two X/Y numbering keys of "frame" and what they do to device text.
+
+    void XYN_30_keysAreHexOrOctalAndAMissingKeyIsHex() {
+        mc::McDeviceConfig c;
+        QJsonObject json = c.toJson();
+        QJsonObject frame = json.value("frame").toObject();
+        QCOMPARE(frame.value("xyNotation").toString(), QStringLiteral("Hex"));
+        QCOMPARE(frame.value("xyAsciiDigits").toString(), QStringLiteral("Hex"));
+
+        c.frame.xyNotation = mc::XyNumbering::Octal;
+        frame = c.toJson().value("frame").toObject();
+        QCOMPARE(frame.value("xyNotation").toString(), QStringLiteral("Octal"));
+        QCOMPARE(frame.value("xyAsciiDigits").toString(), QStringLiteral("Hex"));
+        c.frame.xyAsciiDigits = mc::XyNumbering::Octal;
+        frame = c.toJson().value("frame").toObject();
+        QCOMPARE(frame.value("xyAsciiDigits").toString(), QStringLiteral("Octal"));
+
+        // Missing keys: Hex.
+        frame.remove("xyNotation");
+        frame.remove("xyAsciiDigits");
+        json.insert("frame", frame);
+        const auto missing = mc::McDeviceConfig::fromJson(json);
+        QVERIFY(missing.hasValue());
+        QCOMPARE(missing.value().frame.xyNotation, mc::XyNumbering::Hex);
+        QCOMPARE(missing.value().frame.xyAsciiDigits, mc::XyNumbering::Hex);
+
+        // Spelling is exact; anything else names the key.
+        for (const char* key : {"xyNotation", "xyAsciiDigits"}) {
+            for (const QJsonValue& bad : {QJsonValue(QStringLiteral("octal")),
+                                          QJsonValue(QStringLiteral("Oct")), QJsonValue(1)}) {
+                QJsonObject f = frame;
+                f.insert(key, bad);
+                QJsonObject root = json;
+                root.insert("frame", f);
+                QString where;
+                QVERIFY(!mc::McDeviceConfig::fromJson(root, &where).hasValue());
+                QCOMPARE(where, QStringLiteral("frame.") + QLatin1String(key));
+            }
+        }
+    }
+
+    void XYN_31_textDevicesAreReadAndWrittenInTheNotation() {
+        // Octal: the heartbeat Y17 is index 15, and the config writes it back as Y17.
+        mc::McDeviceConfig c;
+        c.frame.xyNotation = mc::XyNumbering::Octal;
+        c.session.heartbeat.device = mc::Device{mc::DeviceType::Y, 15};
+        const QJsonObject json = c.toJson();
+        QCOMPARE(json.value("session")
+                     .toObject()
+                     .value("heartbeat")
+                     .toObject()
+                     .value("device")
+                     .toString(),
+                 QStringLiteral("Y17"));
+        const auto back = mc::McDeviceConfig::fromJson(json);
+        QVERIFY(back.hasValue());
+        QVERIFY(back.value().session.heartbeat.device == (mc::Device{mc::DeviceType::Y, 15}));
+
+        // The same text under Hex is index 0x17.
+        QJsonObject hexJson = json;
+        QJsonObject hexFrame = hexJson.value("frame").toObject();
+        hexFrame.insert("xyNotation", "Hex");
+        hexJson.insert("frame", hexFrame);
+        const auto asHex = mc::McDeviceConfig::fromJson(hexJson);
+        QVERIFY(asHex.hasValue());
+        QVERIFY(asHex.value().session.heartbeat.device == (mc::Device{mc::DeviceType::Y, 0x17}));
+
+        // A digit 8 is not a device under Octal and the path names the heartbeat.
+        QJsonObject bad = json;
+        QJsonObject session = bad.value("session").toObject();
+        QJsonObject heartbeat = session.value("heartbeat").toObject();
+        heartbeat.insert("device", "Y18");
+        session.insert("heartbeat", heartbeat);
+        bad.insert("session", session);
+        QString where;
+        QVERIFY(!mc::McDeviceConfig::fromJson(bad, &where).hasValue());
+        QCOMPARE(where, QStringLiteral("session.heartbeat.device"));
+    }
+
+    void XYN_32_subscriptionTextIsValidatedInTheNotation() {
+        mc::McDeviceConfig c;
+        c.frame = mc::FrameConfig::frame1C();
+        c.frame.xyNotation = mc::XyNumbering::Octal;
+        c.frame.xyAsciiDigits = mc::XyNumbering::Octal;
+        c.transport = mc::TransportKind::Serial;
+        c.serial.portName = QStringLiteral("COM1");
+        c.subscriptions = {{QStringLiteral("X10"), 16}};
+        QString where;
+        QVERIFY(c.validate(&where).hasValue());
+
+        // X8 is no octal number.
+        c.subscriptions = {{QStringLiteral("X8"), 16}};
+        const mc::Expected<void> bad = c.validate(&where);
+        QVERIFY(!bad.hasValue());
+        QCOMPARE(bad.error().code, mc::ErrorCode::InvalidDevice);
+        QCOMPARE(where, QStringLiteral("subscriptions[0].device"));
+
+        // Under Hex the same text is fine, and 1C ACPU still checks the field width of the digits:
+        // index 4096 is X10000 octal, 5 digits for a 4 character field.
+        c.frame.xyNotation = mc::XyNumbering::Hex;
+        c.frame.xyAsciiDigits = mc::XyNumbering::Hex;
+        QVERIFY(c.validate(&where).hasValue());
+        c.frame.xyNotation = mc::XyNumbering::Octal;
+        c.frame.xyAsciiDigits = mc::XyNumbering::Octal;
+        c.subscriptions = {{QStringLiteral("X10000"), 8}};
+        QVERIFY(!c.validate(&where).hasValue());
+        QCOMPARE(where, QStringLiteral("subscriptions[0].device"));
     }
 
     void CFG_04_theSessionLogSinkIsNotSerialisedAndStaysNull() {

@@ -17,7 +17,8 @@
  * profile.supports, profile.specialBit, profile.specialWord, device. The rest is optional.
  * Every other key is an error, also inside `device`. Scratch ranges and deviceEnd
  * numbers are written in each device type's own radix (D decimal, W/B/X/Y hexadecimal, from
- * the core device table); a deviceEnd of a hexadecimal type is a JSON string. `families` holds
+ * the core device table; X and Y octal when `device.frame.xyNotation` is "Octal", as for an FX
+ * CPU); a deviceEnd of a hexadecimal or octal type is a JSON string. `families` holds
  * "qna-ethernet", "a1e", "qna-serial" or "a1c". `device.subscriptions` must be empty: polling is
  * the business of the plan's poll steps.
  */
@@ -96,18 +97,23 @@ std::optional<DeviceType> deviceTypeFromSymbol(const QString& symbol);
 /// @brief The canonical symbol of a device type.
 QString deviceSymbol(DeviceType t);
 
-/// @brief The canonical text of a device, e.g. "D100", "X1F".
-QString deviceText(const Device& d);
+/// @brief The canonical text of a device, e.g. "D100", "X1F" ("X37" for the same index in octal).
+/// @param[in] d The device (its number is the point index).
+/// @param[in] xy Base of X and Y numbers (the profile's `FrameConfig::xyNotation`).
+QString deviceText(const Device& d, XyNumbering xy);
 
 /// @brief Parses a device number written in the radix of @p t (no prefix, no sign).
 /// @param[in] t Device type whose radix applies.
 /// @param[in] text Digits only.
-/// @param[out] out The number.
+/// @param[out] out The number (the point index).
+/// @param[in] xy Base of X and Y numbers (the profile's `FrameConfig::xyNotation`).
 /// @return false when @p text is empty, has a digit outside the radix, or does not fit 32 bits.
-bool parseDeviceNumber(DeviceType t, const QString& text, uint32_t& out);
+bool parseDeviceNumber(DeviceType t, const QString& text, uint32_t& out,
+                       XyNumbering xy);
 
-/// @brief The device number as text in the radix of its type (upper-case hexadecimal).
-QString formatDeviceNumber(DeviceType t, uint32_t number);
+/// @brief The device number as text in the radix of its type (upper-case hexadecimal; octal for X
+/// and Y under an octal @p xy).
+QString formatDeviceNumber(DeviceType t, uint32_t number, XyNumbering xy);
 
 /// @brief Whether @p id can name a capture folder: letters, digits, '-', '_' and '.', starting
 /// with a letter or digit, at most 80 characters, no "..".

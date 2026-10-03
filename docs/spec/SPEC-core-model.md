@@ -236,6 +236,8 @@ struct FrameConfig {
                                        ///< Ethernet: whole response. Serial: time to the FIRST byte only; the
                                        ///< rest is governed by SessionConfig::serialInterCharMs (core-session).
     uint8_t readRetries{0};            ///< Acts on serial links only: an Ethernet timeout faults the link (spec §6.1).
+    XyNumbering xyNotation{XyNumbering::Hex};   ///< How X/Y numbers are written in text (parse/format); Octal for FX CPUs.
+    XyNumbering xyAsciiDigits{XyNumbering::Hex}; ///< Digits of X/Y numbers in ASCII frames; Binary frames always carry the point index.
 
     static FrameConfig frame3E(DataCode code = DataCode::Binary) noexcept;
     static FrameConfig frame1E(DataCode code = DataCode::Binary) noexcept;   // monitoringTimer = 0x000A
@@ -251,6 +253,38 @@ struct FrameConfig {
 };
 }
 ```
+
+#### X/Y numbering for FX CPUs (amended 2026-10-03, owner decision)
+
+FX3 and FX5 number X and Y in **octal** (X0–X7, X10–X17, …); Q, L and iQ-R number them in
+hexadecimal. A `Device` always holds the **point index** (`X10` octal on an FX is index 8). Two
+`FrameConfig` fields, both defaulting to `Hex` so nothing changes for existing users:
+
+```cpp
+enum class XyNumbering : uint8_t { Hex, Octal };
+```
+
+- `xyNotation` — how X/Y numbers are **written as text**. `parseDevice(text, xyNotation)` and
+  `formatDevice(d, out, capacity, xyNotation)` (overloads; the existing functions keep `Hex`).
+  With `Octal`, `"X10"` parses to index 8 and digits 8 and 9 are rejected (`InvalidDevice`).
+  Only X and Y are affected; every other symbol keeps its own radix.
+- `xyAsciiDigits` — the **digits of X/Y numbers inside ASCII frames** (3E/1E ASCII, 3C/4C, 1C).
+  With `Octal` the encoder writes the index as octal digits and the parser and the mock read them
+  as octal; with `Hex` the index is written in hex as today. Binary frames always carry the index
+  as a binary value, whatever the setting.
+
+Settings per PLC, from the vendor manuals in `docs/mc_reference/`:
+
+| Target | `xyNotation` | `xyAsciiDigits` | Source |
+|---|---|---|---|
+| Q, L, iQ-R (any frame) | Hex | Hex | reference spec §3.2 |
+| FX3 1E (ENET-ADP) | Octal | Hex | `fx3-enet-adp.pdf` §7.5: X000–X377 ↔ 0000–00FFH |
+| FX3 1C (computer link) | Octal | Octal | `fx3-data-communication.pdf`, device table (octal) |
+| FX5 3E/3C/1C, data code Binary or "ASCII (X,Y HEX)" | Octal | Hex | `fx5-ethernet-communication.pdf` §5.3 *3; `fx5-serial-communication.pdf` *1 |
+| FX5, data code "ASCII (X,Y OCT)" | Octal | Octal | same footnotes |
+
+`validate()` checks the X/Y field width with the digits actually written (an octal number takes
+more digits than the same index in hex).
 
 ### `request.h`
 

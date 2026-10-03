@@ -3,6 +3,8 @@
 // T-008), not this module's.
 #include "mc/core/device.h"
 
+#include "core/model/validate_internal.h"
+
 #include <cstddef>
 
 namespace mc {
@@ -15,17 +17,18 @@ char toUpperAscii(char c) noexcept {
     return (c >= 'a' && c <= 'z') ? static_cast<char>(c - 'a' + 'A') : c;
 }
 
-bool isDecDigit(char c) noexcept { return c >= '0' && c <= '9'; }
+// The value of a digit in any base up to 16, or kInvalidDigit.
+constexpr uint32_t kInvalidDigit = 0xFFFFFFFFu;
 
-bool isHexDigit(char c) noexcept {
-    return isDecDigit(c) || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f');
-}
-
-uint32_t hexDigitValue(char c) noexcept {
-    if (isDecDigit(c)) {
+uint32_t digitValue(char c) noexcept {
+    if (c >= '0' && c <= '9') {
         return static_cast<uint32_t>(c - '0');
     }
-    return static_cast<uint32_t>(toUpperAscii(c) - 'A' + 10);
+    char u = toUpperAscii(c);
+    if (u >= 'A' && u <= 'F') {
+        return static_cast<uint32_t>(u - 'A' + 10);
+    }
+    return kInvalidDigit;
 }
 
 // Compares the first `len` characters of `text` against `symbol` (which is exactly `len`
@@ -58,6 +61,10 @@ Error invalidDeviceError() noexcept {
 } // namespace
 
 Expected<Device> parseDevice(std::string_view text) noexcept {
+    return parseDevice(text, XyNumbering::Hex);
+}
+
+Expected<Device> parseDevice(std::string_view text, XyNumbering xy) noexcept {
     // Longest symbol first (spec §3.4 item 1): try len = 3, 2, 1 in turn; the first table row
     // whose symbol equals that prefix, case-insensitively, wins. Symbols in the table are
     // pairwise distinct within each length, so at most one row can match at a given length.
@@ -76,21 +83,17 @@ Expected<Device> parseDevice(std::string_view text) noexcept {
             }
 
             std::string_view digits = text.substr(symLen);
+            const uint32_t base = detail::numberBase(info, xy);
             uint32_t number = 0;
-            if (info.radix == Radix::Hex) {
-                for (char c : digits) {
-                    if (!isHexDigit(c)) {
-                        return Expected<Device>(invalidDeviceError());
-                    }
-                    number = number * 16u + hexDigitValue(c);
+            for (char c : digits) {
+                const uint32_t v = digitValue(c);
+                if (v >= base) { // also true for kInvalidDigit
+                    return Expected<Device>(invalidDeviceError());
                 }
-            } else {
-                for (char c : digits) {
-                    if (!isDecDigit(c)) {
-                        return Expected<Device>(invalidDeviceError());
-                    }
-                    number = number * 10u + static_cast<uint32_t>(c - '0');
+                if (number > (0xFFFFFFFFu - v) / base) { // number * base + v would not fit 32 bits
+                    return Expected<Device>(invalidDeviceError());
                 }
+                number = number * base + v;
             }
 
             Device d{};
@@ -103,16 +106,21 @@ Expected<Device> parseDevice(std::string_view text) noexcept {
 }
 
 size_t formatDevice(const Device& d, char* out, size_t capacity) noexcept {
+    return formatDevice(d, out, capacity, XyNumbering::Hex);
+}
+
+size_t formatDevice(const Device& d, char* out, size_t capacity, XyNumbering xy) noexcept {
     const DeviceInfo& info = deviceInfo(d.type);
 
-    // Collect digits least-significant-first; uint32_t needs at most 10 decimal or 8 hex digits.
-    char digits[10];
+    // Collect digits least-significant-first; uint32_t needs at most 11 octal, 10 decimal or 8
+    // hex digits.
+    char digits[11];
     size_t digitCount = 0;
     uint32_t n = d.number;
     if (n == 0) {
         digits[digitCount++] = '0';
     } else {
-        uint32_t base = (info.radix == Radix::Hex) ? 16u : 10u;
+        const uint32_t base = detail::numberBase(info, xy);
         while (n > 0) {
             uint32_t digit = n % base;
             digits[digitCount++] =

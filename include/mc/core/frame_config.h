@@ -74,6 +74,22 @@ enum class C1CommandSet : uint8_t {
 };
 
 /**
+ * @enum XyNumbering
+ * @brief Numeral base of X and Y device numbers where a setting chooses it: in device text and in
+ * the digits of ASCII frames.
+ *
+ * Q, L and iQ-R CPUs number X and Y in hexadecimal; FX3 and FX5 CPUs number them in octal (X0-X7,
+ * X10-X17). Every other device symbol keeps its own base whatever the setting. A Device always
+ * holds the point index, so `X10` on an FX CPU is index 8 under either notation of the PLC.
+ *
+ * @see FrameConfig::xyNotation, FrameConfig::xyAsciiDigits
+ */
+enum class XyNumbering : uint8_t {
+    Hex,  ///< Hexadecimal digits (Q, L, iQ-R).
+    Octal ///< Octal digits (FX3, FX5).
+};
+
+/**
  * @struct FrameConfig
  * @brief One flat struct describing every frame family; a frame ignores the fields it does not
  * use, and so does validate(Request, FrameConfig) (`request.h`).
@@ -131,6 +147,11 @@ struct FrameConfig {
     uint32_t timeoutMs{0}; ///< 0 = derived: see effectiveTimeoutMs().
     uint8_t readRetries{0}; ///< Serial links only: an Ethernet timeout faults the link (spec
                             ///< §6.1); unused by validate() in v1.
+    XyNumbering xyNotation{XyNumbering::Hex}; ///< Base of X/Y numbers written as text (parse and
+                                              ///< format); Octal for FX CPUs.
+    XyNumbering xyAsciiDigits{XyNumbering::Hex}; ///< Base of the digits of X/Y numbers in ASCII
+                                                 ///< frames (3E, 1E, 3C, 1C); Binary frames always
+                                                 ///< carry the point index.
 
     /**
      * @brief Builds a 3E FrameConfig with spec §8.3's 3E defaults.

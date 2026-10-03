@@ -29,7 +29,8 @@ template <class Codec> size_t putTestHead(size_t n, MutableByteView out) noexcep
 } // namespace
 
 template <class Codec>
-Expected<size_t> a1eRequestData(const Request& r, MutableByteView out) noexcept {
+Expected<size_t> a1eRequestData(const Request& r, MutableByteView out,
+                                XyNumbering xyDigits) noexcept {
     size_t needed = a1eRequestDataSize<Codec>(r);
     if (out.size < needed) {
         return Expected<size_t>(fieldBufferTooSmallError());
@@ -37,8 +38,8 @@ Expected<size_t> a1eRequestData(const Request& r, MutableByteView out) noexcept 
 
     size_t offset = 0;
     size_t deviceSize = e1DeviceSize(Codec::kDataCode);
-    auto deviceResult =
-        e1Device(r.head, Codec::kDataCode, MutableByteView{out.data + offset, deviceSize});
+    auto deviceResult = e1Device(r.head, Codec::kDataCode,
+                                 MutableByteView{out.data + offset, deviceSize}, xyDigits);
     if (!deviceResult.hasValue()) {
         return Expected<size_t>(deviceResult.error());
     }
@@ -130,8 +131,10 @@ Expected<size_t> a1eTestWordsRequestData(const A1eTestWord* items, size_t n,
 
 // Only two Codec types ever exist (field_codec.h); explicit instantiation keeps the bodies out of
 // command_a1e.h, as command_qna.cpp does.
-template Expected<size_t> a1eRequestData<AsciiCodec>(const Request&, MutableByteView) noexcept;
-template Expected<size_t> a1eRequestData<BinaryCodec>(const Request&, MutableByteView) noexcept;
+template Expected<size_t> a1eRequestData<AsciiCodec>(const Request&, MutableByteView,
+                                                      XyNumbering) noexcept;
+template Expected<size_t> a1eRequestData<BinaryCodec>(const Request&, MutableByteView,
+                                                       XyNumbering) noexcept;
 template Expected<size_t> a1eResponseData<AsciiCodec>(const Request&, ByteView,
                                                         MutableByteView) noexcept;
 template Expected<size_t> a1eResponseData<BinaryCodec>(const Request&, ByteView,

@@ -128,7 +128,9 @@ struct Request {
  * -# `count >= 1`.
  * -# A bit operation (`isBitOp()`) on a non-bit device.
  * -# `head.type` unsupported by `cfg`'s frame family, honouring `cfg.e1AliasLS` for L/S on 1E.
- * -# `head.number` exceeds the frame family's field width (spec §3.4 item 4).
+ * -# `head.number` exceeds the frame family's field width (spec §3.4 item 4). An ASCII field
+ *    is counted in the digits actually written: X and Y take octal digits when
+ *    `cfg.xyAsciiDigits` is `XyNumbering::Octal`.
  * -# A word operation on a bit device with `head.number` not a multiple of 16, when `cfg.frame`
  *    is 1E or 1C or `cfg.aSeriesTarget`; in M9000-M9255 the rule is `head.number == 9000 + 16k`
  *    (spec §10 Q8), which replaces the plain multiple-of-16 rule in that range.

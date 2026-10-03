@@ -11,7 +11,9 @@
  * "D100" is decimal, "X1F" is hexadecimal), zero-padded to a fixed width -- is this file's own
  * (`putFixedWidthNumber`, device_encode.cpp): QnA ASCII and 1C are both this kind of field, 1E
  * ASCII is not (spec E4: its number is always 8 hexadecimal digits regardless of the device's own
- * radix, so `AsciiCodec::putU32` already produces exactly the right text).
+ * radix, so `AsciiCodec::putU32` already produces exactly the right text). X and Y on an FX CPU
+ * are the exception to "own radix": their ASCII digits are octal when the caller passes
+ * `XyNumbering::Octal` (`FrameConfig::xyAsciiDigits`), through the same `putFixedWidthNumber`.
  *
  * This is the one place command code is allowed to branch on ASCII vs. Binary itself (module
  * spec "Internal design": "no ASCII/Binary branches inside command code except device
@@ -57,6 +59,8 @@ constexpr size_t qnaDeviceSize(DataCode code, PlcSeries series) noexcept {
  * @param[in] code Ascii or Binary wire representation.
  * @param[in] series Q/L or iQ-R device-code column (`FrameConfig::series`).
  * @param[out] out Destination; must hold at least `qnaDeviceSize(code, series)` bytes.
+ * @param[in] xyDigits Base of the digits of an X or Y number in ASCII
+ * (`FrameConfig::xyAsciiDigits`); Binary always carries the point index.
  * @return Bytes/characters written (`qnaDeviceSize(code, series)`).
  * @retval ErrorCode::InvalidDevice `d.type` has no code for this `series` (spec §3.2: a blank
  * cell, e.g. `RD` on Q/L).
@@ -65,8 +69,8 @@ constexpr size_t qnaDeviceSize(DataCode code, PlcSeries series) noexcept {
  * O(1); no allocation.
  * @see e1Device, c1Device
  */
-Expected<size_t> qnaDevice(const Device& d, DataCode code, PlcSeries series,
-                            MutableByteView out) noexcept;
+Expected<size_t> qnaDevice(const Device& d, DataCode code, PlcSeries series, MutableByteView out,
+                           XyNumbering xyDigits = XyNumbering::Hex) noexcept;
 
 /// Wire size of a 1E device field: ASCII 12 characters; Binary 6 bytes.
 constexpr size_t e1DeviceSize(DataCode code) noexcept { return code == DataCode::Ascii ? 12 : 6; }
@@ -84,6 +88,9 @@ constexpr size_t e1DeviceSize(DataCode code) noexcept { return code == DataCode:
  * @param[in] d Device to encode.
  * @param[in] code Ascii or Binary wire representation.
  * @param[out] out Destination; must hold at least `e1DeviceSize(code)` bytes.
+ * @param[in] xyDigits Base of the 8 ASCII digits of an X or Y number
+ * (`FrameConfig::xyAsciiDigits`); every other device is written in hexadecimal, Binary always
+ * carries the point index.
  * @return Bytes/characters written (`e1DeviceSize(code)`).
  * @retval ErrorCode::InvalidDevice `d.type` has no 1E code (spec §3.2: a blank `e1Code` cell,
  * e.g. `SM`, `SD`).
@@ -92,7 +99,8 @@ constexpr size_t e1DeviceSize(DataCode code) noexcept { return code == DataCode:
  * O(1); no allocation.
  * @see qnaDevice, c1Device
  */
-Expected<size_t> e1Device(const Device& d, DataCode code, MutableByteView out) noexcept;
+Expected<size_t> e1Device(const Device& d, DataCode code, MutableByteView out,
+                          XyNumbering xyDigits = XyNumbering::Hex) noexcept;
 
 /// Wire size of a 1C device field (spec §3.3): ACPU commands 5 characters (Timer/Counter
 /// devices: 4); AnA/AnU commands 7 characters (Timer/Counter: 6). Not `constexpr`: reads
@@ -109,6 +117,7 @@ size_t c1DeviceSize(const Device& d, C1CommandSet commandSet) noexcept;
  * @param[in] commandSet ACPU (`BR`/`WR`/`BW`/`WW`) or AnA/AnU (`JR`/`QR`/`JW`/`QW`) field widths
  * (`FrameConfig::commandSet`).
  * @param[out] out Destination; must hold at least `c1DeviceSize(d, commandSet)` characters.
+ * @param[in] xyDigits Base of the digits of an X or Y number (`FrameConfig::xyAsciiDigits`).
  * @return Characters written (`c1DeviceSize(d, commandSet)`).
  * @retval ErrorCode::InvalidDevice `d.type` has no 1C code (spec §3.2: a blank `c1Code` cell,
  * e.g. `V`).
@@ -117,6 +126,7 @@ size_t c1DeviceSize(const Device& d, C1CommandSet commandSet) noexcept;
  * O(1); no allocation.
  * @see qnaDevice, e1Device
  */
-Expected<size_t> c1Device(const Device& d, C1CommandSet commandSet, MutableByteView out) noexcept;
+Expected<size_t> c1Device(const Device& d, C1CommandSet commandSet, MutableByteView out,
+                          XyNumbering xyDigits = XyNumbering::Hex) noexcept;
 
 } // namespace mc::detail

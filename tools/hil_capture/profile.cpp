@@ -16,12 +16,6 @@ constexpr size_t kTypeCount = static_cast<size_t>(DeviceType::Count);
 
 DeviceType typeAt(size_t i) { return static_cast<DeviceType>(i); }
 
-bool isHexDigit(QChar c) {
-    return (c >= QLatin1Char('0') && c <= QLatin1Char('9')) ||
-           (c >= QLatin1Char('A') && c <= QLatin1Char('F')) ||
-           (c >= QLatin1Char('a') && c <= QLatin1Char('f'));
-}
-
 bool isDecDigit(QChar c) { return c >= QLatin1Char('0') && c <= QLatin1Char('9'); }
 
 // Splits "TN10" into its symbol and its number text, longest symbol first as parseDevice() does.
@@ -42,12 +36,14 @@ bool splitDevice(const QString& text, DeviceType& type, QString& number, QString
     return true;
 }
 
-bool numberFor(DeviceType t, const QString& text, uint32_t& out, QString& why) {
-    if (!parseDeviceNumber(t, text, out)) {
+bool numberFor(DeviceType t, const QString& text, uint32_t& out, QString& why, XyNumbering xy) {
+    if (!parseDeviceNumber(t, text, out, xy)) {
+        const bool octal = xy == XyNumbering::Octal && (t == DeviceType::X || t == DeviceType::Y);
         why = QStringLiteral("'%1' is not a %2 number of device %3")
                   .arg(text,
-                       deviceInfo(t).radix == Radix::Hex ? QStringLiteral("hexadecimal")
-                                                         : QStringLiteral("decimal"),
+                       octal ? QStringLiteral("octal")
+                             : (deviceInfo(t).radix == Radix::Hex ? QStringLiteral("hexadecimal")
+                                                                  : QStringLiteral("decimal")),
                        deviceSymbol(t));
         return false;
     }
@@ -55,7 +51,7 @@ bool numberFor(DeviceType t, const QString& text, uint32_t& out, QString& why) {
 }
 
 // "D100-D2099" or "W100-1FF": the second part may repeat the symbol, which must then match.
-bool parseRange(const QString& textIn, ScratchRange& out, QString& why) {
+bool parseRange(const QString& textIn, ScratchRange& out, QString& why, XyNumbering xy) {
     const QString text = textIn.trimmed();
     const qsizetype dash = text.indexOf(QLatin1Char('-'));
     if (dash <= 0) {
@@ -77,10 +73,10 @@ bool parseRange(const QString& textIn, ScratchRange& out, QString& why) {
     }
     uint32_t first = 0;
     uint32_t last = 0;
-    if (!numberFor(t, firstText, first, why)) {
+    if (!numberFor(t, firstText, first, why, xy)) {
         return false;
     }
-    if (!numberFor(t, lastText, last, why)) {
+    if (!numberFor(t, lastText, last, why, xy)) {
         DeviceType other = DeviceType::D;
         QString otherNumber;
         QString ignored;
@@ -141,8 +137,8 @@ const char* const kFamilies[] = {"qna-ethernet", "a1e", "qna-serial", "a1c"};
 
 QString deviceSymbol(DeviceType t) { return QString::fromLatin1(deviceInfo(t).symbol); }
 
-QString deviceText(const Device& d) {
-    return deviceSymbol(d.type) + formatDeviceNumber(d.type, d.number);
+QString deviceText(const Device& d, XyNumbering xy) {
+    return deviceSymbol(d.type) + formatDeviceNumber(d.type, d.number, xy);
 }
 
 std::optional<DeviceType> deviceTypeFromSymbol(const QString& symbol) {
@@ -154,28 +150,27 @@ std::optional<DeviceType> deviceTypeFromSymbol(const QString& symbol) {
     return std::nullopt;
 }
 
-bool parseDeviceNumber(DeviceType t, const QString& text, uint32_t& out) {
+// The number goes through the core parser behind its own symbol, so the radix rules (and the
+// octal reading of X and Y) live in one place.
+bool parseDeviceNumber(DeviceType t, const QString& text, uint32_t& out, XyNumbering xy) {
     if (text.isEmpty() || text.size() > 8) {
         return false;
     }
-    const bool hex = deviceInfo(t).radix == Radix::Hex;
-    for (const QChar c : text) {
-        if (hex ? !isHexDigit(c) : !isDecDigit(c)) {
-            return false;
-        }
-    }
-    bool ok = false;
-    const qulonglong v = text.toULongLong(&ok, hex ? 16 : 10);
-    if (!ok || v > 0xFFFFFFFFull) {
+    const QByteArray bytes = (deviceSymbol(t) + text).toLatin1();
+    const Expected<Device> d =
+        parseDevice(std::string_view(bytes.constData(), static_cast<size_t>(bytes.size())), xy);
+    if (!d || d.value().type != t) {
         return false;
     }
-    out = static_cast<uint32_t>(v);
+    out = d.value().number;
     return true;
 }
 
-QString formatDeviceNumber(DeviceType t, uint32_t number) {
-    return deviceInfo(t).radix == Radix::Hex ? QString::number(number, 16).toUpper()
-                                             : QString::number(number);
+QString formatDeviceNumber(DeviceType t, uint32_t number, XyNumbering xy) {
+    char text[32];
+    const size_t needed = formatDevice(Device{t, number}, text, sizeof text, xy);
+    const size_t symbolLength = static_cast<size_t>(deviceSymbol(t).size());
+    return QString::fromLatin1(text + symbolLength, static_cast<int>(needed - symbolLength));
 }
 
 bool Profile::supportsType(DeviceType t) const { return supports.contains(t); }
@@ -237,6 +232,22 @@ ProfileLoad loadProfile(const QJsonObject& root) {
                QStringLiteral("must be a folder name: letters, digits, '-', '_' or '.', no '..'"));
     }
 
+    // The connection comes first: its xyNotation decides how the device numbers below are read.
+    if (!f.failed()) {
+        checkKnownKeys(deviceObj, McDeviceConfig{}.toJson(), QStringLiteral("device"), f);
+    }
+    if (!f.failed()) {
+        QString where;
+        Expected<McDeviceConfig> cfg = McDeviceConfig::fromJson(deviceObj, &where);
+        if (!cfg) {
+            f.fail(childPath(QStringLiteral("device"), where),
+                   QString::fromLatin1(cfg.error().message));
+        } else {
+            p.device = cfg.value();
+        }
+    }
+    const XyNumbering xy = p.device.frame.xyNotation;
+
     for (int i = 0; i < scratchArr.size() && !f.failed(); ++i) {
         const QString path = indexPath(QStringLiteral("profile.scratch"), i);
         if (!scratchArr.at(i).isString()) {
@@ -245,7 +256,7 @@ ProfileLoad loadProfile(const QJsonObject& root) {
         }
         ScratchRange r;
         QString why;
-        if (!parseRange(scratchArr.at(i).toString(), r, why)) {
+        if (!parseRange(scratchArr.at(i).toString(), r, why, xy)) {
             f.fail(path, why);
             break;
         }
@@ -281,7 +292,7 @@ ProfileLoad loadProfile(const QJsonObject& root) {
         }
         uint32_t number = 0;
         QString why;
-        if (!numberFor(*t, text, number, why)) {
+        if (!numberFor(*t, text, number, why, xy)) {
             f.fail(path, why);
             break;
         }
@@ -303,7 +314,7 @@ ProfileLoad loadProfile(const QJsonObject& root) {
     if (!f.failed() && !p.scanTimeDevice.isEmpty()) {
         const QByteArray text = p.scanTimeDevice.toLatin1();
         const Expected<Device> d =
-            parseDevice(std::string_view(text.constData(), static_cast<size_t>(text.size())));
+            parseDevice(std::string_view(text.constData(), static_cast<size_t>(text.size())), xy);
         if (!d) {
             f.fail(QStringLiteral("profile.scanTimeDevice"), QStringLiteral("not a device"));
         } else {
@@ -319,7 +330,7 @@ ProfileLoad loadProfile(const QJsonObject& root) {
         const QString path = childPath(QStringLiteral("profile"), QLatin1String(key));
         const QByteArray bytes = text.toLatin1();
         const Expected<Device> d =
-            parseDevice(std::string_view(bytes.constData(), static_cast<size_t>(bytes.size())));
+            parseDevice(std::string_view(bytes.constData(), static_cast<size_t>(bytes.size())), xy);
         if (!d) {
             f.fail(path, QStringLiteral("not a device"));
         } else if (deviceInfo(d.value().type).kind != kind) {
@@ -357,19 +368,6 @@ ProfileLoad loadProfile(const QJsonObject& root) {
         }
     }
 
-    if (!f.failed()) {
-        checkKnownKeys(deviceObj, McDeviceConfig{}.toJson(), QStringLiteral("device"), f);
-    }
-    if (!f.failed()) {
-        QString where;
-        Expected<McDeviceConfig> cfg = McDeviceConfig::fromJson(deviceObj, &where);
-        if (!cfg) {
-            f.fail(childPath(QStringLiteral("device"), where),
-                   QString::fromLatin1(cfg.error().message));
-        } else {
-            p.device = cfg.value();
-        }
-    }
     if (!f.failed() && !p.device.subscriptions.isEmpty()) {
         f.fail(QStringLiteral("device.subscriptions"),
                QStringLiteral("must be empty: subscriptions belong to the plan's poll steps"));

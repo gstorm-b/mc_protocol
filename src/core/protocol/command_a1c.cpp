@@ -47,7 +47,7 @@ size_t putTestCount(size_t n, MutableByteView out) noexcept {
 } // namespace
 
 Expected<size_t> a1cRequestData(const Request& r, C1CommandSet commandSet, uint8_t messageWait,
-                                MutableByteView out) noexcept {
+                                MutableByteView out, XyNumbering xyDigits) noexcept {
     if (messageWait > 15) {
         return Expected<size_t>(invalidMessageWaitError());
     }
@@ -59,7 +59,7 @@ Expected<size_t> a1cRequestData(const Request& r, C1CommandSet commandSet, uint8
 
     size_t deviceSize = c1DeviceSize(r.head, commandSet);
     auto deviceResult =
-        c1Device(r.head, commandSet, MutableByteView{out.data + offset, deviceSize});
+        c1Device(r.head, commandSet, MutableByteView{out.data + offset, deviceSize}, xyDigits);
     if (!deviceResult.hasValue()) {
         return Expected<size_t>(deviceResult.error());
     }

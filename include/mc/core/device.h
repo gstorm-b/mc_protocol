@@ -5,6 +5,7 @@
  */
 #pragma once
 
+#include "mc/core/frame_config.h"
 #include "mc/core/result.h"
 #include "mc/core/types.h"
 
@@ -119,13 +120,15 @@ const DeviceInfo& deviceInfo(DeviceType t) noexcept;
  * @brief One PLC device address: a symbol such as D or X plus its number.
  *
  * Value type, trivially copyable, no invariants beyond what parseDevice() enforces; field width
- * for a frame family is not checked here (validate(), core-request).
+ * for a frame family is not checked here (validate(), core-request). `number` is the point
+ * index: for X and Y on an FX CPU it is the index behind the octal text, not the octal digits
+ * read as a number (see XyNumbering).
  *
  * @see parseDevice, formatDevice
  */
 struct Device {
     DeviceType type{DeviceType::D}; ///< Symbol, indexes the device table.
-    uint32_t number{0};             ///< Device number, in the symbol's own radix.
+    uint32_t number{0};             ///< Device number (point index); text uses the symbol's radix.
 };
 
 /**
@@ -178,12 +181,13 @@ constexpr bool operator<(const Device& a, const Device& b) noexcept {
  * The symbol is matched case-insensitively and longest-first (e.g. "STS" is tried before "S"),
  * then the remaining text is parsed as the device number in the matched symbol's own radix
  * (decimal or hexadecimal). Field width for any frame family is not checked here; that is
- * validate() (core-request).
+ * validate() (core-request). Equal to `parseDevice(text, XyNumbering::Hex)`.
  *
  * @param[in] text Device text without surrounding spaces.
  * @return The parsed device.
  * @retval ErrorCode::InvalidDevice No symbol of the table is a prefix of @p text, no digit
- * follows the matched symbol, or a digit falls outside the matched symbol's radix.
+ * follows the matched symbol, a digit falls outside the matched symbol's radix, or the number
+ * does not fit 32 bits.
  * @par Complexity
  * O(len); no allocation.
  * @see formatDevice
@@ -191,11 +195,31 @@ constexpr bool operator<(const Device& a, const Device& b) noexcept {
 Expected<Device> parseDevice(std::string_view text) noexcept;
 
 /**
+ * @brief Parses device address text, reading the number of X and Y in the given base.
+ *
+ * As parseDevice(std::string_view), except that for the symbols X and Y the digits are octal when
+ * @p xy is XyNumbering::Octal (so "X10" is index 8 and a digit 8 or 9 is rejected); every other
+ * symbol keeps its own radix. The result holds the point index.
+ *
+ * @param[in] text Device text without surrounding spaces.
+ * @param[in] xy Base of X and Y numbers (`FrameConfig::xyNotation`).
+ * @return The parsed device.
+ * @retval ErrorCode::InvalidDevice No symbol of the table is a prefix of @p text, no digit
+ * follows the matched symbol, a digit falls outside the base of the matched symbol, or the
+ * number does not fit 32 bits.
+ * @par Complexity
+ * O(len); no allocation.
+ * @see formatDevice
+ */
+Expected<Device> parseDevice(std::string_view text, XyNumbering xy) noexcept;
+
+/**
  * @brief Writes the canonical text form of @p d (e.g. "D100", "X1F") into @p out.
  *
  * Behaves like snprintf: writes at most `capacity - 1` characters plus a terminating NUL (writes
  * nothing when capacity == 0), and always returns the number of characters the full text needs,
- * whether or not it fit in @p capacity. The number is never zero-padded.
+ * whether or not it fit in @p capacity. The number is never zero-padded. Equal to
+ * `formatDevice(d, out, capacity, XyNumbering::Hex)`.
  *
  * @param[in] d Device to format.
  * @param[out] out Destination buffer; may be null when capacity == 0.
@@ -206,5 +230,22 @@ Expected<Device> parseDevice(std::string_view text) noexcept;
  * @see parseDevice
  */
 size_t formatDevice(const Device& d, char* out, size_t capacity) noexcept;
+
+/**
+ * @brief Writes the canonical text form of @p d, writing the number of X and Y in the given base.
+ *
+ * As formatDevice(const Device&, char*, size_t), except that for the symbols X and Y the digits
+ * are octal when @p xy is XyNumbering::Octal (index 8 is "X10"). Same snprintf-like contract.
+ *
+ * @param[in] d Device to format; its number is the point index.
+ * @param[out] out Destination buffer; may be null when capacity == 0.
+ * @param[in] capacity Number of bytes available at @p out, including the terminating NUL.
+ * @param[in] xy Base of X and Y numbers (`FrameConfig::xyNotation`).
+ * @return The number of characters the canonical text needs, excluding the terminating NUL.
+ * @par Complexity
+ * O(digits); no allocation.
+ * @see parseDevice
+ */
+size_t formatDevice(const Device& d, char* out, size_t capacity, XyNumbering xy) noexcept;
 
 } // namespace mc

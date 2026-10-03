@@ -334,7 +334,7 @@ class HilCaptureTests : public QObject {
         ChunkStatus failed;
         failed.state = ChunkState::Failed;
         snapshot.chunks = {ok, failed};
-        cap.events.push_back(snapshotEvent(snapshot, 3000));
+        cap.events.push_back(snapshotEvent(snapshot, 3000, XyNumbering::Hex));
         cap.events.back().seq = 3;
 
         cap.events.push_back(changesEvent(
@@ -472,7 +472,9 @@ class HilCaptureTests : public QObject {
                                       "aSeriesTarget",
                                       "splitWrites",
                                       "timeoutMs",
-                                      "readRetries"};
+                                      "readRetries",
+                                      "xyNotation",
+                                      "xyAsciiDigits"};
         const QStringList sessionFields{
             "cycleIntervalMs",   "cycleMode",       "bitsAsWords",       "maxGap",
             "adHocCapacity",     "adHocArenaBytes", "maxAdHocBurst",     "maxConsecutiveLinkErrors",
@@ -599,6 +601,26 @@ class HilCaptureTests : public QObject {
         QVERIFY(!tcpText.contains(QStringLiteral("40456")));
         QVERIFY(!tcpText.contains(QStringLiteral("serial.")));
         QVERIFY(tcpText.contains(QStringLiteral("transport: tcp")));
+    }
+
+    // XYN: an FX profile's run.meta writes X and Y in the profile's octal notation.
+    void HIL_XYN_06_runMetaOfAnFxProfileIsInOctal() {
+        const ProfileLoad load =
+            loadProfileFile(exampleProfilePath(QStringLiteral("fx5u-eth-3e-ascii")));
+        QVERIFY2(load.ok(), qPrintable(load.error.text()));
+        RunMeta meta;
+        meta.profile = *load.profile;
+        meta.date = QStringLiteral("2026-10-03T12:00:00Z");
+        const QMap<QString, QString> map = parseMeta(runMetaText(meta));
+        QCOMPARE(map.value(QStringLiteral("frame.xyNotation")), QStringLiteral("Octal"));
+        QCOMPARE(map.value(QStringLiteral("frame.xyAsciiDigits")), QStringLiteral("Hex"));
+        QVERIFY2(map.value(QStringLiteral("scratch")).endsWith(QStringLiteral(" Y20-Y37")),
+                 qPrintable(map.value(QStringLiteral("scratch"))));
+        // deviceEnd Y is 1777 octal (index 1023); the hexadecimal W and B keep their radix.
+        QVERIFY2(map.value(QStringLiteral("device_end")).contains(QStringLiteral("Y=1777")),
+                 qPrintable(map.value(QStringLiteral("device_end"))));
+        QVERIFY2(map.value(QStringLiteral("device_end")).contains(QStringLiteral("W=1FF")),
+                 qPrintable(map.value(QStringLiteral("device_end"))));
     }
 
     void HIL_05_runMetaScrubsTheProfilesOwnAddressesFromEveryValue() {

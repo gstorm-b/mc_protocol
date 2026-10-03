@@ -1,0 +1,74 @@
+{
+  "schema": 1,
+  "plan": {
+    "id": "fixture_fx_3e_oct",
+    "title": "replay fixture plan against virtual_plc with FX octal X/Y numbering, 3E ASCII (not a catalogue plan, not hardware)",
+    "family": "qna-ethernet"
+  },
+  "steps": [
+    {
+      "id": "F-01",
+      "kind": "read",
+      "device": "X10",
+      "unit": "bit",
+      "count": 8,
+      "expect": {
+        "kind": "ok",
+        "values": [
+          1,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "id": "F-02",
+      "kind": "write",
+      "device": "Y10",
+      "unit": "bit",
+      "values": "10110010",
+      "readBack": true
+    },
+    {
+      "id": "F-03",
+      "kind": "write",
+      "device": "D100",
+      "values": [
+        4660
+      ],
+      "readBack": true
+    },
+    {
+      "id": "F-04",
+      "kind": "poll",
+      "rounds": 3,
+      "subscribe": [
+        {
+          "name": "d",
+          "device": "D100",
+          "count": 2
+        },
+        {
+          "name": "y",
+          "device": "Y20",
+          "count": 16
+        }
+      ],
+      "actions": [
+        {
+          "after": 1,
+          "write": {
+            "device": "Y10",
+            "unit": "bit",
+            "values": "11110000"
+          }
+        }
+      ]
+    }
+  ]
+}

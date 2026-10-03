@@ -2,6 +2,8 @@
 
 #include "field_codec.h"
 
+#include "core/model/validate_internal.h"
+
 namespace mc::detail {
 namespace {
 
@@ -20,13 +22,13 @@ bool isTimerOrCounterDevice(const DeviceInfo& info) noexcept {
     return info.c1Code[0] != '\0' && info.c1Code[1] != '\0';
 }
 
-// Writes `number` as exactly `width` ASCII digits in `radix`, zero-padded, upper-case for hex
-// (spec §3.2: "*" and leading zeros are never a space). Precondition: `number` fits in `width`
-// digits of `radix` and `out.size >= width` -- validate() (core-model) already guarantees the
-// first before any codec runs (field_codec.h's own note on field overflow applies here too); the
-// second is checked by this file's own callers before this is reached.
-void putFixedWidthNumber(uint32_t number, Radix radix, size_t width, MutableByteView out) noexcept {
-    uint32_t base = radix == Radix::Hex ? 16u : 10u;
+// Writes `number` as exactly `width` ASCII digits in `base` (8, 10 or 16), zero-padded, upper-case
+// for hex (spec §3.2: "*" and leading zeros are never a space). Precondition: `number` fits in
+// `width` digits of `base` and `out.size >= width` -- validate() (core-model) already guarantees
+// the first before any codec runs (field_codec.h's own note on field overflow applies here too);
+// the second is checked by this file's own callers before this is reached.
+void putFixedWidthNumber(uint32_t number, uint32_t base, size_t width,
+                         MutableByteView out) noexcept {
     for (size_t i = 0; i < width; ++i) {
         uint32_t digit = number % base;
         number /= base;
@@ -37,8 +39,8 @@ void putFixedWidthNumber(uint32_t number, Radix radix, size_t width, MutableByte
 
 } // namespace
 
-Expected<size_t> qnaDevice(const Device& d, DataCode code, PlcSeries series,
-                            MutableByteView out) noexcept {
+Expected<size_t> qnaDevice(const Device& d, DataCode code, PlcSeries series, MutableByteView out,
+                           XyNumbering xyDigits) noexcept {
     const DeviceInfo& info = deviceInfo(d.type);
     size_t needed = qnaDeviceSize(code, series);
     if (out.size < needed) {
@@ -52,7 +54,8 @@ Expected<size_t> qnaDevice(const Device& d, DataCode code, PlcSeries series,
             }
             out.data[0] = static_cast<uint8_t>(info.qnaAsciiQL[0]);
             out.data[1] = static_cast<uint8_t>(info.qnaAsciiQL[1]);
-            putFixedWidthNumber(d.number, info.radix, 6, MutableByteView{out.data + 2, 6});
+            putFixedWidthNumber(d.number, numberBase(info, xyDigits), 6,
+                                MutableByteView{out.data + 2, 6});
         } else {
             if (info.qnaAsciiIqr[0] == '\0') {
                 return Expected<size_t>(invalidDeviceError());
@@ -60,7 +63,8 @@ Expected<size_t> qnaDevice(const Device& d, DataCode code, PlcSeries series,
             for (size_t i = 0; i < 4; ++i) {
                 out.data[i] = static_cast<uint8_t>(info.qnaAsciiIqr[i]);
             }
-            putFixedWidthNumber(d.number, info.radix, 8, MutableByteView{out.data + 4, 8});
+            putFixedWidthNumber(d.number, numberBase(info, xyDigits), 8,
+                                MutableByteView{out.data + 4, 8});
         }
     } else {
         if (series == PlcSeries::QL) {
@@ -84,7 +88,8 @@ Expected<size_t> qnaDevice(const Device& d, DataCode code, PlcSeries series,
     return Expected<size_t>(needed);
 }
 
-Expected<size_t> e1Device(const Device& d, DataCode code, MutableByteView out) noexcept {
+Expected<size_t> e1Device(const Device& d, DataCode code, MutableByteView out,
+                          XyNumbering xyDigits) noexcept {
     const DeviceInfo& info = deviceInfo(d.type);
     size_t needed = e1DeviceSize(code);
     if (out.size < needed) {
@@ -96,7 +101,11 @@ Expected<size_t> e1Device(const Device& d, DataCode code, MutableByteView out) n
 
     if (code == DataCode::Ascii) {
         (void)AsciiCodec::putU16(info.e1Code, MutableByteView{out.data, 4});
-        (void)AsciiCodec::putU32(d.number, MutableByteView{out.data + 4, 8});
+        if (numberBase(info, xyDigits) == 8u) {
+            putFixedWidthNumber(d.number, 8u, 8, MutableByteView{out.data + 4, 8});
+        } else {
+            (void)AsciiCodec::putU32(d.number, MutableByteView{out.data + 4, 8});
+        }
     } else {
         (void)BinaryCodec::putU32(d.number, MutableByteView{out.data, 4});
         (void)BinaryCodec::putU16(info.e1Code, MutableByteView{out.data + 4, 2});
@@ -117,7 +126,8 @@ size_t c1DeviceSize(const Device& d, C1CommandSet commandSet) noexcept {
     return codeWidth + numberWidth;
 }
 
-Expected<size_t> c1Device(const Device& d, C1CommandSet commandSet, MutableByteView out) noexcept {
+Expected<size_t> c1Device(const Device& d, C1CommandSet commandSet, MutableByteView out,
+                          XyNumbering xyDigits) noexcept {
     const DeviceInfo& info = deviceInfo(d.type);
     if (info.c1Code[0] == '\0') {
         return Expected<size_t>(invalidDeviceError());
@@ -132,7 +142,7 @@ Expected<size_t> c1Device(const Device& d, C1CommandSet commandSet, MutableByteV
     for (size_t i = 0; i < codeWidth; ++i) {
         out.data[i] = static_cast<uint8_t>(info.c1Code[i]);
     }
-    putFixedWidthNumber(d.number, info.radix, numberWidth,
+    putFixedWidthNumber(d.number, numberBase(info, xyDigits), numberWidth,
                         MutableByteView{out.data + codeWidth, numberWidth});
     return Expected<size_t>(needed);
 }

@@ -1,50 +1,46 @@
 {
   "schema": 1,
   "profile": {
-    "id": "fx3-eth-1e-bin",
-    "plc": "FX3U-32M",
-    "module": "FX3U-ENET",
-    "firmware": "placeholder",
+    "id": "vplc-fx-3e-ascii-oct",
+    "plc": "virtual_plc (FX numbering)",
+    "module": "MockPlc",
+    "firmware": "n/a",
     "adapter": "",
-    "plcState": "RUN",
+    "plcState": "RUN (virtual_plc fixture, not hardware)",
     "scratch": [
-      "D100-D999",
-      "M100-M999"
+      "D100-D2099",
+      "M100-M2099",
+      "Y10-Y37"
     ],
     "deviceEnd": {
-      "D": 7999,
-      "M": 7679
+      "D": 12287,
+      "M": 8191,
+      "X": "1777",
+      "Y": "1777"
     },
     "supports": [
       "D",
       "M",
       "X",
-      "Y",
-      "S",
-      "TS",
-      "TC",
-      "TN",
-      "CS",
-      "CC",
-      "CN"
+      "Y"
     ],
     "scanTimeDevice": "",
-    "specialBit": "M8000",
-    "specialWord": "D8000",
+    "specialBit": "SM0",
+    "specialWord": "SD0",
     "families": [
-      "a1e"
+      "qna-ethernet"
     ]
   },
   "device": {
     "schema": 1,
     "frame": {
-      "frame": "1E",
-      "code": "Binary",
+      "frame": "3E",
+      "code": "Ascii",
       "network": 0,
       "pc": 255,
       "io": 1023,
       "station": 0,
-      "monitoringTimer": 10,
+      "monitoringTimer": 16,
       "series": "QL",
       "checkRoute": false,
       "serialStart": 0,
@@ -59,14 +55,14 @@
       "messageWait": 0,
       "commandSet": "ACPU",
       "e1AliasLS": false,
-      "targetFamily": "A",
+      "targetFamily": "IqR_Q_L",
       "highPerformanceQcpu": false,
       "aSeriesTarget": false,
       "splitWrites": false,
       "timeoutMs": 0,
       "readRetries": 0,
       "xyNotation": "Octal",
-      "xyAsciiDigits": "Hex"
+      "xyAsciiDigits": "Octal"
     },
     "session": {
       "cycleIntervalMs": 100,
@@ -87,8 +83,8 @@
     "transport": {
       "kind": "Tcp",
       "tcp": {
-        "host": "192.0.2.10",
-        "port": 5000,
+        "host": "127.0.0.1",
+        "port": 5065,
         "connectTimeoutMs": 2000
       },
       "serial": {

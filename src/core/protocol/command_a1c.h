@@ -90,6 +90,7 @@ inline size_t a1cRequestDataSize(const Request& r, C1CommandSet commandSet) noex
  * @param[in] commandSet ACPU or AnA/AnU.
  * @param[in] messageWait Message wait, 0-15 (unit 10 ms), written as one upper-case hex digit.
  * @param[out] out Destination; must hold at least `a1cRequestDataSize(r, commandSet)` characters.
+ * @param[in] xyDigits Base of the digits of an X/Y head device (`FrameConfig::xyAsciiDigits`).
  * @return Characters written.
  * @retval ErrorCode::InvalidConfig `messageWait` is above 15.
  * @retval ErrorCode::InvalidDevice `r.head.type` has no 1C code (device_encode.h's `c1Device()`).
@@ -99,7 +100,8 @@ inline size_t a1cRequestDataSize(const Request& r, C1CommandSet commandSet) noex
  * @see a1cResponseData
  */
 Expected<size_t> a1cRequestData(const Request& r, C1CommandSet commandSet, uint8_t messageWait,
-                                MutableByteView out) noexcept;
+                                MutableByteView out,
+                                XyNumbering xyDigits = XyNumbering::Hex) noexcept;
 
 /**
  * @brief Wire size of the response DATA for `r` (spec §4.3 table): 0 for a write; a bit read `N`
@@ -156,6 +158,9 @@ size_t a1cTestWordsRequestDataSize(const A1cTestWord* items, size_t n,
 
 /**
  * @brief Encodes BT/JT (test, random write of bits) request data (spec §4.3) into `out`.
+ *
+ * X/Y digits are always hex (unreachable through McProtocol in v1).
+ *
  * @param[in] items The `n` entries, in wire order.
  * @param[in] n Number of entries; at most 255 (the `n` field is 2 characters).
  * @param[in] commandSet ACPU (`BT`) or AnA/AnU (`JT`).
@@ -174,6 +179,9 @@ Expected<size_t> a1cTestBitsRequestData(const A1cTestBit* items, size_t n, C1Com
 
 /**
  * @brief Encodes WT/QT (test, random write of words) request data (spec §4.3) into `out`.
+ *
+ * X/Y digits are always hex (unreachable through McProtocol in v1).
+ *
  * @param[in] items The `n` entries, in wire order.
  * @param[in] n Number of entries; at most 255.
  * @param[in] commandSet ACPU (`WT`) or AnA/AnU (`QT`).

@@ -39,3 +39,12 @@ safety field.
 `-1`) is a plain decimal number added to the resolved device number, also on a hexadecimal device:
 with `W100-W1FF` as scratch, `W@s+10` is `W10A` (100H plus ten), not `W110`. A reference that
 resolves below zero is an error.
+
+**X/Y numbering.** An FX CPU numbers X and Y in octal. The three FX examples set the device
+config's `frame.xyNotation` to `"Octal"`: scratch ranges, `deviceEnd`, `specialBit`/`specialWord`,
+`scanTimeDevice` and the literal devices of a plan (`Y20`, `X7`) are then written in octal (so
+`Y20-Y37` is 16 points, indices 16 to 31, and a `deviceEnd` of X or Y is a JSON string such as
+`"1777"`), and the tool's texts (dry run, gate messages, `run.meta`, capture records) write X and Y
+the same way. Offsets and alignments stay plain decimal counts of points. `frame.xyAsciiDigits` is
+what the PLC expects inside ASCII frames: `"Hex"` for the FX3 1E adapter and the FX5U, `"Octal"`
+for the FX3 computer link (1C).

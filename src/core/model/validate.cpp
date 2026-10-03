@@ -81,17 +81,16 @@ bool isTimerOrCounterDevice(const DeviceInfo& info) noexcept {
     return info.c1Code[0] != '\0' && info.c1Code[1] != '\0';
 }
 
-// base^digits - 1: the largest value representable in `digits` digits of `radix`. Accumulates in
+// base^digits - 1: the largest value representable in `digits` digits of `base`. Accumulates in
 // uint64_t, not uint32_t: the widest case this module calls with (8 hex digits, iQ-R) computes
 // 16^8 == 2^32, one past uint32_t's own range. A uint32_t accumulator still lands on the right
 // final answer (0xFFFFFFFF) here, but only because it wraps twice in a row (2^32 mod 2^32 == 0,
 // then 0 - 1 == 0xFFFFFFFF) -- correct by coincidence, not by construction, and silently wrong
 // for any future caller whose base^digits doesn't happen to be an exact multiple of 2^32 (found
-// in Checkpoint A review, T-008). Every digits/radix pair this module ever calls with keeps
+// in Checkpoint A review, T-008). Every digits/base pair this module ever calls with keeps
 // base^digits - 1 within uint32_t's range (the widest is exactly 0xFFFFFFFF), so the final
 // narrowing cast below never truncates.
-uint32_t digitLimit(int digits, Radix radix) noexcept {
-    uint64_t base = (radix == Radix::Hex) ? 16u : 10u;
+uint32_t digitLimit(int digits, uint32_t base) noexcept {
     uint64_t limit = 1;
     for (int i = 0; i < digits; ++i) {
         limit *= base;
@@ -132,11 +131,16 @@ uint32_t deviceNumberLimit(const DeviceInfo& info, const FrameConfig& cfg) noexc
         int digits = (cfg.series == PlcSeries::IqR) ? 8 : 6;
         // Binary always caps at the raw byte width, regardless of the device's own radix; only
         // ASCII's digit count depends on it (spec §3.4 item 4 table).
-        Radix effectiveRadix = (cfg.code == DataCode::Binary) ? Radix::Hex : info.radix;
-        return digitLimit(digits, effectiveRadix);
+        uint32_t base =
+            (cfg.code == DataCode::Binary) ? 16u : detail::numberBase(info, cfg.xyAsciiDigits);
+        return digitLimit(digits, base);
     }
     if (cfg.frame == FrameType::F1E) {
-        return 0xFFFFFFFFu; // Always representable in a uint32_t; no narrower cap exists.
+        // 8 hex digits (or the 4 bytes of Binary) hold any uint32_t; 8 octal digits do not.
+        if (cfg.code == DataCode::Ascii && detail::numberBase(info, cfg.xyAsciiDigits) == 8u) {
+            return digitLimit(8, 8u);
+        }
+        return 0xFFFFFFFFu;
     }
     if (cfg.frame == FrameType::F1C) {
         bool isTC = isTimerOrCounterDevice(info);
@@ -146,7 +150,7 @@ uint32_t deviceNumberLimit(const DeviceInfo& info, const FrameConfig& cfg) noexc
         } else {
             digits = isTC ? 5 : 6;
         }
-        return digitLimit(digits, info.radix);
+        return digitLimit(digits, detail::numberBase(info, cfg.xyAsciiDigits));
     }
     return 0xFFFFFFFFu;
 }

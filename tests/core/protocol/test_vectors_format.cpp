@@ -16,6 +16,7 @@
 #include <filesystem>
 #include <string>
 #include <string_view>
+#include <utility>
 #include <vector>
 
 #ifndef MC_TESTS_SOURCE_DIR
@@ -312,4 +313,68 @@ TEST_CASE("VEC-RT: every enabled vector record of every v1 family (Appendix A ro
     MESSAGE("VEC-RT total: ", totalEnabled, " enabled, ", totalTagged, " tagged and skipped, ",
             totalRoundTripped, " round-tripped");
     CHECK(totalRoundTripped == totalEnabled);
+}
+
+// XYN-13: tests/vectors/fx_xy.vec, hand-typed from the FX manuals, round-trips like the
+// Appendix A files: every request is reproduced byte for byte under the record's `xy:` / `xyascii:`
+// keys, every response reaches Done with its payload.
+TEST_CASE("XYN-13: every record of fx_xy.vec round-trips under its xy and xyascii keys") {
+    std::vector<Vector> vectors = loadVectors(vectorsRoot() / "fx_xy.vec");
+    REQUIRE(vectors.size() == 19);
+    size_t requests = 0;
+    for (const Vector& v : vectors) {
+        INFO("vector ", v.id, " (", v.file, ":", v.line, ")");
+        std::string why;
+        const bool ok = roundTrips(v, why);
+        CHECK_MESSAGE(ok, why);
+        requests += v.field("kind") == "request" ? 1 : 0;
+    }
+    CHECK(requests == 12);
+}
+
+// The same request under the wrong digits is a different frame: with the digits left at hex the
+// octal-digit records of 1C, 3C and 3E ASCII do not reproduce (X10 octal is index 8, which hex
+// digits write as 8, not 10), and 1E Binary and 3E Binary do not depend on xyascii at all.
+TEST_CASE("XYN-14: the ASCII digits setting changes ASCII requests and never Binary ones") {
+    std::vector<Vector> vectors = loadVectors(vectorsRoot() / "fx_xy.vec");
+    const auto encodeWith = [&](const std::string& id, mc::XyNumbering digits) {
+        const Vector& v = findById(vectors, id);
+        std::vector<uint8_t> storage;
+        mc::Request r = mc::test::serialRequestFromVector(v, storage);
+        mc::FrameConfig cfg = mc::test::frameConfigFromVector(v);
+        cfg.xyAsciiDigits = digits;
+        mc::McProtocol proto(cfg);
+        std::vector<uint8_t> out(proto.encodedSize(r).value(), 0);
+        auto n = proto.encode(r, mc::MutableByteView{out.data(), out.size()});
+        REQUIRE(n.hasValue());
+        return std::pair<std::vector<uint8_t>, std::vector<uint8_t>>{out, v.bytes};
+    };
+
+    for (const char* id : {"V-FXY-08", "V-FXY-13", "V-FXY-15"}) {
+        INFO("vector ", id);
+        const auto octal = encodeWith(id, mc::XyNumbering::Octal);
+        const auto hex = encodeWith(id, mc::XyNumbering::Hex);
+        CHECK(octal.first == octal.second);
+        CHECK(hex.first != hex.second);
+        CHECK(hex.first.size() == octal.first.size());
+    }
+    // 1E ASCII: hex digits reproduce the vector (the FX3 Ethernet adapter), octal digits do not.
+    {
+        const auto hex = encodeWith("V-FXY-06", mc::XyNumbering::Hex);
+        const auto octal = encodeWith("V-FXY-06", mc::XyNumbering::Octal);
+        CHECK(hex.first == hex.second);
+        CHECK(octal.first != octal.second);
+    }
+    for (const char* id : {"V-FXY-01", "V-FXY-03", "V-FXY-04", "V-FXY-18"}) {
+        INFO("vector ", id);
+        const auto octal = encodeWith(id, mc::XyNumbering::Octal);
+        const auto hex = encodeWith(id, mc::XyNumbering::Hex);
+        CHECK(octal.first == octal.second);
+        CHECK(hex.first == hex.second);
+    }
+    // 3E ASCII with hex digits (FX5 "ASCII (X,Y HEX)"): V-FXY-17 has the default digits.
+    {
+        const auto hex = encodeWith("V-FXY-17", mc::XyNumbering::Hex);
+        CHECK(hex.first == hex.second);
+    }
 }

@@ -4,6 +4,7 @@
 #include "mc/core/frame_config.h"
 #include "mc/core/request.h"
 
+#include <string>
 #include <string_view>
 
 using mc::DataCode;
@@ -358,4 +359,201 @@ TEST_CASE("DEV-14 Device ==, !=, < order by table order then number") {
     // Equal devices are neither less than each other.
     CHECK_FALSE(d100 < d100Again);
     CHECK_FALSE(d100Again < d100);
+}
+
+// ---- XYN-01..04: X/Y numbering for FX CPUs ----------------------------------------------
+// Expected values are worked out by hand from the vendor tables: FX3 X000-X377 octal = indices
+// 0-255 = 0000-00FFH (fx3-enet-adp.pdf 7.5), X0000-X0377 (fx3-data-communication.pdf), X0-X1777 on
+// the FX5U (fx5-ethernet-communication.pdf), X10 octal = index 8.
+
+namespace {
+
+mc::Expected<Device> parseOctal(std::string_view text) {
+    return mc::parseDevice(text, mc::XyNumbering::Octal);
+}
+
+std::string formatWith(Device d, mc::XyNumbering xy) {
+    char buf[32];
+    const size_t n = mc::formatDevice(d, buf, sizeof buf, xy);
+    return std::string(buf, n);
+}
+
+} // namespace
+
+TEST_CASE("XYN-01 parseDevice with Octal: X10 is index 8, X377 is 255, 8 and 9 are rejected") {
+    auto x10 = parseOctal("X10");
+    REQUIRE(x10.hasValue());
+    CHECK(x10.value().type == DeviceType::X);
+    CHECK(x10.value().number == 8u);
+
+    auto x377 = parseOctal("X377");
+    REQUIRE(x377.hasValue());
+    CHECK(x377.value().number == 255u);
+
+    auto x1777 = parseOctal("x1777"); // the last input of an FX5U, lower case symbol
+    REQUIRE(x1777.hasValue());
+    CHECK(x1777.value().number == 1023u);
+
+    auto y20 = parseOctal("Y20");
+    REQUIRE(y20.hasValue());
+    CHECK(y20.value().type == DeviceType::Y);
+    CHECK(y20.value().number == 16u);
+
+    CHECK(parseOctal("X0").value().number == 0u);
+    CHECK(parseOctal("X7").value().number == 7u);
+
+    for (const char* bad : {"X8", "X9", "X19", "X18", "Y80", "X1F", "X1A", "Y7F", "X", "Y"}) {
+        INFO(bad);
+        auto r = parseOctal(bad);
+        CHECK_FALSE(r.hasValue());
+        if (!r.hasValue()) {
+            CHECK(r.error().code == mc::ErrorCode::InvalidDevice);
+        }
+    }
+}
+
+TEST_CASE("XYN-02 formatDevice with Octal writes X and Y in octal and round-trips") {
+    CHECK(formatWith(Device{DeviceType::X, 8}, mc::XyNumbering::Octal) == "X10");
+    CHECK(formatWith(Device{DeviceType::X, 255}, mc::XyNumbering::Octal) == "X377");
+    CHECK(formatWith(Device{DeviceType::Y, 16}, mc::XyNumbering::Octal) == "Y20");
+    CHECK(formatWith(Device{DeviceType::X, 0}, mc::XyNumbering::Octal) == "X0");
+    CHECK(formatWith(Device{DeviceType::X, 7}, mc::XyNumbering::Octal) == "X7");
+    CHECK(formatWith(Device{DeviceType::X, 1023}, mc::XyNumbering::Octal) == "X1777");
+    // The largest index needs 11 octal digits.
+    CHECK(formatWith(Device{DeviceType::X, 0xFFFFFFFFu}, mc::XyNumbering::Octal) == "X37777777777");
+
+    for (DeviceType t : {DeviceType::X, DeviceType::Y}) {
+        for (uint32_t n : {0u, 1u, 7u, 8u, 63u, 64u, 255u, 256u, 1023u, 0x7FFFFFFFu, 0xFFFFFFFFu}) {
+            const std::string text = formatWith(Device{t, n}, mc::XyNumbering::Octal);
+            auto back = mc::parseDevice(text, mc::XyNumbering::Octal);
+            INFO(text);
+            REQUIRE(back.hasValue());
+            CHECK(back.value() == (Device{t, n}));
+        }
+    }
+
+    // The snprintf-like contract holds with octal digits too.
+    char small[4];
+    CHECK(mc::formatDevice(Device{DeviceType::X, 255}, small, sizeof small,
+                           mc::XyNumbering::Octal) == 4u);
+    CHECK(std::string(small) == "X37");
+}
+
+TEST_CASE("XYN-03 Hex overloads and every other symbol are unaffected by the notation") {
+    // The one-argument forms are the Hex forms.
+    CHECK(mc::parseDevice("X10").value().number == 16u);
+    CHECK(mc::parseDevice("X10", mc::XyNumbering::Hex).value().number == 16u);
+    CHECK(mc::parseDevice("X1F", mc::XyNumbering::Hex).value().number == 31u);
+    char buf[16];
+    CHECK(mc::formatDevice(Device{DeviceType::X, 16}, buf, sizeof buf) == 3u);
+    CHECK(std::string(buf) == "X10");
+    CHECK(formatWith(Device{DeviceType::X, 31}, mc::XyNumbering::Hex) == "X1F");
+
+    // Symbols other than X and Y keep their own radix under Octal: M and D decimal, B and W hex.
+    CHECK(parseOctal("M100").value().number == 100u);
+    CHECK(parseOctal("D99").value().number == 99u);
+    CHECK(parseOctal("B1F").value().number == 31u);
+    CHECK(parseOctal("W10").value().number == 16u);
+    CHECK(parseOctal("TN19").value().number == 19u);
+    CHECK_FALSE(parseOctal("M1F").hasValue());
+    CHECK(formatWith(Device{DeviceType::M, 100}, mc::XyNumbering::Octal) == "M100");
+    CHECK(formatWith(Device{DeviceType::B, 31}, mc::XyNumbering::Octal) == "B1F");
+    CHECK(formatWith(Device{DeviceType::W, 16}, mc::XyNumbering::Octal) == "W10");
+    // DX and DY are direct access symbols of their own, not X and Y.
+    CHECK(parseOctal("DX1F").value().number == 31u);
+    CHECK(parseOctal("DY10").value().number == 16u);
+}
+
+TEST_CASE("XYN-06 parseDevice rejects a number that does not fit 32 bits, in every radix") {
+    const auto invalid = [](std::string_view text, mc::XyNumbering xy) {
+        const auto r = mc::parseDevice(text, xy);
+        return !r.hasValue() && r.error().code == mc::ErrorCode::InvalidDevice;
+    };
+    // 2^32 = 4294967296 = 0x100000000 = 0o40000000000; the largest value fits, one more does not.
+    CHECK(invalid("D4294967296", mc::XyNumbering::Hex));
+    CHECK(invalid("D99999999999", mc::XyNumbering::Hex));
+    CHECK(invalid("X100000000", mc::XyNumbering::Hex));
+    CHECK(invalid("W100000000", mc::XyNumbering::Hex));
+    CHECK(invalid("X40000000000", mc::XyNumbering::Octal));
+    CHECK(invalid("Y77777777777777", mc::XyNumbering::Octal));
+    CHECK(invalid("D4294967296", mc::XyNumbering::Octal)); // D stays decimal under Octal
+    CHECK(invalid("X100000000", mc::XyNumbering::Hex));
+
+    CHECK(mc::parseDevice("D4294967295").value().number == 0xFFFFFFFFu);
+    CHECK(mc::parseDevice("X0FFFFFFFF").value().number == 0xFFFFFFFFu);
+    CHECK(mc::parseDevice("X37777777777", mc::XyNumbering::Octal).value().number == 0xFFFFFFFFu);
+    // Leading zeros do not count against the limit.
+    CHECK(mc::parseDevice("D00000000000000000000100").value().number == 100u);
+    CHECK(mc::parseDevice("X0000000000000010", mc::XyNumbering::Octal).value().number == 8u);
+}
+
+TEST_CASE("XYN-04 validate() counts the digits actually written") {
+    const auto readX = [](uint32_t number) {
+        return Request::readBits(Device{DeviceType::X, number}, 1);
+    };
+    const auto ok = [](const mc::Expected<void>& r) { return r.hasValue(); };
+
+    // 1C ACPU: 4 characters. Octal: 07777 = 4095 is the last index; hex: 0xFFFF.
+    FrameConfig oct1c = FrameConfig::frame1C();
+    oct1c.xyAsciiDigits = mc::XyNumbering::Octal;
+    CHECK(ok(mc::validate(readX(4095), oct1c)));
+    CHECK_FALSE(ok(mc::validate(readX(4096), oct1c)));
+    FrameConfig hex1c = FrameConfig::frame1C();
+    CHECK(ok(mc::validate(readX(4096), hex1c)));
+    CHECK(ok(mc::validate(readX(0xFFFF), hex1c)));
+    CHECK_FALSE(ok(mc::validate(readX(0x10000), hex1c)));
+    // The notation of the text has no effect on a Device.
+    oct1c.xyNotation = mc::XyNumbering::Octal;
+    CHECK_FALSE(ok(mc::validate(readX(4096), oct1c)));
+    // Another device is not narrowed: M9999 stays the 1C ACPU limit.
+    CHECK(ok(mc::validate(Request::readBits(Device{DeviceType::M, 9999}, 1), oct1c)));
+    // AnA: 6 characters, octal 777777 = 262143.
+    oct1c.commandSet = mc::C1CommandSet::AnA;
+    CHECK(ok(mc::validate(readX(262143), oct1c)));
+    CHECK_FALSE(ok(mc::validate(readX(262144), oct1c)));
+
+    // 3E ASCII Q/L: 6 characters, octal 777777 = 262143; iQ-R 8 characters, octal 77777777.
+    FrameConfig oct3e = FrameConfig::frame3E(DataCode::Ascii);
+    oct3e.xyAsciiDigits = mc::XyNumbering::Octal;
+    CHECK(ok(mc::validate(readX(262143), oct3e)));
+    CHECK_FALSE(ok(mc::validate(readX(262144), oct3e)));
+    FrameConfig hex3e = FrameConfig::frame3E(DataCode::Ascii);
+    CHECK(ok(mc::validate(readX(262144), hex3e)));
+    CHECK(ok(mc::validate(readX(0xFFFFFF), hex3e)));
+    CHECK_FALSE(ok(mc::validate(readX(0x1000000), hex3e)));
+    oct3e.series = mc::PlcSeries::IqR;
+    CHECK(ok(mc::validate(readX(16777215), oct3e)));
+    CHECK_FALSE(ok(mc::validate(readX(16777216), oct3e)));
+
+    // 3C is always ASCII: the same rule.
+    FrameConfig oct3c = FrameConfig::frame3C();
+    oct3c.xyAsciiDigits = mc::XyNumbering::Octal;
+    CHECK_FALSE(ok(mc::validate(readX(262144), oct3c)));
+
+    // 1E ASCII: 8 characters; octal reaches 0xFFFFFF, hex the whole uint32_t.
+    FrameConfig oct1eAscii = FrameConfig::frame1E(DataCode::Ascii);
+    oct1eAscii.xyAsciiDigits = mc::XyNumbering::Octal;
+    CHECK(ok(mc::validate(readX(16777215), oct1eAscii)));
+    CHECK_FALSE(ok(mc::validate(readX(16777216), oct1eAscii)));
+    FrameConfig hex1eAscii = FrameConfig::frame1E(DataCode::Ascii);
+    CHECK(ok(mc::validate(readX(16777216), hex1eAscii)));
+    CHECK(ok(mc::validate(readX(0xFFFFFFFFu), hex1eAscii)));
+    // Only X and Y are narrowed.
+    CHECK(ok(mc::validate(Request::readBits(Device{DeviceType::M, 16777216u}, 1), oct1eAscii)));
+
+    // Binary frames carry the index: the digits setting never narrows them.
+    FrameConfig octBin = FrameConfig::frame3E(DataCode::Binary);
+    octBin.xyAsciiDigits = mc::XyNumbering::Octal;
+    CHECK(ok(mc::validate(readX(0xFFFFFF), octBin)));
+    CHECK_FALSE(ok(mc::validate(readX(0x1000000), octBin)));
+    CHECK(ok(mc::validate(readX(262144), octBin)));
+    FrameConfig octBin1e = FrameConfig::frame1E(DataCode::Binary);
+    octBin1e.xyAsciiDigits = mc::XyNumbering::Octal;
+    CHECK(ok(mc::validate(readX(0xFFFFFFFFu), octBin1e)));
+
+    // The word-unit alignment is on indices: X20 octal = 16 is a multiple of 16, X10 octal is not.
+    FrameConfig oct1cAlign = FrameConfig::frame1C();
+    oct1cAlign.xyAsciiDigits = mc::XyNumbering::Octal;
+    CHECK(ok(mc::validate(Request::readWords(Device{DeviceType::X, 16}, 1), oct1cAlign)));
+    CHECK_FALSE(ok(mc::validate(Request::readWords(Device{DeviceType::X, 8}, 1), oct1cAlign)));
 }

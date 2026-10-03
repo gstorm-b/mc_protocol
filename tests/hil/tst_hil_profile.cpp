@@ -89,8 +89,8 @@ class HilProfileTests : public QObject {
         QVERIFY(q.inScratch(DeviceType::W, 0x100, 0x100));
         QVERIFY(!q.inScratch(DeviceType::W, 0x100, 0x101));
         const Profile fx3 = loadExample(QStringLiteral("fx3-eth-1e-bin"));
-        QCOMPARE(deviceText(fx3.specialBit), QStringLiteral("M8000"));
-        QCOMPARE(deviceText(fx3.specialWord), QStringLiteral("D8000"));
+        QCOMPARE(deviceText(fx3.specialBit, XyNumbering::Hex), QStringLiteral("M8000"));
+        QCOMPARE(deviceText(fx3.specialWord, XyNumbering::Hex), QStringLiteral("D8000"));
         QVERIFY(fx3.device.frame.frame == FrameType::F1E);
         const Profile c24 = loadExample(QStringLiteral("q03ude-c24-3c-f4"));
         QVERIFY(c24.device.transport == TransportKind::Serial);
@@ -125,6 +125,151 @@ class HilProfileTests : public QObject {
         QVERIFY(!load.ok());
         QCOMPARE(load.error.path, QStringLiteral("profile.scratch[2]"));
         QVERIFY2(load.error.message.contains(message), qPrintable(load.error.message));
+    }
+
+    // ---- XYN: X/Y octal numbering of an FX profile -------------------------------------
+
+    void HIL_XYN_01_theFxExampleProfilesSetTheNotationTheirManualsUse() {
+        const struct {
+            const char* id;
+            XyNumbering notation;
+            XyNumbering digits;
+        } expected[] = {{"q03ude-eth-3e-bin", XyNumbering::Hex, XyNumbering::Hex},
+                        {"q03ude-c24-3c-f4", XyNumbering::Hex, XyNumbering::Hex},
+                        {"fx5u-eth-3e-ascii", XyNumbering::Octal, XyNumbering::Hex},
+                        {"fx3-eth-1e-bin", XyNumbering::Octal, XyNumbering::Hex},
+                        {"fx3-serial-1c-f1", XyNumbering::Octal, XyNumbering::Octal}};
+        for (const auto& e : expected) {
+            const Profile p = loadExample(QLatin1String(e.id));
+            QVERIFY2(p.device.frame.xyNotation == e.notation, e.id);
+            QVERIFY2(p.device.frame.xyAsciiDigits == e.digits, e.id);
+        }
+        // The FX5U example: Y20-Y37 octal is 16 points, indices 16 to 31; deviceEnd Y "1777".
+        const Profile fx5 = loadExample(QStringLiteral("fx5u-eth-3e-ascii"));
+        const ScratchRange* y = fx5.firstScratch(DeviceType::Y);
+        QVERIFY(y != nullptr);
+        QCOMPARE(y->first, 16u);
+        QCOMPARE(y->last, 31u);
+        QCOMPARE(fx5.end(DeviceType::Y).value_or(0), 1023u);
+    }
+
+    void HIL_XYN_02_scratchAndDeviceEndAreReadInTheProfilesNotation() {
+        const auto withNotation = [](const QString& notation, const QJsonArray& scratch,
+                                     const QJsonObject& deviceEnd) {
+            QJsonObject root = edited(QStringLiteral("q03ude-eth-3e-bin"),
+                                      QStringLiteral("device.frame.xyNotation"), notation);
+            setAt(root, {"profile", "scratch"}, 0, scratch);
+            setAt(root, {"profile", "deviceEnd"}, 0, deviceEnd);
+            return root;
+        };
+        const QJsonObject end{{"D", 12287}};
+        // Octal: Y0-Y17 is indices 0 to 15, X10-X17 is 8 to 15.
+        ProfileLoad oct = loadProfile(withNotation(
+            QStringLiteral("Octal"),
+            {QStringLiteral("D100-D199"), QStringLiteral("Y0-Y17"), QStringLiteral("X10-17")},
+            end));
+        QVERIFY2(oct.ok(), qPrintable(oct.error.text()));
+        QCOMPARE(oct.profile->scratch[1].first, 0u);
+        QCOMPARE(oct.profile->scratch[1].last, 15u);
+        QCOMPARE(oct.profile->scratch[2].first, 8u);
+        QCOMPARE(oct.profile->scratch[2].last, 15u);
+        // The same text under Hex is 0 to 23.
+        ProfileLoad hex = loadProfile(withNotation(
+            QStringLiteral("Hex"), {QStringLiteral("D100-D199"), QStringLiteral("Y0-Y17")}, end));
+        QVERIFY2(hex.ok(), qPrintable(hex.error.text()));
+        QCOMPARE(hex.profile->scratch[1].last, 23u);
+
+        // A digit 8 or 9, or a letter, is no octal number; the message says octal.
+        for (const char* bad : {"Y0-Y18", "Y8-Y17", "X0-X1F"}) {
+            const ProfileLoad load = loadProfile(withNotation(
+                QStringLiteral("Octal"), {QStringLiteral("D100-D199"), QLatin1String(bad)}, end));
+            QVERIFY2(!load.ok(), bad);
+            QCOMPARE(load.error.path, QStringLiteral("profile.scratch[1]"));
+            QVERIFY2(load.error.message.contains(QStringLiteral("octal")),
+                     qPrintable(load.error.message));
+        }
+
+        // deviceEnd: a string in octal, 1777 = index 1023; a letter is refused.
+        const ProfileLoad good = loadProfile(withNotation(
+            QStringLiteral("Octal"), {QStringLiteral("D100-D199"), QStringLiteral("Y0-Y17")},
+            QJsonObject{{"D", 12287}, {"Y", QStringLiteral("1777")}}));
+        QVERIFY2(good.ok(), qPrintable(good.error.text()));
+        QCOMPARE(good.profile->end(DeviceType::Y).value_or(0), 1023u);
+        const ProfileLoad badEnd =
+            loadProfile(withNotation(QStringLiteral("Octal"), {QStringLiteral("D100-D199")},
+                                     QJsonObject{{"D", 12287}, {"X", QStringLiteral("1FF")}}));
+        QVERIFY(!badEnd.ok());
+        QCOMPARE(badEnd.error.path, QStringLiteral("profile.deviceEnd.X"));
+        QVERIFY(badEnd.error.message.contains(QStringLiteral("octal")));
+        // A scratch range may not end beyond deviceEnd: Y0-Y17 is 16 points, "7" ends at index 7.
+        const ProfileLoad beyond = loadProfile(withNotation(
+            QStringLiteral("Octal"), {QStringLiteral("D100-D199"), QStringLiteral("Y0-Y17")},
+            QJsonObject{{"D", 12287}, {"Y", QStringLiteral("7")}}));
+        QVERIFY(!beyond.ok());
+        QCOMPARE(beyond.error.path, QStringLiteral("profile.scratch[1]"));
+    }
+
+    void HIL_XYN_03_deviceTextAndNumbersRoundTripInOctal() {
+        QCOMPARE(deviceText(Device{DeviceType::Y, 15}, XyNumbering::Octal), QStringLiteral("Y17"));
+        QCOMPARE(deviceText(Device{DeviceType::Y, 15}, XyNumbering::Hex), QStringLiteral("YF"));
+        QCOMPARE(deviceText(Device{DeviceType::M, 100}, XyNumbering::Octal),
+                 QStringLiteral("M100"));
+        QCOMPARE(formatDeviceNumber(DeviceType::X, 255, XyNumbering::Octal), QStringLiteral("377"));
+        QCOMPARE(formatDeviceNumber(DeviceType::X, 255, XyNumbering::Hex), QStringLiteral("FF"));
+        uint32_t n = 0;
+        QVERIFY(parseDeviceNumber(DeviceType::X, QStringLiteral("377"), n, XyNumbering::Octal));
+        QCOMPARE(n, 255u);
+        QVERIFY(!parseDeviceNumber(DeviceType::X, QStringLiteral("378"), n, XyNumbering::Octal));
+        QVERIFY(!parseDeviceNumber(DeviceType::X, QStringLiteral("1F"), n, XyNumbering::Octal));
+        QVERIFY(parseDeviceNumber(DeviceType::X, QStringLiteral("1F"), n, XyNumbering::Hex));
+        QCOMPARE(n, 31u);
+        // Other symbols keep their radix.
+        QVERIFY(parseDeviceNumber(DeviceType::D, QStringLiteral("99"), n, XyNumbering::Octal));
+        QCOMPARE(n, 99u);
+        QVERIFY(!parseDeviceNumber(DeviceType::D, QStringLiteral("9A"), n, XyNumbering::Octal));
+        QVERIFY(parseDeviceNumber(DeviceType::W, QStringLiteral("1F"), n, XyNumbering::Octal));
+        QCOMPARE(n, 31u);
+    }
+
+    void HIL_XYN_04_planReferencesResolveInTheProfilesNotation() {
+        const Profile fx = loadExample(QStringLiteral("fx5u-eth-3e-ascii")); // Y20-Y37, octal
+        const ResolveResult r = resolveText(R"JSON(
+            {"id":"Y-01","kind":"read","device":"Y@s","unit":"bit","count":8},
+            {"id":"Y-02","kind":"read","device":"Y@s+8","unit":"bit","count":8},
+            {"id":"Y-03","kind":"read","device":"Y@s16","unit":"bit","count":16},
+            {"id":"Y-04","kind":"read","device":"Y20","unit":"bit","count":1},
+            {"id":"Y-05","kind":"read","device":"X377","unit":"bit","count":1},
+            {"id":"Y-06","kind":"read","device":"Y@end","unit":"bit","count":1},
+            {"id":"Y-07","kind":"read","device":"M100","count":1}
+        )JSON",
+                                            fx);
+        QVERIFY2(r.ok(), qPrintable(r.errors.isEmpty() ? QString() : r.errors[0].text()));
+        const auto head = [&](int i) { return r.steps[i].ops[0].request.head; };
+        QCOMPARE(head(0).number, 16u); // Y20 octal
+        QCOMPARE(head(1).number, 24u); // an offset is a decimal count of points: Y30 octal
+        QCOMPARE(head(2).number, 16u);
+        QCOMPARE(head(3).number, 16u);
+        QCOMPARE(head(4).number, 255u);
+        QCOMPARE(head(5).number, 1023u); // deviceEnd 1777 octal
+        QCOMPARE(head(6).number, 100u);  // M is decimal
+        // The descriptions of the steps use the octal text.
+        QVERIFY2(r.steps[1].ops[0].description.contains(QStringLiteral("Y30")),
+                 qPrintable(r.steps[1].ops[0].description));
+        QVERIFY2(r.steps[4].ops[0].description.contains(QStringLiteral("X377")),
+                 qPrintable(r.steps[4].ops[0].description));
+
+        // A literal with a digit 8 is no device under octal, and the step names it.
+        const ResolveResult bad =
+            resolveText(R"JSON({"id":"B-01","kind":"read","device":"X18","unit":"bit"})JSON", fx);
+        QVERIFY(!bad.ok());
+        QVERIFY2(bad.errors[0].text().contains(QStringLiteral("X18")),
+                 qPrintable(bad.errors[0].text()));
+        // The same literal is fine under Hex.
+        const ResolveResult hex =
+            resolveText(R"JSON({"id":"B-01","kind":"read","device":"X18","unit":"bit"})JSON",
+                        loadExample(QStringLiteral("q03ude-eth-3e-bin")));
+        QVERIFY(hex.ok());
+        QCOMPARE(hex.steps[0].ops[0].request.head.number, 0x18u);
     }
 
     void HIL_01_scratchRangeForms() {
@@ -518,25 +663,28 @@ class HilProfileTests : public QObject {
                                             q);
         QVERIFY2(r.ok(), qPrintable(r.errors.isEmpty() ? QString() : r.errors[0].text()));
         const auto head = [&](int i) { return r.steps[i].ops[0].request.head; };
-        QCOMPARE(deviceText(head(0)), QStringLiteral("D100"));
-        QCOMPARE(deviceText(head(1)), QStringLiteral("D110"));
-        QCOMPARE(deviceText(head(2)), QStringLiteral("M112")); // 100 aligned up to a multiple of 16
-        QCOMPARE(deviceText(head(3)), QStringLiteral("D12287"));
-        QCOMPARE(deviceText(head(4)), QStringLiteral("D12288")); // first number that does not exist
-        QCOMPARE(deviceText(head(5)), QStringLiteral("D100"));
+        QCOMPARE(deviceText(head(0), XyNumbering::Hex), QStringLiteral("D100"));
+        QCOMPARE(deviceText(head(1), XyNumbering::Hex), QStringLiteral("D110"));
+        QCOMPARE(deviceText(head(2), XyNumbering::Hex),
+                 QStringLiteral("M112")); // 100 aligned up to a multiple of 16
+        QCOMPARE(deviceText(head(3), XyNumbering::Hex), QStringLiteral("D12287"));
+        QCOMPARE(deviceText(head(4), XyNumbering::Hex),
+                 QStringLiteral("D12288")); // first number that does not exist
+        QCOMPARE(deviceText(head(5), XyNumbering::Hex), QStringLiteral("D100"));
         QCOMPARE(r.steps[5].ops[0].request.count, uint16_t(3));
-        QCOMPARE(deviceText(head(6)),
+        QCOMPARE(deviceText(head(6), XyNumbering::Hex),
                  QStringLiteral("W100")); // hexadecimal: 100H aligned to 16 = 100H
         QCOMPARE(head(6).number, 0x100u);
         QCOMPARE(head(7).number, 0x101u);
-        QCOMPARE(deviceText(head(8)), QStringLiteral("SM0")); // the profile's special bit
-        QCOMPARE(deviceText(head(9)), QStringLiteral("SD4"));
-        QCOMPARE(deviceText(head(10)), QStringLiteral("M115"));  // 112 + 3
+        QCOMPARE(deviceText(head(8), XyNumbering::Hex),
+                 QStringLiteral("SM0")); // the profile's special bit
+        QCOMPARE(deviceText(head(9), XyNumbering::Hex), QStringLiteral("SD4"));
+        QCOMPARE(deviceText(head(10), XyNumbering::Hex), QStringLiteral("M115")); // 112 + 3
         QVERIFY(r.steps[10].ops[0].request.op == Op::ReadWords); // unit word on a bit device
-        QCOMPARE(deviceText(head(11)), QStringLiteral("M105"));
-        QCOMPARE(deviceText(head(12)), QStringLiteral("X1F"));
-        QCOMPARE(deviceText(head(13)), QStringLiteral("B100"));
-        QCOMPARE(deviceText(head(14)), QStringLiteral("D12286"));
+        QCOMPARE(deviceText(head(11), XyNumbering::Hex), QStringLiteral("M105"));
+        QCOMPARE(deviceText(head(12), XyNumbering::Hex), QStringLiteral("X1F"));
+        QCOMPARE(deviceText(head(13), XyNumbering::Hex), QStringLiteral("B100"));
+        QCOMPARE(deviceText(head(14), XyNumbering::Hex), QStringLiteral("D12286"));
         QVERIFY(r.steps[0].ops[0].request.scratchRelative);
         QVERIFY(!r.steps[3].ops[0].request.scratchRelative);
         QVERIFY(!r.steps[5].ops[0].request.scratchRelative);
@@ -557,13 +705,14 @@ class HilProfileTests : public QObject {
                                             q);
         QVERIFY2(r.ok(), qPrintable(r.errors.isEmpty() ? QString() : r.errors[0].text()));
         const auto head = [&](int i) { return r.steps[i].ops[0].request.head; };
-        QCOMPARE(deviceText(head(0)), QStringLiteral("D99")); // one below the scratch start
-        QCOMPARE(deviceText(head(1)), QStringLiteral("D0"));
+        QCOMPARE(deviceText(head(0), XyNumbering::Hex),
+                 QStringLiteral("D99")); // one below the scratch start
+        QCOMPARE(deviceText(head(1), XyNumbering::Hex), QStringLiteral("D0"));
         QCOMPARE(head(2).number, 0xFFu); // W100 is 256: one below is 255 = W0FF
         // "+10" is ten, not 10H: W100 (256) + 10 = 266 = W10A, also on a hexadecimal device.
         QCOMPARE(head(3).number, 266u);
-        QCOMPARE(deviceText(head(3)), QStringLiteral("W10A"));
-        QCOMPARE(deviceText(head(4)), QStringLiteral("M109")); // 112 - 3
+        QCOMPARE(deviceText(head(3), XyNumbering::Hex), QStringLiteral("W10A"));
+        QCOMPARE(deviceText(head(4), XyNumbering::Hex), QStringLiteral("M109")); // 112 - 3
         QVERIFY(r.steps[0].ops[0].request.scratchRelative);
     }
 
@@ -603,12 +752,14 @@ class HilProfileTests : public QObject {
         r = resolveText(R"({"id":"A-01","kind":"read","device":"M@s16","unit":"word"})",
                         withScratch(QStringLiteral("M100-M112")));
         QVERIFY2(r.ok(), qPrintable(r.errors.isEmpty() ? QString() : r.errors[0].text()));
-        QCOMPARE(deviceText(r.steps[0].ops[0].request.head), QStringLiteral("M112"));
+        QCOMPARE(deviceText(r.steps[0].ops[0].request.head, XyNumbering::Hex),
+                 QStringLiteral("M112"));
         // A multiple of 16 that is the very first number needs no rounding.
         r = resolveText(R"({"id":"A-02","kind":"read","device":"M@s16","unit":"word"})",
                         withScratch(QStringLiteral("M96-M111")));
         QVERIFY(r.ok());
-        QCOMPARE(deviceText(r.steps[0].ops[0].request.head), QStringLiteral("M96"));
+        QCOMPARE(deviceText(r.steps[0].ops[0].request.head, XyNumbering::Hex),
+                 QStringLiteral("M96"));
     }
 
     void HIL_01_aMinimumOfTwoLimitsIsTheSmallerOne() {

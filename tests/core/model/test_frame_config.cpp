@@ -78,6 +78,19 @@ TEST_CASE("CFG-01 Named-constructor defaults equal spec section 8.3") {
     }
 }
 
+TEST_CASE(
+    "XYN-05 every named constructor keeps both X/Y numberings at Hex, validate() accepts Octal") {
+    for (FrameConfig cfg :
+         {FrameConfig{}, FrameConfig::frame3E(), FrameConfig::frame3E(DataCode::Ascii),
+          FrameConfig::frame1E(), FrameConfig::frame3C(), FrameConfig::frame1C()}) {
+        CHECK(cfg.xyNotation == mc::XyNumbering::Hex);
+        CHECK(cfg.xyAsciiDigits == mc::XyNumbering::Hex);
+        cfg.xyNotation = mc::XyNumbering::Octal;
+        cfg.xyAsciiDigits = mc::XyNumbering::Octal;
+        CHECK(cfg.validate().hasValue());
+    }
+}
+
 TEST_CASE("CFG-02 validate() rejects Format5 for every frame") {
     std::array<FrameConfig, 4> configs{FrameConfig::frame3E(), FrameConfig::frame1E(),
                                         FrameConfig::frame3C(), FrameConfig::frame1C()};

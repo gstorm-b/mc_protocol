@@ -402,7 +402,7 @@ TEST_CASE("ALC-01 every v1 family: every request vector encodes and every respon
     std::vector<mc::test::Vector> vectors;
     for (const char* file : {"3e_binary.vec", "3e_ascii.vec", "1e_binary.vec", "1e_ascii.vec",
                              "3c_f1.vec", "3c_f2.vec", "3c_f3.vec", "3c_f4.vec", "1c_f1.vec",
-                             "1c_f2.vec", "1c_f3.vec", "1c_f4.vec"}) {
+                             "1c_f2.vec", "1c_f3.vec", "1c_f4.vec", "fx_xy.vec"}) {
         for (mc::test::Vector& v : mc::test::loadVectors(root / file)) {
             if (!v.hasTag("v1.1") && !v.hasTag("v2")) {
                 vectors.push_back(std::move(v));

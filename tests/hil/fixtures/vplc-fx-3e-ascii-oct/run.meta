@@ -1,0 +1,62 @@
+format: hil-capture-1
+tool: hil_capture
+tool_version: 0.1.0
+library_version: 0.1.0
+git_commit: 1e37514c4653
+date: 2026-10-03T05:04:58Z
+operator_note: virtual_plc fixture, not hardware
+plc_state: RUN
+profile: vplc-fx-3e-ascii-oct
+plc: virtual_plc (FX numbering)
+module: MockPlc
+firmware: n/a
+adapter: 
+plc_state_note: RUN (virtual_plc fixture, not hardware)
+transport: tcp
+scratch: D100-D2099 M100-M2099 Y10-Y37
+device_end: X=1777 Y=1777 M=8191 D=12287
+supports: D M X Y
+special_bit: SM0
+special_word: SD0
+frame.aSeriesTarget: false
+frame.blockNo: 0
+frame.checkBlockNo: true
+frame.checkRoute: false
+frame.code: Ascii
+frame.commandSet: ACPU
+frame.e1AliasLS: false
+frame.f3ShortResponseHasSum: false
+frame.format: Format1
+frame.frame: 3E
+frame.highPerformanceQcpu: false
+frame.io: 1023
+frame.messageWait: 0
+frame.monitoringTimer: 16
+frame.network: 0
+frame.pc: 255
+frame.readRetries: 0
+frame.selfStation: 0
+frame.sendEotOnError: true
+frame.serialStart: 0
+frame.series: QL
+frame.splitWrites: false
+frame.station: 0
+frame.stationNo: 0
+frame.sumCheck: true
+frame.targetFamily: IqR_Q_L
+frame.timeoutMs: 0
+frame.xyAsciiDigits: Octal
+frame.xyNotation: Octal
+session.adHocArenaBytes: 65536
+session.adHocCapacity: 64
+session.bitsAsWords: true
+session.cycleIntervalMs: 100
+session.cycleMode: FixedRate
+session.heartbeat.device: M2000
+session.heartbeat.enabled: false
+session.maxAdHocBurst: 4
+session.maxConsecutiveLinkErrors: 3
+session.maxGap: auto
+session.serialFlushMs: 50
+session.serialInterCharMs: 100
+polls: F-04

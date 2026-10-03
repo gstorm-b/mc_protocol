@@ -67,6 +67,8 @@ template <class Codec> size_t qnaRequestDataSize(const Request& r, PlcSeries ser
  * @param[in] r Request being encoded; a read or a write, bits or words.
  * @param[in] series Q/L or iQ-R device-code column.
  * @param[out] out Destination; must hold at least `qnaRequestDataSize<Codec>(r, series)` bytes.
+ * @param[in] xyDigits Base of the ASCII digits of an X/Y head device
+ * (`FrameConfig::xyAsciiDigits`).
  * @return Bytes/characters written.
  * @retval ErrorCode::InvalidDevice `r.head.type` has no QnA code for `series` (device_encode.h's
  * `qnaDevice()`).
@@ -76,7 +78,8 @@ template <class Codec> size_t qnaRequestDataSize(const Request& r, PlcSeries ser
  * @see qnaResponseData
  */
 template <class Codec>
-Expected<size_t> qnaRequestData(const Request& r, PlcSeries series, MutableByteView out) noexcept;
+Expected<size_t> qnaRequestData(const Request& r, PlcSeries series, MutableByteView out,
+                                XyNumbering xyDigits = XyNumbering::Hex) noexcept;
 
 /**
  * @brief Wire size of the 0401/1401 response DATA for `r` (spec §4.1.1): 0 for a write; for a

@@ -137,10 +137,21 @@ FrameConfig frameFromMeta(const std::map<std::string, std::string>& m, const fs:
     f.splitWrites = needBool(m, "frame.splitWrites", file);
     f.timeoutMs = needNumber(m, "frame.timeoutMs", file);
     f.readRetries = static_cast<uint8_t>(needNumber(m, "frame.readRetries", file));
+    // X/Y numbering: a capture written before the keys existed is hex.
+    const auto xy = [&](const char* key) {
+        if (m.find(key) == m.end()) {
+            return XyNumbering::Hex;
+        }
+        return needEnum<XyNumbering>(m, key, file,
+                                     {{"Hex", XyNumbering::Hex}, {"Octal", XyNumbering::Octal}});
+    };
+    f.xyNotation = xy("frame.xyNotation");
+    f.xyAsciiDigits = xy("frame.xyAsciiDigits");
     return f;
 }
 
-SessionConfig sessionFromMeta(const std::map<std::string, std::string>& m, const fs::path& file) {
+SessionConfig sessionFromMeta(const std::map<std::string, std::string>& m, const fs::path& file,
+                              XyNumbering xy) {
     SessionConfig s;
     s.cycleIntervalMs = needNumber(m, "session.cycleIntervalMs", file);
     s.cycleMode = needEnum<CycleMode>(
@@ -161,7 +172,7 @@ SessionConfig sessionFromMeta(const std::map<std::string, std::string>& m, const
     s.serialInterCharMs = static_cast<uint16_t>(needNumber(m, "session.serialInterCharMs", file));
     s.serialFlushMs = static_cast<uint16_t>(needNumber(m, "session.serialFlushMs", file));
     s.heartbeat.enabled = needBool(m, "session.heartbeat.enabled", file);
-    const auto dev = parseDevice(need(m, "session.heartbeat.device", file));
+    const auto dev = parseDevice(need(m, "session.heartbeat.device", file), xy);
     if (!dev) {
         bad(file, "key 'session.heartbeat.device' is not a device: '" +
                       need(m, "session.heartbeat.device", file) + "'");
@@ -211,14 +222,18 @@ Capture loadCapture(const fs::path& dir) {
     c.profile = need(c.meta, "profile", metaFile);
     c.transport = need(c.meta, "transport", metaFile);
     c.frame = frameFromMeta(c.meta, metaFile);
-    c.session = sessionFromMeta(c.meta, metaFile);
+    c.session = sessionFromMeta(c.meta, metaFile, c.frame.xyNotation);
     for (const std::string& tok : words(need(c.meta, "device_end", metaFile))) {
         const size_t eq = tok.find('=');
         const auto type = eq == std::string::npos ? std::nullopt : typeBySymbol(tok.substr(0, eq));
         if (!type) {
             bad(metaFile, "device_end entry '" + tok + "' is not <symbol>=<number>");
         }
-        const auto n = number(tok.substr(eq + 1), deviceInfo(*type).radix == Radix::Hex ? 16 : 10);
+        // run.meta writes X and Y in the capture's xyNotation, every other device in its radix.
+        const bool octalXy = c.frame.xyNotation == XyNumbering::Octal &&
+                             (*type == DeviceType::X || *type == DeviceType::Y);
+        const int base = octalXy ? 8 : (deviceInfo(*type).radix == Radix::Hex ? 16 : 10);
+        const auto n = number(tok.substr(eq + 1), base);
         if (!n) {
             bad(metaFile, "device_end entry '" + tok + "' has a bad number");
         }
@@ -384,8 +399,8 @@ std::string errorCodeName(ErrorCode code) {
 }
 
 /// The head device of a record's metadata; nullopt when it does not parse.
-std::optional<Device> recordHead(const Record& rec) {
-    const auto d = parseDevice(rec.device);
+std::optional<Device> recordHead(const Record& rec, XyNumbering xy) {
+    const auto d = parseDevice(rec.device, xy);
     if (!d) {
         return std::nullopt;
     }
@@ -393,9 +408,9 @@ std::optional<Device> recordHead(const Record& rec) {
 }
 
 /// The Request a record's metadata describes (op, head, count), data left empty.
-std::optional<Request> metaRequest(const Record& rec) {
+std::optional<Request> metaRequest(const Record& rec, XyNumbering xy) {
     const auto op = opByName(rec.op);
-    const auto head = recordHead(rec);
+    const auto head = recordHead(rec, xy);
     if (!op || !head || rec.count <= 0) {
         return std::nullopt;
     }
@@ -510,7 +525,7 @@ void checkReencode(const Capture& c, Report& r) {
                      frameName + " " + c.meta.at("frame.code"));
             continue;
         }
-        const auto meta = metaRequest(rec);
+        const auto meta = metaRequest(rec, c.frame.xyNotation);
         if (!meta) {
             fail(r, "RPL-01", c, rec.id,
                  "the metadata (op '" + rec.op + "', device '" + rec.device + "', count " +
@@ -520,8 +535,8 @@ void checkReencode(const Capture& c, Report& r) {
         const std::vector<Decoded> dec = decode(c.frame, rec.request);
         if (dec.empty()) {
             fail(r, "RPL-01", c, rec.id,
-                 "the captured request is not a frame the mock can decode with the run.meta "
-                 "FrameConfig: " +
+                 "the mock cannot decode the captured request with the run.meta FrameConfig (a "
+                 "device number outside the base of frame.xyAsciiDigits counts): " +
                      hex(rec.request));
             continue;
         }
@@ -529,8 +544,9 @@ void checkReencode(const Capture& c, Report& r) {
         if (d.op != meta->op || d.head != meta->head || d.count != meta->count) {
             fail(r, "RPL-01", c, rec.id,
                  "the captured bytes ask for " + std::to_string(static_cast<int>(d.op)) + " " +
-                     deviceText(d.head) + " x" + std::to_string(d.count) + ", the metadata says " +
-                     rec.op + " " + rec.device + " x" + std::to_string(rec.count));
+                     deviceText(d.head, c.frame.xyNotation) + " x" + std::to_string(d.count) +
+                     ", the metadata says " + rec.op + " " + rec.device + " x" +
+                     std::to_string(rec.count));
             continue;
         }
         Request req = *meta;
@@ -567,7 +583,7 @@ void checkParse(const Capture& c, Report& r) {
         if (!rec.hasResponse || rec.partial || rec.op == "Raw") {
             continue;
         }
-        const auto req = metaRequest(rec);
+        const auto req = metaRequest(rec, c.frame.xyNotation);
         if (!req) {
             fail(r, "RPL-02", c, rec.id,
                  "the metadata (op '" + rec.op + "', device '" + rec.device +
@@ -901,7 +917,8 @@ void checkSanity(const Capture& c, const Env& env, Report& r) {
                      "the write of " + w.device + " x" + std::to_string(w.count) +
                          " has no read-back of " +
                          deviceText(
-                             Device{static_cast<DeviceType>(pv.first.first), pv.first.second}) +
+                             Device{static_cast<DeviceType>(pv.first.first), pv.first.second},
+                             c.frame.xyNotation) +
                          " (the plan needs readBack)");
                 break;
             }
@@ -909,7 +926,8 @@ void checkSanity(const Capture& c, const Env& env, Report& r) {
                 fail(r, "RPL-05", c, w.id,
                      "the read-back of " +
                          deviceText(
-                             Device{static_cast<DeviceType>(pv.first.first), pv.first.second}) +
+                             Device{static_cast<DeviceType>(pv.first.first), pv.first.second},
+                             c.frame.xyNotation) +
                          " is " + std::to_string(it->second) + " but " + std::to_string(pv.second) +
                          " was written");
                 break;
@@ -975,7 +993,7 @@ void checkSanity(const Capture& c, const Env& env, Report& r) {
             const std::string kind = v.field("kind");
             if (startsWith(kind, "response") && v.field("of") == reqVec->id && kind == "response") {
                 // the response is compared when the data are the vector's own (the default values)
-                const auto req = metaRequest(rec);
+                const auto req = metaRequest(rec, c.frame.xyNotation);
                 if (!req) {
                     break;
                 }

@@ -63,6 +63,8 @@ constexpr EnumName<TargetFamily> kTargetFamilies[] = {
     {TargetFamily::IqR_Q_L, "IqR_Q_L"}, {TargetFamily::QnA, "QnA"}, {TargetFamily::A, "A"}};
 constexpr EnumName<C1CommandSet> kCommandSets[] = {{C1CommandSet::ACPU, "ACPU"},
                                                    {C1CommandSet::AnA, "AnA"}};
+constexpr EnumName<XyNumbering> kXyNumberings[] = {{XyNumbering::Hex, "Hex"},
+                                                   {XyNumbering::Octal, "Octal"}};
 constexpr EnumName<CycleMode> kCycleModes[] = {{CycleMode::FixedRate, "FixedRate"},
                                                {CycleMode::FixedDelay, "FixedDelay"}};
 constexpr EnumName<TransportKind> kTransportKinds[] = {{TransportKind::Tcp, "Tcp"},
@@ -214,7 +216,9 @@ bool readFrame(const QJsonObject& o, const QString& base, FrameConfig& c, Failur
            readBool(o, "aSeriesTarget", base, c.aSeriesTarget, f) &&
            readBool(o, "splitWrites", base, c.splitWrites, f) &&
            readInt(o, "timeoutMs", base, c.timeoutMs, f) &&
-           readInt(o, "readRetries", base, c.readRetries, f);
+           readInt(o, "readRetries", base, c.readRetries, f) &&
+           readEnum(o, "xyNotation", base, kXyNumberings, c.xyNotation, f) &&
+           readEnum(o, "xyAsciiDigits", base, kXyNumberings, c.xyAsciiDigits, f);
 }
 
 bool readMaxGap(const QJsonObject& o, const QString& base, uint32_t& out, Failure& f) {
@@ -241,7 +245,9 @@ bool readMaxGap(const QJsonObject& o, const QString& base, uint32_t& out, Failur
     return true;
 }
 
-bool readHeartbeat(const QJsonObject& o, const QString& base, HeartbeatConfig& c, Failure& f) {
+// The heartbeat device is text: its X/Y number is read in `xy` (FrameConfig::xyNotation).
+bool readHeartbeat(const QJsonObject& o, const QString& base, XyNumbering xy, HeartbeatConfig& c,
+                   Failure& f) {
     if (!readBool(o, "enabled", base, c.enabled, f)) {
         return false;
     }
@@ -252,7 +258,7 @@ bool readHeartbeat(const QJsonObject& o, const QString& base, HeartbeatConfig& c
     if (o.contains(QLatin1String("device"))) {
         const QByteArray utf8 = text.toUtf8();
         const Expected<Device> parsed =
-            parseDevice(std::string_view(utf8.constData(), static_cast<size_t>(utf8.size())));
+            parseDevice(std::string_view(utf8.constData(), static_cast<size_t>(utf8.size())), xy);
         if (!parsed) {
             return f.set(joinPath(base, "device"), "not a device");
         }
@@ -261,7 +267,8 @@ bool readHeartbeat(const QJsonObject& o, const QString& base, HeartbeatConfig& c
     return true;
 }
 
-bool readSession(const QJsonObject& o, const QString& base, SessionConfig& c, Failure& f) {
+bool readSession(const QJsonObject& o, const QString& base, XyNumbering xy, SessionConfig& c,
+                 Failure& f) {
     if (!(readInt(o, "cycleIntervalMs", base, c.cycleIntervalMs, f) &&
           readEnum(o, "cycleMode", base, kCycleModes, c.cycleMode, f) &&
           readBool(o, "bitsAsWords", base, c.plan.bitsAsWords, f) &&
@@ -279,7 +286,7 @@ bool readSession(const QJsonObject& o, const QString& base, SessionConfig& c, Fa
     if (!readObject(o, "heartbeat", base, heartbeat, present, f)) {
         return false;
     }
-    return !present || readHeartbeat(heartbeat, joinPath(base, "heartbeat"), c.heartbeat, f);
+    return !present || readHeartbeat(heartbeat, joinPath(base, "heartbeat"), xy, c.heartbeat, f);
 }
 
 bool readTcp(const QJsonObject& o, const QString& base, TcpSettings& c, Failure& f) {
@@ -356,8 +363,8 @@ Expected<void> checkSubscription(const McDeviceConfig& cfg, int index, QString* 
     const QString base = indexPath(QStringLiteral("subscriptions"), index);
 
     const QByteArray utf8 = spec.device.toUtf8();
-    const Expected<Device> head =
-        parseDevice(std::string_view(utf8.constData(), static_cast<size_t>(utf8.size())));
+    const Expected<Device> head = parseDevice(
+        std::string_view(utf8.constData(), static_cast<size_t>(utf8.size())), cfg.frame.xyNotation);
     if (!head) {
         setWhere(where, joinPath(base, "device"));
         return head.error();
@@ -410,10 +417,12 @@ QJsonObject frameToJson(const FrameConfig& c) {
     o.insert(QStringLiteral("splitWrites"), c.splitWrites);
     o.insert(QStringLiteral("timeoutMs"), static_cast<qint64>(c.timeoutMs));
     o.insert(QStringLiteral("readRetries"), c.readRetries);
+    o.insert(QStringLiteral("xyNotation"), enumJson(kXyNumberings, c.xyNotation));
+    o.insert(QStringLiteral("xyAsciiDigits"), enumJson(kXyNumberings, c.xyAsciiDigits));
     return o;
 }
 
-QJsonObject sessionToJson(const SessionConfig& c) {
+QJsonObject sessionToJson(const SessionConfig& c, XyNumbering xy) {
     QJsonObject o;
     o.insert(QStringLiteral("cycleIntervalMs"), static_cast<qint64>(c.cycleIntervalMs));
     o.insert(QStringLiteral("cycleMode"), enumJson(kCycleModes, c.cycleMode));
@@ -431,7 +440,7 @@ QJsonObject sessionToJson(const SessionConfig& c) {
     o.insert(QStringLiteral("serialFlushMs"), c.serialFlushMs);
 
     char text[32];
-    const size_t needed = formatDevice(c.heartbeat.device, text, sizeof text);
+    const size_t needed = formatDevice(c.heartbeat.device, text, sizeof text, xy);
     QJsonObject heartbeat;
     heartbeat.insert(QStringLiteral("enabled"), c.heartbeat.enabled);
     heartbeat.insert(
@@ -513,7 +522,7 @@ QJsonObject McDeviceConfig::toJson() const {
     QJsonObject root;
     root.insert(QStringLiteral("schema"), 1);
     root.insert(QStringLiteral("frame"), frameToJson(frame));
-    root.insert(QStringLiteral("session"), sessionToJson(session));
+    root.insert(QStringLiteral("session"), sessionToJson(session, frame.xyNotation));
     root.insert(QStringLiteral("transport"), transportObject);
     root.insert(QStringLiteral("subscriptions"), subs);
     return root;
@@ -543,7 +552,8 @@ Expected<McDeviceConfig> McDeviceConfig::fromJson(const QJsonObject& obj, QStrin
         if (!readObject(obj, "session", QString(), section, present, f)) {
             return false;
         }
-        if (present && !readSession(section, QStringLiteral("session"), cfg.session, f)) {
+        if (present && !readSession(section, QStringLiteral("session"), cfg.frame.xyNotation,
+                                    cfg.session, f)) {
             return false;
         }
         if (!readObject(obj, "transport", QString(), section, present, f)) {

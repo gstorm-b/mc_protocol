@@ -15,11 +15,11 @@ namespace mc::hil {
 
 namespace {
 
-QString rangeText(DeviceType t, uint32_t head, uint64_t points) {
+QString rangeText(DeviceType t, uint32_t head, uint64_t points, XyNumbering xy) {
     const uint64_t last = static_cast<uint64_t>(head) + points - 1;
     return QStringLiteral("%1%2-%1%3 (%4 point%5)")
-        .arg(deviceSymbol(t), formatDeviceNumber(t, head),
-             formatDeviceNumber(t, static_cast<uint32_t>(last)))
+        .arg(deviceSymbol(t), formatDeviceNumber(t, head, xy),
+             formatDeviceNumber(t, static_cast<uint32_t>(last), xy))
         .arg(points)
         .arg(points == 1 ? QString() : QStringLiteral("s"));
 }
@@ -29,8 +29,9 @@ QString scratchListText(const Profile& p, DeviceType t) {
     for (const ScratchRange& r : p.scratch) {
         if (r.type == t) {
             parts << QStringLiteral("%1%2-%1%3")
-                         .arg(deviceSymbol(t), formatDeviceNumber(t, r.first),
-                              formatDeviceNumber(t, r.last));
+                         .arg(deviceSymbol(t),
+                              formatDeviceNumber(t, r.first, p.device.frame.xyNotation),
+                              formatDeviceNumber(t, r.last, p.device.frame.xyNotation));
         }
     }
     return parts.join(QStringLiteral(", "));
@@ -46,8 +47,8 @@ QString explain(const Profile& p, DeviceType t, uint32_t head, uint64_t points) 
         if (r.type == t && head >= r.first && head <= r.last && last > r.last) {
             return QStringLiteral("runs past the end of scratch range %1%2-%1%3; a write must lie "
                                   "inside ONE scratch range")
-                .arg(deviceSymbol(t), formatDeviceNumber(t, r.first),
-                     formatDeviceNumber(t, r.last));
+                .arg(deviceSymbol(t), formatDeviceNumber(t, r.first, p.device.frame.xyNotation),
+                     formatDeviceNumber(t, r.last, p.device.frame.xyNotation));
         }
     }
     return QStringLiteral("outside the scratch area of %1 (%2)").arg(deviceSymbol(t), list);
@@ -69,7 +70,8 @@ void checkWriteRange(GateReport& report, const Profile& p, const QString& id, co
     GateViolation v;
     v.stepId = id;
     v.kind = kind;
-    v.range = rangeText(head.type, head.number, points == 0 ? 1 : points);
+    v.range =
+        rangeText(head.type, head.number, points == 0 ? 1 : points, p.device.frame.xyNotation);
     v.why = explain(p, head.type, head.number, points);
     report.violations.push_back(v);
 }
@@ -86,7 +88,7 @@ void checkPoll(GateReport& report, const Profile& p, const QString& id, const Re
             GateViolation v;
             v.stepId = id;
             v.kind = QStringLiteral("poll subscription '%1'").arg(s.name);
-            v.range = rangeText(s.head.type, s.head.number, s.count);
+            v.range = rangeText(s.head.type, s.head.number, s.count, p.device.frame.xyNotation);
             v.why = explain(p, s.head.type, s.head.number, s.count) +
                     QStringLiteral(" (mark it \"input\": true if it is a read-only input)");
             report.violations.push_back(v);
@@ -465,7 +467,7 @@ class FrameGate {
         if (m_op.via == Via::Mutate && m_op.readOnly && m_op.request.isWrite()) {
             refuse(declared(),
                    rangeText(m_op.request.head.type, m_op.request.head.number,
-                             m_op.request.numbersCovered()),
+                             m_op.request.numbersCovered(), m_profile.device.frame.xyNotation),
                    QStringLiteral("the base request is a write: a mutate of a write can never be "
                                   "declared readOnly"));
         }
@@ -551,7 +553,8 @@ class FrameGate {
         if (m_profile.inScratch(r.head.type, r.head.number, points)) {
             return;
         }
-        const QString range = rangeText(r.head.type, r.head.number, points);
+        const QString range =
+            rangeText(r.head.type, r.head.number, points, m_profile.device.frame.xyNotation);
         if (m_reported.contains(range)) {
             return;
         }

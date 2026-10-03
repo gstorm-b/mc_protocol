@@ -207,7 +207,7 @@ QString expectText(const Expect& e, bool bitUnit) {
     return text;
 }
 
-SessionEvent snapshotEvent(const DeviceSnapshot& s, qint64 tNs) {
+SessionEvent snapshotEvent(const DeviceSnapshot& s, qint64 tNs, XyNumbering xy) {
     SessionEvent e = makeEvent(QStringLiteral("snapshot"), 0x01, tNs);
     QStringList segments;
     for (const SnapshotSegment& seg : s.segments) {
@@ -215,7 +215,7 @@ SessionEvent snapshotEvent(const DeviceSnapshot& s, qint64 tNs) {
         putU32(e.payload, seg.count);
         e.payload.append(seg.values);
         e.payload.append(seg.states);
-        segments << QStringLiteral("%1x%2").arg(deviceText(seg.head)).arg(seg.count);
+        segments << QStringLiteral("%1x%2").arg(deviceText(seg.head, xy)).arg(seg.count);
     }
     QStringList chunks;
     for (const ChunkStatus& c : s.chunks) {
@@ -326,7 +326,7 @@ SessionEvent linkFaultEvent(const LinkFaultInfo& f, qint64 tNs) {
     return e;
 }
 
-SessionEvent heartbeatInput(bool enabled, const Device& device, qint64 tNs) {
+SessionEvent heartbeatInput(bool enabled, const Device& device, qint64 tNs, XyNumbering xy) {
     SessionEvent e = makeEvent(QStringLiteral("heartbeat"), 0x07, tNs);
     e.input = true;
     e.payload.append(static_cast<char>(enabled ? 1 : 0));
@@ -334,18 +334,19 @@ SessionEvent heartbeatInput(bool enabled, const Device& device, qint64 tNs) {
     putU32(e.payload, device.number);
     e.keys.push_back(
         {QStringLiteral("enabled"), enabled ? QStringLiteral("true") : QStringLiteral("false")});
-    e.keys.push_back({QStringLiteral("device"), deviceText(device)});
+    e.keys.push_back({QStringLiteral("device"), deviceText(device, xy)});
     return e;
 }
 
-SessionEvent subscribeInput(const QString& name, const Device& head, quint32 count, qint64 tNs) {
+SessionEvent subscribeInput(const QString& name, const Device& head, quint32 count, qint64 tNs,
+                            XyNumbering xy) {
     SessionEvent e = makeEvent(QStringLiteral("subscribe"), 0x08, tNs);
     e.input = true;
     e.payload.append(static_cast<char>(head.type));
     putU32(e.payload, head.number);
     putU32(e.payload, count);
     e.keys.push_back({QStringLiteral("name"), name});
-    e.keys.push_back({QStringLiteral("device"), deviceText(head)});
+    e.keys.push_back({QStringLiteral("device"), deviceText(head, xy)});
     e.keys.push_back({QStringLiteral("count"), QString::number(count)});
     return e;
 }
@@ -358,7 +359,8 @@ SessionEvent unsubscribeInput(const QString& name, qint64 tNs) {
     return e;
 }
 
-SessionEvent writeInput(Op op, const Device& head, quint16 count, const ByteBuf& data, qint64 tNs) {
+SessionEvent writeInput(Op op, const Device& head, quint16 count, const ByteBuf& data, qint64 tNs,
+                        XyNumbering xy) {
     SessionEvent e = makeEvent(QStringLiteral("write"), 0x0A, tNs);
     e.input = true;
     e.payload.append(static_cast<char>(op));
@@ -369,7 +371,7 @@ SessionEvent writeInput(Op op, const Device& head, quint16 count, const ByteBuf&
                      static_cast<qsizetype>(data.size()));
     static const char* const ops[] = {"ReadBits", "ReadWords", "WriteBits", "WriteWords"};
     e.keys.push_back({QStringLiteral("op"), QLatin1String(ops[static_cast<int>(op)])});
-    e.keys.push_back({QStringLiteral("device"), deviceText(head)});
+    e.keys.push_back({QStringLiteral("device"), deviceText(head, xy)});
     e.keys.push_back({QStringLiteral("count"), QString::number(count)});
     return e;
 }
@@ -544,15 +546,17 @@ QString runMetaText(const RunMeta& meta) {
     QStringList scratch;
     for (const ScratchRange& r : p.scratch) {
         scratch << QStringLiteral("%1%2-%1%3")
-                       .arg(deviceSymbol(r.type), formatDeviceNumber(r.type, r.first),
-                            formatDeviceNumber(r.type, r.last));
+                       .arg(deviceSymbol(r.type),
+                            formatDeviceNumber(r.type, r.first, p.device.frame.xyNotation),
+                            formatDeviceNumber(r.type, r.last, p.device.frame.xyNotation));
     }
     out += kv(QStringLiteral("scratch"), scratch.join(QLatin1Char(' ')));
     QStringList ends;
     for (size_t i = 0; i < static_cast<size_t>(DeviceType::Count); ++i) {
         const auto t = static_cast<DeviceType>(i);
         if (const std::optional<uint32_t> end = p.end(t)) {
-            ends << QStringLiteral("%1=%2").arg(deviceSymbol(t), formatDeviceNumber(t, *end));
+            ends << QStringLiteral("%1=%2").arg(
+                deviceSymbol(t), formatDeviceNumber(t, *end, p.device.frame.xyNotation));
         }
     }
     out += kv(QStringLiteral("device_end"), ends.join(QLatin1Char(' ')));
@@ -561,8 +565,8 @@ QString runMetaText(const RunMeta& meta) {
         supports << deviceSymbol(t);
     }
     out += kv(QStringLiteral("supports"), supports.join(QLatin1Char(' ')));
-    out += kv(QStringLiteral("special_bit"), deviceText(p.specialBit));
-    out += kv(QStringLiteral("special_word"), deviceText(p.specialWord));
+    out += kv(QStringLiteral("special_bit"), deviceText(p.specialBit, p.device.frame.xyNotation));
+    out += kv(QStringLiteral("special_word"), deviceText(p.specialWord, p.device.frame.xyNotation));
 
     // Every FrameConfig and SessionConfig field, through the JSON mapping of the device layer.
     const QJsonObject frame = json.value(QStringLiteral("frame")).toObject();

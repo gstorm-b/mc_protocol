@@ -65,6 +65,8 @@ template <class Codec> size_t a1eRequestDataSize(const Request& r) noexcept {
  *
  * @param[in] r Request being encoded; a read or a write, bits or words.
  * @param[out] out Destination; must hold at least `a1eRequestDataSize<Codec>(r)` bytes.
+ * @param[in] xyDigits Base of the ASCII digits of an X/Y head device
+ * (`FrameConfig::xyAsciiDigits`).
  * @return Bytes/characters written.
  * @retval ErrorCode::InvalidDevice `r.head.type` has no 1E code (device_encode.h's `e1Device()`).
  * @retval ErrorCode::BufferTooSmall `out` is smaller than `a1eRequestDataSize<Codec>(r)`.
@@ -73,7 +75,8 @@ template <class Codec> size_t a1eRequestDataSize(const Request& r) noexcept {
  * @see a1eResponseData
  */
 template <class Codec>
-Expected<size_t> a1eRequestData(const Request& r, MutableByteView out) noexcept;
+Expected<size_t> a1eRequestData(const Request& r, MutableByteView out,
+                                XyNumbering xyDigits = XyNumbering::Hex) noexcept;
 
 /**
  * @brief Wire size of the 00H-03H response DATA for `r` (spec §4.2 "Response data size"): 0 for a
@@ -137,6 +140,9 @@ template <class Codec> size_t a1eTestWordsRequestDataSize(size_t n) noexcept {
 
 /**
  * @brief Encodes 04H (test, random write of bits) request data (spec §4.2) into `out`.
+ *
+ * X/Y digits are always hex (unreachable through McProtocol in v1).
+ *
  * @param[in] items The `n` entries, in wire order.
  * @param[in] n Number of entries; at most 255 (the `n` field is a `u8`).
  * @param[out] out Destination; must hold at least `a1eTestBitsRequestDataSize<Codec>(n)`.
@@ -153,6 +159,9 @@ Expected<size_t> a1eTestBitsRequestData(const A1eTestBit* items, size_t n,
 
 /**
  * @brief Encodes 05H (test, random write of words) request data (spec §4.2) into `out`.
+ *
+ * X/Y digits are always hex (unreachable through McProtocol in v1).
+ *
  * @param[in] items The `n` entries, in wire order.
  * @param[in] n Number of entries; at most 255 (the `n` field is a `u8`).
  * @param[out] out Destination; must hold at least `a1eTestWordsRequestDataSize<Codec>(n)`.

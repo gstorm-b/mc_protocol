@@ -75,8 +75,9 @@ size_t requestDataSize(const Request& r, const FrameConfig& cfg) noexcept {
 
 Expected<size_t> requestData(const Request& r, const FrameConfig& cfg,
                              MutableByteView out) noexcept {
-    return cfg.frame == FrameType::F1C ? a1cRequestData(r, cfg.commandSet, cfg.messageWait, out)
-                                       : qnaRequestData<AsciiCodec>(r, cfg.series, out);
+    return cfg.frame == FrameType::F1C
+               ? a1cRequestData(r, cfg.commandSet, cfg.messageWait, out, cfg.xyAsciiDigits)
+               : qnaRequestData<AsciiCodec>(r, cfg.series, out, cfg.xyAsciiDigits);
 }
 
 size_t responseDataSize(const Request& r, const FrameConfig& cfg) noexcept {

@@ -19,9 +19,9 @@ QString frameLabel(const FrameConfig& f) {
     return text;
 }
 
-QString subText(const ResolvedSub& s) {
+QString subText(const ResolvedSub& s, XyNumbering xy) {
     return QStringLiteral("%1 x%2%3")
-        .arg(deviceText(s.head))
+        .arg(deviceText(s.head, xy))
         .arg(s.count)
         .arg(s.input ? QStringLiteral(" (input)") : QString());
 }
@@ -77,7 +77,7 @@ void printPlan(QString& out, const QVector<ResolvedSub>& subs, const FrameConfig
         out += QStringLiteral("  CHUNK %1 %2 x%3\n")
                    .arg(r.op == Op::ReadBits ? QStringLiteral("ReadBits")
                                              : QStringLiteral("ReadWords"),
-                        deviceText(r.head))
+                        deviceText(r.head, frame.xyNotation))
                    .arg(r.count);
         const Expected<ByteBuf> bytes = codec.encode(r);
         if (bytes) {
@@ -94,8 +94,9 @@ void printPoll(QString& out, const ResolvedPoll& poll, const FrameConfig& frame,
     if (poll.heartbeat) {
         for (const uint8_t value : {uint8_t(1), uint8_t(0)}) {
             Request w = Request::writeBits(*poll.heartbeat, ByteView{&value, 1});
-            out +=
-                QStringLiteral("  HEARTBEAT %1 = %2\n").arg(deviceText(*poll.heartbeat)).arg(value);
+            out += QStringLiteral("  HEARTBEAT %1 = %2\n")
+                       .arg(deviceText(*poll.heartbeat, frame.xyNotation))
+                       .arg(value);
             const Expected<ByteBuf> bytes = codec.encode(w);
             if (bytes) {
                 tx(out, bytes.value());
@@ -116,7 +117,7 @@ void printPoll(QString& out, const ResolvedPoll& poll, const FrameConfig& frame,
             subs.push_back(a.sub);
             out += QStringLiteral("  AFTER ROUND %1: subscribe %2 = %3\n")
                        .arg(a.after)
-                       .arg(a.sub.name, subText(a.sub));
+                       .arg(a.sub.name, subText(a.sub, frame.xyNotation));
             printPlan(out, subs, frame, profile, poll.bitsAsWords,
                       QStringLiteral("after round %1").arg(a.after));
             break;
@@ -227,8 +228,9 @@ QString confirmationSummary(const Profile& profile, const GateReport& gate,
     QStringList ranges;
     for (const ScratchRange& r : profile.scratch) {
         ranges << QStringLiteral("%1%2-%1%3")
-                      .arg(deviceSymbol(r.type), formatDeviceNumber(r.type, r.first),
-                           formatDeviceNumber(r.type, r.last));
+                      .arg(deviceSymbol(r.type),
+                           formatDeviceNumber(r.type, r.first, profile.device.frame.xyNotation),
+                           formatDeviceNumber(r.type, r.last, profile.device.frame.xyNotation));
     }
     out += QStringLiteral("  Scratch:    %1\n")
                .arg(ranges.isEmpty() ? QStringLiteral("(none: no write can pass the gate)")

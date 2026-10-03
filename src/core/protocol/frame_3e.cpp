@@ -68,8 +68,8 @@ Expected<size_t> frame3eEncode(const Request& r, const FrameConfig& cfg,
     (void)Codec::putU16(cfg.monitoringTimer, MutableByteView{out.data + offset, Codec::u16Size()});
     offset += Codec::u16Size();
 
-    auto reqResult =
-        qnaRequestData<Codec>(r, cfg.series, MutableByteView{out.data + offset, out.size - offset});
+    auto reqResult = qnaRequestData<Codec>(
+        r, cfg.series, MutableByteView{out.data + offset, out.size - offset}, cfg.xyAsciiDigits);
     if (!reqResult.hasValue()) {
         return Expected<size_t>(reqResult.error());
     }

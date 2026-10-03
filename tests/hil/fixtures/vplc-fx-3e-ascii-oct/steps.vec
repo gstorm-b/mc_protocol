@@ -1,0 +1,60 @@
+# id: CAP-vplc-fx-3e-ascii-oct-F-01
+# source: plc  profile: vplc-fx-3e-ascii-oct  step: F-01
+# frame: 3E  code: Ascii  op: ReadBits  device: X10  count: 8  via: api
+# kind: request
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 31 58 2A 30 30 30 30 31 30 30 30 30 38
+
+# id: CAP-vplc-fx-3e-ascii-oct-F-01-R
+# kind: response  of: CAP-vplc-fx-3e-ascii-oct-F-01
+# outcome: ok  expect: bits 1 0 1 0 0 0 0 0  verdict: passed
+# ttfb_ms: 0.746  rx_ms: 0.000  rtt_ms: 0.746
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 31 30 31 30 30 30 30 30
+
+# id: CAP-vplc-fx-3e-ascii-oct-F-02
+# source: plc  profile: vplc-fx-3e-ascii-oct  step: F-02
+# frame: 3E  code: Ascii  op: WriteBits  device: Y10  count: 8  via: api
+# kind: request
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 32 30 30 30 31 30 31 34 30 31 30 30 30 31 59 2A 30 30 30 30 31 30 30 30 30 38 31 30 31 31 30 30 31 30
+
+# id: CAP-vplc-fx-3e-ascii-oct-F-02-R
+# kind: response  of: CAP-vplc-fx-3e-ascii-oct-F-02
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 0.259  rx_ms: 0.000  rtt_ms: 0.259
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-vplc-fx-3e-ascii-oct-F-02.2
+# source: plc  profile: vplc-fx-3e-ascii-oct  step: F-02.2
+# frame: 3E  code: Ascii  op: ReadBits  device: Y10  count: 8  via: api
+# kind: request
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 31 59 2A 30 30 30 30 31 30 30 30 30 38
+
+# id: CAP-vplc-fx-3e-ascii-oct-F-02.2-R
+# kind: response  of: CAP-vplc-fx-3e-ascii-oct-F-02.2
+# outcome: ok  expect: bits 1 0 1 1 0 0 1 0  verdict: passed
+# ttfb_ms: 0.238  rx_ms: 0.000  rtt_ms: 0.238
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 31 30 31 31 30 30 31 30
+
+# id: CAP-vplc-fx-3e-ascii-oct-F-03
+# source: plc  profile: vplc-fx-3e-ascii-oct  step: F-03
+# frame: 3E  code: Ascii  op: WriteWords  device: D100  count: 1  via: api
+# kind: request
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 43 30 30 31 30 31 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 31 31 32 33 34
+
+# id: CAP-vplc-fx-3e-ascii-oct-F-03-R
+# kind: response  of: CAP-vplc-fx-3e-ascii-oct-F-03
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 0.354  rx_ms: 0.000  rtt_ms: 0.354
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-vplc-fx-3e-ascii-oct-F-03.2
+# source: plc  profile: vplc-fx-3e-ascii-oct  step: F-03.2
+# frame: 3E  code: Ascii  op: ReadWords  device: D100  count: 1  via: api
+# kind: request
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 31
+
+# id: CAP-vplc-fx-3e-ascii-oct-F-03.2-R
+# kind: response  of: CAP-vplc-fx-3e-ascii-oct-F-03.2
+# outcome: ok  expect: words 1234  verdict: passed
+# ttfb_ms: 0.310  rx_ms: 0.000  rtt_ms: 0.310
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 38 30 30 30 30 31 32 33 34
+

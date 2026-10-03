@@ -165,9 +165,10 @@ Expected<void> McDevice::configStatus() const {
 
 void McDevice::setLogSink(LogSink* sink) { m_sink->setTarget(sink); }
 
-Expected<Device> McDevice::parseHead(QStringView text) {
+Expected<Device> McDevice::parseHead(QStringView text, XyNumbering xy) {
     const QByteArray latin1 = text.toLatin1();
-    return parseDevice(std::string_view(latin1.constData(), static_cast<size_t>(latin1.size())));
+    return parseDevice(std::string_view(latin1.constData(), static_cast<size_t>(latin1.size())),
+                       xy);
 }
 
 Expected<SubscriptionId> McDevice::subscribe(Device head, quint32 count) {
@@ -179,7 +180,7 @@ Expected<SubscriptionId> McDevice::subscribe(Device head, quint32 count) {
 }
 
 Expected<SubscriptionId> McDevice::subscribe(QStringView device, quint32 count) {
-    const Expected<Device> head = parseHead(device);
+    const Expected<Device> head = parseHead(device, m_config.frame.xyNotation);
     if (!head) {
         return head.error();
     }
@@ -207,7 +208,7 @@ Expected<RequestId> McDevice::submit(const Request& r) {
 }
 
 Expected<RequestId> McDevice::writeWords(QStringView head, const QVector<quint16>& values) {
-    const Expected<Device> device = parseHead(head);
+    const Expected<Device> device = parseHead(head, m_config.frame.xyNotation);
     if (!device) {
         return device.error();
     }
@@ -228,7 +229,7 @@ Expected<RequestId> McDevice::writeWords(QStringView head, const QVector<quint16
 }
 
 Expected<RequestId> McDevice::writeBits(QStringView head, const QVector<bool>& values) {
-    const Expected<Device> device = parseHead(head);
+    const Expected<Device> device = parseHead(head, m_config.frame.xyNotation);
     if (!device) {
         return device.error();
     }
@@ -248,7 +249,7 @@ Expected<RequestId> McDevice::writeBits(QStringView head, const QVector<bool>& v
 }
 
 Expected<RequestId> McDevice::readWords(QStringView head, quint16 count) {
-    const Expected<Device> device = parseHead(head);
+    const Expected<Device> device = parseHead(head, m_config.frame.xyNotation);
     if (!device) {
         return device.error();
     }
@@ -256,7 +257,7 @@ Expected<RequestId> McDevice::readWords(QStringView head, quint16 count) {
 }
 
 Expected<RequestId> McDevice::readBits(QStringView head, quint16 count) {
-    const Expected<Device> device = parseHead(head);
+    const Expected<Device> device = parseHead(head, m_config.frame.xyNotation);
     if (!device) {
         return device.error();
     }
@@ -347,7 +348,7 @@ void McDevice::rebuildSession() {
 
     for (qsizetype i = 0; i < m_config.subscriptions.size(); ++i) {
         const SubscriptionSpec& spec = m_config.subscriptions[i];
-        const Expected<Device> head = parseHead(spec.device);
+        const Expected<Device> head = parseHead(spec.device, m_config.frame.xyNotation);
         const Expected<SubscriptionId> id = head ? m_session->subscribe(head.value(), spec.count)
                                                  : Expected<SubscriptionId>(head.error());
         if (!id) { // validate() accepted it, so this is not expected; keep the device unusable

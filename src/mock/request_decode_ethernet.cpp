@@ -77,16 +77,16 @@ size_t deviceFieldSize(DataCode code, PlcSeries series) {
     return series == PlcSeries::QL ? 4 : 6;
 }
 
-bool digitValue(uint8_t c, Radix radix, uint32_t& v) {
+bool digitValue(uint8_t c, uint32_t base, uint32_t& v) {
     if (c == ' ') { // spec §3.2: leading zeros of ASCII device numbers may be spaces
         v = 0;
         return true;
     }
     if (c >= '0' && c <= '9') {
         v = static_cast<uint32_t>(c - '0');
-        return true;
+        return v < base;
     }
-    if (radix == Radix::Hex) {
+    if (base == 16) {
         if (c >= 'A' && c <= 'F') {
             v = static_cast<uint32_t>(c - 'A' + 10);
             return true;
@@ -119,21 +119,28 @@ bool asciiCodeMatches(const char* tableCode, ByteView text) {
 // The device and subcommand decoding below is shared with the serial decoder
 // (request_decode_serial.cpp).
 
-bool parseDeviceNumber(ByteView digits, Radix radix, uint64_t& number) {
+uint32_t asciiNumberBase(const DeviceInfo& info, XyNumbering xy) {
+    if (xy == XyNumbering::Octal && (info.type == DeviceType::X || info.type == DeviceType::Y)) {
+        return 8;
+    }
+    return info.radix == Radix::Hex ? 16 : 10;
+}
+
+bool parseDeviceNumber(ByteView digits, uint32_t base, uint64_t& number) {
     number = 0;
     for (size_t i = 0; i < digits.size; ++i) {
         uint32_t digit = 0;
-        if (!digitValue(digits.data[i], radix, digit)) {
+        if (!digitValue(digits.data[i], base, digit)) {
             return false;
         }
-        number = number * (radix == Radix::Hex ? 16u : 10u) + digit;
+        number = number * base + digit;
     }
     return true;
 }
 
 size_t qnaAsciiDeviceSize(PlcSeries series) { return deviceFieldSize(DataCode::Ascii, series); }
 
-bool decodeQnaAsciiDevice(PlcSeries series, ByteView field, Device& out) {
+bool decodeQnaAsciiDevice(PlcSeries series, ByteView field, XyNumbering xy, Device& out) {
     const size_t codeSize = series == PlcSeries::QL ? 2 : 4;
     const ByteView codeText{field.data, codeSize};
     for (uint8_t i = 0; i < static_cast<uint8_t>(DeviceType::Count); ++i) {
@@ -143,8 +150,8 @@ bool decodeQnaAsciiDevice(PlcSeries series, ByteView field, Device& out) {
             continue;
         }
         uint64_t number = 0;
-        if (!parseDeviceNumber(ByteView{field.data + codeSize, field.size - codeSize}, info.radix,
-                               number)) {
+        if (!parseDeviceNumber(ByteView{field.data + codeSize, field.size - codeSize},
+                               asciiNumberBase(info, xy), number)) {
             return false;
         }
         out = Device{info.type, static_cast<uint32_t>(number)};
@@ -201,15 +208,15 @@ bool decodeBinaryDevice(PlcSeries series, ByteView field, Device& out) {
     return false;
 }
 
-bool decodeDevice(DataCode code, PlcSeries series, ByteView field, Device& out) {
-    return code == DataCode::Ascii ? decodeQnaAsciiDevice(series, field, out)
+bool decodeDevice(DataCode code, PlcSeries series, XyNumbering xy, ByteView field, Device& out) {
+    return code == DataCode::Ascii ? decodeQnaAsciiDevice(series, field, xy, out)
                                    : decodeBinaryDevice(series, field, out);
 }
 
 // Decodes the request data of one frame: monitoring timer (3E only, so `withTimer`), command,
 // subcommand, command data.
 template <class Codec>
-QnaRequest decodeBody(const Route& route, ByteView body, bool withTimer) {
+QnaRequest decodeBody(const Route& route, ByteView body, bool withTimer, XyNumbering xy) {
     QnaRequest req;
     req.route = route;
 
@@ -239,7 +246,7 @@ QnaRequest decodeBody(const Route& route, ByteView body, bool withTimer) {
     Device head;
     uint16_t count = 0;
     if (!rd.bytes(deviceFieldSize(Codec::kDataCode, series), deviceField) ||
-        !decodeDevice(Codec::kDataCode, series, deviceField, head) || !rd.u16(count) ||
+        !decodeDevice(Codec::kDataCode, series, xy, deviceField, head) || !rd.u16(count) ||
         count == 0) {
         return req;
     }
@@ -273,7 +280,7 @@ QnaRequest decodeBody(const Route& route, ByteView body, bool withTimer) {
     return req;
 }
 
-template <class Codec> DecodeResult decodeFrame(ByteView rx) {
+template <class Codec> DecodeResult decodeFrame(XyNumbering xy, ByteView rx) {
     constexpr bool ascii = Codec::kDataCode == DataCode::Ascii;
     const uint8_t* subheader = ascii ? kSubheaderAscii : kSubheaderBinary;
     constexpr size_t subheaderSize = ascii ? sizeof(kSubheaderAscii) : sizeof(kSubheaderBinary);
@@ -312,7 +319,7 @@ template <class Codec> DecodeResult decodeFrame(ByteView rx) {
 
     result.status = FrameStatus::Complete;
     result.consumed = headerSize + length;
-    result.request = decodeBody<Codec>(route, ByteView{rx.data + headerSize, length}, true);
+    result.request = decodeBody<Codec>(route, ByteView{rx.data + headerSize, length}, true, xy);
     return result;
 }
 
@@ -327,11 +334,12 @@ constexpr uint8_t kE1TestBits = 0x04;  // random write, bit units: not executed 
 constexpr uint8_t kE1TestWords = 0x05; // random write, word units: not executed (v1.1)
 
 // Spec §3.3: 1E Binary is number (LE 4) + code (LE 2); 1E ASCII is code (4 hex characters) +
-// number (8 hex characters), whatever the device's own radix. Spec §3.2 footnote 2: L and S have
-// no code of their own and are reached as M, so a code never decodes to L or S.
+// number (8 hex characters), whatever the device's own radix; X and Y carry 8 octal characters
+// when `xy` is Octal. Spec §3.2 footnote 2: L and S have no code of their own and are reached as
+// M, so a code never decodes to L or S.
 size_t e1DeviceFieldSize(DataCode code) { return code == DataCode::Ascii ? 12 : 6; }
 
-template <class Codec> bool decodeE1Device(ByteView field, Device& out) {
+template <class Codec> bool decodeE1Device(ByteView field, XyNumbering xy, Device& out) {
     constexpr bool ascii = Codec::kDataCode == DataCode::Ascii;
     const ByteView numberField = ascii ? ByteView{field.data + 4, 8} : ByteView{field.data, 4};
     const ByteView codeField = ascii ? ByteView{field.data, 4} : ByteView{field.data + 4, 2};
@@ -346,7 +354,15 @@ template <class Codec> bool decodeE1Device(ByteView field, Device& out) {
             continue;
         }
         if (info.e1Code != kNoCode && info.e1Code == code.value()) {
-            out = Device{info.type, number.value()};
+            uint32_t index = number.value();
+            if (ascii && asciiNumberBase(info, xy) == 8) {
+                uint64_t octal = 0;
+                if (!parseDeviceNumber(numberField, 8, octal)) {
+                    return false;
+                }
+                index = static_cast<uint32_t>(octal);
+            }
+            out = Device{info.type, index};
             return true;
         }
     }
@@ -355,7 +371,7 @@ template <class Codec> bool decodeE1Device(ByteView field, Device& out) {
 
 // Frames one 1E request from the start of `rx`. There is no length field: the frame ends where the
 // command's fixed layout says, given its point count (00H-03H) or its item count (04H, 05H).
-template <class Codec> DecodeResult1e decodeFrame1e(ByteView rx) {
+template <class Codec> DecodeResult1e decodeFrame1e(XyNumbering xy, ByteView rx) {
     constexpr bool ascii = Codec::kDataCode == DataCode::Ascii;
     // Subheader (command), PC No., monitoring timer (spec §5.3 fields 1-3).
     constexpr size_t headSize = Codec::u8Size() + Codec::u8Size() + Codec::u16Size();
@@ -440,8 +456,8 @@ template <class Codec> DecodeResult1e decodeFrame1e(ByteView rx) {
     result.consumed = total;
 
     Device dev;
-    bool executable = fixed == 0 &&
-                      decodeE1Device<Codec>(ByteView{rx.data + headSize, deviceSize}, dev);
+    bool executable =
+        fixed == 0 && decodeE1Device<Codec>(ByteView{rx.data + headSize, deviceSize}, xy, dev);
     ByteBuf data;
     if (executable && write) {
         data.resize(bitUnit ? count : size_t{count} * 2);
@@ -465,16 +481,18 @@ template <class Codec> DecodeResult1e decodeFrame1e(ByteView rx) {
 
 } // namespace
 
-DecodeResult decode3eRequest(DataCode code, ByteView rx) {
-    return code == DataCode::Ascii ? decodeFrame<AsciiCodec>(rx) : decodeFrame<BinaryCodec>(rx);
+DecodeResult decode3eRequest(DataCode code, XyNumbering xy, ByteView rx) {
+    return code == DataCode::Ascii ? decodeFrame<AsciiCodec>(xy, rx)
+                                   : decodeFrame<BinaryCodec>(xy, rx);
 }
 
-DecodeResult1e decode1eRequest(DataCode code, ByteView rx) {
-    return code == DataCode::Ascii ? decodeFrame1e<AsciiCodec>(rx) : decodeFrame1e<BinaryCodec>(rx);
+DecodeResult1e decode1eRequest(DataCode code, XyNumbering xy, ByteView rx) {
+    return code == DataCode::Ascii ? decodeFrame1e<AsciiCodec>(xy, rx)
+                                   : decodeFrame1e<BinaryCodec>(xy, rx);
 }
 
-QnaRequest decodeQnaAsciiRequestData(ByteView data) {
-    return decodeBody<AsciiCodec>(Route{}, data, false);
+QnaRequest decodeQnaAsciiRequestData(ByteView data, XyNumbering xy) {
+    return decodeBody<AsciiCodec>(Route{}, data, false, xy);
 }
 
 } // namespace mc::detail::mock
