@@ -135,7 +135,8 @@ public:
     /// Opens a new stream and returns its id (never 0, never reused by this object).
     MockStreamId openStream();
     /// Closes a stream: its partial request and its unsent responses are discarded (not counted
-    /// as EOT or skipped bytes). Closing 0 or an unknown id does nothing.
+    /// as EOT or skipped bytes). Closing 0 or an unknown id does nothing. Not re-entrant: never
+    /// called from the MockOptions::log sink during bytesIn() (owner 2026-10-04, doc only).
     void closeStream(MockStreamId id);
     /// As bytesIn(bytes) for one stream. Bytes for a closed or unknown stream are ignored.
     void bytesIn(MockStreamId id, ByteView bytes);

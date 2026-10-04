@@ -996,6 +996,16 @@ Task details live in the baton files `tasks/active/T-066.md` (X/Y octal numberin
 - [x] T-076 HIL view: confirm without typing only for loopback profiles (GUI-07 amended)
 - [x] T-077 Release builds green (MSVC and MinGW), Release presets back
 
+Known issues, noted only (owner 2026-10-04: no task):
+- GUI-08 workspace tests (`tst_gui_workspace.cpp:418`, `:646`, probe `T8_moreDamagedWorkspaceFiles…`) read
+  `liveRunners()` at once while runners are created and destroyed asynchronously: they can fail under
+  heavy CPU load (also on the tree before T-075). Fix if it recurs: poll with `QTRY_COMPARE`.
+- The skip message of the serial tests still gives `"COM50,COM51"` as the example (use COM54,COM55).
+- `MockPlc::closeStream()` from inside the `MockOptions::log` sink during `bytesIn()` crashes: documented
+  as not re-entrant (doc comment only, owner decision); the GUI never does it.
+- LOW from the T-075..T-077 review: `localhost` is trusted by name; one GUI interleave case relies on a
+  3 ms pause; two doc-comment format nits (`hil_types.h:62` width, `mock_runner.h` `///` vs `///<`).
+
 ---
 
 ## Phase 9: Bench and release

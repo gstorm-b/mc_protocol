@@ -3,6 +3,9 @@
 Curated by the team leader. One entry, one decision, newest first.
 Format: `- [T-xxx or date] Decision — why. (supersedes: entry, if any)`
 
+- [2026-10-04] Owner: no T-078 — the GUI-08 `liveRunners()` flake and the COM50 skip-message example
+  are noted in `tasks/todo.md` only; `closeStream()` re-entrancy from the log sink is documented in
+  `mock_plc.h` (no guard); Phase 9 waits until the owner has finished the HIL captures.
 - [2026-10-04] Owner decisions after Phase 8: (C) the HIL view's "confirm without typing" only for a
   loopback profile without `readOnly` frames, any other host or COM always types the id
   (`SPEC-gui-tool.md` amended; T-076); (a1) `MockPlc` input streams — one parser per client,

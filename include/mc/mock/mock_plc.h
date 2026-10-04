@@ -42,7 +42,8 @@ struct MockOptions {
     uint8_t outOfRange1c{0x06};      ///< 1C NAK code for a device beyond the limit.
     LogSink* log{nullptr};           ///< Not owned; null = no logging. Category `"mc.mock"`: one
                                      ///< `Trace` line per skipped serial byte, with the running
-                                     ///< MockPlc::skippedBytes().
+                                     ///< MockPlc::skippedBytes(). The sink must not call back
+                                     ///< into the MockPlc that writes to it (see closeStream()).
 };
 
 /**
@@ -227,6 +228,10 @@ public:
      *
      * The discarded bytes count as neither EOT nor skipped bytes. Closing 0 or an unknown id does
      * nothing.
+     *
+     * @warning Not re-entrant: do not call it from inside the MockOptions::log sink while a
+     * bytesIn() call of this object is running (the sink is called during reception); close the
+     * stream after bytesIn() has returned.
      *
      * @param[in] id Stream to close.
      */
