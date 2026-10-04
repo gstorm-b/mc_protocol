@@ -67,6 +67,12 @@ contradict `agent-team/core/`, this file wins.
   first item passes). A fresh agent per task (rule above). The Checkpoint H demo is the owner's.
   Writing outside the project is still excluded: ADS for MinGW is built into `build/` only.
   Phase 9 (bench and release) waits for the owner.
+- **Phase 8 follow-ups delegated, owner 2026-10-04:** "Duyệt spec. Giao quyền như phase 8. Hãy tạo
+  thành một task riêng để xử lí lỗi trong bản release." The `SPEC-mock-plc.md` (streams, a1) and
+  `SPEC-gui-tool.md` (confirmation, C) amendments are approved; T-075, T-076 and T-077 (Release
+  builds) run on Phase 8's terms: leader plans, fresh developer per task, one fresh tester and
+  reviewer over the batch, one commit after both pass. A change T-077 needs outside the test code
+  and build files (library behaviour, a spec) goes back to the owner. Phase 9 still waits.
 - Work on `main` unless the owner says otherwise.
 
 ## Phase-batched verification (owner decision 2026-09-27)

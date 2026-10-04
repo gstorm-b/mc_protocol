@@ -103,7 +103,11 @@ struct MockRequestRecord {
     PlcSeries series;       ///< From the subcommand actually received (QnA), else QL.
     bool answered;          ///< false when muted, station mismatch, or dropped.
     Error answeredWith;     ///< Ok, or the PLC error the mock returned.
+    uint32_t stream{0};     ///< Input stream the request came from (0 = the default stream).
 };
+
+/// Identifies one input stream of a MockPlc (one client connection). 0 is the default stream.
+using MockStreamId = uint32_t;
 
 class MockPlc {
 public:
@@ -122,6 +126,21 @@ public:
     void bytesIn(ByteView bytes);
     /// Next response to send, if any. The view is valid until the next call on this object.
     bool nextResponse(ByteView& out);
+
+    // ---- streams (amended 2026-10-04, owner decision a1) --------------------------------
+    // One server, several clients: each client gets its own stream, so its partial request
+    // and its responses never mix with another client's. Memory, faults, the request log and
+    // the counters stay shared. bytesIn(bytes) / nextResponse(out) above are stream 0, which
+    // always exists.
+    /// Opens a new stream and returns its id (never 0, never reused by this object).
+    MockStreamId openStream();
+    /// Closes a stream: its partial request and its unsent responses are discarded (not counted
+    /// as EOT or skipped bytes). Closing 0 or an unknown id does nothing.
+    void closeStream(MockStreamId id);
+    /// As bytesIn(bytes) for one stream. Bytes for a closed or unknown stream are ignored.
+    void bytesIn(MockStreamId id, ByteView bytes);
+    /// As nextResponse(out) for one stream; false for a closed or unknown stream.
+    bool nextResponse(MockStreamId id, ByteView& out);
 
     // ---- memory image ------------------------------------------------------------------
     /// Bit devices are single bits; word access to a bit device sees bit i of word k at
@@ -175,6 +194,16 @@ public:
 - **Station:** a request whose station number differs from `cfg.stationNo` gets **no response** (multidrop behaviour).
 - **EOT:** `EOT` (F4: `EOT CR LF`) at any point discards the partial request and increments `eotCount()`.
 
+### Streams
+
+Every stream has its own reception state (partial request, serial scan position, F2 block state)
+and its own response queue. Requests execute in the order they complete, whatever their stream,
+against the one memory image; `mute`, `muteNext`, `corruptNext` and `failRange` count and apply
+across all streams in that order. `requests()` records the stream of each request; `eotCount()`
+and `skippedBytes()` are totals over all streams. Closing a stream mid-request drops that partial
+request only, so the next client never sees it (the `virtual_plc` behaviour of one `MockPlc` per
+connection, with shared memory).
+
 ### Ethernet reception
 
 3E requests are framed by the request-data-length field; 1E requests by the command's fixed layout plus the point count. Bytes that cannot start a request (wrong subheader) are answered with nothing and logged in the request record as unanswered, so a client desync shows up as a timeout, like a real module. The 3E response **echoes the request's route**; `Corruption::WrongRoute` is how route checking is tested.
@@ -203,6 +232,7 @@ Two doctest binaries. `mc_mock_tests` (label `mock`) checks the mock against the
 | MCK-10 | Odd bit reads: 1E ASCII trailing dummy (V-1E-A-10), binary zero nibble (V-1E-B-10, V-3E-B-09) |
 | MCK-11 | `mute`, `muteNext`, and each `Corruption` mode produce exactly the documented bytes (or none) |
 | MCK-12 | `setDeviceLimit`: a request reaching the limit gets the out-of-range error; one below it succeeds |
+| MCK-13 | Streams: two streams fed interleaved fragments (one byte each, alternating) decode both requests and answer each on its own stream, on every frame family; a stream closed mid-request leaves no trace for the next stream; stream 0 calls equal the stream-less calls; faults and the request log are shared (`stream` recorded); a closed or unknown id is ignored |
 | MCK-HYG | `src/mock/**` includes only the headers allowed by the independence rule |
 
 The vector loader is shared with `core-protocol` (see "Changes required in other specs").

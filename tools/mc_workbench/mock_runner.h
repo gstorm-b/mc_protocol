@@ -21,6 +21,7 @@
 #include <QVector>
 
 #include <cstdint>
+#include <map>
 #include <memory>
 
 class QIODevice;
@@ -38,9 +39,11 @@ namespace mc::workbench {
  * Created by a `RunnerThread` factory: the mock, the `QTcpServer`, the `QSerialPort` and the
  * sockets live on the runner thread. Bytes that arrive go into `MockPlc::bytesIn()`; what
  * `nextResponse()` hands back is written to the same socket or port. One `MockPlc` serves every
- * connection (up to `kMaxClients` TCP clients at once; each chunk a client sends is fed to the mock
- * whole and the responses it yields go back to that client), so the memory image the GUI edits is
- * the one every client sees. TCP and COM serving exclude each other: stopListening() ends either.
+ * connection (up to `kMaxClients` TCP clients at once), so the memory image the GUI edits is the
+ * one every client sees. Each TCP client has its own `MockPlc` input stream (opened when it
+ * connects, closed when it disconnects) and its own trace decoder, so requests split across
+ * segments by two clients never mix and a request a client abandons dies with its connection. COM
+ * serving uses stream 0. TCP and COM serving exclude each other: stopListening() ends either.
  *
  * Statistics, request log entries and log lines are emitted at most about 30 times a second. The
  * request log of the `MockPlc` is cleared on every emit, so it stays bounded; `MockStats` carries
@@ -315,13 +318,14 @@ private:
     void buildPlc();
     void onNewConnection();
     void onReadyRead(QIODevice* io);
+    void releaseLink(QTcpSocket* socket);
     void dropClients();
     void closeServer();
     void closeSerial(const QString& reason);
     void announceServing(bool serving, const QString& what);
     bool isServing() const;
     void flushNow(bool force = false);
-    void collectFrame(qint64 tNs, bool tx, const QByteArray& bytes);
+    void collectFrame(qint64 tNs, bool tx, const QByteArray& bytes, FrameDecoder* decoder);
     void configureCapture();
     void emitCaptureStatus();
     void answer(quint64 token, bool ok, const QString& message, quint64 value);
@@ -335,6 +339,12 @@ private:
     QThread* m_plcThread{nullptr}; ///< The thread the mock was created on.
     QTcpServer* m_server;          ///< Child of this object.
     QVector<QTcpSocket*> m_clients; ///< Children of the server, in connection order.
+    /// What one TCP client owns on the mock: its input stream and its trace decoder.
+    struct ClientLink {
+        mc::MockStreamId stream{0};
+        std::unique_ptr<FrameDecoder> decoder; /// Null while decode is off.
+    };
+    std::map<QTcpSocket*, ClientLink> m_links; ///< One entry per element of m_clients.
     QSerialPort* m_serial{nullptr}; ///< Child of this object while a COM port is served.
     QTimer* m_flushTimer;          ///< Single shot; armed when traffic is pending.
     quint64 m_requests{0};         ///< Requests seen, from the cleared request logs.
@@ -345,7 +355,7 @@ private:
     quint64 m_framesDropped{0};
     bool m_dropsChanged{false};
     quint32 m_pendingRequestsDropped{0}; ///< Request entries discarded while the GUI was behind.
-    std::unique_ptr<FrameDecoder> m_decoder; ///< Null while decode is off.
+    std::unique_ptr<FrameDecoder> m_decoder; ///< COM link (stream 0); null while decode is off.
     bool m_decode{true};
     FlowGate m_gate;
     bool m_flushWanted{false}; ///< A flush was held back by the gate.

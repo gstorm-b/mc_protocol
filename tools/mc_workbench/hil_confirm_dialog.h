@@ -22,9 +22,10 @@ namespace mc::workbench {
  *
  * It shows the confirmation summary of `hil_capture` (PLC identity, transport, scratch area,
  * read-only frames). Whether the OK button works is decided by `confirmationAccepted()`, the rule
- * `runTool()` applies; when the run holds read-only frames the "confirm without typing" box does
- * not exist, so nothing but the exact profile id enables the button. The runner checks the same
- * rule again before it starts.
+ * `runTool()` applies; the "confirm without typing" box exists only for a loopback TCP profile
+ * whose run holds no read-only frame (`skipTypingAllowed()`). For any other profile (another host,
+ * a COM port) or a run with read-only frames nothing but the exact profile id enables the button.
+ * The runner checks the same rule again before it starts.
  *
  * @note GUI thread only.
  */
@@ -43,10 +44,12 @@ public:
     QString typedId() const;
 
     /// @brief Whether the operator asked to confirm without typing and may.
-    /// @return false when the run holds read-only frames, whatever the box says.
+    /// @return false when the box does not exist (read-only frames, or not a loopback profile),
+    /// whatever was asked.
     bool skipTyping() const;
 
-    /// @brief Whether the "confirm without typing" box exists (the run holds no read-only frame).
+    /// @brief Whether the "confirm without typing" box exists (loopback TCP profile, no read-only
+    /// frame).
     /// @return true when it does.
     bool skipTypingAvailable() const;
 

@@ -8,6 +8,12 @@ All notable changes to this project are documented in this file. The format foll
 
 ### Added
 
+- `MockPlc` input streams, one per client of a server: `MockStreamId`, `openStream()`,
+  `closeStream()`, `bytesIn(id, bytes)`, `nextResponse(id, out)` and `MockRequestRecord::stream`.
+  Each stream has its own partial request, serial scan state and response queue; memory, faults,
+  the request log and the counters stay shared, and the stream-less calls are stream 0. The
+  `mc_workbench` mock tab opens one stream per TCP client, so interleaved partial requests and a
+  request abandoned by a closed client no longer corrupt another client.
 - X/Y numbering for FX CPUs: `XyNumbering { Hex, Octal }`, `FrameConfig::xyNotation` (how X/Y
   numbers are written as text) and `FrameConfig::xyAsciiDigits` (the digits of X/Y numbers inside
   ASCII frames: 3E, 1E, 3C, 1C), both defaulting to `Hex`, and the overloads

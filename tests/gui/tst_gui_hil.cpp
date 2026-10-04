@@ -91,6 +91,29 @@ QString writeProfile(const QString& dir, const QString& exampleId, const QString
     return path;
 }
 
+// A copy of an example profile under a new id whose tcp host is @p host (the transport kind of the
+// example is kept: a serial example stays serial). The example's other settings are not changed.
+QString writeProfileHost(const QString& dir, const QString& exampleId, const QString& newId,
+                         const QString& host) {
+    QJsonObject root = readJson(exampleProfile(exampleId));
+    QJsonObject profile = root.value(QStringLiteral("profile")).toObject();
+    profile.insert(QStringLiteral("id"), newId);
+    root.insert(QStringLiteral("profile"), profile);
+    QJsonObject device = root.value(QStringLiteral("device")).toObject();
+    QJsonObject transport = device.value(QStringLiteral("transport")).toObject();
+    QJsonObject tcp = transport.value(QStringLiteral("tcp")).toObject();
+    tcp.insert(QStringLiteral("host"), host);
+    transport.insert(QStringLiteral("tcp"), tcp);
+    device.insert(QStringLiteral("transport"), transport);
+    root.insert(QStringLiteral("device"), device);
+    const QString path = dir + QStringLiteral("/") + newId + QStringLiteral(".json");
+    QFile f(path);
+    if (f.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+        f.write(QJsonDocument(root).toJson());
+    }
+    return path;
+}
+
 QString writePlan(const QString& dir, const QString& name, const QByteArray& json) {
     const QString path = dir + QStringLiteral("/") + name;
     QFile f(path);
@@ -100,10 +123,10 @@ QString writePlan(const QString& dir, const QString& name, const QByteArray& jso
     return path;
 }
 
-// tests/hil/e2e/plan_3e.json without E-10. E-10 sends a truncated frame and reconnects; virtual_plc
-// gives every connection its own MockPlc, but a mock tab serves all its clients with one shared
-// parser (T-070, "Known limits"), so the half frame of E-10 would still be in it when the link comes
-// back. E-09 stays: it is a read-only frame too, so the typed confirmation is part of the run.
+// tests/hil/e2e/plan_3e.json without E-10. E-10's follow-up read expects the fresh image of a new
+// virtual_plc connection (D100 = 1234), while a mock tab keeps one memory for all its clients; the
+// full plan, E-10 included, runs against a mock tab in tst_gui_mock_streams.cpp (T-075). E-09
+// stays: it is a read-only frame too, so the typed confirmation is part of the run.
 QString mockPlan(const QString& dir) {
     QJsonObject plan = readJson(e2ePlan("plan_3e.json"));
     QJsonArray kept;
@@ -438,6 +461,7 @@ private slots:
     void GUI_07_confirmationRuleIsTheRuleOfHilCapture() {
         HilCheckResult withFrames;
         withFrames.exitCode = 0;
+        withFrames.loopbackTcp = true;
         withFrames.profileId = QStringLiteral("prof-1");
         withFrames.readOnlyFrames = {{QStringLiteral("E-09"), QStringLiteral("frame"), QStringLiteral("50 00")}};
         HilCheckResult plain = withFrames;
@@ -470,6 +494,7 @@ private slots:
     void GUI_07_theDialogEnablesRunOnlyForTheTypedIdWhenReadOnlyFramesExist() {
         HilCheckResult withFrames;
         withFrames.exitCode = 0;
+        withFrames.loopbackTcp = true;
         withFrames.profileId = QStringLiteral("prof-1");
         withFrames.confirmationText = QStringLiteral("summary");
         withFrames.readOnlyFrames = {{QStringLiteral("E-09"), QStringLiteral("frame"), QStringLiteral("50 00")}};
@@ -497,6 +522,215 @@ private slots:
         repeat.setSkipTyping(true);
         QVERIFY(repeat.acceptEnabled());
         QVERIFY(repeat.okButton()->isEnabled());
+    }
+
+    // T-076 (owner decision C, 2026-10-04): "confirm without typing" only for a loopback TCP profile
+    // whose run has no read-only frames. {loopback TCP, other TCP host, COM} x {read-only frames,
+    // none} x {typed right, typed wrong, nothing typed} x {skip off, skip on}.
+    void GUI_07_skipTypingTruthTable() {
+        enum class Target { Loopback, OtherHost, Com };
+        for (const Target target : {Target::Loopback, Target::OtherHost, Target::Com}) {
+            for (const bool readOnly : {false, true}) {
+                HilCheckResult check;
+                check.exitCode = 0;
+                check.profileId = QStringLiteral("prof-1");
+                check.loopbackTcp = target == Target::Loopback;
+                if (readOnly) {
+                    check.readOnlyFrames = {{QStringLiteral("E-09"), QStringLiteral("frame"), QStringLiteral("50 00")}};
+                }
+                const bool allowed = target == Target::Loopback && !readOnly;
+                QCOMPARE(skipTypingAllowed(check), allowed);
+                for (const QString& typed : {QStringLiteral("prof-1"), QStringLiteral("wrong"), QString()}) {
+                    for (const bool skip : {false, true}) {
+                        const bool right = typed == QLatin1String("prof-1");
+                        const bool expected = right || (skip && allowed);
+                        QString why;
+                        const bool got = confirmationAccepted(check, typed, skip, &why);
+                        QVERIFY2(got == expected,
+                                 qPrintable(QStringLiteral("target %1 readOnly %2 typed '%3' skip %4: got %5")
+                                                .arg(static_cast<int>(target)).arg(readOnly).arg(typed)
+                                                .arg(skip).arg(got)));
+                        QCOMPARE(mustTypeProfileId(check, skip), !(skip && allowed));
+                        QCOMPARE(why.isEmpty(), expected);
+
+                        // the dialog follows the same rule, and offers the box only where it counts
+                        HilCheckResult shown = check;
+                        shown.confirmationText = QStringLiteral("summary");
+                        HilConfirmDialog dialog(shown);
+                        QCOMPARE(dialog.skipTypingAvailable(), allowed);
+                        dialog.setSkipTyping(skip);
+                        QCOMPARE(dialog.skipTyping(), skip && allowed);
+                        dialog.typeId(typed);
+                        QCOMPARE(dialog.acceptEnabled(), expected);
+                        QCOMPARE(dialog.okButton()->isEnabled(), expected);
+                        dialog.accept();
+                        QCOMPARE(dialog.result() == QDialog::Accepted, expected);
+                    }
+                }
+            }
+        }
+        // a run the gate did not pass is never confirmed, loopback or not
+        HilCheckResult refused;
+        refused.exitCode = 3;
+        refused.loopbackTcp = true;
+        refused.profileId = QStringLiteral("prof-1");
+        QVERIFY(!confirmationAccepted(refused, QStringLiteral("prof-1"), true));
+        // the refusal says why a non-loopback profile cannot skip
+        HilCheckResult other;
+        other.exitCode = 0;
+        other.profileId = QStringLiteral("prof-1");
+        QString why;
+        QVERIFY(!confirmationAccepted(other, QString(), true, &why));
+        QVERIFY2(why.contains(QStringLiteral("loopback")), qPrintable(why));
+    }
+
+    // The check derives loopbackTcp from the profile: 127.0.0.0/8, ::1, localhost (as isLoopbackHost)
+    // are loopback; another host and a COM profile are not.
+    void GUI_07_loopbackIsDerivedFromTheProfile() {
+        const QString dir = freshOutputDir(QStringLiteral("gui-t076-derive"));
+        const QString plan = writePlan(dir, QStringLiteral("simple.json"), kSimplePlan);
+        const auto check = [&](const QString& profilePath) {
+            HilCheckInput input;
+            input.profilePath = profilePath;
+            input.planPath = plan;
+            const HilPrepared prepared = prepareHil(input);
+            [&]() { QVERIFY2(prepared.ok(), qPrintable(prepared.errorText + prepared.refusalText)); }();
+            return prepared.toResult();
+        };
+        for (const QString& host : {QStringLiteral("127.0.0.1"), QStringLiteral("127.8.9.10"),
+                                    QStringLiteral("::1"), QStringLiteral("localhost")}) {
+            const HilCheckResult r = check(writeProfileHost(dir, QStringLiteral("q03ude-eth-3e-bin"),
+                                                            QStringLiteral("t76-loop"), host));
+            QVERIFY2(r.ok(), qPrintable(host));
+            QVERIFY2(r.loopbackTcp, qPrintable(host));
+            QVERIFY2(skipTypingAllowed(r), qPrintable(host));
+        }
+        for (const QString& host : {QStringLiteral("192.0.2.10"), QStringLiteral("10.0.0.1"),
+                                    QStringLiteral("example.invalid"), QStringLiteral("128.0.0.1")}) {
+            const HilCheckResult r = check(writeProfileHost(dir, QStringLiteral("q03ude-eth-3e-bin"),
+                                                            QStringLiteral("t76-other"), host));
+            QVERIFY2(r.ok(), qPrintable(host));
+            QVERIFY2(!r.loopbackTcp, qPrintable(host));
+            QVERIFY2(!skipTypingAllowed(r), qPrintable(host));
+        }
+        // a COM profile, even one whose (unused) tcp block names 127.0.0.1
+        const QString com = writeProfileHost(dir, QStringLiteral("q03ude-c24-3c-f4"),
+                                             QStringLiteral("t76-com"), QStringLiteral("127.0.0.1"));
+        const HilCheckResult r = check(com);
+        QVERIFY(r.ok());
+        QVERIFY(!r.loopbackTcp);
+        QVERIFY(!skipTypingAllowed(r));
+    }
+
+    // The runner thread refuses skipTyping for a non-loopback or COM profile on its own, whatever the
+    // dialog did. The profiles are the committed examples (192.0.2.10, COM1): a run that got past the
+    // refusal would try to connect or open the port, so the check is the status, the missing capture
+    // folder and the time it took. A loopback listener cannot stand in for a non-loopback host (the
+    // profile would then be loopback), so the runner is also shown to start and connect for a
+    // loopback profile in the same setup, and the decision function carries the truth table above.
+    void GUI_07_theRunnerRefusesSkipTypingForANonLoopbackOrComProfile() {
+        const QString dir = freshOutputDir(QStringLiteral("gui-t076-runner"));
+        const QString plan = writePlan(dir, QStringLiteral("simple.json"), kSimplePlan);
+        const QString root = dir + QStringLiteral("/captured");
+        struct Case {
+            const char* name;
+            QString profile;
+            QString id;
+        };
+        const QVector<Case> cases = {
+            {"other tcp host", writeProfileHost(dir, QStringLiteral("q03ude-eth-3e-bin"),
+                                                QStringLiteral("t76-other"), QStringLiteral("192.0.2.10")),
+             QStringLiteral("t76-other")},
+            {"com port", writeProfileHost(dir, QStringLiteral("q03ude-c24-3c-f4"),
+                                          QStringLiteral("t76-com"), QStringLiteral("192.0.2.10")),
+             QStringLiteral("t76-com")},
+        };
+        HilHost host(QStringLiteral("gui07-t076"));
+        for (const Case& c : cases) {
+            HilCheckInput input;
+            input.profilePath = c.profile;
+            input.planPath = plan;
+            HilCheckResult check;
+            QVERIFY2(checkVia(host, input, &check), c.name);
+            QVERIFY2(check.ok(), qPrintable(check.errorText + check.refusalText));
+            QVERIFY2(check.readOnlyFrames.isEmpty(), c.name);
+            QVERIFY2(!check.loopbackTcp, c.name);
+
+            for (const QString& typed : {QString(), QStringLiteral("wrong")}) {
+                HilRunRequest request = requestFor(input, check, root);
+                request.typedId = typed;
+                request.skipTyping = true; // as if the dialog had been bypassed
+                QElapsedTimer timer;
+                timer.start();
+                HilRunResult result;
+                QVERIFY2(runVia(host, request, &result), c.name);
+                QVERIFY2(result.status == HilRunStatus::NotConfirmed, c.name);
+                QVERIFY2(result.reason.contains(c.id), qPrintable(result.reason));
+                QVERIFY2(!result.onGuiThread, c.name);
+                QVERIFY2(timer.elapsed() < 1500, c.name); // no connect attempt, no port open
+                QVERIFY2(!QDir(root).exists(), c.name);
+            }
+            // typed id, no skip: allowed by the rule (the request is only judged, not run, here:
+            // the digest of another check keeps it from starting)
+            HilRunRequest typed = requestFor(input, check, root);
+            typed.expectedDigest = QStringLiteral("0000");
+            HilRunResult result;
+            QVERIFY(runVia(host, typed, &result));
+            QVERIFY(result.status == HilRunStatus::NotConfirmed);
+            QVERIFY(result.reason.contains(QStringLiteral("changed")));
+        }
+
+        // the view: its dialog does not offer the box for these profiles, and the view's own call
+        // with skipTyping and no id still reaches the runner's refusal
+        for (const Case& c : cases) {
+            HilView view;
+            view.setProfilePath(c.profile);
+            view.setPlanPath(plan);
+            view.setOutputRoot(root);
+            QSignalSpy checked(&view, &HilView::checkDone);
+            view.check();
+            QTRY_COMPARE_WITH_TIMEOUT(checked.count(), 1, kWait);
+            QVERIFY2(view.lastCheck().ok(), c.name);
+            QVERIFY2(view.canRun(), c.name);
+            bool skipBox = true;
+            bool enabled = true;
+            {
+                DialogDriver driver([&](HilConfirmDialog* d) {
+                    skipBox = d->skipTypingAvailable();
+                    d->setSkipTyping(true);
+                    enabled = d->okButton()->isEnabled();
+                    d->accept();
+                    d->reject();
+                });
+                QCOMPARE(view.requestRun(), quint64(0));
+                QVERIFY(driver.seen());
+            }
+            QVERIFY2(!skipBox, c.name);
+            QVERIFY2(!enabled, c.name);
+            QSignalSpy done(&view, &HilView::runDone);
+            QVERIFY2(view.runWith(QString(), true) != 0, c.name);
+            QTRY_COMPARE_WITH_TIMEOUT(done.count(), 1, kWait);
+            QVERIFY2(view.lastRun().status == HilRunStatus::NotConfirmed, c.name);
+            QVERIFY2(!QDir(root).exists(), c.name);
+        }
+
+        // the loopback twin of the first profile does take --yes (to a mock, on the runner thread)
+        MockRig mock(QStringLiteral("gui07-t076"));
+        QVERIFY(mock.ok);
+        mock.host.setWords(QStringLiteral("D100"), {1234});
+        HilCheckInput input;
+        input.profilePath = writeProfile(dir, QStringLiteral("q03ude-eth-3e-bin"),
+                                         QStringLiteral("t76-loop"), mock.port);
+        input.planPath = plan;
+        HilCheckResult check;
+        QVERIFY(checkVia(host, input, &check));
+        QVERIFY(check.loopbackTcp);
+        HilRunRequest request = requestFor(input, check, root);
+        request.typedId.clear();
+        request.skipTyping = true;
+        HilRunResult result;
+        QVERIFY(runVia(host, request, &result));
+        QVERIFY2(result.status == HilRunStatus::Finished, qPrintable(result.reason));
     }
 
     void GUI_07_aRunWithReadOnlyFramesIsNotStartedWithoutTheTypedId() {

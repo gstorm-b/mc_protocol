@@ -67,4 +67,5 @@ SOURCES += \
     $$PWD/../gui/tst_gui_hil.cpp \
     $$PWD/../gui/tst_gui_workspace.cpp \
     $$PWD/../gui/tst_gui_virtual_plc.cpp \
+    $$PWD/../gui/tst_gui_mock_streams.cpp \
     $$PWD/../gui/tst_gui_tester_probes.cpp

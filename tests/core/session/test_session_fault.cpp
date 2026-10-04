@@ -67,6 +67,17 @@ PeerScript okWords(std::initializer_list<uint16_t> words) {
 // runs) -- so a later test case never inherits a stale handler.
 int g_drainViolationCalls = 0;
 
+// How many handler calls n drain violations produce: the handler runs in Debug builds only
+// (notifyDrainViolation() is a no-op under NDEBUG); the discard-and-log recovery runs in both.
+constexpr int expectedHandlerCalls(int violations) noexcept {
+#ifndef NDEBUG
+    return violations;
+#else
+    (void)violations;
+    return 0;
+#endif
+}
+
 void recordDrainViolation() noexcept { ++g_drainViolationCalls; }
 
 struct RaiiRestoreHandler {
@@ -367,7 +378,7 @@ TEST_CASE("Rework (phase review blocker, T-026): a drain violation must release 
     // the undrained Snapshot+CycleDone and discards them (one violation), then subscribe() itself
     // sets m_rePlanPending = true for this new subscription.
     REQUIRE(s.subscribe(Device{DeviceType::D, 200}, 1).hasValue());
-    CHECK(g_drainViolationCalls == 1);
+    CHECK(g_drainViolationCalls == expectedHandlerCalls(1)); // Debug: 1; Release: handler is a no-op.
     REQUIRE_FALSE(s.nextOutput(out)); // Confirms the ring really is empty: the violation did fire.
 
     // Round 2 must still be able to start. On the pre-fix code, m_pendingPlanRefs is stuck at 1
@@ -433,8 +444,10 @@ TEST_CASE("Rework (phase review blocker, T-026): a drain violation must release 
     }
     s.tick(clock.now());
 
-    CHECK(g_drainViolationCalls == cycles); // One per cycle: cycles - 1 from later submit()s, one
-                                              // from the trailing tick() for the last cycle.
+    // Debug: one handler call per cycle (cycles - 1 from later submit()s, one from the trailing
+    // tick() for the last cycle). Release: none; the loop's REQUIRE(submitted) above is the proof
+    // that every discard still freed its slot.
+    CHECK(g_drainViolationCalls == expectedHandlerCalls(cycles));
 }
 
 // =============================================================================================

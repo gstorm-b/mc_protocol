@@ -10,6 +10,12 @@
 
 # qpb (MIT, vendored unmodified in components/qpb; its own CMake file is used as it is).
 add_subdirectory("${PROJECT_SOURCE_DIR}/components/qpb" "${CMAKE_CURRENT_BINARY_DIR}/qpb")
+if(MSVC)
+    # Release only: qpb's Int64SpinBox.cpp inlines Qt's qnumeric.h (qMulOverflow path) and cl reports
+    # C4702 inside that Qt header. Third-party code on both sides, so silenced for this one vendored
+    # target, not globally.
+    target_compile_options(qpb_widgets PRIVATE /wd4702)
+endif()
 
 add_library(mc_workbench_core STATIC
     component_versions.h

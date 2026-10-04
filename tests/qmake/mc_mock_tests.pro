@@ -47,4 +47,5 @@ SOURCES += \
     $$PWD/../mock/test_mock_memory.cpp \
     $$PWD/../mock/test_mock_vectors.cpp \
     $$PWD/../mock/test_mock_stream.cpp \
+    $$PWD/../mock/test_mock_streams.cpp \
     $$PWD/../mock/test_mock_faults.cpp

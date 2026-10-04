@@ -103,7 +103,12 @@ if(MC_BUILD_GUI)
         message(STATUS "MC Workbench (GUI) skipped: ${MC_GUI_SKIP_REASON}")
     else()
         # Imported targets are directory-scoped; tests/ links the GUI libraries and needs this one.
-        set_target_properties(ads::qtadvanceddocking-qt6 PROPERTIES IMPORTED_GLOBAL TRUE)
+        # RelWithDebInfo / MinSizeRel: ADS ships only Debug and Release; without this mapping CMake
+        # picks the first one listed (Debug), linking the debug ADS next to release Qt (a
+        # "Must construct a QApplication" abort at the first widget).
+        set_target_properties(ads::qtadvanceddocking-qt6 PROPERTIES IMPORTED_GLOBAL TRUE
+            MAP_IMPORTED_CONFIG_RELWITHDEBINFO "RELEASE;DEBUG"
+            MAP_IMPORTED_CONFIG_MINSIZEREL "RELEASE;DEBUG")
         message(STATUS "MC Workbench (GUI) enabled: ADS ${qtadvanceddocking-qt6_VERSION} from ${MC_ADS_DIR}")
         add_subdirectory(mc_workbench)
     endif()

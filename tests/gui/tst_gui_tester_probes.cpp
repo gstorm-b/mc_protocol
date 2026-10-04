@@ -9,6 +9,7 @@
 #include "gui_suites.h"
 #include "gui_test_support.h"
 
+#include "mc/core/protocol.h"
 #include "mc_workbench/capture_export.h"
 #include "mc_workbench/device_host.h"
 #include "mc_workbench/device_tab.h"
@@ -73,7 +74,8 @@ void writeBytes(const QString& path, const QByteArray& bytes) {
 }
 
 // A copy of an example profile aimed at a loopback port.
-QString writeProfile(const QString& dir, const QString& newId, quint16 port, int timeoutMs = 400) {
+QString writeProfile(const QString& dir, const QString& newId, quint16 port, int timeoutMs = 400,
+                     const QString& host = QStringLiteral("127.0.0.1")) {
     QJsonObject root = readJson(testsDir() + QStringLiteral("/hil/profiles/q03ude-eth-3e-bin.example.json"));
     QJsonObject profile = root.value(QStringLiteral("profile")).toObject();
     profile.insert(QStringLiteral("id"), newId);
@@ -87,7 +89,7 @@ QString writeProfile(const QString& dir, const QString& newId, quint16 port, int
     device.insert(QStringLiteral("session"), session);
     QJsonObject transport = device.value(QStringLiteral("transport")).toObject();
     QJsonObject tcp = transport.value(QStringLiteral("tcp")).toObject();
-    tcp.insert(QStringLiteral("host"), QStringLiteral("127.0.0.1"));
+    tcp.insert(QStringLiteral("host"), host);
     tcp.insert(QStringLiteral("port"), static_cast<int>(port == 0 ? 1 : port));
     tcp.insert(QStringLiteral("connectTimeoutMs"), 1000);
     transport.insert(QStringLiteral("tcp"), tcp);
@@ -437,6 +439,239 @@ private slots:
             qInfo("isLoopbackHost(\"%s\") = %d", qPrintable(s), isLoopbackHost(s) ? 1 : 0);
         }
         QVERIFY(isLoopbackHost(QStringLiteral("127.0.0.1")));
+    }
+
+    // ---- T-075 batch tester (tester9): client churn on one mock tab --------------------------------
+
+    // One steady client keeps asking while other clients connect, send half a request or junk, and
+    // leave (reset or orderly close), with the trace decoder toggled meanwhile. The steady client and
+    // a fresh client at the end must always get the right words: no byte of one link reaches another.
+    void T9_clientChurnNeverDisturbsAnAnsweringClient() {
+        MockRig mock(QStringLiteral("t9-churn"));
+        QVERIFY(mock.ok);
+        mc::Request read;
+        read.op = mc::Op::ReadWords;
+        read.head = mc::Device{mc::DeviceType::D, 100};
+        read.count = 4;
+        const auto encoded = mc::McProtocol(mc::FrameConfig::frame3E()).encode(read);
+        QVERIFY(encoded.hasValue());
+        const QByteArray whole(reinterpret_cast<const char*>(encoded.value().data()),
+                               static_cast<qsizetype>(encoded.value().size()));
+        const auto connectSock = [&](QTcpSocket& s) {
+            s.connectToHost(QHostAddress::LocalHost, mock.port);
+            s.setSocketOption(QAbstractSocket::LowDelayOption, 1);
+            return s.waitForConnected(kWait);
+        };
+        const auto askAndCheck = [&](QTcpSocket& s, const char* what) {
+            s.write(whole);
+            s.flush();
+            QByteArray got;
+            (void)QTest::qWaitFor(
+                [&]() {
+                    got += s.readAll();
+                    return got.size() >= 19;
+                },
+                kWait);
+            QVERIFY2(got.size() == 19, what);
+            QVERIFY2(static_cast<quint8>(got[0]) == 0xD0 && got[9] == 0 && got[10] == 0, what);
+            QVERIFY2(static_cast<quint8>(got[11]) == 10 && static_cast<quint8>(got[13]) == 20 &&
+                         static_cast<quint8>(got[15]) == 30 && static_cast<quint8>(got[17]) == 40,
+                     what);
+        };
+        QTcpSocket steady;
+        QVERIFY(connectSock(steady));
+        for (int round = 0; round < 60; ++round) {
+            if (round % 7 == 3) {
+                mock.host.setTraceDecode(round % 2 == 0);
+            }
+            QTcpSocket gone;
+            QVERIFY(connectSock(gone));
+            if (round % 3 == 0) {
+                gone.write(whole.constData(), 1 + (round % (whole.size() - 1)));
+            } else if (round % 3 == 1) {
+                gone.write(QByteArray(20, '\xFF'));
+            } else {
+                gone.write(whole.constData(), whole.size() - 1);
+            }
+            gone.flush();
+            QTest::qWait(round % 5);
+            askAndCheck(steady, "steady client while another link holds a partial request");
+            if (round % 2 == 0) {
+                gone.abort();
+            } else {
+                gone.disconnectFromHost();
+            }
+        }
+        QTcpSocket fresh;
+        QVERIFY(connectSock(fresh));
+        askAndCheck(fresh, "fresh client after the churn");
+        askAndCheck(steady, "steady client after the churn");
+    }
+
+    // ---- T-076 batch tester (tester9): skipTyping for non-loopback spellings and edited profiles --
+
+    // Every host spelling that is NOT loopback (all aimed at TEST-NET-1 / reserved / invalid names, never
+    // at anything real) must be refused by the runner thread when skipTyping is forced: NotConfirmed, no
+    // capture folder, quickly (no connect attempt). A spelling the profile loader refuses is also safe.
+    void T9_noNonLoopbackSpellingGetsASkippedTyping() {
+        const QString dir = freshOutputDir(QStringLiteral("t9-spell"));
+        const QString plan = dir + QStringLiteral("/simple.json");
+        writeBytes(plan, kSimplePlan);
+        const QStringList nonLoopback = {
+            QStringLiteral("192.0.2.10"),          QStringLiteral("192.000.002.010"),
+            QStringLiteral("0xC000020A"),          QStringLiteral("3221226010"),
+            QStringLiteral("::ffff:192.0.2.10"),   QStringLiteral("[::ffff:192.0.2.10]"),
+            QStringLiteral("0.0.0.0"),             QStringLiteral("::"),
+            QStringLiteral("localhost.example.invalid"), QStringLiteral("127.0.0.1.example.invalid"),
+            QStringLiteral("localhost.."),         QStringLiteral("localhost:502"),
+            QStringLiteral("127.0.0.1:502"),       QStringLiteral("[::1]:502"),
+            QStringLiteral("127.0.0.1 evil.invalid"), QStringLiteral("evil.invalid"),
+            QStringLiteral("128.0.0.1"),           QStringLiteral("::ffff:0:127.0.0.1"),
+            QStringLiteral("0127.0.0.1"),          QStringLiteral("1.invalid"),
+            QStringLiteral("localhost.localdomain"), QStringLiteral("ip6-localhost"),
+            QStringLiteral(""),                    QStringLiteral(" ")};
+        HilHost host(QStringLiteral("t9-spell"));
+        const QString out = dir + QStringLiteral("/out");
+        int refusedAtLoad = 0;
+        int refusedByRunner = 0;
+        QStringList bad;
+        for (const QString& spelling : nonLoopback) {
+            // 0127.0.0.1 is 87.0.0.1 (a public address): only the check is made, never a run
+            const bool checkOnly = spelling == QLatin1String("0127.0.0.1");
+            const QString profile = writeProfile(dir, QStringLiteral("t9-sp"), 0, 400, spelling);
+            HilCheckInput input;
+            input.profilePath = profile;
+            input.planPath = plan;
+            HilCheckResult check;
+            QVERIFY(checkVia(host, input, &check));
+            if (!check.ok()) {
+                ++refusedAtLoad;
+                qInfo("spelling '%s': profile/check refused (%s)", qPrintable(spelling),
+                      qPrintable(check.errorText.left(60)));
+                continue;
+            }
+            if (check.loopbackTcp) {
+                bad.push_back(spelling + QStringLiteral(" (loopbackTcp)"));
+                continue;
+            }
+            if (skipTypingAllowed(check)) {
+                bad.push_back(spelling + QStringLiteral(" (skipTypingAllowed)"));
+                continue;
+            }
+            if (checkOnly) {
+                qInfo("spelling '%s': check only, loopbackTcp=0", qPrintable(spelling));
+                continue;
+            }
+            HilRunRequest r = requestFor(input, check, out);
+            r.typedId.clear();
+            r.skipTyping = true;
+            QElapsedTimer timer;
+            timer.start();
+            HilRunResult result;
+            QVERIFY2(runVia(host, r, &result), qPrintable(spelling));
+            if (result.status != HilRunStatus::NotConfirmed || timer.elapsed() > 1500 ||
+                QFileInfo::exists(out + QStringLiteral("/t9-sp"))) {
+                bad.push_back(spelling + QStringLiteral(" (run status %1)").arg(int(result.status)));
+            } else {
+                ++refusedByRunner;
+            }
+        }
+        qInfo("non-loopback spellings: %d refused at load, %d refused by the runner, %d bad",
+              refusedAtLoad, refusedByRunner, int(bad.size()));
+        QVERIFY2(bad.isEmpty(), qPrintable(bad.join(QStringLiteral("; "))));
+    }
+
+    // The loopback verdict of every spelling the owner listed, as the check derives it from a profile.
+    void T9_loopbackVerdictOfTheListedSpellings() {
+        const QString dir = freshOutputDir(QStringLiteral("t9-loopverdict"));
+        const QString plan = dir + QStringLiteral("/simple.json");
+        writeBytes(plan, kSimplePlan);
+        const QStringList spellings = {
+            QStringLiteral("127.0.0.1"),       QStringLiteral("127.000.000.001"), QStringLiteral("0x7f000001"),
+            QStringLiteral("localhost"),       QStringLiteral("localhost."),      QStringLiteral("[::1]"),
+            QStringLiteral("::1"),             QStringLiteral("::ffff:127.0.0.1"), QStringLiteral("127.1"),
+            QStringLiteral("LocalHost"),       QStringLiteral(" 127.0.0.1")};
+        HilHost host(QStringLiteral("t9-verdict"));
+        for (const QString& spelling : spellings) {
+            const QString profile = writeProfile(dir, QStringLiteral("t9-lv"), 0, 400, spelling);
+            HilCheckInput input;
+            input.profilePath = profile;
+            input.planPath = plan;
+            HilCheckResult check;
+            QVERIFY(checkVia(host, input, &check));
+            qInfo("profile host '%s': check ok=%d loopbackTcp=%d skipAllowed=%d", qPrintable(spelling),
+                  check.ok() ? 1 : 0, check.loopbackTcp ? 1 : 0, skipTypingAllowed(check) ? 1 : 0);
+        }
+    }
+
+    // The profile changes between the check and the run: loopback -> another host / a COM profile.
+    // The runner re-derives everything, so skipTyping (and the old digest) buy nothing, through the
+    // host and through the view.
+    void T9_aProfileEditedAfterTheCheckCannotSkipTyping() {
+        const QString dir = freshOutputDir(QStringLiteral("t9-edit"));
+        Listener listener;
+        QVERIFY(listener.ok);
+        const QString plan = dir + QStringLiteral("/simple.json");
+        writeBytes(plan, kSimplePlan);
+        const QString out = dir + QStringLiteral("/out");
+        const QString profile = writeProfile(dir, QStringLiteral("t9-ed"), listener.port());
+        HilHost host(QStringLiteral("t9-edit"));
+        HilCheckInput input;
+        input.profilePath = profile;
+        input.planPath = plan;
+        HilCheckResult check;
+        QVERIFY(checkVia(host, input, &check));
+        QVERIFY2(check.ok() && check.loopbackTcp, qPrintable(check.errorText));
+        QVERIFY(skipTypingAllowed(check));
+
+        // 1. host changed to TEST-NET-1 after the check
+        writeProfile(dir, QStringLiteral("t9-ed"), listener.port(), 400, QStringLiteral("192.0.2.10"));
+        {
+            HilRunRequest r = requestFor(input, check, out);
+            r.typedId.clear();
+            r.skipTyping = true;
+            HilRunResult result;
+            QVERIFY(runVia(host, r, &result));
+            QVERIFY2(result.status == HilRunStatus::NotConfirmed, qPrintable(result.reason));
+            QVERIFY(!QFileInfo::exists(out + QStringLiteral("/t9-ed")));
+        }
+        // 2. the same, as the view does it (skipTyping, no id, the stale loopback check on screen)
+        {
+            writeProfile(dir, QStringLiteral("t9-ed"), listener.port());
+            HilView view;
+            view.setProfilePath(profile);
+            view.setPlanPath(plan);
+            view.setOutputRoot(out);
+            QSignalSpy checked(&view, &HilView::checkDone);
+            view.check();
+            QTRY_COMPARE_WITH_TIMEOUT(checked.count(), 1, kWait);
+            QVERIFY(view.lastCheck().loopbackTcp);
+            writeProfile(dir, QStringLiteral("t9-ed"), listener.port(), 400, QStringLiteral("192.0.2.10"));
+            QSignalSpy done(&view, &HilView::runDone);
+            QVERIFY(view.runWith(QString(), true) != 0);
+            QTRY_COMPARE_WITH_TIMEOUT(done.count(), 1, kWait);
+            QVERIFY2(view.lastRun().status == HilRunStatus::NotConfirmed, qPrintable(view.lastRun().reason));
+            QVERIFY(!QFileInfo::exists(out + QStringLiteral("/t9-ed")));
+        }
+        // 3. profile replaced by a COM example (same id) after the check
+        {
+            QJsonObject com = readJson(testsDir() + QStringLiteral("/hil/profiles/q03ude-c24-3c-f4.example.json"));
+            QJsonObject p = com.value(QStringLiteral("profile")).toObject();
+            p.insert(QStringLiteral("id"), QStringLiteral("t9-ed"));
+            com.insert(QStringLiteral("profile"), p);
+            writeBytes(profile, QJsonDocument(com).toJson());
+            HilRunRequest r = requestFor(input, check, out);
+            r.typedId.clear();
+            r.skipTyping = true;
+            HilRunResult result;
+            QElapsedTimer timer;
+            timer.start();
+            QVERIFY(runVia(host, r, &result));
+            QVERIFY2(result.status == HilRunStatus::NotConfirmed, qPrintable(result.reason));
+            QVERIFY(timer.elapsed() < 1500);
+            QVERIFY(!QFileInfo::exists(out + QStringLiteral("/t9-ed")));
+        }
+        QCOMPARE(listener.connectionsAfter(400), 0);
     }
 
     // ---- the GUI thread under load and faults, with the real views -----------------------------

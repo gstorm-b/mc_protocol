@@ -66,10 +66,7 @@ TEST_CASE("ALC positive control: the allocation counter is live") {
     // Same proof as tests/core/model/test_alloc.cpp: if this fails, every zero-count assertion
     // in this file (ALC-01, ALC-02, and the two ValueStore-only checks below) would be
     // meaningless (a broken counter reads 0 for everything).
-    mc::test::resetAllocCount();
-    auto* p = new int(42);
-    size_t count = mc::test::allocCount();
-    delete p;
+    const size_t count = mc::test::probeAllocCount();
 
     CHECK(count >= 1);
 }

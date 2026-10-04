@@ -229,9 +229,12 @@ the bar (`-D MC_MIN_COVERAGE=<n>`, default 95, total over `src/core/model`).
 - CMake presets: `CMakePresets.json` (committed, hidden bases only) + `CMakeUserPresets.json`
   (git-ignored, this PC's paths; template `CMakeUserPresets.json.example`). Presets `msvc-debug` and
   `mingw-debug` build into `build/qtc-<preset>/` (`cmake --preset msvc-debug` inside
-  `scripts/vsdev.ps1`; MinGW needs only the preset). Both verified 35/35. Release is not offered:
-  MSVC Release fails the drain-contract tests (they expect the debug handler) and MinGW `-O3` fails
-  `-Werror=mismatched-new-delete` in `tests/common/alloc_counter.h` — open owner item.
+  `scripts/vsdev.ps1`; MinGW needs only the preset). `msvc-release` / `mingw-release` too (T-077):
+  all four verified 35/35. Agents use the presets with `-B build/<own folder>`, never the default
+  `build/qtc-*`. Release/RelWithDebInfo notes (T-077): drain tests expect the handler only in Debug;
+  GCC `-O2+` elides an unobserved `new`/`delete` (allocation probes must be observable); ADS ships
+  Debug and Release only, so `RelWithDebInfo`/`MinSizeRel` map to Release; a hung
+  `mc_workbench_tests.exe` survives a ctest timeout (end it with `taskkill`).
 - Qt Creator's qmake and CMake projects use their own `build/qtc-*` folders. **Agents never build
   `build/qtc-*` or `build/Desktop_Qt_*`** (the owner's IDE builds there), and the owner's IDE must not
   use `build/qmake-*`, `build/check-*` or `build/cmake-*`.

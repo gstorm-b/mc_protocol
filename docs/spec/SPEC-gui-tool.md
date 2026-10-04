@@ -27,7 +27,7 @@ A Qt Widgets desktop application, working name **MC Workbench** (`tools/mc_workb
 | Frame trace | Per tab: tx / rx chunks with nanosecond stamps, hex and ASCII view, frame boundaries, optional decode (op, device, count, outcome) | `RecordingTransport` from `mc_hil_tool` |
 | Debug log | `LogSink` lines of every `Session`, `McDevice` and mock, with level and tab filters, search, copy, save | `LogSink` |
 | Capture and export | Record a tab's traffic to `steps.vec` / `session.vec` / `run.meta` in the capture formats of `hil-capture`, so a capture from a real PLC can be **exported as a replay test** (`tests/vectors/captured/<profile-id>/`, read by `mc_replay_tests`; the owner confirms the files before `git add`). Captures of mocks or `virtual_plc` go to a user folder, never to `tests/vectors/captured/` | `CaptureWriter` |
-| HIL runner | Load a profile and a plan, run the safety gate, show the dry run, confirm (typing the profile id when `readOnly` frames exist, exactly like `hil_capture`), run, show step outcomes live, open the capture, run the replay, show the bench report | `mc_hil_tool` (`profile`, `plan`, `safety_gate`, `runner`, `bench_report`), `mc_replay_tests` |
+| HIL runner | Load a profile and a plan, run the safety gate, show the dry run, confirm by typing the profile id. Only a **loopback** profile (TCP host `127.0.0.0/8`, `::1` or `localhost`; a mock or `virtual_plc`) whose run has no `readOnly` frames may be confirmed without typing, like `hil_capture --yes`; any other profile (another host, any COM port) always needs the typed id (amended 2026-10-04, owner decision C), run, show step outcomes live, open the capture, run the replay, show the bench report | `mc_hil_tool` (`profile`, `plan`, `safety_gate`, `runner`, `bench_report`), `mc_replay_tests` |
 | Workspace | Save / load the set of tabs and their configs as one JSON file; the dock layout is saved and restored | `McDeviceConfig` JSON, ADS state |
 
 **"Chạy test" (running tests) means** running HIL plans and replays from the GUI, and exporting real-PLC captures as replay test data. The GUI does **not** launch the unit-test binaries (owner decision 2026-10-03).
@@ -79,7 +79,7 @@ QtTest binary `mc_workbench_tests`, label `gui`, run with `QT_QPA_PLATFORM=offsc
 | GUI-04 | Shutdown: closing tabs and the window joins every runner thread within the bound; no leak (object counts) and no cross-thread delete (debug assertion hooks) |
 | GUI-05 | Back-pressure: a mock answering as fast as possible for N seconds keeps memory bounded and the GUI event latency below a limit |
 | GUI-06 | qpb grid ↔ `McDeviceConfig` round trip: every field editable, invalid values rejected with the library's `validate()` message |
-| GUI-07 | HIL runner: the same gate decisions as `hil_capture` on the committed plans (dry runs identical), `readOnly` confirmation requires the typed profile id, a refused plan sends nothing |
+| GUI-07 | HIL runner: the same gate decisions as `hil_capture` on the committed plans (dry runs identical), `readOnly` confirmation requires the typed profile id, a non-loopback or COM profile always requires it, a refused plan sends nothing |
 | GUI-08 | Workspace save / load restores tabs, configs and the dock layout |
 | GUI-09 | Smoke: the main window opens offscreen with ADS and qpb, every dock widget is created, the app exits 0 |
 
@@ -90,7 +90,7 @@ Serial cases use `MC_TEST_SERIAL_PAIR` with `RESOURCE_LOCK mc_serial_pair`. A ma
 **Always**
 
 - Every `McDevice`, transport, mock server and HIL run on a runner thread; the GUI thread only renders and forwards commands.
-- The HIL safety gate is the `mc_hil_tool` gate, unchanged; the GUI adds no bypass and no way to skip the typed confirmation.
+- The HIL safety gate is the `mc_hil_tool` gate, unchanged; the GUI adds no bypass. The typed confirmation can be skipped only as the HIL runner row says: a loopback profile and no `readOnly` frames (amended 2026-10-04, owner decision C).
 - Bounded buffers for everything that streams.
 
 **Ask first**

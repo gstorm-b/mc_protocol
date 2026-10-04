@@ -991,6 +991,13 @@ Task details live in the baton files `tasks/active/T-066.md` (X/Y octal numberin
 
 ---
 
+### Phase 8 follow-ups (owner, 2026-10-04; leader gates as Phase 8)
+- [x] T-075 MockPlc input streams (one parser per client; MCK-13) and the GUI mock on them
+- [x] T-076 HIL view: confirm without typing only for loopback profiles (GUI-07 amended)
+- [x] T-077 Release builds green (MSVC and MinGW), Release presets back
+
+---
+
 ## Phase 9: Bench and release
 
 ### P9-1: Capture the 14 bench profiles

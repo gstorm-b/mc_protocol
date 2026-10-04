@@ -41,7 +41,7 @@ HilConfirmDialog::HilConfirmDialog(const HilCheckResult& check, QWidget* parent)
     m_typed->setPlaceholderText(check.profileId);
     layout->addWidget(m_typed);
 
-    if (check.readOnlyFrames.isEmpty()) {
+    if (skipTypingAllowed(check)) {
         m_skip = new QCheckBox(QStringLiteral(
             "Repeat run of an already-checked profile: confirm without typing (like --yes)"));
         layout->addWidget(m_skip);

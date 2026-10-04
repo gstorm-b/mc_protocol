@@ -24,12 +24,9 @@ using mc::FrameConfig;
 using mc::Request;
 
 TEST_CASE("ALC-01 positive control: the counter is live") {
-    mc::test::resetAllocCount();
     // A deliberate allocation the counter MUST see; if this fails, the whole file's zero-count
     // assertions below would be meaningless (a broken counter reads 0 for everything).
-    auto* p = new int(42);
-    size_t count = mc::test::allocCount();
-    delete p;
+    const size_t count = mc::test::probeAllocCount();
 
     CHECK(count >= 1);
 }

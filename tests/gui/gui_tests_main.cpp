@@ -30,6 +30,7 @@ int main(int argc, char** argv) {
                                mc::workbench::test::makeHilSuite,
                                mc::workbench::test::makeWorkspaceSuite,
                                mc::workbench::test::makeVirtualPlcSuite,
+                               mc::workbench::test::makeMockStreamsSuite,
                                mc::workbench::test::makeTesterProbesSuite}) {
         const std::unique_ptr<QObject> suite(make());
         failures += QTest::qExec(suite.get(), argc, argv);

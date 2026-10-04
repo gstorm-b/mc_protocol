@@ -3,6 +3,11 @@
 Curated by the team leader. One entry, one decision, newest first.
 Format: `- [T-xxx or date] Decision — why. (supersedes: entry, if any)`
 
+- [2026-10-04] Owner decisions after Phase 8: (C) the HIL view's "confirm without typing" only for a
+  loopback profile without `readOnly` frames, any other host or COM always types the id
+  (`SPEC-gui-tool.md` amended; T-076); (a1) `MockPlc` input streams — one parser per client,
+  shared memory / faults / log (`SPEC-mock-plc.md` amended; T-075); Checkpoint F owner gate
+  ticked; CMake presets for Qt Creator committed; `build/qmake-mingw` rebuild allowed.
 - [T-074] Phase 8 leader decisions: GUI mock tabs serve up to 32 TCP clients over one shared
   `MockPlc` (one parser — interleaved or abandoned partial frames corrupt; plans with truncated
   frames such as E-10 run against `virtual_plc`; a fix needs a `MockPlc` API, owner question);

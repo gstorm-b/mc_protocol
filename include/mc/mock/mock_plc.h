@@ -93,7 +93,11 @@ struct MockRequestRecord {
     PlcSeries series{PlcSeries::QL}; ///< From the subcommand actually received (QnA), else QL.
     bool answered{false};            ///< false when muted, station mismatch, or dropped.
     Error answeredWith{};            ///< Ok, or the PLC error the mock returned.
+    uint32_t stream{0};              ///< Input stream the request came from (0 = the default stream).
 };
+
+/// Identifies one input stream of a MockPlc (one client connection). 0 is the default stream.
+using MockStreamId = uint32_t;
 
 /**
  * @class MockPlc
@@ -105,6 +109,12 @@ struct MockRequestRecord {
  * is queued for nextResponse(). The mock performs no I/O, reads no clock, starts no thread and
  * throws nothing; the same inputs always produce the same bytes. It is test and demo
  * infrastructure and may allocate freely.
+ *
+ * One mock can serve several clients: openStream() gives each its own input stream, with its own
+ * partial request, serial scan state and response queue. Requests execute in the order they
+ * complete, whatever their stream, against one memory image; mute(), muteNext(), corruptNext()
+ * and failRange() count and apply across all streams in that order, and requests(), eotCount()
+ * and skippedBytes() are totals over all streams.
  *
  * In this version FrameType::F3E and FrameType::F1E (Binary and ASCII each) and FrameType::F3C
  * and FrameType::F1C (ASCII, formats 1 to 4) are answered. A 1E request is framed by its
@@ -196,6 +206,47 @@ public:
      * @return true when a response was returned in @p out, false when none is pending.
      */
     bool nextResponse(ByteView& out);
+    /// @}
+
+    /// @name Streams
+    /// @{
+
+    /**
+     * @brief Opens a new input stream, for one more client of this mock.
+     *
+     * A stream has its own partial request, serial scan state and response queue, so clients
+     * never mix their bytes or answers. Memory, faults, the request log and the counters stay
+     * shared. bytesIn(ByteView) and nextResponse(ByteView&) work on stream 0, which always exists.
+     *
+     * @return The new stream id: never 0 and never reused by this object.
+     */
+    MockStreamId openStream();
+
+    /**
+     * @brief Closes a stream, discarding its partial request and its unsent responses.
+     *
+     * The discarded bytes count as neither EOT nor skipped bytes. Closing 0 or an unknown id does
+     * nothing.
+     *
+     * @param[in] id Stream to close.
+     */
+    void closeStream(MockStreamId id);
+
+    /**
+     * @brief As bytesIn(ByteView) for one stream.
+     * @param[in] id Stream the bytes arrived on; bytes for a closed or unknown id are ignored.
+     * @param[in] bytes Bytes received on that stream, in order.
+     */
+    void bytesIn(MockStreamId id, ByteView bytes);
+
+    /**
+     * @brief As nextResponse(ByteView&) for one stream.
+     * @param[in] id Stream to take the response from.
+     * @param[out] out The response bytes; valid until the next call on this object.
+     * @return true when a response was returned in @p out, false when none is pending or @p id
+     * is closed or unknown.
+     */
+    bool nextResponse(MockStreamId id, ByteView& out);
     /// @}
 
     /// @name Memory image

@@ -237,7 +237,8 @@ void HilRunner::run(quint64 token, const HilRunRequest& request) {
     }
 
     // 3. The confirmation of hil_capture: the profile id is typed, always when the run holds
-    //    read-only frames.
+    //    read-only frames or the profile is not loopback TCP (another host, a COM port). `check` was
+    //    derived from the profile on this thread, so a bypassed dialog changes nothing.
     QString why;
     if (!confirmationAccepted(check, request.typedId, request.skipTyping, &why)) {
         end(HilRunStatus::NotConfirmed, why);

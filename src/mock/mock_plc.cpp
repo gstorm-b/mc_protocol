@@ -5,6 +5,7 @@
 
 #include <cstdio>
 #include <deque>
+#include <map>
 #include <utility>
 
 namespace mc {
@@ -30,7 +31,7 @@ struct MockPlc::Impl {
         uint32_t remaining;
     };
 
-    Impl(const FrameConfig& c, const MockOptions& o) : cfg(c), opt(o) {}
+    Impl(const FrameConfig& c, const MockOptions& o) : cfg(c), opt(o) { streams[0]; }
 
     void receive(ByteView bytes);
     void receiveSerial(ByteView bytes);
@@ -48,15 +49,25 @@ struct MockPlc::Impl {
     std::vector<MockRequestRecord> log;
     uint32_t eot{0};
     uint64_t skipped{0};           // serial bytes dropped before a start byte or as unframable
-    uint8_t eotTail{0};            // format 4: CR (2) and LF (1) still to come after an EOT
     std::vector<Fault> faults;
     bool muted{false};
     uint32_t muteCount{0};
     std::deque<PendingCorruption> corruptions;
-    ByteBuf rx;                    // request bytes received but not yet framed
-    bool inJunk{false};            // the last dropped bytes belong to a junk run already logged
-    std::deque<ByteBuf> responses; // responses waiting for nextResponse()
-    ByteBuf current;               // backing store of the view handed out by nextResponse()
+    // Everything one client owns: its partial request, its serial scan state and its responses.
+    struct Stream {
+        ByteBuf rx;                    // request bytes received but not yet framed
+        bool inJunk{false};            // the last dropped bytes belong to a junk run already logged
+        uint8_t eotTail{0};            // format 4: CR (2) and LF (1) still to come after an EOT
+        std::deque<ByteBuf> responses; // responses waiting for nextResponse()
+        ByteBuf current;               // backing store of the view handed out by nextResponse()
+    };
+
+    Stream* find(MockStreamId id);
+
+    std::map<MockStreamId, Stream> streams; // id 0 always exists
+    MockStreamId nextStreamId{1};
+    Stream* cur{nullptr};          // the stream bytesIn() is working on
+    MockStreamId curId{0};
 };
 
 void MockPlc::Impl::receive(ByteView bytes) {
@@ -70,10 +81,10 @@ void MockPlc::Impl::receive(ByteView bytes) {
         return;
     }
 
-    rx.insert(rx.end(), bytes.data, bytes.data + bytes.size);
+    cur->rx.insert(cur->rx.end(), bytes.data, bytes.data + bytes.size);
     size_t pos = 0;
-    while (pos < rx.size()) {
-        const ByteView pending{rx.data() + pos, rx.size() - pos};
+    while (pos < cur->rx.size()) {
+        const ByteView pending{cur->rx.data() + pos, cur->rx.size() - pos};
         FrameStatus status = FrameStatus::NeedMore;
         size_t consumed = 0;
         if (cfg.frame == FrameType::F3E) {
@@ -81,7 +92,7 @@ void MockPlc::Impl::receive(ByteView bytes) {
             status = r.status;
             consumed = r.consumed;
             if (status == FrameStatus::Complete) {
-                inJunk = false;
+                cur->inJunk = false;
                 handle3e(r.request);
             }
         } else {
@@ -89,7 +100,7 @@ void MockPlc::Impl::receive(ByteView bytes) {
             status = r.status;
             consumed = r.consumed;
             if (status == FrameStatus::Complete) {
-                inJunk = false;
+                cur->inJunk = false;
                 handle1e(r.request);
             }
         }
@@ -101,34 +112,34 @@ void MockPlc::Impl::receive(ByteView bytes) {
             logJunk();
         }
     }
-    rx.erase(rx.begin(), rx.begin() + static_cast<std::ptrdiff_t>(pos));
+    cur->rx.erase(cur->rx.begin(), cur->rx.begin() + static_cast<std::ptrdiff_t>(pos));
 }
 
 // Serial: bytes before the start byte are skipped and counted (spec §6.3), and an EOT cancels the
 // partial request and is counted. In format 4 the CR LF of an EOT CR LF belongs to the EOT, also when
 // it arrives in a later call.
 void MockPlc::Impl::receiveSerial(ByteView bytes) {
-    rx.insert(rx.end(), bytes.data, bytes.data + bytes.size);
+    cur->rx.insert(cur->rx.end(), bytes.data, bytes.data + bytes.size);
     size_t pos = 0;
-    while (pos < rx.size()) {
-        if (eotTail > 0) {
-            const uint8_t expected = eotTail == 2 ? kCr : kLf;
-            if (rx[pos] == expected) {
-                --eotTail;
+    while (pos < cur->rx.size()) {
+        if (cur->eotTail > 0) {
+            const uint8_t expected = cur->eotTail == 2 ? kCr : kLf;
+            if (cur->rx[pos] == expected) {
+                --cur->eotTail;
                 ++pos;
                 continue;
             }
-            eotTail = 0;
+            cur->eotTail = 0;
         }
         SerialDecodeResult r =
-            detail::mock::decodeSerialRequest(cfg, ByteView{rx.data() + pos, rx.size() - pos});
+            detail::mock::decodeSerialRequest(cfg, ByteView{cur->rx.data() + pos, cur->rx.size() - pos});
         if (r.status == FrameStatus::NeedMore) {
             break;
         }
         pos += r.consumed;
         if (r.status == FrameStatus::Eot) {
             ++eot;
-            eotTail = cfg.format == SerialFormat::Format4 ? 2 : 0;
+            cur->eotTail = cfg.format == SerialFormat::Format4 ? 2 : 0;
         } else if (r.status == FrameStatus::Complete) {
             handleSerial(r.request);
         } else if (r.status == FrameStatus::Junk) {
@@ -136,7 +147,7 @@ void MockPlc::Impl::receiveSerial(ByteView bytes) {
             logSkipped();
         }
     }
-    rx.erase(rx.begin(), rx.begin() + static_cast<std::ptrdiff_t>(pos));
+    cur->rx.erase(cur->rx.begin(), cur->rx.begin() + static_cast<std::ptrdiff_t>(pos));
 }
 
 // One Trace line per skipped serial byte, with the running count.
@@ -153,12 +164,13 @@ void MockPlc::Impl::logSkipped() {
 // Bytes that cannot start a request are dropped one at a time; a run of them is one log record,
 // so the log does not depend on how the stream was fragmented.
 void MockPlc::Impl::logJunk() {
-    if (inJunk) {
+    if (cur->inJunk) {
         return;
     }
-    inJunk = true;
+    cur->inJunk = true;
     MockRequestRecord rec;
     rec.frame = cfg.frame;
+    rec.stream = curId;
     log.push_back(rec);
 }
 
@@ -187,12 +199,13 @@ void MockPlc::Impl::queueResponse(ByteBuf response) {
             corruptions.pop_front();
         }
     }
-    responses.push_back(std::move(response));
+    cur->responses.push_back(std::move(response));
 }
 
 void MockPlc::Impl::handle3e(const QnaRequest& request) {
     MockRequestRecord rec;
     rec.frame = cfg.frame;
+    rec.stream = curId;
     rec.op = request.op;
     rec.head = request.head;
     rec.count = request.count;
@@ -226,6 +239,7 @@ void MockPlc::Impl::handle3e(const QnaRequest& request) {
 void MockPlc::Impl::handle1e(const E1Request& request) {
     MockRequestRecord rec;
     rec.frame = cfg.frame;
+    rec.stream = curId;
     rec.op = request.op;
     rec.head = request.head;
     rec.count = request.count;
@@ -257,6 +271,7 @@ void MockPlc::Impl::handle1e(const E1Request& request) {
 void MockPlc::Impl::handleSerial(const SerialRequest& request) {
     MockRequestRecord rec;
     rec.frame = cfg.frame;
+    rec.stream = curId;
     rec.op = request.op;
     rec.head = request.head;
     rec.count = request.count;
@@ -295,15 +310,46 @@ MockPlc::~MockPlc() = default;
 MockPlc::MockPlc(MockPlc&& other) noexcept = default;
 MockPlc& MockPlc::operator=(MockPlc&& other) noexcept = default;
 
-void MockPlc::bytesIn(ByteView bytes) { m_impl->receive(bytes); }
+void MockPlc::bytesIn(ByteView bytes) { bytesIn(MockStreamId{0}, bytes); }
 
-bool MockPlc::nextResponse(ByteView& out) {
-    if (m_impl->responses.empty()) {
+bool MockPlc::nextResponse(ByteView& out) { return nextResponse(MockStreamId{0}, out); }
+
+MockPlc::Impl::Stream* MockPlc::Impl::find(MockStreamId id) {
+    const auto it = streams.find(id);
+    return it == streams.end() ? nullptr : &it->second;
+}
+
+MockStreamId MockPlc::openStream() {
+    const MockStreamId id = m_impl->nextStreamId++;
+    m_impl->streams[id];
+    return id;
+}
+
+void MockPlc::closeStream(MockStreamId id) {
+    if (id != 0) {
+        m_impl->streams.erase(id);
+    }
+}
+
+void MockPlc::bytesIn(MockStreamId id, ByteView bytes) {
+    Impl::Stream* stream = m_impl->find(id);
+    if (stream == nullptr) {
+        return;
+    }
+    m_impl->cur = stream;
+    m_impl->curId = id;
+    m_impl->receive(bytes);
+    m_impl->cur = nullptr;
+}
+
+bool MockPlc::nextResponse(MockStreamId id, ByteView& out) {
+    Impl::Stream* stream = m_impl->find(id);
+    if (stream == nullptr || stream->responses.empty()) {
         return false;
     }
-    m_impl->current = std::move(m_impl->responses.front());
-    m_impl->responses.pop_front();
-    out = ByteView{m_impl->current.data(), m_impl->current.size()};
+    stream->current = std::move(stream->responses.front());
+    stream->responses.pop_front();
+    out = ByteView{stream->current.data(), stream->current.size()};
     return true;
 }
 

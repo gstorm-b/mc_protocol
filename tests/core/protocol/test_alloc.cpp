@@ -39,10 +39,7 @@ using mc::Request;
 TEST_CASE("ALC-01 positive control: the counter is live") {
     // Same proof as tests/core/model/test_alloc.cpp: if this fails, every zero-count assertion
     // below would be meaningless (a broken counter reads 0 for everything).
-    mc::test::resetAllocCount();
-    auto* p = new int(42);
-    size_t count = mc::test::allocCount();
-    delete p;
+    const size_t count = mc::test::probeAllocCount();
 
     CHECK(count >= 1);
 }

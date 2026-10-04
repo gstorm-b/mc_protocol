@@ -201,6 +201,7 @@ if(MC_BUILD_MOCK)
         mock/test_mock_memory.cpp
         mock/test_mock_vectors.cpp
         mock/test_mock_stream.cpp
+        mock/test_mock_streams.cpp
         mock/test_mock_faults.cpp
     )
     target_link_libraries(mc_mock_tests PRIVATE mc::mock mc_doctest mc_test_vectors)
@@ -477,6 +478,7 @@ if(MC_BUILD_DEVICE)
                     gui/tst_gui_hil.cpp
                     gui/tst_gui_workspace.cpp
                     gui/tst_gui_virtual_plc.cpp
+                    gui/tst_gui_mock_streams.cpp
                     gui/tst_gui_tester_probes.cpp)
                 unset(MC_QT_TEST_GROUP)
                 target_link_libraries(mc_workbench_tests PRIVATE mc_workbench_ui Qt6::Widgets)

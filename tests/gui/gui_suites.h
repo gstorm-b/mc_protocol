@@ -32,6 +32,10 @@ QObject* makeWorkspaceSuite();
 /// T-074: the GUI against examples/virtual_plc (a device tab; a full HIL run with E-10 and replay).
 QObject* makeVirtualPlcSuite();
 
+/// T-075: one MockPlc input stream per TCP client of a mock tab (interleaved fragments, an
+/// abandoned request, the full e2e plan with E-10 and replay).
+QObject* makeMockStreamsSuite();
+
 /// T-074 phase tester probes: gate and confirmation bypass attempts, export rule, load, workspace.
 QObject* makeTesterProbesSuite();
 

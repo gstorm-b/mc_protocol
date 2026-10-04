@@ -59,7 +59,7 @@ struct HilRunRequest {
     HilCheckInput input;                 ///< Profile, plan, groups, PLC state.
     QString expectedDigest;              ///< The digest of the check the operator looked at.
     QString typedId;                     ///< What the operator typed to confirm.
-    bool skipTyping{false};              ///< `--yes`: confirm without typing (never for read-only frames).
+    bool skipTyping{false};              ///< `--yes`: confirm without typing (only a loopback TCP profile without read-only frames)
     QString outputRoot;                  ///< The capture goes to `<outputRoot>/<profile id>/`.
     QString capturedRoot;                ///< `tests/vectors/captured/` of the repository (may be empty).
     CaptureSource source{CaptureSource::MockPlc}; ///< What the run talks to.

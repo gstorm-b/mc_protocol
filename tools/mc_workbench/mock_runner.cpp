@@ -134,6 +134,7 @@ void MockRunner::buildPlc() {
     m_pendingFrames.clear();
     m_pendingFrameBytes = 0;
     m_pendingRequestsDropped = 0;
+    m_links.clear(); // no client is connected while the configuration changes
     m_decoder = m_decode ? std::make_unique<FrameDecoder>(m_frame) : nullptr;
     configureCapture();
 }
@@ -155,12 +156,18 @@ void MockRunner::onNewConnection() {
             continue;
         }
         m_clients.push_back(socket);
+        ClientLink& link = m_links[socket];
+        link.stream = m_plc->openStream();
+        if (m_decode) {
+            link.decoder = std::make_unique<FrameDecoder>(m_frame);
+        }
         connect(socket, &QTcpSocket::readyRead, this, [this, socket]() {
             guarded("readyRead", [this, socket]() { onReadyRead(socket); });
         });
         connect(socket, &QTcpSocket::disconnected, this, [this, socket]() {
             guarded("disconnected", [this, socket]() {
                 if (m_clients.removeOne(socket)) {
+                    releaseLink(socket);
                     m_statsDirty = true;
                     emit clientDisconnected();
                     flushNow(true);
@@ -177,19 +184,31 @@ void MockRunner::onNewConnection() {
 }
 
 void MockRunner::onReadyRead(QIODevice* io) {
-    if (io == nullptr || (!m_clients.contains(static_cast<QTcpSocket*>(io)) && io != m_serial)) {
+    if (io == nullptr) {
         return;
     }
+    // A TCP client has its own stream and decoder; the COM port is stream 0.
+    mc::MockStreamId stream = 0;
+    FrameDecoder* decoder = m_decoder.get();
+    if (io != m_serial) {
+        const auto link = m_links.find(static_cast<QTcpSocket*>(io));
+        if (link == m_links.end()) {
+            return;
+        }
+        stream = link->second.stream;
+        decoder = link->second.decoder.get();
+    }
     const QByteArray request = io->readAll();
-    collectFrame(m_clock->nowNs(), true, request);
-    m_plc->bytesIn(mc::ByteView{reinterpret_cast<const uint8_t*>(request.constData()),
-                                static_cast<size_t>(request.size())});
+    collectFrame(m_clock->nowNs(), true, request, decoder);
+    m_plc->bytesIn(stream, mc::ByteView{reinterpret_cast<const uint8_t*>(request.constData()),
+                                        static_cast<size_t>(request.size())});
     mc::ByteView response;
-    while (m_plc->nextResponse(response)) {
+    while (m_plc->nextResponse(stream, response)) {
         io->write(reinterpret_cast<const char*>(response.data), static_cast<qint64>(response.size));
         collectFrame(m_clock->nowNs(), false,
                      QByteArray(reinterpret_cast<const char*>(response.data),
-                                static_cast<qsizetype>(response.size)));
+                                static_cast<qsizetype>(response.size)),
+                     decoder);
     }
     m_statsDirty = true;
     if (!m_flushTimer->isActive()) {
@@ -197,10 +216,20 @@ void MockRunner::onReadyRead(QIODevice* io) {
     }
 }
 
+// Closes the input stream of a client that is going away and forgets its decoder.
+void MockRunner::releaseLink(QTcpSocket* socket) {
+    const auto it = m_links.find(socket);
+    if (it != m_links.end()) {
+        m_plc->closeStream(it->second.stream);
+        m_links.erase(it);
+    }
+}
+
 void MockRunner::dropClients() {
     const QVector<QTcpSocket*> old = m_clients;
     m_clients.clear(); // a disconnected() that still arrives finds nothing to remove
     for (QTcpSocket* socket : old) {
+        releaseLink(socket);
         socket->disconnect(this);
         socket->abort();
         socket->deleteLater();
@@ -230,13 +259,14 @@ void MockRunner::closeSerial(const QString& reason) {
     }
 }
 
-void MockRunner::collectFrame(qint64 tNs, bool tx, const QByteArray& bytes) {
+void MockRunner::collectFrame(qint64 tNs, bool tx, const QByteArray& bytes,
+                              FrameDecoder* decoder) {
     FrameRecord record;
     record.tNs = tNs;
     record.tx = tx;
     record.bytes = bytes;
-    if (m_decoder) {
-        m_decoder->annotate(record);
+    if (decoder != nullptr) {
+        decoder->annotate(record);
     }
     m_capture.add(record);
     if (m_pendingFrames.size() >= kMaxPendingFrames ||
@@ -355,6 +385,9 @@ void MockRunner::flushNow(bool force) {
 void MockRunner::setTraceDecode(bool on) {
     m_decode = on;
     m_decoder = on ? std::make_unique<FrameDecoder>(m_frame) : nullptr;
+    for (auto& entry : m_links) {
+        entry.second.decoder = on ? std::make_unique<FrameDecoder>(m_frame) : nullptr;
+    }
 }
 
 void MockRunner::enableFlowControl(bool on) {
