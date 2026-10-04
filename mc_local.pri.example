@@ -1,0 +1,15 @@
+# mc_local.pri.example -- per-machine paths for the qmake build of MC Workbench (SPEC-gui-tool.md).
+#
+# Copy this file to mc_local.pri (same folder; git-ignored) and adjust the paths. Without a
+# mc_local.pri, or when the paths below do not hold a docking library built for the kit in use,
+# qmake skips the GUI and builds the rest unchanged. Paths are install prefixes of the Qt Advanced
+# Docking System (ADS 5.1.1, LGPL-2.1): the folder that holds bin/, lib/ and include/.
+#
+# The docking library is never part of this repository. Use forward slashes.
+
+# MSVC kits: the prebuilt package of this PC, or a script build (see scripts/build-ads.ps1).
+MC_ADS_DIR = C:/build_packages/qtadvanceddocking-5.1.1
+
+# MinGW kits: the install folder scripts/build-ads.ps1 prints (a path inside this repository's
+# build/ folder; $$PWD is the folder of this file, the repository root).
+MC_ADS_DIR_MINGW = $$PWD/build/ads-mingw_64/install

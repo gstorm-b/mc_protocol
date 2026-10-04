@@ -30,6 +30,15 @@ else()
     option(MC_BUILD_TOOLS "Build developer tools under tools/" OFF)
 endif()
 
+# MC_BUILD_GUI (SPEC-gui-tool.md): the MC Workbench program under tools/mc_workbench. ON by default
+# whenever the tools are built; tools/CMakeLists.txt skips it with a status message when a
+# requirement is missing (Qt 6.5 with Widgets, CMake 3.22, the docking library).
+if(MC_BUILD_TOOLS)
+    option(MC_BUILD_GUI "Build the MC Workbench GUI under tools/mc_workbench" ON)
+else()
+    option(MC_BUILD_GUI "Build the MC Workbench GUI under tools/mc_workbench" OFF)
+endif()
+
 add_subdirectory(src)
 
 if(MC_BUILD_TOOLS)

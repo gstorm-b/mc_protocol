@@ -129,6 +129,8 @@ namespace mc::hil {
 struct StepRecord {
     QString recordId;                   ///< "G1-01", "G1-01.2", "G1-04+2".
     QString mirrors;                    ///< Appendix A vectors this mirrors; empty when none.
+    QString source{QStringLiteral("plc")}; ///< `source:` of the record: "plc", or "mock" and
+                                           ///< "virtual_plc" for the GUI's captures of those.
     QString via{QStringLiteral("api")}; ///< "api", "mutate" or "raw".
     QString frame;                      ///< "3E", "1E", "3C", "1C".
     QString code;                       ///< "Binary" or "Ascii".

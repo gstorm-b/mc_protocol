@@ -3,6 +3,13 @@
 Curated by the team leader. One entry, one decision, newest first.
 Format: `- [T-xxx or date] Decision — why. (supersedes: entry, if any)`
 
+- [T-074] Phase 8 leader decisions: GUI mock tabs serve up to 32 TCP clients over one shared
+  `MockPlc` (one parser — interleaved or abandoned partial frames corrupt; plans with truncated
+  frames such as E-10 run against `virtual_plc`; a fix needs a `MockPlc` API, owner question);
+  `gui.mc_workbench_tests` is `RUN_SERIAL`; export of a capture under `tests/vectors/captured` only
+  for Real PLC, checked on the OS-resolved final folder; workspace files refuse unknown keys
+  entirely; `MC_WORKBENCH_CONFIG_DIR` redirects the app's config folder. Open owner questions:
+  the "confirm without typing" box for runs without readOnly frames (spec Functions vs Boundaries).
 - [2026-10-03] `SPEC-gui-tool.md` approved by the owner; delegation extended to Phase 8. Owner
   answers: no unit tests from the GUI — it exports real-PLC captures as replay test data; GUI on
   MSVC **and** MinGW (ADS built from source for MinGW, into `build/` only); name `mc_workbench`;

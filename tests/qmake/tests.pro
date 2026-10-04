@@ -20,3 +20,10 @@ mc_device_thread_tests.file = mc_device_thread_tests.pro
 mc_serial_tests.file = mc_serial_tests.pro
 mc_hil_tool_tests.file = mc_hil_tool_tests.pro
 mc_replay_tests.file = mc_replay_tests.pro
+
+# mc_workbench_tests: only when the GUI can be built (see tools/qmake/tools.pro).
+include(../../mc_gui_deps.pri)
+equals(MC_GUI_ENABLED, 1) {
+    SUBDIRS += mc_workbench_tests
+    mc_workbench_tests.file = mc_workbench_tests.pro
+}

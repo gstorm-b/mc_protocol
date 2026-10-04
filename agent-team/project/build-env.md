@@ -175,6 +175,55 @@ the bar (`-D MC_MIN_COVERAGE=<n>`, default 95, total over `src/core/model`).
 - Build guards `BLD-04` / `BLD-05` read `build/<dir>/mc_sources.txt`, written at
   configure time; a new source file needs a (re)configure before they see it.
 
+## GUI tool `mc_workbench` (T-067)
+
+- ADS (docking) is a local-path dependency, never in the repo; qpb is vendored in `components/qpb`.
+- MSVC: prebuilt ADS `C:/build_packages/qtadvanceddocking-5.1.1` (default of `MC_ADS_DIR`).
+- MinGW: build ADS once into the project: `scripts/build-ads.ps1` (source
+  `C:/build_packages/Qt-Advanced-Docking-System`, read only) → `build/ads-mingw_64/install`; then
+  configure MinGW CMake with `-DMC_ADS_DIR=<that path>` (or `$env:MC_ADS_DIR`).
+- qmake: copy `mc_local.pri.example` to the git-ignored `mc_local.pri`; it sets `MC_ADS_DIR`
+  (MSVC kits) and `MC_ADS_DIR_MINGW` (MinGW kits).
+- CMake skips the GUI with a message when ADS is missing or built for the other compiler, and
+  needs CMake ≥ 3.22 for it. The check scripts' MinGW CMake stages therefore skip the GUI unless
+  `$env:MC_ADS_DIR` points at the MinGW ADS; their qmake stage builds it through `mc_local.pri`.
+- After pulling T-067, delete `build/qmake-*/tools/qmake/Makefile.tools*` and
+  `build/qmake-*/tests/qmake/Makefile.tests*` before the next qmake build.
+- Harmless: MSVC qmake prints C4996 `compressEvent` warnings from Qt headers in qpb moc files.
+- GUI tests: label `gui`, `QT_QPA_PLATFORM=offscreen`. One binary `mc_workbench_tests`
+  (`tests/gui/gui_tests_main.cpp` runs every QtTest class; register a new class there and in
+  `gui_suites.h`). It holds `RESOURCE_LOCK mc_serial_pair` (a case holds COM54 open when
+  `MC_TEST_SERIAL_PAIR` is set) (T-068).
+- New sources in `tools/mc_workbench/mc_workbench.pri` or `tests/qmake/mc_workbench_tests.pro`: delete
+  `build/qmake-*/tools/qmake/Makefile.mc_workbench*` and `build/qmake-*/tests/qmake/Makefile.mc_workbench_tests*`
+  before the next qmake build (T-068).
+- QtTest macros (`QVERIFY`, `QTRY_*`) `return;` — not usable in a function that returns a value;
+  `QTest::qWaitFor` is `[[nodiscard]]` (C4834 under `/WX`) (T-068).
+- qmake `$$first()` takes a variable name, not a value (use `$$cat(file, singleline)`); a `.pri` that
+  writes a generated header does it with `write_file()` under `$$OUT_PWD`. ADS MinGW artifacts:
+  `libqtadvanceddocking-qt6[d].dll` / `.dll.a` (T-067).
+- `mc_workbench_core` links Qt Core + Network only: no `QColor` / QtGui there (use other roles than
+  `ForegroundRole` in core models). `QAbstractItemView::state()` is protected (find an open editor
+  with `viewport()->findChild<QLineEdit*>()`). `qpb::PropertyModel::setValue` returns false and emits
+  `validationFailed` when a property validator refuses. A well-formed test frame:
+  `mc::McProtocol(cfg).encode(request)`; a test mock listens on `127.0.0.1` port 0 (T-069, T-070).
+- Run `scripts/check.ps1` / `check.sh` with `MC_TEST_SERIAL_PAIR` **unset**: their qmake stage runs
+  `make -j check`, which starts test binaries side by side, and two of them opening COM54 at once
+  fail with "Access is denied" (T-074). Serial tests run in the ctest runs, where `RESOURCE_LOCK` works.
+- The program source of `mc_workbench` is `workbench_main.cpp`, not `main.cpp`: with
+  `hil_capture.pri` in the same qmake project, jom picked `tools/hil_capture/main.cpp` for `main.obj`
+  (qmake MSVC only). Never name a source `main.cpp` in a qmake project that includes another tool's
+  `.pri` (T-074). `build/cmake-coverage` is configured with the MinGW ADS, so it builds the GUI;
+  reports `mc_coverage_report_gui_core` / `_gui_ui` (report only).
+- `gui.mc_workbench_tests` is `RUN_SERIAL` (GUI-05 floods four busy threads; beside other binaries
+  its GUI-gap limit and their timing cases starve). A full `ctest -j 8` takes about 85 s (T-071).
+- After `. scripts/vsdev.ps1`, `bash` is not on PATH: delete qmake `Makefile.*` from the Bash tool.
+  `QTRY_*` macros re-run their condition (no `++` inside). `QSortFilterProxyModel::invalidateFilter`
+  is deprecated from Qt 6.9 (use `begin/endFilterChange()` behind a version check). MinGW `-Wextra`
+  flags a brace initialiser that skips a new defaulted member (T-071).
+- Edit `.pri` / `.pro` files with the Edit tool: a perl `s///` with `\\\n` wrote a literal `\n` into a
+  qmake continuation line (T-069).
+
 ## Other tools on this PC (T-065, T-066)
 
 - Vendor manuals (PDF) are in `docs/mc_reference/`. Extract text with Git Bash's

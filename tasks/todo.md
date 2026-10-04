@@ -977,16 +977,16 @@ Task details live in the baton files `tasks/active/T-066.md` (X/Y octal numberin
 `T-067.md` … `T-074.md` (GUI), each with its acceptance criteria; the spec's GUI-01…09 map onto them.
 
 - [x] T-066 X/Y octal numbering for FX CPUs
-- [ ] T-067 Wiring (GUI-09)
-- [ ] T-068 Runner threads (GUI-01, 03, 04)
-- [ ] T-069 Device tab (GUI-06)
-- [ ] T-070 Mock PLC tab (GUI-02)
-- [ ] T-071 Trace, log, capture and export (GUI-05)
-- [ ] T-072 HIL runner view (GUI-07)
-- [ ] T-073 Workspace (GUI-08)
+- [x] T-067 Wiring (GUI-09)
+- [x] T-068 Runner threads (GUI-01, 03, 04)
+- [x] T-069 Device tab (GUI-06)
+- [x] T-070 Mock PLC tab (GUI-02)
+- [x] T-071 Trace, log, capture and export (GUI-05)
+- [x] T-072 HIL runner view (GUI-07)
+- [x] T-073 Workspace (GUI-08)
 
 ### Checkpoint H: GUI tool ready (baton T-074)
-- [ ] GUI proven against MockPlc and `virtual_plc` on MSVC and MinGW (CMake and qmake); full verification.
+- [x] GUI proven against MockPlc and `virtual_plc` on MSVC and MinGW (CMake and qmake); full verification.
 - [ ] Owner demo.
 
 ---

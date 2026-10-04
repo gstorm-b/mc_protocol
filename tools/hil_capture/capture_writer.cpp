@@ -384,7 +384,9 @@ QString stepsText(const QString& profileId, const QVector<StepRecord>& records) 
         }
         const QString id = QStringLiteral("CAP-%1-%2").arg(profileId, r.recordId);
         out += QStringLiteral("# id: %1\n").arg(id);
-        out += QStringLiteral("# source: plc  profile: %1  step: %2").arg(profileId, r.recordId);
+        out += QStringLiteral("# source: %1  profile: %2  step: %3")
+                   .arg(clean(r.source).isEmpty() ? QStringLiteral("plc") : clean(r.source),
+                        profileId, r.recordId);
         if (!clean(r.mirrors).isEmpty()) {
             out += QStringLiteral("  mirrors: %1").arg(clean(r.mirrors));
         }

@@ -229,3 +229,30 @@ All notable changes to this project are documented in this file. The format foll
   go to `tests/vectors/captured/`. A frame the gate cannot fully decode (`readOnly`) needs a `recover` step and
   an explicit confirmation even with `--yes`, and a mutated write can never be declared `readOnly`; `run.meta`
   is scrubbed of the profile's host, port and COM port name.
+- Phase 8, the GUI tool `mc_workbench` (`SPEC-gui-tool.md`; `tools/mc_workbench`, `MC_BUILD_GUI`, a developer tool like
+  `hil_capture`, not part of the library): a Qt 6.5+ Widgets application on the public API. Every `McDevice`, transport,
+  mock server and HIL run lives on its own runner thread; the GUI thread only renders and forwards queued commands and
+  value copies, a throwing runner or a failed port is contained in its tab, and closing a tab or the window joins its
+  threads. Device tabs: the whole `McDeviceConfig` as a property grid (every field editable, a refused value shows the
+  library's own `validate()` message), connect and disconnect, run-time subscriptions, a live points table with change
+  highlight, a trend chart and an ad-hoc read/write console. Mock tabs: a `MockPlc` served over TCP (several clients) or a
+  COM port, memory editor (word and bit ranges, X/Y octal for FX), fault injection (mute, `corruptNext`, `failRange`,
+  device limits) and the request log with `eotCount()` and `skippedBytes()`. A frame trace (ring buffer, frame decode,
+  pause, save), a debug log dock, and capture to `steps.vec` / `session.vec` / `run.meta` with export as replay data
+  (captures of mocks or `virtual_plc` are tagged `not hardware` and never go to `tests/vectors/captured/`); one batch
+  in flight per runner keeps memory and GUI latency bounded under a flood. A HIL runner view on `mc_hil_tool`: the same
+  gate decisions and dry runs as `hil_capture` on every committed plan, the typed profile id for `readOnly` frames, live
+  step outcomes, replay and bench report. Workspace save and load (devices, mocks with memory presets, HIL inputs, dock
+  layout; a damaged file or an unknown key is refused with its JSON path and changes nothing). The docking library (Qt
+  Advanced Docking System, LGPL) is a local dependency found through `MC_ADS_DIR` (CMake, env) or `mc_local.pri` (qmake),
+  never in the repository (`scripts/build-ads.ps1` builds it for MinGW into `build/`); the property browser `qpb` (MIT)
+  is vendored in `components/qpb`; without the docking library the GUI is skipped and the rest of the build is unchanged.
+  Additive changes in `tools/hil_capture`: `RecordingTransport::takeChunks()` and `StepRecord::source` (the `# source:`
+  tag, default `plc`); the gate and its tests are untouched. Test binary `mc_workbench_tests` (label `gui`, offscreen,
+  GUI-01 to GUI-09 plus the tab, trace, capture and workspace cases; qmake twin); T-074 adds the cases that run the GUI
+  against the `examples/virtual_plc` process (a device tab, and the whole `tests/hil/e2e/plan_3e.json` including E-10
+  through the HIL view with a capture that replays green) and the report-only targets `mc_coverage_report_gui_core` and
+  `mc_coverage_report_gui_ui`. MSVC and MinGW GCC 13.1 (CMake and qmake), `scripts/check.ps1` (both kits) and
+  `check.sh` pass; line coverage on MinGW: `src/core/model` 98.1 %, `src/core/protocol` 97.9 %, `src/core/session`
+  97.9 %, `src/mock` 97.3 %, `src/device` 92.3 % (report only), `tools/mc_workbench` core 90.8 % and ui 85.4 % (report
+  only).

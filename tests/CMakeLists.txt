@@ -456,6 +456,87 @@ if(MC_BUILD_DEVICE)
             add_executable(hil_fault_proxy hil/fixtures/make/fault_proxy.cpp)
             target_link_libraries(hil_fault_proxy PRIVATE Qt6::Core Qt6::Network)
             mc_apply_warnings(hil_fault_proxy)
+
+            # mc_workbench_tests (SPEC-gui-tool.md "Testing", label gui): the GUI cases, offscreen.
+            # Exists only when tools/ enabled the GUI (Qt >= 6.5, docking library found). The
+            # docking library is a DLL the test finds through PATH; QT_QPA_PLATFORM makes the run
+            # headless (the test's own main() sets it too, for runs outside ctest).
+            if(TARGET mc_workbench_ui)
+                find_package(Qt6 6.5 REQUIRED COMPONENTS Widgets)
+                set(MC_QT_TEST_GROUP gui)
+                mc_add_qt_test(mc_workbench_tests
+                    gui/gui_tests_main.cpp
+                    gui/gui_suites.h
+                    gui/tst_gui_smoke.cpp
+                    gui/tst_gui_runners.cpp
+                    gui/tst_gui_device_tab.cpp
+                    gui/tst_gui_mock_tab.cpp
+                    gui/gui_test_support.h
+                    gui/tst_gui_trace.cpp
+                    gui/tst_gui_backpressure.cpp
+                    gui/tst_gui_hil.cpp
+                    gui/tst_gui_workspace.cpp
+                    gui/tst_gui_virtual_plc.cpp
+                    gui/tst_gui_tester_probes.cpp)
+                unset(MC_QT_TEST_GROUP)
+                target_link_libraries(mc_workbench_tests PRIVATE mc_workbench_ui Qt6::Widgets)
+                target_include_directories(mc_workbench_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/gui)
+                # What a test writes goes under the build tree, never to tests/vectors/captured/.
+                target_compile_definitions(mc_workbench_tests PRIVATE
+                    MC_TESTS_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}"
+                    MC_GUI_OUTPUT_DIR="${CMAKE_CURRENT_BINARY_DIR}/gui_out")
+                # T-074: the GUI is also run against examples/virtual_plc, started as a process
+                # (built when the examples are; without it those cases skip).
+                if(MC_BUILD_EXAMPLES)
+                    target_compile_definitions(mc_workbench_tests PRIVATE
+                        "MC_VIRTUAL_PLC_PATH=\"$<TARGET_FILE:virtual_plc>\"")
+                    add_dependencies(mc_workbench_tests virtual_plc)
+                else()
+                    target_compile_definitions(mc_workbench_tests PRIVATE MC_VIRTUAL_PLC_PATH="")
+                endif()
+                # T-074: the program itself is started once (GUI_09_theProgramStartsAndStaysUp).
+                target_compile_definitions(mc_workbench_tests PRIVATE
+                    "MC_WORKBENCH_PATH=\"$<TARGET_FILE:mc_workbench>\"")
+                add_dependencies(mc_workbench_tests mc_workbench)
+                # A capture made in the GUI is replayed with mc_replay_tests (T-071).
+                if(TARGET mc_replay_tests)
+                    target_compile_definitions(mc_workbench_tests PRIVATE
+                        "MC_REPLAY_TESTS_PATH=\"$<TARGET_FILE:mc_replay_tests>\"")
+                    add_dependencies(mc_workbench_tests mc_replay_tests)
+                else()
+                    target_compile_definitions(mc_workbench_tests PRIVATE MC_REPLAY_TESTS_PATH="")
+                endif()
+                set_tests_properties(gui.mc_workbench_tests PROPERTIES ENVIRONMENT_MODIFICATION
+                    "PATH=path_list_prepend:$<TARGET_FILE_DIR:Qt6::Core>;PATH=path_list_prepend:$<TARGET_FILE_DIR:ads::qtadvanceddocking-qt6>;QT_ASSUME_STDERR_HAS_CONSOLE=set:1;QT_QPA_PLATFORM=set:offscreen")
+                # GUI-03 holds the first port of MC_TEST_SERIAL_PAIR open (when it is set), like every
+                # other entry that opens the pair.
+                set_tests_properties(gui.mc_workbench_tests PROPERTIES RESOURCE_LOCK mc_serial_pair)
+                # GUI-05 floods a mock and a device on four threads and measures the GUI event gap: it must
+                # not share the machine with the timing-sensitive cases of the other binaries (a loaded run
+                # showed a GUI gap of 370 ms). RUN_SERIAL runs it alone.
+                set_tests_properties(gui.mc_workbench_tests PROPERTIES RUN_SERIAL TRUE)
+
+                # mc_coverage_report_gui_core / _gui_ui (T-074, Checkpoint H): the same script as the
+                # reports above, pointed at the object files of tools/mc_workbench's two libraries.
+                # REPORT ONLY: the spec sets no bar for the GUI tool (MC_MIN_COVERAGE 0). Needs .gcda
+                # data, i.e. `ctest -L gui` must have run in the MC_COVERAGE=ON tree first.
+                if(MC_COVERAGE AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+                    foreach(_mc_gui_lib core ui)
+                        add_custom_target(mc_coverage_report_gui_${_mc_gui_lib}
+                            COMMAND ${CMAKE_COMMAND}
+                                -D MC_SOURCE_DIR=${PROJECT_SOURCE_DIR}
+                                -D MC_OBJECT_BASE_DIR=${CMAKE_BINARY_DIR}/tools/mc_workbench/CMakeFiles/mc_workbench_${_mc_gui_lib}.dir
+                                -D MC_GCOV_EXECUTABLE=${MC_GCOV_EXECUTABLE}
+                                -D MC_MIN_COVERAGE=0
+                                -D MC_REPORT_LABEL=tools/mc_workbench_${_mc_gui_lib}
+                                -P ${PROJECT_SOURCE_DIR}/cmake/mc_coverage_report.cmake
+                            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+                            DEPENDS mc_workbench_tests
+                            VERBATIM
+                        )
+                    endforeach()
+                endif()
+            endif()
         endif()
     endif()
 

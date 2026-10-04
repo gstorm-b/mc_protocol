@@ -87,6 +87,17 @@ class RecordingTransport final : public Transport {
     const QVector<WireChunk>& chunks() const { return m_chunks; }
     /// @brief Number of chunks recorded so far.
     int chunkCount() const { return static_cast<int>(m_chunks.size()); }
+    /// @brief Moves every recorded chunk out and starts the recording empty again.
+    ///
+    /// For a long-lived consumer that must not keep the whole recording in memory (the GUI's
+    /// device runner). The capture tool never calls it: `chunks()` and `chunkCount()` keep
+    /// their meaning for it.
+    /// @return The chunks recorded since the last call (or since construction), oldest first.
+    QVector<WireChunk> takeChunks() {
+        QVector<WireChunk> out;
+        out.swap(m_chunks);
+        return out;
+    }
     /// @brief The shared clock.
     const std::shared_ptr<RecordingClock>& clock() const { return m_clock; }
 
