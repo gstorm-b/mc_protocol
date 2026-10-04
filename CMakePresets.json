@@ -1,0 +1,64 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 25,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "mc-base",
+      "hidden": true,
+      "description": "Ninja tree under build/qtc-<preset>; machine paths come from CMakeUserPresets.json (see CMakeUserPresets.json.example).",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/qtc-${presetName}"
+    },
+    {
+      "name": "mc-debug",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "mc-release",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "mc-msvc",
+      "hidden": true,
+      "inherits": "mc-base",
+      "description": "MSVC x64 with Ninja; the caller (Qt Creator kit or scripts/vsdev.ps1) provides the VS environment.",
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
+      "toolset": {
+        "value": "host=x64",
+        "strategy": "external"
+      },
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "cl.exe"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "mc-mingw",
+      "hidden": true,
+      "inherits": "mc-base",
+      "description": "MinGW GCC with Ninja; CMAKE_CXX_COMPILER and PATH come from the user preset.",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    }
+  ]
+}

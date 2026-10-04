@@ -967,7 +967,7 @@
 
 ### Checkpoint F: tooling ready (baton T-064; parallel check scripts T-056)
 - [x] `scripts/check.ps1` green; the whole capture flow proven against `virtual_plc` (Ethernet and serial). (T-064)
-- [ ] **Owner gate (open by choice until now):** scratch area decided for each PLC; FX3 manual checked (special relay/register addresses through 1E/1C; computer link formats 1 and 4).
+- [x] **Owner gate** (owner, 2026-10-04, answers in `temp-docs/hil-scratch-areas.md`): scratch area decided for each PLC; FX3 manual checked (special relay/register addresses through 1E/1C; computer link formats 1 and 4).
 
 ---
 

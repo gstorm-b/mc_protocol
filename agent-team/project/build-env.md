@@ -224,6 +224,21 @@ the bar (`-D MC_MIN_COVERAGE=<n>`, default 95, total over `src/core/model`).
 - Edit `.pri` / `.pro` files with the Edit tool: a perl `s///` with `\\\n` wrote a literal `\n` into a
   qmake continuation line (T-069).
 
+## Qt Creator (owner's IDE, 2026-10-04)
+
+- CMake presets: `CMakePresets.json` (committed, hidden bases only) + `CMakeUserPresets.json`
+  (git-ignored, this PC's paths; template `CMakeUserPresets.json.example`). Presets `msvc-debug` and
+  `mingw-debug` build into `build/qtc-<preset>/` (`cmake --preset msvc-debug` inside
+  `scripts/vsdev.ps1`; MinGW needs only the preset). Both verified 35/35. Release is not offered:
+  MSVC Release fails the drain-contract tests (they expect the debug handler) and MinGW `-O3` fails
+  `-Werror=mismatched-new-delete` in `tests/common/alloc_counter.h` — open owner item.
+- Qt Creator's qmake and CMake projects use their own `build/qtc-*` folders. **Agents never build
+  `build/qtc-*` or `build/Desktop_Qt_*`** (the owner's IDE builds there), and the owner's IDE must not
+  use `build/qmake-*`, `build/check-*` or `build/cmake-*`.
+- Qt Creator MCP server (when the owner opens it): SSE transport, `http://127.0.0.1:<port>/sse`; a
+  scratch client can post JSON-RPC to the `/message?session=` endpoint it announces. Tools include
+  `build`, `run_tests`, `list_build_configs`, `call_action`.
+
 ## Other tools on this PC (T-065, T-066)
 
 - Vendor manuals (PDF) are in `docs/mc_reference/`. Extract text with Git Bash's
