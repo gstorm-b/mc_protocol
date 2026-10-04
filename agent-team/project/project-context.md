@@ -65,8 +65,14 @@ Checkpoints build with **both** compilers. v1 is verified on Windows only
 
 ## Current state
 
-Specs approved (commit `0b287cc`). Implementation plan (`tasks/plan.md`,
-`tasks/todo.md`) approved by the owner 2026-09-27. No library code yet — first
-work is Phase 0 (T01–T04, build skeleton) toward Checkpoint A0. HIL owner
-prerequisites (scratch areas; FX3 manual checks) are still open — Phase 7+
-waits on them.
+Updated 2026-10-04. Phases 0–8 are implemented and committed:
+- the library (core-model, core-protocol, core-session, mock-plc, qt-device) with frames 3E, 1E, 3C and 1C;
+- the HIL capture tool and replay tests (Phase 7);
+- the GUI tool `mc_workbench` (Phase 8, commit `75ece90`) and its follow-ups T-075…T-077 (`11bc5f0`).
+
+Checkpoint F's owner gate is ticked (HIL prerequisites decided). Still open:
+- the Checkpoint H owner demo;
+- **Phase 9 (bench and release)**, which waits until the owner has finished the real-PLC captures.
+
+Progress lives in `tasks/plan.md` (phase checklist and checkpoint "Done" lines) and `tasks/todo.md`.
+The leader updates **both** at every commit.

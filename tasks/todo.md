@@ -973,8 +973,9 @@
 
 ## Phase 8: GUI tool `mc_workbench` (`gui-tool`, spec approved 2026-10-03)
 
-Task details live in the baton files `tasks/active/T-066.md` (X/Y octal numbering, library) and
+Task details live in the baton files `tasks/done/T-066.md` (X/Y octal numbering, library) and
 `T-067.md` … `T-074.md` (GUI), each with its acceptance criteria; the spec's GUI-01…09 map onto them.
+Phase 8 committed in `75ece90`; follow-ups T-075…T-077 in `11bc5f0`.
 
 - [x] T-066 X/Y octal numbering for FX CPUs
 - [x] T-067 Wiring (GUI-09)
@@ -1021,7 +1022,7 @@ Known issues, noted only (owner 2026-10-04: no task):
 **Verification:**
 - [ ] Per profile: dry run, real run, summary reviewed; `ctest -L replay`.
 
-**Dependencies:** Checkpoint F
+**Dependencies:** Checkpoint F (owner gate ticked 2026-10-04). Phase 9 waits until the owner reports the captures done (owner, 2026-10-04); captures may be run with `hil_capture` or the `mc_workbench` HIL view.
 
 **Files likely touched:** `tests/vectors/captured/<profile>/*` (generated), `docs/hil/FINDINGS.md`, `docs/hil/BENCH.md`
 

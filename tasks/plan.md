@@ -17,7 +17,7 @@ Build the library in the order of the capability map, but cut it **vertically by
 - **Each module's tests live in its own binary and label**, as in `SPEC-build-packaging.md`, so every task verifies with one `ctest -L <label>`.
 - **Zero-allocation tests arrive with the code they guard**, not at the end: core-model (T-011), core-protocol (T-018), session (T-026).
 - **Two compilers from day one.** MSVC (VS 2026, Qt `msvc2022_64`) and MinGW GCC 13.1 (Qt `mingw_64`) are both on this machine. Every checkpoint builds with both.
-- **HIL comes last and is owner-gated.** The capture tool is verified against `virtual_plc` first. Real captures wait for the two prerequisites the owner left open: scratch areas, and the FX3 manual checks (see `SPEC-hil-capture.md`, operator procedure).
+- **HIL comes last and is owner-gated.** The capture tool is verified against `virtual_plc` first. The two owner prerequisites (scratch areas, FX3 manual checks; `SPEC-hil-capture.md`, operator procedure) were decided on 2026-10-04 (Checkpoint F owner gate); the owner now runs the real captures.
 
 ## Dependency graph
 
@@ -34,6 +34,7 @@ T-002–T-005 build skeleton ── A0
                                                └── T-051–T-054 serial session, mock, matrix, SerialTransport ── E
                                                       └── T-056–T-063 hil-capture tool + replay ── F (+ owner gate)
                                                              └── T-066 X/Y octal, T-067–T-073 GUI tool (McDevice in an app) ── H
+                                                                    └── T-075–T-077 follow-ups (mock streams, typed confirmation, Release builds)
                                                                     └── P9-1–P9-2 bench captures, findings
                                                                            └── P9-3 release 1.0 ── G
 ```
@@ -112,7 +113,7 @@ created before 2026-10-03 still name the old plan numbers (`T01`…`T56`) in `Pl
 - [x] T-038 `McDevice` faults, re-entrancy, threads, destructor
 - [x] T-039 Examples `qt_console_poller` and `virtual_plc`
 
-**Checkpoint D** → T-040: 3E through the whole stack; demo `virtual_plc` ↔ `qt_console_poller`. No real PLC here (owner decision 5); real hardware waits for Phase 9.
+**Checkpoint D** → T-040: 3E through the whole stack; demo `virtual_plc` ↔ `qt_console_poller`. No real PLC here (owner decision 5); real hardware waits for Phase 9. Done: commit `4e4d015`; demo confirmed by the owner 2026-10-01.
 
 ### Phase 6: Frames 1E, 3C, 1C through every layer
 
@@ -129,7 +130,7 @@ created before 2026-10-03 still name the old plan numbers (`T01`…`T56`) in `Pl
 - [x] T-053 Integration matrix complete (12 combinations)
 - [x] T-054 `SerialTransport` and serial loopback
 
-**Checkpoint E1** → T-044 (after T-043): 1E complete. **Checkpoint E2** → T-050 (after T-049): codec complete. **Checkpoint E** → T-055: all four frames through every layer. Run as three batches 6a/6b/6c, one commit each (owner decision 2026-10-01).
+**Checkpoint E1** → T-044 (after T-043): 1E complete. **Checkpoint E2** → T-050 (after T-049): codec complete. **Checkpoint E** → T-055: all four frames through every layer. Run as three batches 6a/6b/6c, one commit each (owner decision 2026-10-01). Done: commits `ae51bb7` (E1), `d2dfee5` (E2), `0e6053c` (E); owner review approved 2026-10-02.
 
 ### Phase 7: Hardware capture tooling (`hil-capture`)
 
@@ -143,22 +144,32 @@ created before 2026-10-03 still name the old plan numbers (`T01`…`T56`) in `Pl
 - [x] T-063 Plans for the four frame families
 - [x] T-065 Owner follow-ups: `maxConsecutiveLinkErrors` 0 rejected, `MockPlc::skippedBytes()`
 
-**Checkpoint F** → T-064: tooling proven against `virtual_plc`. **Owner gate:** scratch areas decided; FX3 manual checked.
+**Checkpoint F** → T-064: tooling proven against `virtual_plc`. **Owner gate:** scratch areas decided; FX3 manual checked. Done: commit `70cca94` (T-065: `657f814`); owner gate ticked 2026-10-04 (answers in `temp-docs/hil-scratch-areas.md`).
 
 ### Phase 8: GUI tool `mc_workbench` (`gui-tool`, spec approved 2026-10-03)
 
 - [x] T-066 X/Y octal numbering for FX CPUs (library, before the GUI)
-- [ ] T-067 Wiring: build options, ADS local path and MinGW build script, qpb, empty main window
-- [ ] T-068 Runner threads: DeviceRunner, MockRunner, containment, shutdown
-- [ ] T-069 Device tab: config grid, connect, subscriptions, trend, ad-hoc console
-- [ ] T-070 Mock PLC tab: TCP and COM serving, memory editor, faults, request log
-- [ ] T-071 Frame trace, debug log, back-pressure, capture and export
-- [ ] T-072 HIL runner view
-- [ ] T-073 Workspace save / load and dock layout
+- [x] T-067 Wiring: build options, ADS local path and MinGW build script, qpb, empty main window
+- [x] T-068 Runner threads: DeviceRunner, MockRunner, containment, shutdown
+- [x] T-069 Device tab: config grid, connect, subscriptions, trend, ad-hoc console
+- [x] T-070 Mock PLC tab: TCP and COM serving, memory editor, faults, request log
+- [x] T-071 Frame trace, debug log, back-pressure, capture and export
+- [x] T-072 HIL runner view
+- [x] T-073 Workspace save / load and dock layout
 
-**Checkpoint H** → T-074: GUI proven against MockPlc and `virtual_plc` on MSVC and MinGW; owner demo.
+**Checkpoint H** → T-074: GUI proven against MockPlc and `virtual_plc` on MSVC and MinGW; owner demo. First item done: commit `75ece90` (T-066: `cd2764a`); the owner demo is open (steps in `tasks/done/T-074.md`).
+
+Follow-ups (owner 2026-10-04, leader gates as Phase 8), done in commit `11bc5f0`:
+
+- [x] T-075 `MockPlc` input streams (one parser per client, MCK-13) and the GUI mock on them
+- [x] T-076 HIL view: confirm without typing only for loopback profiles
+- [x] T-077 Release builds green on MSVC and MinGW; Release CMake presets
+
+Also: CMake presets for Qt Creator (`6da2242`); known issues noted without a task in `tasks/todo.md` (owner 2026-10-04).
 
 ### Phase 9: Bench and release
+
+Waits until the owner has finished the HIL captures (owner, 2026-10-04); not delegated.
 
 - [ ] P9-1 Capture the 14 bench profiles (owner-operated)
 - [ ] P9-2 Findings triage
