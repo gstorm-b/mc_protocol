@@ -3,6 +3,9 @@
 Curated by the team leader. One entry, one decision, newest first.
 Format: `- [T-xxx or date] Decision — why. (supersedes: entry, if any)`
 
+- [2026-10-09] Owner allowed publishing v0.1.1 with their account: `main` and tag `v0.1.1` pushed to
+  gstorm-b/mc_protocol, GitHub pre-release with `mc_protocol-v0.1.1.bundle`; gh back to dev39-hash. A guide doc for the
+  app team ("mc 0.1.1 Reconnect Fix Guide") was written for the owner to forward.
 - [T-081..T-083] Skill-pack experiment (owner 2026-10-08), developer runs: T-081 WITH skills 30.1 min / 193k tokens /
   82 tool calls; T-082 WITHOUT 35.1 min / 209k / 81; T-083 WITHOUT 27.1 min / 141k / 47. Batch findings: no HIGH or
   MEDIUM in any task; LOW: T-081 1 test gap + 1 literal, T-082 2 test gaps (+ spec wording finding by the developer),

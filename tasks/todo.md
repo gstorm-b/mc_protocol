@@ -1068,8 +1068,8 @@ Details and acceptance criteria in the baton files `tasks/done/T-081.md`, `T-082
 - [x] Worktree slots `.wt/wt1…wt4` (git-ignored) and `scripts/wt-sync.ps1` for parallel builds (owner 2026-10-08;
   leader; the script is reviewed in this batch)
 - [x] Batch tester and reviewer; one commit; `CHANGELOG.md` `Unreleased`
-- [x] Owner: v0.1.1 pre-release (2026-10-09: built, tagged, bundled locally; GitHub publish awaits the owner)
-- [ ] Owner: reply to the app team (bench steps: `firstResponseTimeoutMs`, `closeGraceMs`, PLC existence
+- [x] Owner: v0.1.1 pre-release (2026-10-09: built, tagged, bundled; published as a GitHub pre-release with the bundle)
+- [ ] Owner: forward the guide doc "mc 0.1.1 Reconnect Fix Guide" (leader, 2026-10-09) to the app team (bench steps: `firstResponseTimeoutMs`, `closeGraceMs`, PLC existence
   confirmation, Wireshark trace)
 
 ---

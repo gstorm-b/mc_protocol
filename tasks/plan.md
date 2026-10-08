@@ -216,7 +216,9 @@ worktree slots `.wt/` and `scripts/wt-sync.ps1` added for parallel builds). Comm
   GUI included, 0 warnings); Autotest 146 passed, 0 failed, 3 skipped (serial pair unset)
 - [x] `include/mc/version.h` 0.1.1; `CHANGELOG.md` `[0.1.1] - 2026-10-09`; full ctest x86 Debug and Qt 6 MSVC in `.wt/`
 - [x] Tag `v0.1.1` (annotated) and git bundle `build/release/mc_protocol-v0.1.1.bundle` (`--all`, verified, test clone)
-- [ ] Publishing to GitHub: owner decides (the v0.1.0 permission was for that release)
+- [x] Published 2026-10-09 (owner: "giao quyền cho bạn publish lên github"): `main` and tag `v0.1.1` pushed to
+  gstorm-b/mc_protocol; GitHub pre-release https://github.com/gstorm-b/mc_protocol/releases/tag/v0.1.1 with the bundle
+  (SHA-256 on GitHub matches); gh switched back to dev39-hash
 
 ### Phase 9: Bench and release
 
