@@ -12,6 +12,10 @@ Format: `- [T-xxx or date] Decision — why. (supersedes: entry, if any)`
   break on the 14.51 STL and qpb 1.7.0 excludes MSVC 2026 for Qt 5 — leader; no compat shim.
 - [2026-10-07] Owner: qpb is being updated to **1.7.0** with Qt 5.15 support; it replaces the vendored
   1.6.1 in `components/qpb` (unmodified) for T-079. No local patches or Qt5 fallback editor.
+- [2026-10-08] Owner allowed publishing with their account: `main` and tag `v0.1.0` pushed to
+  gstorm-b/mc_protocol (gh switched to gstorm-b for the push and release, then back to dev39-hash; git's own
+  credential helper untouched); GitHub pre-release v0.1.0 with `mc_protocol-v0.1.0.bundle` (SHA-256 checked
+  after upload).
 - [2026-10-08] Owner: `.gitignore` gains `.mcp.json` (the owner's own change; it goes into the T-078/T-079 commit).
 - [2026-10-07] Owner: subagents run on **Opus** for the Qt 5.15 batch (T-078, T-079); the owner edited
   `.claude/settings.json` themselves after the leader's own edit was blocked as self-modification.

@@ -1029,7 +1029,8 @@ Details and acceptance criteria in the baton files `tasks/done/T-078.md` and `T-
   switch kits, the owner skipped the other five (verified on the command line by the T-078/T-079 tester).
 - [x] `CHANGELOG.md` `Unreleased` → `[0.1.0] - <date>` marked pre-release; `version.h` stays 0.1.0; tag `v0.1.0`
 - [x] Export a new git bundle (`git bundle create … --all`) to `build/release/` and verify it (`git bundle verify`, clone test)
-  — `build/release/mc_protocol-v0.1.0.bundle`; tag `v0.1.0` local only; GitHub publishing waits for the owner
+  — `build/release/mc_protocol-v0.1.0.bundle`; published 2026-10-08 with the owner's permission: `main` and tag
+  `v0.1.0` pushed, GitHub pre-release https://github.com/gstorm-b/mc_protocol/releases/tag/v0.1.0 with the bundle
 
 ---
 
