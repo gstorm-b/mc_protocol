@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file. The format foll
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-10-09
+
+Second pre-release (owner, 2026-10-09). Follows a field report on 0.1.0 (3E over TCP: after a cable
+pull the PLC served the new connection only ~40 s later). The new options are off by default, so
+0.1.0 behaviour is unchanged until an application sets them. Still not verified against real PLCs
+(Phase 9). Verified on Windows: Qt 6.11.1 (MSVC 2022 x64, MinGW 13.1), Qt 5.15.0 MSVC toolset 14.44
+x64 and **x86**, CMake and qmake, Debug and Release.
+
 ### Added
 
 - `tools/hil_capture` profiles take the optional key `specialFrom`: per device type, the first

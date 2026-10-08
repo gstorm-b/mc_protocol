@@ -9,9 +9,9 @@
 /// Minor version component.
 #define MC_VERSION_MINOR 1
 /// Patch version component.
-#define MC_VERSION_PATCH 0
+#define MC_VERSION_PATCH 1
 /// Dotted "MAJOR.MINOR.PATCH" form of the three macros above; must always agree with them.
-#define MC_VERSION_STRING "0.1.0"
+#define MC_VERSION_STRING "0.1.1"
 
 /**
  * @namespace mc

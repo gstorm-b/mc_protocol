@@ -208,7 +208,15 @@ QDV-18, QDV-19). Defaults keep v0.1.0 behaviour; no Ethernet resend, no automati
 - [x] T-083 Qt 5.15 MSVC **32-bit** (owner installed `msvc2019`, the app's configuration): x86 warning fixes in `src/mock/command_exec.cpp`, `-Arch x86` for `vsdev.ps1` / `build-ads.ps1`, `qt5-msvc32-*` presets, full ctest x86 (GUI included when ADS x86 builds), qmake x86
 
 Batch tester and reviewer after T-083; one commit for all three. Done 2026-10-09 (tester and reviewer PASS, LOW only;
-worktree slots `.wt/` and `scripts/wt-sync.ps1` added for parallel builds). Then the owner decides on a v0.1.1 pre-release.
+worktree slots `.wt/` and `scripts/wt-sync.ps1` added for parallel builds). Commit `9fb98be`.
+
+**Pre-release v0.1.1** (owner 2026-10-09: "hãy build kit 32 bit trong qt creator, tạo bản pre-release 0.1.1"):
+
+- [x] Qt Creator MCP: kit "Qt 5.15.0 MSVC2019 32bit", Release (`build/qtc-qt5-msvc32-release`): build clean (241 steps,
+  GUI included, 0 warnings); Autotest 146 passed, 0 failed, 3 skipped (serial pair unset)
+- [x] `include/mc/version.h` 0.1.1; `CHANGELOG.md` `[0.1.1] - 2026-10-09`; full ctest x86 Debug and Qt 6 MSVC in `.wt/`
+- [x] Tag `v0.1.1` (annotated) and git bundle `build/release/mc_protocol-v0.1.1.bundle` (`--all`, verified, test clone)
+- [ ] Publishing to GitHub: owner decides (the v0.1.0 permission was for that release)
 
 ### Phase 9: Bench and release
 
