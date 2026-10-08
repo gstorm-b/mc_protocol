@@ -34,6 +34,9 @@ void printOp(QString& out, const ResolvedOp& op) {
     out += QStringLiteral("  OP %1: %2%3\n")
                .arg(op.recordId, op.description,
                     op.readBack ? QStringLiteral(" (read-back)") : QString());
+    if (!op.expectNote.isEmpty()) {
+        out += QStringLiteral("    %1\n").arg(op.expectNote);
+    }
     if (!op.notSent.isEmpty()) {
         out += QStringLiteral("    not sent: %1\n").arg(op.notSent);
         return;

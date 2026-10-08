@@ -10,7 +10,8 @@
  *                    "plcState": ..., "scratch": ["D100-D2099", ...],
  *                    "deviceEnd": { "D": 12287, "W": "1FFF" },
  *                    "supports": ["D", "W", ...], "scanTimeDevice": "",
- *                    "specialBit": "SM0", "specialWord": "SD0", "families": ["qna-serial"] },
+ *                    "specialBit": "SM0", "specialWord": "SD0", "families": ["qna-serial"],
+ *                    "specialFrom": { "D": 8000, "M": 8000 } },
  *       "device": { an McDeviceConfig, read by McDeviceConfig::fromJson } }
  *
  * Required: schema, profile.id, profile.plc, profile.scratch, profile.deviceEnd,
@@ -21,6 +22,10 @@
  * CPU); a deviceEnd of a hexadecimal or octal type is a JSON string. `families` holds
  * "qna-ethernet", "a1e", "qna-serial" or "a1c". `device.subscriptions` must be empty: polling is
  * the business of the plan's poll steps.
+ *
+ * `specialFrom` (optional) gives, per device type, the first number of a special range that
+ * exists beyond `deviceEnd` (an FX3 over 1E/1C: `{"D": 8000, "M": 8000}`). Its numbers are
+ * written like those of `deviceEnd`; each needs a `deviceEnd` of its type and must be greater.
  */
 #pragma once
 
@@ -57,6 +62,8 @@ struct Profile {
     QVector<ScratchRange> scratch; ///< Declared scratch ranges, in file order.
     std::array<std::optional<uint32_t>, static_cast<size_t>(DeviceType::Count)> deviceEnd{};
     ///< Last existing number of each device type; nullopt when not declared.
+    std::array<std::optional<uint32_t>, static_cast<size_t>(DeviceType::Count)> specialFrom{};
+    ///< First number of the special range beyond deviceEnd of each type; nullopt when none.
     QVector<DeviceType> supports;   ///< Device types to exercise.
     QString scanTimeDevice;         ///< Text of the scan time device; empty when none.
     std::optional<Device> scanTime; ///< The parsed scan time device.
@@ -73,6 +80,10 @@ struct Profile {
     bool inScratch(DeviceType t, uint32_t head, uint64_t points) const;
     /// @brief The declared deviceEnd of @p t.
     std::optional<uint32_t> end(DeviceType t) const { return deviceEnd[static_cast<size_t>(t)]; }
+    /// @brief The declared first number of the special range of @p t (`specialFrom`).
+    std::optional<uint32_t> special(DeviceType t) const {
+        return specialFrom[static_cast<size_t>(t)];
+    }
 };
 
 /// @brief Outcome of loading a profile.

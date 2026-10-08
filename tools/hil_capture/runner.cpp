@@ -1281,6 +1281,9 @@ struct Runner::Impl {
                         if (what.isEmpty()) {
                             what = op.description;
                         }
+                        if (!op.expectNote.isEmpty()) {
+                            what += QStringLiteral(" (%1: %2)").arg(op.recordId, op.expectNote);
+                        }
                         const Verdict v =
                             op.via == Via::Api ? runApiOp(op, step, i) : runFrameOp(op);
                         if (static_cast<int>(v.category) > static_cast<int>(worst.category)) {

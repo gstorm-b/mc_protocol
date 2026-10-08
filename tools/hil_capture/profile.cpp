@@ -225,6 +225,7 @@ ProfileLoad loadProfile(const QJsonObject& root) {
     const QString specialBitText = pr.string("specialBit", true);
     const QString specialWordText = pr.string("specialWord", true);
     const QJsonArray familiesArr = pr.array("families", false);
+    const QJsonObject specialObj = pr.object("specialFrom", false);
     pr.finish();
 
     if (!f.failed() && !folderSafe(p.id)) {
@@ -263,40 +264,59 @@ ProfileLoad loadProfile(const QJsonObject& root) {
         p.scratch.push_back(r);
     }
 
-    for (auto it = endObj.begin(); it != endObj.end() && !f.failed(); ++it) {
-        const QString path = childPath(QStringLiteral("profile.deviceEnd"), it.key());
-        const std::optional<DeviceType> t = deviceTypeFromSymbol(it.key());
-        if (!t) {
-            f.fail(path, QStringLiteral("unknown device type"));
-            break;
-        }
-        QString text;
-        if (it.value().isString()) {
-            text = it.value().toString();
-        } else if (it.value().isDouble()) {
-            if (deviceInfo(*t).radix == Radix::Hex) {
-                f.fail(path, QStringLiteral("device %1 is hexadecimal: write the number as a "
-                                            "string such as \"1FFF\"")
-                                 .arg(deviceSymbol(*t)));
-                break;
+    // deviceEnd and specialFrom: per device type, a number in the type's own radix.
+    const auto readNumbers = [&](const QJsonObject& obj, const QString& objPath,
+                                 std::array<std::optional<uint32_t>, kTypeCount>& out) {
+        for (auto it = obj.begin(); it != obj.end() && !f.failed(); ++it) {
+            const QString path = childPath(objPath, it.key());
+            const std::optional<DeviceType> t = deviceTypeFromSymbol(it.key());
+            if (!t) {
+                f.fail(path, QStringLiteral("unknown device type"));
+                return;
             }
-            const double d = it.value().toDouble();
-            if (d < 0 || d != static_cast<double>(static_cast<qint64>(d))) {
-                f.fail(path, QStringLiteral("expected a non-negative integer"));
-                break;
+            QString text;
+            if (it.value().isString()) {
+                text = it.value().toString();
+            } else if (it.value().isDouble()) {
+                if (deviceInfo(*t).radix == Radix::Hex) {
+                    f.fail(path, QStringLiteral("device %1 is hexadecimal: write the number as a "
+                                                "string such as \"1FFF\"")
+                                     .arg(deviceSymbol(*t)));
+                    return;
+                }
+                const double d = it.value().toDouble();
+                if (d < 0 || d != static_cast<double>(static_cast<qint64>(d))) {
+                    f.fail(path, QStringLiteral("expected a non-negative integer"));
+                    return;
+                }
+                text = QString::number(static_cast<qint64>(d));
+            } else {
+                f.fail(path, QStringLiteral("expected a number or a string"));
+                return;
             }
-            text = QString::number(static_cast<qint64>(d));
-        } else {
-            f.fail(path, QStringLiteral("expected a number or a string"));
-            break;
+            uint32_t number = 0;
+            QString why;
+            if (!numberFor(*t, text, number, why, xy)) {
+                f.fail(path, why);
+                return;
+            }
+            out[static_cast<size_t>(*t)] = number;
         }
-        uint32_t number = 0;
-        QString why;
-        if (!numberFor(*t, text, number, why, xy)) {
-            f.fail(path, why);
-            break;
+    };
+    readNumbers(endObj, QStringLiteral("profile.deviceEnd"), p.deviceEnd);
+    readNumbers(specialObj, QStringLiteral("profile.specialFrom"), p.specialFrom);
+
+    // A special range lies beyond the general one: it needs deviceEnd of its type and starts after.
+    for (auto it = specialObj.begin(); it != specialObj.end() && !f.failed(); ++it) {
+        const DeviceType t = *deviceTypeFromSymbol(it.key());
+        const std::optional<uint32_t> end = p.end(t);
+        const QString path = childPath(QStringLiteral("profile.specialFrom"), it.key());
+        if (!end) {
+            f.fail(path, QStringLiteral("needs a deviceEnd of %1").arg(deviceSymbol(t)));
+        } else if (*p.special(t) <= *end) {
+            f.fail(path, QStringLiteral("must be greater than deviceEnd of %1 (%2)")
+                             .arg(deviceSymbol(t), formatDeviceNumber(t, *end, xy)));
         }
-        p.deviceEnd[static_cast<size_t>(*t)] = number;
     }
 
     for (int i = 0; i < supportsArr.size() && !f.failed(); ++i) {

@@ -7,6 +7,7 @@
 #include "hil_capture/plan.h"
 #include "hil_capture/profile.h"
 #include "hil_capture/resolve.h"
+#include "hil_capture/safety_gate.h"
 #include "mc/core/convert.h"
 #include "mc/core/protocol.h"
 
@@ -144,12 +145,13 @@ class HilProfileTests : public QObject {
             QVERIFY2(p.device.frame.xyNotation == e.notation, e.id);
             QVERIFY2(p.device.frame.xyAsciiDigits == e.digits, e.id);
         }
-        // The FX5U example: Y20-Y37 octal is 16 points, indices 16 to 31; deviceEnd Y "1777".
+        // The FX5U example: Y0-Y7, the outputs whose number is the same in octal and in hex;
+        // deviceEnd Y "1777" octal is index 1023.
         const Profile fx5 = loadExample(QStringLiteral("fx5u-eth-3e-ascii"));
         const ScratchRange* y = fx5.firstScratch(DeviceType::Y);
         QVERIFY(y != nullptr);
-        QCOMPARE(y->first, 16u);
-        QCOMPARE(y->last, 31u);
+        QCOMPARE(y->first, 0u);
+        QCOMPARE(y->last, 7u);
         QCOMPARE(fx5.end(DeviceType::Y).value_or(0), 1023u);
     }
 
@@ -232,7 +234,13 @@ class HilProfileTests : public QObject {
     }
 
     void HIL_XYN_04_planReferencesResolveInTheProfilesNotation() {
-        const Profile fx = loadExample(QStringLiteral("fx5u-eth-3e-ascii")); // Y20-Y37, octal
+        // The FX5U example with Y20-Y37 (octal) as its Y scratch.
+        const ProfileLoad fxLoad = loadProfile(
+            edited(QStringLiteral("fx5u-eth-3e-ascii"), QStringLiteral("profile.scratch"),
+                   QJsonArray{QStringLiteral("D100-D2099"), QStringLiteral("M100-M2099"),
+                              QStringLiteral("Y20-Y37")}));
+        QVERIFY2(fxLoad.ok(), qPrintable(fxLoad.error.text()));
+        const Profile fx = *fxLoad.profile;
         const ResolveResult r = resolveText(R"JSON(
             {"id":"Y-01","kind":"read","device":"Y@s","unit":"bit","count":8},
             {"id":"Y-02","kind":"read","device":"Y@s+8","unit":"bit","count":8},
@@ -317,6 +325,165 @@ class HilProfileTests : public QObject {
         QCOMPARE(load.error.path, QStringLiteral("profile.supports[1]"));
     }
 
+    // ---- specialFrom: a special range beyond deviceEnd (FX3 D8000-, M8000-) --------------------
+
+    void HIL_01_specialFromLoads() {
+        // The FX3 examples declare it; the Q and FX5U examples, whose special devices are SM/SD,
+        // do not.
+        for (const char* id : {"fx3-eth-1e-bin", "fx3-serial-1c-f1"}) {
+            const Profile p = loadExample(QLatin1String(id));
+            QCOMPARE(p.special(DeviceType::D).value_or(0), 8000u);
+            QCOMPARE(p.special(DeviceType::M).value_or(0), 8000u);
+            QVERIFY2(!p.special(DeviceType::R), id);
+            QCOMPARE(p.end(DeviceType::D).value_or(0), 7999u);
+        }
+        for (const char* id : {"q03ude-eth-3e-bin", "q03ude-c24-3c-f4", "fx5u-eth-3e-ascii"}) {
+            const Profile p = loadExample(QLatin1String(id));
+            for (size_t i = 0; i < static_cast<size_t>(DeviceType::Count); ++i) {
+                QVERIFY2(!p.specialFrom[i], id);
+            }
+        }
+        // Absent is fine; a decimal string and a hexadecimal string are read in the type's radix.
+        ProfileLoad load = loadProfile(edited(QStringLiteral("fx3-eth-1e-bin"),
+                                              QStringLiteral("profile.specialFrom"),
+                                              QJsonValue(QJsonValue::Undefined)));
+        QVERIFY2(load.ok(), qPrintable(load.error.text()));
+        QVERIFY(!load.profile->special(DeviceType::D));
+        load = loadProfile(
+            edited(QStringLiteral("q03ude-eth-3e-bin"), QStringLiteral("profile.specialFrom"),
+                   QJsonObject{{"D", QStringLiteral("12288")}, {"W", QStringLiteral("2000")}}));
+        QVERIFY2(load.ok(), qPrintable(load.error.text()));
+        QCOMPARE(load.profile->special(DeviceType::D).value_or(0), 12288u);
+        QCOMPARE(load.profile->special(DeviceType::W).value_or(0), 0x2000u);
+    }
+
+    void HIL_01_specialFromRejected_data() {
+        QTest::addColumn<QJsonValue>("value");
+        QTest::addColumn<QString>("path");
+        QTest::addColumn<QString>("message");
+        QTest::newRow("not an object") << QJsonValue(8000) << "profile.specialFrom"
+                                       << "expected an object";
+        QTest::newRow("unknown device type")
+            << QJsonValue(QJsonObject{{"QQ", 8000}}) << "profile.specialFrom.QQ"
+            << "unknown device type";
+        QTest::newRow("equal to deviceEnd")
+            << QJsonValue(QJsonObject{{"D", 7999}}) << "profile.specialFrom.D"
+            << "must be greater than deviceEnd of D (7999)";
+        QTest::newRow("below deviceEnd")
+            << QJsonValue(QJsonObject{{"M", 100}}) << "profile.specialFrom.M"
+            << "must be greater than deviceEnd of M (7679)";
+        QTest::newRow("no deviceEnd of its type")
+            << QJsonValue(QJsonObject{{"L", 9000}}) << "profile.specialFrom.L"
+            << "needs a deviceEnd of L";
+        QTest::newRow("not a decimal number")
+            << QJsonValue(QJsonObject{{"D", QStringLiteral("8A00")}}) << "profile.specialFrom.D"
+            << "decimal";
+        QTest::newRow("negative") << QJsonValue(QJsonObject{{"D", -1}}) << "profile.specialFrom.D"
+                                  << "non-negative";
+        QTest::newRow("fraction") << QJsonValue(QJsonObject{{"D", 8000.5}})
+                                  << "profile.specialFrom.D" << "non-negative";
+        QTest::newRow("hexadecimal type as a JSON number")
+            << QJsonValue(QJsonObject{{"X", 400}}) << "profile.specialFrom.X" << "hexadecimal";
+        QTest::newRow("octal X with a digit 8")
+            << QJsonValue(QJsonObject{{"X", QStringLiteral("400")}, {"Y", QStringLiteral("480")}})
+            << "profile.specialFrom.Y" << "octal";
+        QTest::newRow("neither number nor string")
+            << QJsonValue(QJsonObject{{"D", true}}) << "profile.specialFrom.D"
+            << "expected a number or a string";
+    }
+    void HIL_01_specialFromRejected() {
+        QFETCH(QJsonValue, value);
+        QFETCH(QString, path);
+        QFETCH(QString, message);
+        const ProfileLoad load = loadProfile(
+            edited(QStringLiteral("fx3-eth-1e-bin"), QStringLiteral("profile.specialFrom"), value));
+        QVERIFY(!load.ok());
+        QCOMPARE(load.error.path, path);
+        QVERIFY2(load.error.message.contains(message), qPrintable(load.error.message));
+    }
+
+    void HIL_01_specialFromTurnsAPlcErrorReadIntoOkAndSkipsASpanningRead() {
+        const Profile fx3 = loadExample(QStringLiteral("fx3-eth-1e-bin")); // D 7999 / 8000
+        const ResolveResult r = resolveText(R"JSON(
+            {"id":"S-01","kind":"read","device":"D@end+1","expect":"plcError"},
+            {"id":"S-02","kind":"read","device":"D@end","count":2,"expect":"plcError"},
+            {"id":"S-03","kind":"read","device":"D@end","expect":"ok"},
+            {"id":"S-04","kind":"read","device":"M@end+1","unit":"bit","expect":"plcError"},
+            {"id":"S-05","kind":"read","device":"M8000","unit":"bit","count":16,
+                "expect":"plcError"},
+            {"id":"S-06","kind":"read","device":"M7999","unit":"bit","count":2,"expect":"record"},
+            {"id":"S-07","kind":"read","device":"D@s","then":[
+                {"kind":"read","device":"D7990","count":11,"expect":"plcError"}]},
+            {"id":"S-08","kind":"read","device":"D8000","count":3,"expect":"ok"},
+            {"id":"S-09","kind":"read","device":"M@end","unit":"word","count":1,
+                "expect":"record"},
+            {"id":"S-10","kind":"read","device":"D@s","count":5,"expect":"plcError"}
+        )JSON",
+                                            fx3);
+        QVERIFY2(r.ok(), qPrintable(r.errors.isEmpty() ? QString() : r.errors[0].text()));
+        QCOMPARE(r.steps.size(), 10);
+        const auto step = [&](int i) -> const ResolvedStep& { return r.steps[i]; };
+
+        // D8000 exists (a special register): the plcError expectation becomes ok, with a note.
+        QVERIFY(!step(0).skipped());
+        QVERIFY(step(0).ops[0].expect.kind == ExpectKind::Ok);
+        QCOMPARE(step(0).ops[0].expectNote,
+                 QStringLiteral("expect ok, not plcError: D8000 is in the special range from "
+                                "D8000 (specialFrom)"));
+        QCOMPARE(step(0).ops[0].frames.size(), 1); // still encoded and sent
+        // D7999 x2 spans the general and the special range: not sent, skipped with the reason.
+        QVERIFY(step(1).skipped());
+        QCOMPARE(step(1).skipReason,
+                 QStringLiteral("skipped: D7999-D8000 spans the general and the special range "
+                                "(specialFrom D8000); the PLC forbids reading both in one "
+                                "request"));
+        // Reads inside the general range keep their expectation.
+        QVERIFY(step(2).ops[0].expect.kind == ExpectKind::Ok);
+        QVERIFY(step(2).ops[0].expectNote.isEmpty());
+        // M7680 lies between deviceEnd and the special range: it does not exist, still plcError.
+        QVERIFY(!step(3).skipped());
+        QVERIFY(step(3).ops[0].expect.kind == ExpectKind::PlcError);
+        QVERIFY(step(3).ops[0].expectNote.isEmpty());
+        // A read wholly in the special range, bit device.
+        QVERIFY(step(4).ops[0].expect.kind == ExpectKind::Ok);
+        QVERIFY(step(4).ops[0].expectNote.contains(QStringLiteral("M8000")));
+        // A spanning bit read is skipped whatever it expects.
+        QVERIFY2(step(5).skipReason.contains(QStringLiteral("M7999-M8000")),
+                 qPrintable(step(5).skipReason));
+        // A spanning `then` operation skips its whole step.
+        QVERIFY2(step(6).skipReason.contains(QStringLiteral("D7990-D8000")),
+                 qPrintable(step(6).skipReason));
+        // An ok expectation in the special range is left alone.
+        QVERIFY(step(7).ops[0].expect.kind == ExpectKind::Ok);
+        QVERIFY(step(7).ops[0].expectNote.isEmpty());
+        // A word read of a bit device covers 16 numbers: M7679..M7694 does not reach M8000.
+        QVERIFY(!step(8).skipped());
+        // In the general range a plcError expectation stays.
+        QVERIFY(step(9).ops[0].expect.kind == ExpectKind::PlcError);
+        QVERIFY(step(9).ops[0].expectNote.isEmpty());
+    }
+
+    void HIL_01_specialFromLeavesWritesToTheSafetyGate() {
+        // A write never has its expectation changed or its step skipped by specialFrom: the
+        // safety gate judges it (and refuses it, the special range being outside scratch).
+        const Profile fx3 = loadExample(QStringLiteral("fx3-eth-1e-bin"));
+        const ResolveResult r = resolveText(R"JSON(
+            {"id":"W-01","kind":"write","device":"D8000","values":[1],"expect":"plcError"},
+            {"id":"W-02","kind":"write","device":"D7999","count":2,"values":[1,2],
+                "expect":"plcError"}
+        )JSON",
+                                            fx3);
+        QVERIFY2(r.ok(), qPrintable(r.errors.isEmpty() ? QString() : r.errors[0].text()));
+        for (const ResolvedStep& s : r.steps) {
+            QVERIFY2(!s.skipped(), qPrintable(s.id));
+            QVERIFY(s.ops[0].expect.kind == ExpectKind::PlcError);
+            QVERIFY(s.ops[0].expectNote.isEmpty());
+        }
+        const GateReport gate = checkGate(r, fx3);
+        QVERIFY(gate.refused());
+        QCOMPARE(gate.violations.size(), 2);
+    }
+
     void HIL_01_unknownKeyRejected_data() {
         QTest::addColumn<QString>("parent"); // dotted path of the object that gets a stray key
         QTest::addColumn<QString>("errorPath");
@@ -324,6 +491,8 @@ class HilProfileTests : public QObject {
         QTest::newRow("profile") << "profile" << "profile.typo";
         QTest::newRow("deviceEnd is a map, not checked as keys") << "profile.deviceEnd"
                                                                  << "profile.deviceEnd.typo";
+        QTest::newRow("specialFrom is a map, like deviceEnd") << "profile.specialFrom"
+                                                              << "profile.specialFrom.typo";
         QTest::newRow("device") << "device" << "device.typo";
         QTest::newRow("device.frame") << "device.frame" << "device.frame.typo";
         QTest::newRow("device.session") << "device.session" << "device.session.typo";
@@ -786,7 +955,7 @@ class HilProfileTests : public QObject {
             {"id":"E-01","kind":"read","device":"D@s"},
             {"id":"E-02","kind":"write","device":"ZR@s","values":[1]},
             {"id":"E-03","kind":"read","device":"@scan"},
-            {"id":"E-04","kind":"read","device":"TN@end"}
+            {"id":"E-04","kind":"read","device":"STN@end"}
         )JSON",
                                             q);
         QVERIFY(!r.ok());

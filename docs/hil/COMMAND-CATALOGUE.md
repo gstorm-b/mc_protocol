@@ -43,7 +43,7 @@ A step whose count exceeds the scratch area is **skipped** with `skipped: scratc
 
 ## Profiles on this bench (decided 2026-09-26)
 
-Fourteen profiles, one parameter download each (see the spec for the coverage consequences):
+Fourteen profiles, one parameter download each, plus the FX5U RS-485 row added by the owner on 2026-10-03 (see the spec for the coverage consequences). Drafts of all sixteen ids are listed in `tests/hil/profiles/README.md`:
 
 | PLC / module | Frame | Profiles |
 |---|---|---|
@@ -52,8 +52,9 @@ Fourteen profiles, one parameter download each (see the spec for the coverage co
 | FX5U, built-in Ethernet | 3E | Binary · ASCII |
 | FX3, Ethernet adapter | 1E | Binary · ASCII |
 | FX3, serial / computer link | 1C | F1 sum on · F1 sum off · F4 |
+| FX5U, built-in serial (RS-485) | 3C | F1 sum on · F4 (drafts; the owner adds more when needed) |
 
-`SB` / `SW` below mean the profile's `specialBit` / `specialWord` (Q and FX5 over 3E/3C: `SM0` / `SD0`; FX3 over 1E/1C: FX3's own special range, addresses from its manual).
+`SB` / `SW` below mean the profile's `specialBit` / `specialWord` (Q and FX5 over 3E/3C: `SM0` / `SD0`; FX3 over 1E/1C: `M8000` / `D8000` — confirmed for 1E by the ENET-ADP manual §7.5, used for 1C by the owner's decision (same CPU); the profile's `specialFrom` marks D8000/M8000 as existing special devices for G5, on 1C by analogy with the 1E table).
 
 ---
 
@@ -132,8 +133,8 @@ Needs D100–D102 and M100–M107 in scratch and the default route / station of 
 | ID | Step | 3E | 1E | 3C | 1C | Expect |
 |---|---|---|---|---|---|---|
 | G5-01 | Read `D@end` × 1 | ✓ | ✓ | ✓ | ✓ | ok |
-| G5-02 | Read `D@end+1` × 1 | ✓ | ✓ | ✓ | ✓ | plcError: end code; 3E error information; 1E abnormal code if 5BH |
-| G5-03 | Read `D@end` × 2 (crosses the end) | ✓ | ✓ | ✓ | ✓ | plcError |
+| G5-02 | Read `D@end+1` × 1 | ✓ | ✓ | ✓ | ✓ | plcError: end code; 3E error information; 1E abnormal code if 5BH. With `specialFrom.D` = end+1 (FX3): a special register, ok |
+| G5-03 | Read `D@end` × 2 (crosses the end) | ✓ | ✓ | ✓ | ✓ | plcError. With `specialFrom.D` = end+1 (FX3): spans general and special registers, which the manual forbids: not sent (skipped with the reason) |
 | G5-04 | Read `M@end+1` × 1 bit | ✓ | ✓ | ✓ | ✓ | plcError |
 | G5-05 | If `deviceEnd.M + 1` is not a multiple of 16: subscribe the last few M points with `bitsAsWords` on, one round | ✓ | ✓ | ✓ | ✓ | chunk fails every round (confirms core-session open question 4 on hardware) |
 | G5-06 | Write while the PLC forbids it (profile variant with online change disabled, PLC in RUN): write `D@s` × 1 | ✓ | ✓ | ✓ | ✓ | plcError (record code) |

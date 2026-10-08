@@ -62,7 +62,7 @@ Fourteen profiles, one parameter download each, plus row 6 (added by the owner 2
 | 3 | FX5U, built-in Ethernet | 3E | Binary · ASCII |
 | 4 | FX3, Ethernet adapter | 1E | Binary · ASCII |
 | 5 | FX3, serial / computer link | 1C | F1 sum on · F1 sum off · F4 |
-| 6 | FX5U, built-in serial (RS-485) | 3C | defined by the owner when needed |
+| 6 | FX5U, built-in serial (RS-485) | 3C | defined by the owner when needed (leader drafts 2026-10-08: F1 sum on · F4) |
 
 **Coverage consequences, recorded so nobody reads more into a green run than it proves:**
 
@@ -71,7 +71,7 @@ Fourteen profiles, one parameter download each, plus row 6 (added by the owner 2
 - §10.1 Q8 (M9008 word access) is **not testable on this bench**: it needs a CPU exposing M9000–M9255 through 1E/1C, and FX3 uses its own special-device range. The library keeps the spec rule (9000 + 16k).
 - The 1E limit table (Q7) is checked on FX3, which may differ from the A-series figures in the PDF; either result is a finding.
 - iQ-R subcommands and the "A-series target via QnA" rules are not verified on hardware (decision H1).
-- **X/Y numbering on FX5 and FX3 is open** (2026-10-03): GX Works numbers their X/Y in octal, the library reads X/Y numbers in hex (Q style), and the reference spec does not say which value the frame must carry for these CPUs. Numbers 0–7 are the same either way; scratch and expectations on FX use only X/Y 0–7 until a capture (G2, G6) settles it, and the result is a finding.
+- **X/Y numbering on FX5 and FX3** (settled 2026-10-03 from the vendor manuals, implemented in T-066): FX X/Y numbers are octal. `FrameConfig::xyNotation = Octal` makes the library read and write them that way; `xyAsciiDigits` picks what an ASCII frame carries (FX5 `ASCII (X,Y HEX)` and every Binary frame: the point index in hex; FX5 `ASCII (X,Y OCT)` and FX3 1C: octal digits). FX profiles set both fields; a capture (G2, G6) that disagrees is a finding.
 
 ## Concepts
 
@@ -104,6 +104,7 @@ One profile = one PLC + one transport + one frame configuration, i.e. one set of
 - `supports`: device types to exercise; the device-code sweep also probes the family's other types and expects a PLC error from them.
 - `scanTimeDevice`: optional device holding the CPU's current scan time (the owner takes the address from the CPU manual); read before each bench so timings have context.
 - `specialBit`, `specialWord`: the first special relay and special register **as addressed through this profile's frame**, taken by the owner from the CPU manual. Q and FX5 over 3E/3C: `SM0`, `SD0`. FX3 over 1E/1C: FX3's own special range (the owner confirms the addresses, e.g. `M8000`, `D8000`). Used by catalogue steps G1-09, G2-10 and G3-04 instead of a fixed M9000/D9000.
+- `specialFrom` (optional; added 2026-10-08, owner decision): per device type, the first number of a **special range that exists beyond `deviceEnd`**, e.g. FX3 over 1E/1C `{"D": 8000, "M": 8000}` (general D0–D7999, special D8000–D8511). A reference that resolves into the special range names a device that **exists**: a boundary step that expects `plcError` there is run with expectation `ok` instead (FX3: G5-02 reads D8000, a special register). A request whose range spans the general and the special range is **not sent** and is reported as skipped with the reason (the FX3 manual forbids reading e.g. D7999 and D8000 together: G5-03). Omitted for Q and FX5, whose special devices (SM, SD) are separate device types.
 
 Example profiles are committed as `tests/hil/profiles/*.example.json`. Real profiles stay local and git-ignored: they hold IP addresses and COM port names. Everything replay needs is copied into `run.meta`.
 
@@ -224,8 +225,8 @@ t_send ──(request on the wire + PLC processing, incl. waiting for END of sca
 
 **Before the first capture: open by the owner's choice until then (2026-09-26).** Planning and implementation do not wait for these; the first capture run does.
 
-- [ ] Scratch area decided for each PLC (Q + Ethernet, Q + C24, FX5U, FX3 Ethernet, FX3 serial); preferably including D100–D102 and M100–M107 for group `GV`.
-- [ ] FX3 manual checked: the special relay / register addresses as seen through 1E/1C (→ `specialBit` / `specialWord`; guessed M8000 / D8000, unverified), and that its computer link offers formats 1 and 4 (→ the three 1C profiles).
+- [x] Scratch area decided for each PLC (Q + Ethernet, Q + C24, FX5U, FX3 Ethernet, FX3 serial); preferably including D100–D102 and M100–M107 for group `GV`. (Owner, 2026-10-04: `temp-docs/hil-scratch-areas.md`.)
+- [x] FX3 manual checked: the special relay / register addresses as seen through 1E/1C (→ `specialBit` / `specialWord` = `M8000` / `D8000`, and `specialFrom`: confirmed for 1E by the ENET-ADP manual §7.5; for 1C the same addresses by the owner's decision, and the "no read across D7999/D8000" rule applied by analogy, so that 1C answer is not captured), and that its computer link offers formats 1 and 4 (→ the three 1C profiles; owner, 2026-10-03).
 
 1. Fill the hardware capability table, then write the profile. Check that the scratch area is free for testing on that PLC.
 2. Download the PLC parameters matching the profile with GX Works: code, format, sum check, station numbers, open settings for MC protocol, and "enable online change" if the PLC stays in RUN. The tool does not download parameters.

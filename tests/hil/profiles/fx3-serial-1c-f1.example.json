@@ -8,24 +8,35 @@
     "adapter": "FTDI USB-RS232, latency timer 1 ms",
     "plcState": "RUN",
     "scratch": [
-      "D100-D999",
-      "M100-M999"
+      "D100-D2099",
+      "M100-M2099"
     ],
     "deviceEnd": {
       "D": 7999,
-      "M": 7679
+      "R": 32767,
+      "M": 7679,
+      "S": 4095,
+      "TS": 511,
+      "TN": 511,
+      "CS": 255,
+      "CN": 255,
+      "X": "377",
+      "Y": "377"
+    },
+    "specialFrom": {
+      "D": 8000,
+      "M": 8000
     },
     "supports": [
       "D",
+      "R",
       "M",
+      "S",
       "X",
       "Y",
-      "S",
       "TS",
-      "TC",
       "TN",
       "CS",
-      "CC",
       "CN"
     ],
     "scanTimeDevice": "",

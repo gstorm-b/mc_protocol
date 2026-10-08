@@ -1008,6 +1008,9 @@ Known issues, noted only (owner 2026-10-04: no task):
   `GUI_02_comPairMockServesADeviceOverSerial` (`tst_gui_mock_tab.cpp:937`) flakes ~1 in 12 on Qt 5 (tester: 2 of 25 runs; Qt 6: 0).
   A Qt 5.15.0 limitation; noted like the other flakes (T-079). Qt 5 debug JSON loaders of `mc_hil_tool` run on
   1 MB stacks (the workbench's file threads got 4 MB); very deep nesting is not tested there.
+- T-080: `run.meta` does not record `specialFrom`, and the replay (RPL-03) builds its `MockPlc` from `deviceEnd`
+  only, so a real FX3 capture of G5-02 (and, already before, G1-09 / G2-10 / G3-04 reading M8000/D8000) will
+  replay as a divergence. To settle at P9-2 findings triage (tag, or teach the replay the special range).
 - LOW from the T-075..T-077 review: `localhost` is trusted by name; one GUI interleave case relies on a
   3 ms pause; two doc-comment format nits (`hil_types.h:62` width, `mock_runner.h` `///` vs `///<`).
 
@@ -1031,6 +1034,14 @@ Details and acceptance criteria in the baton files `tasks/done/T-078.md` and `T-
 - [x] Export a new git bundle (`git bundle create … --all`) to `build/release/` and verify it (`git bundle verify`, clone test)
   — `build/release/mc_protocol-v0.1.0.bundle`; published 2026-10-08 with the owner's permission: `main` and tag
   `v0.1.0` pushed, GitHub pre-release https://github.com/gstorm-b/mc_protocol/releases/tag/v0.1.0 with the bundle
+
+---
+
+## Capture preparation (owner 2026-10-08, before P9-1)
+
+- [x] T-080 `specialFrom` for the FX3 boundary steps, example profiles fixed, 16 local draft profiles dry-run green,
+  profiles README (details: `tasks/done/T-080.md`); tester and reviewer PASS; commit
+- [ ] Pack the draft profiles and the plans (zip) and attach it to the GitHub release v0.1.0 (owner request)
 
 ---
 

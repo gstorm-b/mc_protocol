@@ -5,8 +5,11 @@
 #include "hil_suites.h"
 #include "hil_test_support.h"
 
+#include "hil_capture/dry_run.h"
 #include "hil_capture/options.h"
 #include "hil_capture/plan.h"
+#include "hil_capture/profile.h"
+#include "hil_capture/resolve.h"
 #include "hil_capture/tool.h"
 
 #include <QFile>
@@ -82,6 +85,15 @@ bool belongsTo(const QString& planId, const QString& catalogueId) {
 PlanLoad loadPlanNamed(const char* file) {
     return loadPlanFile(testsDir() + QStringLiteral("/hil/plans/") + QLatin1String(file) +
                         QStringLiteral(".json"));
+}
+
+const ResolvedStep* findStep(const ResolveResult& r, const QString& id) {
+    for (const ResolvedStep& s : r.steps) {
+        if (s.id == id) {
+            return &s;
+        }
+    }
+    return nullptr;
 }
 
 class HilPlansTests : public QObject {
@@ -174,6 +186,112 @@ class HilPlansTests : public QObject {
                  qPrintable(QString::number(run.out.count(QStringLiteral("    tx ")))));
         // Steps that do not apply to the profile are skipped, not errors.
         QVERIFY(run.out.contains(QStringLiteral("skipped: requires")));
+    }
+
+    // specialFrom (SPEC-hil-capture "Profile"; catalogue G5-02, G5-03): on an FX3 profile D8000 is
+    // a special register, so G5-02 expects ok, and G5-03 (D7999 x2) is not sent.
+    void HIL_01_theFx3BoundaryStepsFollowSpecialFrom_data() {
+        QTest::addColumn<QString>("plan");
+        QTest::addColumn<QString>("profile");
+        QTest::newRow("1E") << "a1e" << "fx3-eth-1e-bin";
+        QTest::newRow("1C") << "a1c" << "fx3-serial-1c-f1";
+    }
+    void HIL_01_theFx3BoundaryStepsFollowSpecialFrom() {
+        QFETCH(QString, plan);
+        QFETCH(QString, profile);
+        const PlanLoad p = loadPlanNamed(qPrintable(plan));
+        QVERIFY(p.ok());
+        const Profile fx3 = loadExample(profile);
+        QVERIFY(fx3.special(DeviceType::D).has_value());
+        const ResolveResult r = resolvePlan(*p.plan, fx3);
+        QVERIFY2(r.ok(), qPrintable(r.errors.isEmpty() ? QString() : r.errors[0].text()));
+        const ResolvedStep* g502 = findStep(r, QStringLiteral("G5-02"));
+        const ResolvedStep* g503 = findStep(r, QStringLiteral("G5-03"));
+        QVERIFY(g502 != nullptr && g503 != nullptr);
+        QVERIFY(!g502->skipped());
+        QVERIFY(g502->ops[0].expect.kind == ExpectKind::Ok);
+        QCOMPARE(g502->ops[0].request.head.number, 8000u);
+        QVERIFY(g503->skipped());
+        QVERIFY2(g503->skipReason.contains(QStringLiteral("D7999-D8000 spans the general and the "
+                                                          "special range")),
+                 qPrintable(g503->skipReason));
+        // G5-04 (M7680, between deviceEnd M7679 and the special M8000) still expects plcError.
+        const ResolvedStep* g504 = findStep(r, QStringLiteral("G5-04"));
+        QVERIFY(g504 != nullptr && !g504->skipped());
+        QVERIFY(g504->ops[0].expect.kind == ExpectKind::PlcError);
+
+        // The dry run shows both, and the safety gate passes.
+        Options options;
+        options.profilePath = exampleProfilePath(profile);
+        options.planPath =
+            testsDir() + QStringLiteral("/hil/plans/") + plan + QStringLiteral(".json");
+        options.dryRun = true;
+        const ToolRun run = runToolWith(options);
+        QVERIFY2(static_cast<int>(run.code) == static_cast<int>(ExitCode::Ok),
+                 qPrintable(run.err + run.out.left(2000)));
+        QVERIFY(run.out.contains(QStringLiteral("safety gate OK")));
+        QVERIFY2(run.out.contains(QStringLiteral("STEP G5-03 [read] skipped: D7999-D8000 spans")),
+                 qPrintable(run.out));
+        QVERIFY(run.out.contains(QStringLiteral("    expect ok, not plcError: D8000 is in the "
+                                                "special range from D8000 (specialFrom)\n")));
+    }
+
+    // Without specialFrom (Q, FX5U, and the FX3 examples with the key removed) every plan resolves
+    // as it did before the key existed: each read or write keeps the plan's expectation, nothing
+    // is skipped for a special range, and G5-02 / G5-03 expect plcError.
+    void HIL_01_aProfileWithoutSpecialFromResolvesAsBefore_data() {
+        QTest::addColumn<QString>("plan");
+        QTest::addColumn<QString>("profile");
+        QTest::newRow("3E binary") << "qna_ethernet" << "q03ude-eth-3e-bin";
+        QTest::newRow("3E ascii") << "qna_ethernet" << "fx5u-eth-3e-ascii";
+        QTest::newRow("3C format 4") << "qna_serial" << "q03ude-c24-3c-f4";
+        QTest::newRow("1E binary") << "a1e" << "fx3-eth-1e-bin";
+        QTest::newRow("1C format 1") << "a1c" << "fx3-serial-1c-f1";
+    }
+    void HIL_01_aProfileWithoutSpecialFromResolvesAsBefore() {
+        QFETCH(QString, plan);
+        QFETCH(QString, profile);
+        const PlanLoad p = loadPlanNamed(qPrintable(plan));
+        QVERIFY(p.ok());
+        QJsonObject root = readJsonFile(exampleProfilePath(profile));
+        QJsonObject profileObj = root.value(QStringLiteral("profile")).toObject();
+        profileObj.remove(QStringLiteral("specialFrom"));
+        root.insert(QStringLiteral("profile"), profileObj);
+        const ProfileLoad load = loadProfile(root);
+        QVERIFY2(load.ok(), qPrintable(load.error.text()));
+        const Profile& prof = *load.profile;
+        for (size_t i = 0; i < static_cast<size_t>(DeviceType::Count); ++i) {
+            QVERIFY(!prof.specialFrom[i]);
+        }
+        const ResolveResult r = resolvePlan(*p.plan, prof);
+        QVERIFY2(r.ok(), qPrintable(r.errors.isEmpty() ? QString() : r.errors[0].text()));
+        int compared = 0;
+        for (const ResolvedStep& rs : r.steps) {
+            QVERIFY2(!rs.skipReason.contains(QStringLiteral("special")), qPrintable(rs.id));
+            for (const ResolvedOp& op : rs.ops) {
+                QVERIFY2(op.expectNote.isEmpty(), qPrintable(op.recordId));
+            }
+            if (rs.skipped() || (rs.kind != StepKind::Read && rs.kind != StepKind::Write)) {
+                continue;
+            }
+            const Step* ps = nullptr;
+            for (const Step& s : p.plan->steps) {
+                if (s.id == rs.id ||
+                    (!s.expandOver.isEmpty() && rs.id.startsWith(s.id + QLatin1Char('-')))) {
+                    ps = &s;
+                }
+            }
+            QVERIFY2(ps != nullptr, qPrintable(rs.id));
+            QVERIFY2(rs.ops[0].expect.kind == ps->op.expect.kind, qPrintable(rs.id));
+            ++compared;
+        }
+        QVERIFY2(compared > 30, qPrintable(QString::number(compared)));
+        for (const char* id : {"G5-02", "G5-03"}) {
+            const ResolvedStep* s = findStep(r, QLatin1String(id));
+            QVERIFY2(s != nullptr && !s->skipped(), id);
+            QVERIFY2(s->ops[0].expect.kind == ExpectKind::PlcError, id);
+        }
+        QVERIFY(!dryRunText(r, prof).contains(QStringLiteral("specialFrom")));
     }
 
     void HIL_01_theG9ProbesAreLiteralAndReadOnly() {

@@ -57,6 +57,7 @@ struct ResolvedOp {
         frameMeta;        ///< What each Api or Mutate frame asks for (same order as `frames`).
     QString notSent;      ///< Api: why the library cannot send it (the encode error).
     Expect expect;        ///< The judged outcome.
+    QString expectNote;   ///< Why `expect` differs from the plan's (specialFrom); or empty.
     QString mirrors;      ///< Appendix A vectors this mirrors, placeholders substituted.
     QString metaKey;      ///< run.meta key for the first response word.
     bool readOnly{false}; ///< Mutate/Raw: declared read-only in the plan.

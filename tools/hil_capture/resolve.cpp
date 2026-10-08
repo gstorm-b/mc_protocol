@@ -403,6 +403,38 @@ bool resolveOp(const OpSpec& spec, const Ctx& ctx, ResolvedOp& op, QString& why)
     return true;
 }
 
+// The profile's special range beyond deviceEnd (`specialFrom`, SPEC-hil-capture "Profile"), for a
+// read: a read lying wholly in the range names devices that exist, so a plcError expectation
+// becomes ok (noted in `expectNote`); a read spanning the general and the special range is not
+// sent. Returns the skip reason of that case, empty otherwise. Writes are left to the safety gate.
+QString applySpecialRange(ResolvedOp& op, const Profile& p) {
+    if (op.via != Via::Api || op.request.isWrite()) {
+        return QString();
+    }
+    const DeviceType type = op.request.head.type;
+    const std::optional<uint32_t> from = p.special(type);
+    if (!from) {
+        return QString();
+    }
+    const XyNumbering xy = p.device.frame.xyNotation;
+    const uint64_t head = op.request.head.number;
+    const uint64_t last = std::min<uint64_t>(head + op.request.numbersCovered() - 1, 0xFFFFFFFFULL);
+    const QString firstSpecial = deviceText(Device{type, *from}, xy);
+    if (head < *from && last >= *from) {
+        return QStringLiteral("skipped: %1-%2 spans the general and the special range "
+                              "(specialFrom %3); the PLC forbids reading both in one request")
+            .arg(deviceText(op.request.head, xy),
+                 deviceText(Device{type, static_cast<uint32_t>(last)}, xy), firstSpecial);
+    }
+    if (head >= *from && op.expect.kind == ExpectKind::PlcError) {
+        op.expect.kind = ExpectKind::Ok;
+        op.expectNote = QStringLiteral("expect ok, not plcError: %1 is in the special range from "
+                                       "%2 (specialFrom)")
+                            .arg(deviceText(op.request.head, xy), firstSpecial);
+    }
+    return QString();
+}
+
 bool resolveSub(const PollSub& s, const Ctx& ctx, ResolvedSub& out, QString& why) {
     out = ResolvedSub{};
     out.name = s.name;
@@ -543,6 +575,7 @@ bool resolveStep(const Step& step, const Ctx& ctxIn, const Profile& profile, Res
     rs.expect = step.expect;
 
     const QString mirrors = substitute(step.mirrors, *frame);
+    QString specialSkip; // a read spanning the general and the special range (specialFrom)
     const auto finishOp = [&](ResolvedOp& op, int index) {
         op.recordId = index == 0 ? step.id : QStringLiteral("%1.%2").arg(step.id).arg(index + 1);
         op.mirrors = mirrors;
@@ -560,6 +593,10 @@ bool resolveStep(const Step& step, const Ctx& ctxIn, const Profile& profile, Res
             ResolvedOp op;
             if (!resolveOp(spec, ctx, op, why)) {
                 return false;
+            }
+            const QString special = applySpecialRange(op, profile);
+            if (specialSkip.isEmpty()) {
+                specialSkip = special;
             }
             finishOp(op, index++);
             rs.ops.push_back(op);
@@ -737,6 +774,9 @@ bool resolveStep(const Step& step, const Ctx& ctxIn, const Profile& profile, Res
         if (misfit) {
             rs.skipReason = QStringLiteral("skipped: scratch too small");
         }
+    }
+    if (rs.skipReason.isEmpty()) {
+        rs.skipReason = specialSkip;
     }
     return true;
 }

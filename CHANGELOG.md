@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file. The format foll
 
 ## [Unreleased]
 
+### Added
+
+- `tools/hil_capture` profiles take the optional key `specialFrom`: per device type, the first
+  number of a special range beyond `deviceEnd` (FX3 over 1E/1C: `{"D": 8000, "M": 8000}`). A read
+  lying in that range that expects a PLC error is run expecting ok; a read spanning the general and
+  the special range is not sent and is reported as skipped with the reason (catalogue G5-02,
+  G5-03). The example profiles carry the owner's scratch areas, device ends and supported types.
+
 ## [0.1.0] - 2026-10-08
 
 First pre-release (owner, 2026-10-08). Not yet verified against real PLCs: the bench captures and

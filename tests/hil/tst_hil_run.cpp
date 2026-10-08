@@ -1370,6 +1370,65 @@ class HilRunTests : public QObject {
                  qPrintable(summary.lines.join(QLatin1Char('\n'))));
     }
 
+    // specialFrom in a run: the read in the special range passes with expectation ok and the
+    // summary line says why; the read spanning both ranges is reported skipped with its reason and
+    // nothing of it goes on the wire. (A 3E profile served by MockPlc, which has no device limit
+    // there, stands in for the FX3.)
+    void HIL_04_theSummaryShowsTheSpecialFromExpectationAndSkip() {
+        QJsonObject root = readJsonFile(exampleProfilePath(QStringLiteral("q03ude-eth-3e-bin")));
+        const Profile q = *loadProfile(root).profile;
+        PerConnectionPlc server(q.device.frame);
+        QVERIFY(server.listen());
+        const QString dir = scratchDir(QStringLiteral("run_special_from"));
+        const QString path =
+            writeProfile(dir, QStringLiteral("q03ude-eth-3e-bin"), QStringLiteral("e2e-special"),
+                         server.port(), QString(), 400);
+        root = readJsonFile(path);
+        QJsonObject profileObj = root.value(QStringLiteral("profile")).toObject();
+        profileObj.insert(QStringLiteral("specialFrom"), QJsonObject{{"D", 12288}});
+        root.insert(QStringLiteral("profile"), profileObj);
+        const ProfileLoad profile = loadProfile(root);
+        QVERIFY2(profile.ok(), qPrintable(profile.error.text()));
+        const PlanLoad plan = loadPlan(QJsonDocument::fromJson(R"JSON({"schema":1,
+            "plan":{"id":"special"},"steps":[
+            {"id":"G5-02","kind":"read","device":"D@end+1","expect":"plcError"},
+            {"id":"G5-03","kind":"read","device":"D@end","count":2,"expect":"plcError"}
+        ]})JSON")
+                                           .object());
+        QVERIFY2(plan.ok(), qPrintable(plan.error.text()));
+        const ResolveResult resolved = resolvePlan(*plan.plan, *profile.profile);
+        QVERIFY(resolved.ok());
+        RunnerSettings settings;
+        settings.outputRoot = dir + QStringLiteral("/captured");
+        QString outText;
+        QString errText;
+        QString inText;
+        QTextStream out(&outText);
+        QTextStream err(&errText);
+        QTextStream in(&inText);
+        Runner runner(*profile.profile, resolved, settings, ToolIo{&out, &err, &in});
+        const RunSummary summary = runner.run();
+        const QString lines = summary.lines.join(QLatin1Char('\n'));
+        QVERIFY2(summary.passed == 1 && summary.skipped == 1 && summary.failed == 0,
+                 qPrintable(lines));
+        QVERIFY2(lines.contains(QStringLiteral("ReadWords D12288 x1 (G5-02: expect ok, not "
+                                               "plcError: D12288 is in the special range from "
+                                               "D12288 (specialFrom))")),
+                 qPrintable(lines));
+        QVERIFY2(lines.contains(QStringLiteral("skipped: D12287-D12288 spans the general and the "
+                                               "special range (specialFrom D12288)")),
+                 qPrintable(lines));
+        // One request reached the PLC: G5-02's. G5-03 was not sent.
+        QCOMPARE(static_cast<int>(server.connections().size()), 1);
+        McProtocol codec(q.device.frame);
+        const Expected<ByteBuf> g502 =
+            codec.encode(Request::readWords(Device{DeviceType::D, 12288}, 1));
+        QVERIFY(g502);
+        QCOMPARE(server.connections()[0]->bytes,
+                 QByteArray(reinterpret_cast<const char*>(g502.value().data()),
+                            static_cast<int>(g502.value().size())));
+    }
+
     void HIL_04_theOnlyOptionRunsTheNamedGroupsOnly() {
         VirtualPlc plc;
         const QString why =

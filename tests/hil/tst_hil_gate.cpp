@@ -85,9 +85,10 @@ QString writeLoopbackProfile(const QString& dir, quint16 port) {
     return path;
 }
 
-// The example profile, with `scratch` replaced.
-Profile withScratch(const QStringList& ranges) {
-    QJsonObject root = readJsonFile(exampleProfilePath(QStringLiteral("q03ude-eth-3e-bin")));
+// The example profile @p id, with `scratch` replaced.
+Profile withScratch(const QStringList& ranges,
+                    const QString& id = QStringLiteral("q03ude-eth-3e-bin")) {
+    QJsonObject root = readJsonFile(exampleProfilePath(id));
     QJsonObject profile = root.value(QStringLiteral("profile")).toObject();
     profile.insert(QStringLiteral("scratch"), QJsonArray::fromStringList(ranges));
     root.insert(QStringLiteral("profile"), profile);
@@ -369,7 +370,8 @@ class HilGateTests : public QObject {
 
     // XYN: the gate counts indices, and its texts use the profile's notation.
     void HIL_XYN_05_theGateChecksIndicesAndNamesRangesInOctal() {
-        const Profile fx = loadExample(QStringLiteral("fx5u-eth-3e-ascii")); // Y20-Y37 = 16..31
+        const Profile fx = withScratch({"D100-D2099", "M100-M2099", "Y20-Y37"},
+                                       QStringLiteral("fx5u-eth-3e-ascii")); // Y20-Y37 = 16..31
         const Verdict ok = gateOf(R"JSON(
             {"id":"OK-01","kind":"write","device":"Y@s","unit":"bit","count":16,
                 "values":{"gen":"fill","value":1}},
@@ -405,6 +407,9 @@ class HilGateTests : public QObject {
     }
 
     void HIL_02_aWriteOutsideScratchIsRefused() {
+        // The Q example with Y20-Y2F as its Y scratch, so that Y0 lies outside it.
+        const Profile q =
+            withScratch({"D100-D2099", "W100-W1FF", "M100-M2099", "B100-B1FF", "Y20-Y2F"});
         const Verdict v = gateOf(R"JSON(
             {"id":"W-01","kind":"write","device":"D3000","values":[1]},
             {"id":"W-02","kind":"write","device":"D@end","values":[1]},
@@ -413,7 +418,7 @@ class HilGateTests : public QObject {
             {"id":"W-05","kind":"write","device":"M@s16","unit":"word","count":1000,
                 "values":{"gen":"fill","value":0}}
         )JSON",
-                                 qProfile());
+                                 q);
         QCOMPARE(stepsOf(v.gate), (QStringList{"W-01", "W-02", "W-03", "W-04", "W-05"}));
         QCOMPARE(v.gate.violations[0].kind, QStringLiteral("write"));
         QCOMPARE(v.gate.violations[0].range, QStringLiteral("D3000-D3000 (1 point)"));

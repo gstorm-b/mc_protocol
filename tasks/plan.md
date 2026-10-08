@@ -188,6 +188,12 @@ Batch tester and reviewer after T-079; one commit for both. Done 2026-10-08 (tes
   `v0.1.0` with the bundle attached,
   `build/release/mc_protocol-v0.1.0.bundle` (`--all`, verified, test clone OK)
 
+### Capture preparation (owner 2026-10-08, before P9-1)
+
+- [x] T-080 `specialFrom` (FX3: D8000 is a special register — G5-02 `ok`, G5-03 not sent), example profiles fixed to the
+  owner's values, 16 local draft bench profiles (dry-run green), profiles README; the leader then attaches a
+  profile/plan pack to the GitHub release v0.1.0
+
 ### Phase 9: Bench and release
 
 Waits until the owner has finished the HIL captures (owner, 2026-10-04); not delegated.

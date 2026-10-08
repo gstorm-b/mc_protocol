@@ -568,10 +568,11 @@ class HilCaptureTests : public QObject {
         QCOMPARE(map.value(QStringLiteral("serial.stopBits")), QStringLiteral("1"));
         QCOMPARE(map.value(QStringLiteral("serial.flowControl")), QStringLiteral("None"));
         QCOMPARE(map.value(QStringLiteral("scratch")),
-                 QStringLiteral("D100-D2099 W100-W1FF R0-R99 M100-M2099 B100-B1FF Y20-Y2F"));
+                 QStringLiteral("D100-D2099 W100-W1FF M100-M2099 B100-B1FF Y0-Y7"));
         QCOMPARE(map.value(QStringLiteral("device_end")),
-                 QStringLiteral("X=1FFF Y=1FFF M=8191 B=1FFF D=12287 W=1FFF R=32767"));
-        QVERIFY(map.value(QStringLiteral("supports")).startsWith(QStringLiteral("D W R ZR M")));
+                 QStringLiteral("X=1FFF Y=1FFF M=8191 L=8191 F=2047 V=2047 B=1FFF D=12287 W=1FFF "
+                                "TS=2047 TC=2047 TN=2047 CS=1023 CC=1023 CN=1023 SB=7FF SW=7FF"));
+        QVERIFY(map.value(QStringLiteral("supports")).startsWith(QStringLiteral("D W M L F B")));
         QCOMPARE(map.value(QStringLiteral("skipped.G1-06")),
                  QStringLiteral("skipped: requires supports:R"));
         QCOMPARE(map.value(QStringLiteral("notsent.G3-03")),
@@ -605,8 +606,14 @@ class HilCaptureTests : public QObject {
 
     // XYN: an FX profile's run.meta writes X and Y in the profile's octal notation.
     void HIL_XYN_06_runMetaOfAnFxProfileIsInOctal() {
-        const ProfileLoad load =
-            loadProfileFile(exampleProfilePath(QStringLiteral("fx5u-eth-3e-ascii")));
+        // The FX5U example with Y20-Y37 (octal) as its Y scratch.
+        QJsonObject root = readJsonFile(exampleProfilePath(QStringLiteral("fx5u-eth-3e-ascii")));
+        QJsonObject profile = root.value(QStringLiteral("profile")).toObject();
+        QJsonArray scratch = profile.value(QStringLiteral("scratch")).toArray();
+        scratch.append(QStringLiteral("Y20-Y37"));
+        profile.insert(QStringLiteral("scratch"), scratch);
+        root.insert(QStringLiteral("profile"), profile);
+        const ProfileLoad load = loadProfile(root);
         QVERIFY2(load.ok(), qPrintable(load.error.text()));
         RunMeta meta;
         meta.profile = *load.profile;
