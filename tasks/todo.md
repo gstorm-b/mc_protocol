@@ -1041,7 +1041,9 @@ Details and acceptance criteria in the baton files `tasks/done/T-078.md` and `T-
 
 - [x] T-080 `specialFrom` for the FX3 boundary steps, example profiles fixed, 16 local draft profiles dry-run green,
   profiles README (details: `tasks/done/T-080.md`); tester and reviewer PASS; commit
-- [ ] Pack the draft profiles and the plans (zip) and attach it to the GitHub release v0.1.0 (owner request)
+- [x] Pack the draft profiles and the plans (zip) and attach it to the GitHub release v0.1.0 (owner request) —
+  `mc_protocol-v0.1.0-hil-profiles-plans.zip` (16 drafts, 5 examples, 4 plans, README; placeholders only, packed
+  before any filling); needs the tool from commit `6674d06` on (`specialFrom`), stated in the release notes
 
 ---
 
