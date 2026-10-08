@@ -49,6 +49,12 @@ QVector<FieldInfo> buildFields() {
     addField(f, "transport/tcp/port", "Port", FieldKind::Int, "TCP port (1..65535)", {}, 0, u16);
     addField(f, "transport/tcp/connectTimeoutMs", "Connect timeout (ms)", FieldKind::Int,
              "0 or less: no connect timer", {}, INT_MIN, INT_MAX);
+    addField(f, "transport/tcp/lowDelay", "Low delay", FieldKind::Bool,
+             "No Nagle delay on requests");
+    addField(f, "transport/tcp/keepAlive", "Keep-alive", FieldKind::Bool,
+             "TCP keep-alive, OS timing");
+    addField(f, "transport/tcp/closeGraceMs", "Close grace (ms)", FieldKind::Int,
+             "Close: 0 = reset at once; > 0 = FIN, reset after this many ms", {}, 0, 60000);
     addField(f, "transport/serial/portName", "Port name", FieldKind::Text, "For example COM3");
     addField(f, "transport/serial/baudRate", "Baud rate", FieldKind::Int, "Bits per second", {},
              INT_MIN, INT_MAX);
@@ -138,6 +144,8 @@ QVector<FieldInfo> buildFields() {
              "Serial: gap allowed inside a response", {}, 0, u16);
     addField(f, "session/serialFlushMs", "Serial flush (ms)", FieldKind::Int,
              "Serial: discard time after EOT", {}, 0, u16);
+    addField(f, "session/firstResponseTimeoutMs", "First response timeout (ms)", FieldKind::Int64,
+             "Deadline of the first request after connect; 0 = the frame timeout", {}, 0, u32);
     addField(f, "session/heartbeat/enabled", "Heartbeat", FieldKind::Bool,
              "Write a bit device every round");
     addField(f, kPathHeartbeatDevice, "Heartbeat device", FieldKind::Text,

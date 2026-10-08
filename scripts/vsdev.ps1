@@ -18,9 +18,16 @@
 # Qt 5.15 needs it: its headers do not compile with the VS 2026 standard library (14.5x), so
 # every Qt 5 build uses the 14.44 toolset. Without the parameter nothing changes. If cl.exe is
 # already on PATH with another toolset, the script stops with an error instead of mixing two.
+#
+# -Arch x64|x86 (optional, default x64) picks the target architecture of the loaded compiler:
+# ". scripts/vsdev.ps1 -VcVarsVer 14.44 -Arch x86" loads the 32-bit (x86) MSVC for Qt 5.15 msvc2019.
+# The host stays x64. If cl.exe is already on PATH for another architecture, the script stops with
+# an error, as it does for a toolset. Without the parameter nothing changes.
 
 param(
-    [string]$VcVarsVer = ''
+    [string]$VcVarsVer = '',
+    [ValidateSet('x64', 'x86')]
+    [string]$Arch = 'x64'
 )
 
 function Add-MCPathIfMissing {
@@ -42,6 +49,12 @@ if (Get-Command 'cl.exe' -ErrorAction SilentlyContinue) {
     if ($VcVarsVer -and -not ("$env:VCToolsVersion".StartsWith($VcVarsVer))) {
         Write-Error ("vsdev: MSVC toolset $VcVarsVer was asked for, but this shell already has " +
             "'$env:VCToolsVersion' loaded; use a fresh PowerShell.")
+        return
+    }
+    $loadedArch = "$env:VSCMD_ARG_TGT_ARCH"
+    if ($PSBoundParameters.ContainsKey('Arch') -and $loadedArch -and $loadedArch -ne $Arch) {
+        Write-Error ("vsdev: target architecture $Arch was asked for, but this shell already has " +
+            "'$loadedArch' loaded; use a fresh PowerShell.")
         return
     }
 }
@@ -69,12 +82,14 @@ else {
         return
     }
 
-    if ($VcVarsVer) {
+    if ($VcVarsVer -or $Arch -eq 'x86') {
         # Launch-VsDevShell.ps1 cannot pass a toolset; its module's Enter-VsDevShell can.
+        $devCmdArgs = "-arch=$Arch -host_arch=x64"
+        if ($VcVarsVer) { $devCmdArgs += " -vcvars_ver=$VcVarsVer" }
         Import-Module (Join-Path $vsInstallPath 'Common7\Tools\Microsoft.VisualStudio.DevShell.dll')
         Enter-VsDevShell -VsInstallPath $vsInstallPath -SkipAutomaticLocation `
-            -DevCmdArguments "-arch=x64 -host_arch=x64 -vcvars_ver=$VcVarsVer"
-        if (-not ("$env:VCToolsVersion".StartsWith($VcVarsVer))) {
+            -DevCmdArguments $devCmdArgs
+        if ($VcVarsVer -and -not ("$env:VCToolsVersion".StartsWith($VcVarsVer))) {
             Write-Error ("vsdev: MSVC toolset $VcVarsVer is not installed in '$vsInstallPath' " +
                 "(loaded: '$env:VCToolsVersion').")
             return

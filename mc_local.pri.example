@@ -18,3 +18,8 @@ MC_ADS_DIR_MINGW = $$PWD/build/ads-mingw_64/install
 # scripts/build-ads.ps1 -QtDir C:/Qt/5.15.0/msvc2019_64 (its qtadvanceddocking-qt5 library). Read by
 # mc_gui_deps.pri for every Qt 5 kit.
 MC_ADS_DIR_QT5 = $$PWD/build/ads-qt5-msvc2019_64/install
+
+# Qt 5.15 32-bit kit (MSVC msvc2019, x86): ADS built for x86 by
+# scripts/build-ads.ps1 -QtDir C:/Qt/5.15.0/msvc2019 (it prints this key). Read by mc_gui_deps.pri when
+# the kit is Qt 5 with QT_ARCH i386; the x64 key above is never used for it.
+MC_ADS_DIR_QT5_X86 = $$PWD/build/ads-qt5-msvc2019/install

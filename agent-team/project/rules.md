@@ -78,6 +78,15 @@ contradict `agent-team/core/`, this file wins.
   batch tester and reviewer, one commit). The leader may amend the Qt minimum in the specs and
   rules to "Qt 5.15 or 6.2+" (owner decision). Changing the vendored qpb stays the owner's choice
   (T-079 step 2). Checking `C:\Qt` for kits was allowed by the owner.
+- **Reconnect follow-up delegated, owner 2026-10-08:** after the v0.1.0 field report "3E Reconnect Stall", the
+  owner chose the library changes the leader proposed ("Hãy làm bước 1 và giao quyền như các follow-up trước"):
+  first-response grace after `linkUp` (no Ethernet resend), TCP graceful close, switchable socket options, a
+  late-serving test server and `virtual_plc` option. The leader writes the spec amendments
+  (`SPEC-core-session.md`, `SPEC-qt-device.md`; new `SessionConfig` field and config keys, both "Ask first",
+  decided by the owner here). T-081 and T-082 run on Phase 8's terms (fresh developer per task, one batch tester
+  and reviewer, one commit). Still excluded: any automatic reconnect or Ethernet resend, and a release/tag.
+  Extended the same day: "duyệt T-083" — Qt 5.15 MSVC **32-bit** (`C:\Qt\5.15.0\msvc2019`, installed by the
+  owner) joins the batch on the same terms; the leader amends the verified-kit note in `SPEC-build-packaging.md`.
 - Work on `main` unless the owner says otherwise.
 
 ## Phase-batched verification (owner decision 2026-09-27)
@@ -121,6 +130,32 @@ nữa." From T-008 on, this overrides the per-task flow of
   tasks it contains.
 - Tasks already reviewed and committed individually (T-001…T-007) are not
   re-reviewed.
+- **Parallel multi-toolset builds** (owner, 2026-10-08: "Nếu tester, reviewer cần build test với nhiều bộ tool
+  set và compile hãy yêu cầu chạy build song song thay vì chạy build từng cái"): when a tester or reviewer
+  builds several toolsets/kits (Qt 6 MSVC, Qt 6 MinGW, Qt 5 x64, Qt 5 x86, Debug/Release, qmake), they start
+  the builds **at the same time**, each as its own background process with its own fresh shell environment
+  (vsdev per toolset) and its own build tree, splitting the 32 cores (e.g. `--parallel 8` / `jom -j 8` each),
+  then collect every result. Not one after another. Limits:
+  - each process keeps its own tree; never two processes on one tree; never `build/qtc-*` / `build/Desktop_Qt_*`;
+  - `ctest` runs may also overlap, but a timing test that fails while others run is re-run alone before it is
+    reported (lessons [T-071], [T-077]); serial-pair tests (`MC_TEST_SERIAL_PAIR`, COM54/COM55) run in one tree
+    only, never in two at once;
+  - logs go to the agent's `build/_scratch-*` folder, one per build;
+  - builds are **incremental** in the existing trees (`build-env.md` rule 2); `scripts/check.ps1` always starts
+    its five `build/check-*` folders from scratch with the same names for every kit, so two `check.ps1` runs
+    never share one tree: each runs in its own worktree slot (below).
+- **Worktree slots `.wt/wt1` … `.wt/wt4`** (owner, 2026-10-08: "hãy tạo nhiều .wt cho trường hợp cần build song
+  song và untrack"; `/.wt/` is git-ignored, owner approval): git worktrees that **mirror** the main tree for
+  parallel builds. Run `scripts/wt-sync.ps1 [-Name wtN]` from the main tree first: it copies the main tree's
+  current files (uncommitted edits and new files included; unchanged files keep their timestamps, so builds
+  there stay incremental) and the local `CMakeUserPresets.json` / `mc_local.pri` with ADS paths pointing at the
+  main tree's `build/ads-*`. Rules:
+  - **nobody edits sources in a slot**; edits happen only in the main tree, then re-sync;
+  - one agent per slot at a time; the leader assigns slots in the spawn prompt (e.g. tester wt1–wt2,
+    reviewer wt3–wt4); each slot has its own `build/` (first build there is a full build);
+  - `git status` inside a slot lists LF/CRLF noise; use `git diff --stat` to see real changes;
+  - slots are never committed from, never pushed, and are not deleted by agents.
+  The leader writes this into every tester and reviewer spawn prompt; developers may do the same.
 
 ## Access boundaries
 
@@ -196,6 +231,11 @@ A vendored subset of addyosmani/agent-skills (MIT) lives in
   | tester | `test-driven-development` (the Prove-It pattern for bug reports) |
   | reviewer | `code-review-and-quality`; plus `doubt-driven-development` on `protocol-core` tasks |
 
+- **Experiment, owner 2026-10-08:** developers spawned **after** T-081 in the reconnect follow-up (T-082, T-083
+  and any rework developer of the batch) do **not** read or apply skill-pack skills; the spawn prompt says so. The
+  owner wants to see whether implementation time and quality improve. T-081's developer (spawned before) used
+  them and is the reference. Tester and reviewer keep their skills. The leader records per developer: wall time,
+  tokens, tool calls, and the batch tester/reviewer findings per task, and reports the comparison to the owner.
 - Void steps: anything in a skill that commits, pushes, opens or merges a PR,
   installs tools, or asks for one approval covering many tasks.
   `incremental-implementation` step 4 "Commit" becomes "record the slice in

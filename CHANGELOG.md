@@ -13,6 +13,29 @@ All notable changes to this project are documented in this file. The format foll
   lying in that range that expects a PLC error is run expecting ok; a read spanning the general and
   the special range is not sent and is reported as skipped with the reason (catalogue G5-02,
   G5-03). The example profiles carry the owner's scratch areas, device ends and supported types.
+- `SessionConfig::firstResponseTimeoutMs` (JSON `session.firstResponseTimeoutMs`, default 0 = off): the
+  response deadline of the first frame sent after each `linkUp`. A PLC that kept a half-open connection
+  after a cable pull may accept the new TCP connection but answer only after its own dead-connection
+  check; with this set, the first request waits for it instead of faulting. Nothing is resent; every later
+  frame keeps `timeoutMs`. A nonzero value below the frame timeout is refused by `validate()`.
+- `TcpSettings::closeGraceMs` (JSON `transport.tcp.closeGraceMs`, 0 … 60000, default 0 = abort as before):
+  a deliberate `close()` of a connected socket flushes and sends FIN, and resets only if the flush is not
+  done within the grace; the transport is `Closed` at once and a new `open()` uses a new socket.
+- `TcpSettings::lowDelay` / `keepAlive` (JSON `transport.tcp.lowDelay` / `keepAlive`, default `true` as
+  before): switch the two socket options off.
+- `virtual_plc --hold-first-ms N`: answers each TCP connection's first request after N ms, to try an app's
+  reconnect handling against a PLC that serves a new connection late. The GUI config grid shows the four
+  new keys.
+- Qt 5.15 MSVC **32-bit** (`msvc2019` kit, toolset 14.44 x86): builds warning-free and passes every test,
+  the GUI included. `scripts/vsdev.ps1 -Arch x86`, `scripts/build-ads.ps1` and `scripts/check.ps1` take the
+  architecture from the kit; presets `qt5-msvc32-debug` / `qt5-msvc32-release`; qmake key
+  `MC_ADS_DIR_QT5_X86`.
+- `scripts/wt-sync.ps1`: mirrors the working tree into git-ignored worktree slots `.wt/wtN` for parallel
+  builds of several kits.
+
+### Fixed
+
+- `src/mock/command_exec.cpp` no longer warns (C4244, an error under `/WX`) on 32-bit targets.
 
 ## [0.1.0] - 2026-10-08
 

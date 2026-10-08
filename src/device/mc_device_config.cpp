@@ -278,7 +278,8 @@ bool readSession(const QJsonObject& o, const QString& base, XyNumbering xy, Sess
           readInt(o, "maxAdHocBurst", base, c.maxAdHocBurst, f) &&
           readInt(o, "maxConsecutiveLinkErrors", base, c.maxConsecutiveLinkErrors, f) &&
           readInt(o, "serialInterCharMs", base, c.serialInterCharMs, f) &&
-          readInt(o, "serialFlushMs", base, c.serialFlushMs, f))) {
+          readInt(o, "serialFlushMs", base, c.serialFlushMs, f) &&
+          readInt(o, "firstResponseTimeoutMs", base, c.firstResponseTimeoutMs, f))) {
         return false;
     }
     QJsonObject heartbeat;
@@ -291,7 +292,10 @@ bool readSession(const QJsonObject& o, const QString& base, XyNumbering xy, Sess
 
 bool readTcp(const QJsonObject& o, const QString& base, TcpSettings& c, Failure& f) {
     return readString(o, "host", base, c.host, f) && readInt(o, "port", base, c.port, f) &&
-           readInt(o, "connectTimeoutMs", base, c.connectTimeoutMs, f);
+           readInt(o, "connectTimeoutMs", base, c.connectTimeoutMs, f) &&
+           readBool(o, "lowDelay", base, c.lowDelay, f) &&
+           readBool(o, "keepAlive", base, c.keepAlive, f) &&
+           readInt(o, "closeGraceMs", base, c.closeGraceMs, f);
 }
 
 bool readSerial(const QJsonObject& o, const QString& base, SerialSettings& c, Failure& f) {
@@ -438,6 +442,8 @@ QJsonObject sessionToJson(const SessionConfig& c, XyNumbering xy) {
     o.insert(QStringLiteral("maxConsecutiveLinkErrors"), c.maxConsecutiveLinkErrors);
     o.insert(QStringLiteral("serialInterCharMs"), c.serialInterCharMs);
     o.insert(QStringLiteral("serialFlushMs"), c.serialFlushMs);
+    o.insert(QStringLiteral("firstResponseTimeoutMs"),
+             static_cast<qint64>(c.firstResponseTimeoutMs));
 
     char text[32];
     const size_t needed = formatDevice(c.heartbeat.device, text, sizeof text, xy);
@@ -460,9 +466,13 @@ Expected<void> McDeviceConfig::validate(QString* where) const {
         return r;
     }
     if (const Expected<void> r = session.validate(frame); !r) {
+        const uint32_t effective = frame.effectiveTimeoutMs();
+        const bool graceTooShort =
+            session.firstResponseTimeoutMs != 0 && session.firstResponseTimeoutMs < effective;
         setWhere(where, session.maxConsecutiveLinkErrors == 0
                             ? QStringLiteral("session.maxConsecutiveLinkErrors")
-                            : QStringLiteral("session.heartbeat.device"));
+                        : graceTooShort ? QStringLiteral("session.firstResponseTimeoutMs")
+                                        : QStringLiteral("session.heartbeat.device"));
         return r;
     }
     for (int i = 0; i < subscriptions.size(); ++i) {
@@ -478,6 +488,10 @@ Expected<void> McDeviceConfig::validate(QString* where) const {
         if (tcp.port == 0) {
             setWhere(where, QStringLiteral("transport.tcp.port"));
             return configError("TCP port is 0");
+        }
+        if (tcp.closeGraceMs < 0 || tcp.closeGraceMs > 60000) {
+            setWhere(where, QStringLiteral("transport.tcp.closeGraceMs"));
+            return configError("TCP closeGraceMs must be 0 to 60000");
         }
     } else {
         if (serial.portName.isEmpty()) {
@@ -497,6 +511,9 @@ QJsonObject McDeviceConfig::toJson() const {
     tcpObject.insert(QStringLiteral("host"), tcp.host);
     tcpObject.insert(QStringLiteral("port"), static_cast<int>(tcp.port));
     tcpObject.insert(QStringLiteral("connectTimeoutMs"), tcp.connectTimeoutMs);
+    tcpObject.insert(QStringLiteral("lowDelay"), tcp.lowDelay);
+    tcpObject.insert(QStringLiteral("keepAlive"), tcp.keepAlive);
+    tcpObject.insert(QStringLiteral("closeGraceMs"), tcp.closeGraceMs);
 
     QJsonObject serialObject;
     serialObject.insert(QStringLiteral("portName"), serial.portName);

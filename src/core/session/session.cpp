@@ -81,6 +81,10 @@ Expected<void> SessionConfig::validate(const FrameConfig& frame) const noexcept 
     if (maxConsecutiveLinkErrors == 0) {
         return Expected<void>(invalidConfigError("maxConsecutiveLinkErrors must be at least 1"));
     }
+    if (firstResponseTimeoutMs != 0 && firstResponseTimeoutMs < frame.effectiveTimeoutMs()) {
+        return Expected<void>(invalidConfigError(
+            "firstResponseTimeoutMs must be 0 or at least effectiveTimeoutMs()"));
+    }
     if (heartbeat.enabled) {
         if (deviceInfo(heartbeat.device.type).kind != DeviceKind::Bit) {
             return Expected<void>(
@@ -235,6 +239,7 @@ void Session::linkUp(TimeMs now) noexcept {
     }
     m_values.resetBaselines();
     m_state = State::Idle;
+    m_firstSendPending = true;
     m_nextRoundAt = now; // Round 1 starts immediately.
     dispatch(now);
 }
@@ -269,6 +274,7 @@ void Session::linkDown(TimeMs now) noexcept {
     m_currentIsAdHoc = false;
     m_currentIsHeartbeat = false;
     m_adHocBurstSinceLastPollChunk = 0;
+    m_firstSendPending = false;
     m_parser.reset();
     m_rxBuffer.clear();
     m_responseDeadline = kNoDeadline;
@@ -531,6 +537,17 @@ void Session::encodeHeartbeatFrames() {
     m_heartbeatFrameOff = off.hasValue() ? std::move(off.value()) : ByteBuf{};
 }
 
+TimeMs Session::newSendDeadline(TimeMs now) noexcept {
+    uint32_t wait = m_frameConfig.effectiveTimeoutMs();
+    if (m_firstSendPending) {
+        m_firstSendPending = false;
+        if (m_config.firstResponseTimeoutMs != 0) {
+            wait = m_config.firstResponseTimeoutMs;
+        }
+    }
+    return now + wait;
+}
+
 void Session::sendChunk(size_t index, TimeMs now) noexcept {
     const ByteBuf& frame = m_encodedChunks[index];
     Output out{};
@@ -542,7 +559,7 @@ void Session::sendChunk(size_t index, TimeMs now) noexcept {
     m_currentIsAdHoc = false;
     m_parser = m_proto.parser(m_plan.chunk(index).request);
     m_rxBuffer.clear();
-    m_responseDeadline = now + m_frameConfig.effectiveTimeoutMs();
+    m_responseDeadline = newSendDeadline(now);
     m_state = State::Waiting;
     m_retriesUsed = 0;
     m_adHocBurstSinceLastPollChunk = 0; // Spec dispatch step 2: sending a polling chunk resets it.

@@ -3,7 +3,7 @@
 # tools/CMakeLists.txt. Dev-only: not part of the consumer contract.
 #
 # Reads the git-ignored mc_local.pri (template: mc_local.pri.example), then the environment
-# variable MC_ADS_DIR. Qt 5 kits read MC_ADS_DIR_QT5, Qt 6 MinGW kits MC_ADS_DIR_MINGW, other Qt 6
+# variable MC_ADS_DIR. Qt 5 kits read MC_ADS_DIR_QT5 (32-bit x86 kits, QT_ARCH i386: MC_ADS_DIR_QT5_X86), Qt 6 MinGW kits MC_ADS_DIR_MINGW, other Qt 6
 # kits MC_ADS_DIR. The GUI needs Qt 5.15, or Qt 6.5 and newer (qpb's minimums), and ADS built for
 # the same Qt major (library qtadvanceddocking-qt5 or -qt6). Sets, for the kit in use:
 #   MC_GUI_ENABLED   1 when the GUI can be built, else empty
@@ -15,7 +15,10 @@ MC_GUI_DEPS_PRI_INCLUDED = 1
 
 exists($$PWD/mc_local.pri): include($$PWD/mc_local.pri)
 
-equals(QT_MAJOR_VERSION, 5) {
+equals(QT_MAJOR_VERSION, 5):equals(QT_ARCH, i386) {
+    # 32-bit kit (Qt 5.15 msvc2019): its ADS is a 32-bit build, never the x64 one.
+    MC_ADS_KIT_DIR = $$MC_ADS_DIR_QT5_X86
+} else: equals(QT_MAJOR_VERSION, 5) {
     MC_ADS_KIT_DIR = $$MC_ADS_DIR_QT5
 } else: win32-g++ {
     MC_ADS_KIT_DIR = $$MC_ADS_DIR_MINGW

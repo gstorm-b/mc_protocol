@@ -600,6 +600,77 @@ class TstMcDevice : public QObject {
                                     "fault(Timeout,reopen=1)", "link(Faulted,Fault)"}));
     }
 
+    void QDV_18_firstResponseAfterConnectWaitsForTheGraceNotTheTimeout() {
+        // The server answers each connection's first request only after 1500 ms; the frame
+        // timeout is 500 ms.
+        const auto withGrace = [](uint32_t graceMs) {
+            return [graceMs](mc::McDeviceConfig& c) {
+                c.frame.timeoutMs = 500;
+                c.session.firstResponseTimeoutMs = graceMs;
+                c.session.cycleIntervalMs = 60000; // one round: nothing else is polled
+            };
+        };
+
+        {
+            Rig rig(mc::FrameConfig::frame3E(), /*subscribe=*/true, /*mute=*/false,
+                    withGrace(3000));
+            QVERIFY(rig.ok());
+            rig.server.holdFirstRequest(1500);
+            QElapsedTimer clock;
+            clock.start();
+            rig.device->connectToPlc();
+            QTRY_VERIFY_WITH_TIMEOUT(rig.recorder->hasCycle(1), kWaitMs);
+            QVERIFY2(clock.elapsed() >= 1400, qPrintable(QString::number(clock.elapsed())));
+            QCOMPARE(rig.device->linkState(), mc::LinkState::Connected);
+            QCOMPARE(rig.recorder->of(Event::Kind::Fault).size(), qsizetype(0));
+            QCOMPARE(rig.server.connectionCount(), 1);
+
+            // Only the first frame of a connection gets the grace: a later one that the PLC
+            // never answers faults after the frame timeout.
+            rig.server.mute(true);
+            qint64 faultAtMs = -1;
+            QElapsedTimer sent;
+            QObject::connect(rig.device.get(), &mc::McDevice::linkFault, rig.device.get(),
+                             [&](const mc::LinkFaultInfo&) { faultAtMs = sent.elapsed(); });
+            sent.start();
+            QVERIFY(rig.device->writeWords(u"D0", {1}));
+            QTRY_VERIFY_WITH_TIMEOUT(faultAtMs >= 0, kWaitMs);
+            QVERIFY2(faultAtMs <= 500 + 100, qPrintable(QString::number(faultAtMs)));
+            QVERIFY2(faultAtMs >= 500 - 2, qPrintable(QString::number(faultAtMs)));
+            QCOMPARE(rig.recorder->of(Event::Kind::Fault).last().fault.error.code,
+                     mc::ErrorCode::Timeout);
+
+            // connectToPlc() again: the grace applies to the new connection.
+            rig.server.mute(false);
+            const qsizetype mark = rig.recorder->events.size();
+            QElapsedTimer again;
+            again.start();
+            rig.device->connectToPlc();
+            QTRY_VERIFY_WITH_TIMEOUT(rig.recorder->trace().mid(mark).contains("cycle(1)"), kWaitMs);
+            QVERIFY2(again.elapsed() >= 1400, qPrintable(QString::number(again.elapsed())));
+            QCOMPARE(rig.device->linkState(), mc::LinkState::Connected);
+            QCOMPARE(rig.server.connectionCount(), 2);
+        }
+
+        {
+            // Grace off: the first request times out like any other, at about 500 ms.
+            Rig rig(mc::FrameConfig::frame3E(), /*subscribe=*/true, /*mute=*/false, withGrace(0));
+            QVERIFY(rig.ok());
+            rig.server.holdFirstRequest(1500);
+            QElapsedTimer clock;
+            qint64 faultAtMs = -1;
+            QObject::connect(rig.device.get(), &mc::McDevice::linkFault, rig.device.get(),
+                             [&](const mc::LinkFaultInfo&) { faultAtMs = clock.elapsed(); });
+            clock.start();
+            rig.device->connectToPlc();
+            QTRY_VERIFY_WITH_TIMEOUT(faultAtMs >= 0, kWaitMs);
+            QVERIFY2(faultAtMs >= 450 && faultAtMs < 1400, qPrintable(QString::number(faultAtMs)));
+            QCOMPARE(rig.recorder->of(Event::Kind::Fault).last().fault.error.code,
+                     mc::ErrorCode::Timeout);
+            QCOMPARE(rig.device->linkState(), mc::LinkState::Faulted);
+        }
+    }
+
     void QDV_13_threeEAsciiSmoke() { smokeOverTcp(mc::FrameConfig::frame3E(mc::DataCode::Ascii)); }
 
     void QDV_13_oneEBinarySmoke() { smokeOverTcp(mc::FrameConfig::frame1E(mc::DataCode::Binary)); }

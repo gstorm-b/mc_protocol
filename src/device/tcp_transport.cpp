@@ -9,19 +9,16 @@
 namespace mc {
 
 TcpTransport::TcpTransport(TcpSettings s, QObject* parent)
-    : Transport(parent), m_settings(std::move(s)), m_socket(new QTcpSocket(this)),
-      m_connectTimer(new QTimer(this)) {
+    : Transport(parent), m_settings(std::move(s)), m_connectTimer(new QTimer(this)) {
     m_connectTimer->setSingleShot(true);
-
-    connect(m_socket, &QAbstractSocket::connected, this, &TcpTransport::onConnected);
-    connect(m_socket, &QAbstractSocket::disconnected, this, &TcpTransport::onDisconnected);
-    connect(m_socket, &QAbstractSocket::errorOccurred, this, &TcpTransport::onError);
-    connect(m_socket, &QIODevice::readyRead, this, &TcpTransport::onReadyRead);
+    createSocket();
     connect(m_connectTimer, &QTimer::timeout, this, &TcpTransport::onConnectTimeout);
 }
 
 TcpTransport::~TcpTransport() {
-    // The socket is a child and is destroyed after this body; make its last signals inert first.
+    // The sockets are children and are destroyed after this body (a socket in a graceful close
+    // is aborted by its destructor); make the current one's last signals inert first. The
+    // closing ones are detached from this object already.
     m_state = State::Closed;
     m_socket->abort();
 }
@@ -44,6 +41,15 @@ void TcpTransport::open() {
 
 void TcpTransport::close() {
     ++m_generation;
+    // Only a deliberate close of a live connection may be graceful; every other path (a loss, a
+    // failed open or write, a connect timeout) goes through finishClosed() and aborts.
+    if (m_settings.closeGraceMs > 0 && m_state == State::Open &&
+        m_socket->state() == QAbstractSocket::ConnectedState) {
+        m_connectTimer->stop();
+        m_state = State::Closed;
+        closeGracefully();
+        return;
+    }
     finishClosed();
 }
 
@@ -95,8 +101,12 @@ void TcpTransport::onConnected() {
         return;
     }
     m_connectTimer->stop();
-    m_socket->setSocketOption(QAbstractSocket::LowDelayOption, 1);
-    m_socket->setSocketOption(QAbstractSocket::KeepAliveOption, 1);
+    if (m_settings.lowDelay) {
+        m_socket->setSocketOption(QAbstractSocket::LowDelayOption, 1);
+    }
+    if (m_settings.keepAlive) {
+        m_socket->setSocketOption(QAbstractSocket::KeepAliveOption, 1);
+    }
     m_state = State::Open;
     emit opened();
 }
@@ -137,6 +147,33 @@ void TcpTransport::onConnectTimeout() {
     finishClosed();
     reportOpenFailed(
         QStringLiteral("connect timed out after %1 ms").arg(m_settings.connectTimeoutMs));
+}
+
+void TcpTransport::createSocket() {
+    m_socket = new QTcpSocket(this);
+    connect(m_socket, &QAbstractSocket::connected, this, &TcpTransport::onConnected);
+    connect(m_socket, &QAbstractSocket::disconnected, this, &TcpTransport::onDisconnected);
+    connect(m_socket, &QAbstractSocket::errorOccurred, this, &TcpTransport::onError);
+    connect(m_socket, &QIODevice::readyRead, this, &TcpTransport::onReadyRead);
+}
+
+void TcpTransport::closeGracefully() {
+    QTcpSocket* closing = m_socket;
+    // Nothing the closing socket does may reach this object any more.
+    QObject::disconnect(closing, nullptr, this, nullptr);
+    createSocket();
+
+    // The socket stays a child of this object, so destroying the transport ends it with abort().
+    // It deletes itself when the close completes, or is reset after the grace time.
+    QObject::connect(closing, &QAbstractSocket::disconnected, closing, &QObject::deleteLater);
+    auto* grace = new QTimer(closing);
+    grace->setSingleShot(true);
+    QObject::connect(grace, &QTimer::timeout, closing, [closing]() {
+        closing->abort();
+        closing->deleteLater();
+    });
+    grace->start(m_settings.closeGraceMs);
+    closing->disconnectFromHost();
 }
 
 void TcpTransport::finishClosed() {

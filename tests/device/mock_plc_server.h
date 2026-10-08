@@ -8,6 +8,7 @@
 
 #include <QObject>
 #include <QTcpServer>
+#include <QTimer>
 #include <QVector>
 
 #include <functional>
@@ -44,6 +45,12 @@ class MockPlcServer : public QObject {
     // Swallows every request (of the current and of every later mock) while on.
     void mute(bool on);
 
+    // For connections accepted after the call: the bytes of each connection's first request (and
+    // everything that arrives while they are held) reach its mock only after `ms`, in order, as a
+    // PLC does that serves a new connection late. 0 = off. A connection closed during the hold
+    // drops the held bytes.
+    void holdFirstRequest(int ms);
+
   signals:
     void clientConnected();
     void clientDisconnected();
@@ -53,14 +60,21 @@ class MockPlcServer : public QObject {
         QTcpSocket* socket{nullptr};
         std::unique_ptr<mc::MockPlc> plc;
         bool open{true};
+        int holdMs{0};         // holdFirstRequest() value at accept time
+        bool holding{false};   // the first request is being held
+        bool firstSeen{false}; // the first bytes arrived
+        QByteArray held;
+        QTimer* holdTimer{nullptr}; // owned by the server (child), single shot
     };
 
     void onNewConnection();
     void onReadyRead(Connection* connection);
+    void deliver(Connection* connection, const QByteArray& request);
 
     mc::FrameConfig m_frame;
     QTcpServer m_server;
     std::function<void(mc::MockPlc&)> m_init;
     bool m_muted{false};
+    int m_holdFirstRequestMs{0};
     QVector<Connection*> m_connections; // owned; kept until the server is destroyed
 };

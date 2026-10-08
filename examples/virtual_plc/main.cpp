@@ -22,6 +22,8 @@
 //   * --wiggle DEV (repeatable) changes DEV once a second (a word counts up, a bit toggles), in
 //     every live connection, so a poller sees a change each second. It starts from the value
 //     --set gave the same device (0 when there is none), so --set keeps its meaning.
+//   * --hold-first-ms N (TCP only, default 0) answers each connection's first request after N ms;
+//     later requests queue behind it. It imitates a PLC that serves a new connection late.
 //   * The 3E and 1E frames (--code Binary or ASCII) and the 3C and 1C frames (ASCII, --format 1 to
 //     4) are answered by the mock; without --serial the serial frames travel over the TCP socket,
 //     as through a serial-to-Ethernet converter.
@@ -76,21 +78,37 @@ void apply(mc::MockPlc& plc, const Point& p) {
     }
 }
 
-// What arrives on `io` goes into the mock; what the mock answers goes back on `io`.
-void feed(QIODevice& io, mc::MockPlc& plc) {
+// --hold-first-ms on one TCP connection: the answers wait in `pending` until the timer ends the
+// hold; answers to later requests queue behind them.
+struct Hold {
+    bool holding{false}; // true from the first request until the timer fires
+    bool started{false}; // the first request has arrived
+    QByteArray pending;
+};
+
+// What arrives on `io` goes into the mock; what the mock answers goes back on `io`, or into the
+// hold's queue while the hold lasts.
+void feed(QIODevice& io, mc::MockPlc& plc, Hold* hold = nullptr) {
     const QByteArray request = io.readAll();
     plc.bytesIn(mc::ByteView{reinterpret_cast<const uint8_t*>(request.constData()),
                              static_cast<size_t>(request.size())});
     mc::ByteView response;
     while (plc.nextResponse(response)) {
-        io.write(reinterpret_cast<const char*>(response.data), static_cast<qint64>(response.size));
+        const char* data = reinterpret_cast<const char*>(response.data);
+        if (hold != nullptr && hold->holding) {
+            hold->pending.append(data, static_cast<int>(response.size));
+        } else {
+            io.write(data, static_cast<qint64>(response.size));
+        }
     }
 }
 
 class VirtualPlc {
   public:
-    VirtualPlc(const mc::FrameConfig& frame, std::vector<Point> image, std::vector<Point> wiggles)
-        : m_frame(frame), m_image(std::move(image)), m_wiggles(std::move(wiggles)) {}
+    VirtualPlc(const mc::FrameConfig& frame, std::vector<Point> image, std::vector<Point> wiggles,
+               int holdFirstMs = 0)
+        : m_frame(frame), m_image(std::move(image)), m_wiggles(std::move(wiggles)),
+          m_holdFirstMs(holdFirstMs) {}
 
     bool listen(quint16 port) {
         QObject::connect(&m_server, &QTcpServer::newConnection, &m_server, [this]() { accept(); });
@@ -167,8 +185,27 @@ class VirtualPlc {
                     .arg(socket->peerPort()));
 
             // The request bytes go into the mock; its responses go back on the socket.
-            QObject::connect(socket, &QTcpSocket::readyRead, socket,
-                             [socket, raw]() { feed(*socket, *raw); });
+            if (m_holdFirstMs > 0) {
+                auto hold = std::make_shared<Hold>();
+                QObject::connect(
+                    socket, &QTcpSocket::readyRead, socket, [this, socket, raw, hold]() {
+                        if (!hold->started) {
+                            hold->started = true;
+                            hold->holding = true;
+                            QTimer::singleShot(m_holdFirstMs, socket, [socket, hold]() {
+                                hold->holding = false;
+                                if (!hold->pending.isEmpty()) {
+                                    socket->write(hold->pending);
+                                    hold->pending.clear();
+                                }
+                            });
+                        }
+                        feed(*socket, *raw, hold.get());
+                    });
+            } else {
+                QObject::connect(socket, &QTcpSocket::readyRead, socket,
+                                 [socket, raw]() { feed(*socket, *raw); });
+            }
             QObject::connect(socket, &QTcpSocket::disconnected, socket, [this, socket]() {
                 say(QStringLiteral("client disconnected"));
                 for (size_t i = 0; i < m_connections.size(); ++i) {
@@ -207,6 +244,7 @@ class VirtualPlc {
     std::unique_ptr<mc::MockPlc> m_serialPlc; // the one mock of --serial mode
     QString m_portError;
     QTimer m_timer;
+    int m_holdFirstMs{0};
     std::vector<Connection> m_connections;
 };
 
@@ -260,6 +298,10 @@ int main(int argc, char** argv) {
     parser.addOption({QStringLiteral("serial"),
                       QStringLiteral("Answer on this COM port (7E1) instead of a TCP port."),
                       QStringLiteral("PORT")});
+    parser.addOption({QStringLiteral("hold-first-ms"),
+                      QStringLiteral("Answer each connection's first request after N ms (imitates "
+                                     "a PLC that serves a new connection late)."),
+                      QStringLiteral("N"), QStringLiteral("0")});
     parser.addOption({QStringLiteral("baud"), QStringLiteral("Baud rate with --serial."),
                       QStringLiteral("N"), QStringLiteral("9600")});
     if (!parser.parse(app.arguments())) {
@@ -286,6 +328,19 @@ int main(int argc, char** argv) {
     line.baudRate = baud;
     if (onComPort && line.portName.isEmpty()) {
         std::fprintf(stderr, "virtual_plc: --serial needs a port name, e.g. COM50.\n");
+        return 2;
+    }
+
+    bool holdOk = false;
+    const int holdFirstMs = parser.value(QStringLiteral("hold-first-ms")).toInt(&holdOk);
+    if (!holdOk || holdFirstMs < 0) {
+        std::fprintf(stderr, "virtual_plc: --hold-first-ms is a number of ms, 0 or more.\n");
+        return 2;
+    }
+    if (holdFirstMs > 0 && onComPort) {
+        std::fprintf(
+            stderr,
+            "virtual_plc: --hold-first-ms applies to TCP only; it cannot be used with --serial.\n");
         return 2;
     }
 
@@ -379,7 +434,7 @@ int main(int argc, char** argv) {
     }
     frame.xyNotation = xyText;
     frame.xyAsciiDigits = xyAscii;
-    VirtualPlc plc(frame, image, wiggles);
+    VirtualPlc plc(frame, image, wiggles, holdFirstMs);
     const QString shape = serialFrame ? QStringLiteral("format %1").arg(formatNumber)
                           : code == mc::DataCode::Binary ? QStringLiteral("Binary")
                                                          : QStringLiteral("ASCII");

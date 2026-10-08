@@ -294,7 +294,7 @@ void Session::sendAdHocChunk(TimeMs now) noexcept {
     m_currentIsAdHoc = true;
     m_parser = m_proto.parser(chunkReq);
     m_rxBuffer.clear();
-    m_responseDeadline = now + m_frameConfig.effectiveTimeoutMs();
+    m_responseDeadline = newSendDeadline(now);
     m_state = State::Waiting;
     m_retriesUsed = 0;
     m_adHocQueue->markChunkSent(chunkReq.count);
@@ -360,7 +360,7 @@ void Session::sendHeartbeat(TimeMs now) noexcept {
     m_parser = m_proto.parser(hbReq); // Parser never reads r.data (protocol.cpp); the local `bit`
                                        // need not outlive this call.
     m_rxBuffer.clear();
-    m_responseDeadline = now + m_frameConfig.effectiveTimeoutMs();
+    m_responseDeadline = newSendDeadline(now);
     m_state = State::Waiting;
     m_retriesUsed = 0;
     // Deliberately does not touch m_adHocBurstSinceLastPollChunk (dispatch()'s own doc comment:

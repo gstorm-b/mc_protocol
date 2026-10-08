@@ -1011,6 +1011,13 @@ Known issues, noted only (owner 2026-10-04: no task):
 - T-080: `run.meta` does not record `specialFrom`, and the replay (RPL-03) builds its `MockPlc` from `deviceEnd`
   only, so a real FX3 capture of G5-02 (and, already before, G1-09 / G2-10 / G3-04 reading M8000/D8000) will
   replay as a divergence. To settle at P9-2 findings triage (tag, or teach the replay the special range).
+- T-081..T-083 batch (LOW, documented): SES-28 does not pin the serial flush cap to `effectiveTimeoutMs()`
+  (a mutant survives; code correct); QDV-19 cannot tell delete-on-`disconnected` from the grace timer, nor pin
+  "no closing socket" at grace 0; SES-28 answers at +4999 where the spec row says +4000; `-Arch` inferred from
+  the kit folder name ("no `_64`" = x86; a future arm64 kit would be misread); `virtual_plc --hold-first-ms`
+  has no automated test (`qt_console_poller` cannot set the session config); QDV-19's stuck-peer case is
+  verified on Windows only; `gui.mc_workbench_tests` runs 67–91 s against the 120 s ctest timeout and timed
+  out once under five parallel builds (passed alone).
 - LOW from the T-075..T-077 review: `localhost` is trusted by name; one GUI interleave case relies on a
   3 ms pause; two doc-comment format nits (`hil_types.h:62` width, `mock_runner.h` `///` vs `///<`).
 
@@ -1044,6 +1051,25 @@ Details and acceptance criteria in the baton files `tasks/done/T-078.md` and `T-
 - [x] Pack the draft profiles and the plans (zip) and attach it to the GitHub release v0.1.0 (owner request) —
   `mc_protocol-v0.1.0-hil-profiles-plans.zip` (16 drafts, 5 examples, 4 plans, README; placeholders only, packed
   before any filling); needs the tool from commit `6674d06` on (`specialFrom`), stated in the release notes
+
+---
+
+## Reconnect follow-up (owner 2026-10-08, after the v0.1.0 field report; leader gates as Phase 8)
+
+Details and acceptance criteria in the baton files `tasks/done/T-081.md`, `T-082.md` and `T-083.md`; spec amendments in
+`SPEC-core-session.md` (SES-28) and `SPEC-qt-device.md` (QDV-12, QDV-18, QDV-19).
+
+- [x] T-081 First-response grace after `linkUp` (`SessionConfig::firstResponseTimeoutMs`), JSON, GUI field, loopback
+  hold-first fixture
+- [x] T-082 TCP graceful close (`closeGraceMs`), switchable `lowDelay` / `keepAlive`, JSON, GUI fields,
+  `virtual_plc --hold-first-ms`
+- [x] T-083 Qt 5.15 MSVC 32-bit (`msvc2019` kit): x86 warnings in `command_exec.cpp`, `-Arch x86` scripts, presets,
+  full ctest x86 (GUI when ADS x86 builds), qmake x86 (owner approved 2026-10-08)
+- [x] Worktree slots `.wt/wt1…wt4` (git-ignored) and `scripts/wt-sync.ps1` for parallel builds (owner 2026-10-08;
+  leader; the script is reviewed in this batch)
+- [x] Batch tester and reviewer; one commit; `CHANGELOG.md` `Unreleased`
+- [ ] Owner: v0.1.1 pre-release or not; reply to the app team (bench steps: `firstResponseTimeoutMs`, PLC existence
+  confirmation, Wireshark trace)
 
 ---
 

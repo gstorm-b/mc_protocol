@@ -82,7 +82,7 @@ Outcome execute(const Access& req, DataCode code, MemoryImage& memory,
     switch (req.op) {
     case Op::ReadWords:
         out.data.resize(size_t{req.count} * 2);
-        for (uint64_t k = 0; k < req.count; ++k) {
+        for (size_t k = 0; k < req.count; ++k) {
             uint16_t w = memory.wordAt(req.head, k);
             out.data[2 * k] = static_cast<uint8_t>(w & 0xFFu);
             out.data[2 * k + 1] = static_cast<uint8_t>(w >> 8);
@@ -90,18 +90,18 @@ Outcome execute(const Access& req, DataCode code, MemoryImage& memory,
         break;
     case Op::ReadBits:
         out.data.resize(req.count);
-        for (uint64_t i = 0; i < req.count; ++i) {
+        for (size_t i = 0; i < req.count; ++i) {
             out.data[i] = memory.bitAt(req.head, i) ? 1 : 0;
         }
         break;
     case Op::WriteWords:
-        for (uint64_t k = 0; k < req.count; ++k) {
+        for (size_t k = 0; k < req.count; ++k) {
             memory.setWordAt(req.head, k,
                              static_cast<uint16_t>(req.data[2 * k] | (req.data[2 * k + 1] << 8)));
         }
         break;
     case Op::WriteBits:
-        for (uint64_t i = 0; i < req.count; ++i) {
+        for (size_t i = 0; i < req.count; ++i) {
             memory.setBitAt(req.head, i, req.data[i] != 0);
         }
         break;

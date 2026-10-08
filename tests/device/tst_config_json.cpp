@@ -58,12 +58,21 @@ const QStringList kFrameKeys = {"frame",
 
 // SessionConfig without `log` (never serialised) and with PlanOptions and HeartbeatConfig
 // flattened as the spec's JSON shows: heartbeat is a nested object.
-const QStringList kSessionKeys = {
-    "cycleIntervalMs",   "cycleMode",       "bitsAsWords",   "maxGap",
-    "adHocCapacity",     "adHocArenaBytes", "maxAdHocBurst", "maxConsecutiveLinkErrors",
-    "serialInterCharMs", "serialFlushMs",   "heartbeat"};
+const QStringList kSessionKeys = {"cycleIntervalMs",
+                                  "cycleMode",
+                                  "bitsAsWords",
+                                  "maxGap",
+                                  "adHocCapacity",
+                                  "adHocArenaBytes",
+                                  "maxAdHocBurst",
+                                  "maxConsecutiveLinkErrors",
+                                  "serialInterCharMs",
+                                  "serialFlushMs",
+                                  "firstResponseTimeoutMs",
+                                  "heartbeat"};
 const QStringList kHeartbeatKeys = {"enabled", "device"};
-const QStringList kTcpKeys = {"host", "port", "connectTimeoutMs"};
+const QStringList kTcpKeys = {"host",     "port",      "connectTimeoutMs",
+                              "lowDelay", "keepAlive", "closeGraceMs"};
 const QStringList kSerialKeys = {"portName", "baudRate", "dataBits",
                                  "parity",   "stopBits", "flowControl"};
 
@@ -125,6 +134,7 @@ mc::McDeviceConfig nonDefaultConfig() {
     c.session.maxConsecutiveLinkErrors = 5;
     c.session.serialInterCharMs = 200;
     c.session.serialFlushMs = 80;
+    c.session.firstResponseTimeoutMs = 45000;
     c.session.heartbeat.enabled = true;
     c.session.heartbeat.device = kHeartbeatDevice;
 
@@ -132,6 +142,9 @@ mc::McDeviceConfig nonDefaultConfig() {
     c.tcp.host = QStringLiteral("10.0.0.7");
     c.tcp.port = 1281;
     c.tcp.connectTimeoutMs = 750;
+    c.tcp.lowDelay = false;
+    c.tcp.keepAlive = false;
+    c.tcp.closeGraceMs = 1500;
     c.serial.portName = QStringLiteral("COM7");
     c.serial.baudRate = 19200;
     c.serial.dataBits = QSerialPort::Data8;
@@ -188,6 +201,7 @@ void expectSameSession(const mc::SessionConfig& a, const mc::SessionConfig& b) {
     QCOMPARE(a.maxConsecutiveLinkErrors, b.maxConsecutiveLinkErrors);
     QCOMPARE(a.serialInterCharMs, b.serialInterCharMs);
     QCOMPARE(a.serialFlushMs, b.serialFlushMs);
+    QCOMPARE(a.firstResponseTimeoutMs, b.firstResponseTimeoutMs);
     QCOMPARE(a.heartbeat.enabled, b.heartbeat.enabled);
     QVERIFY(a.heartbeat.device == b.heartbeat.device);
     QVERIFY(a.log == b.log);
@@ -200,6 +214,9 @@ void expectSame(const mc::McDeviceConfig& a, const mc::McDeviceConfig& b) {
     QCOMPARE(a.tcp.host, b.tcp.host);
     QCOMPARE(a.tcp.port, b.tcp.port);
     QCOMPARE(a.tcp.connectTimeoutMs, b.tcp.connectTimeoutMs);
+    QCOMPARE(a.tcp.lowDelay, b.tcp.lowDelay);
+    QCOMPARE(a.tcp.keepAlive, b.tcp.keepAlive);
+    QCOMPARE(a.tcp.closeGraceMs, b.tcp.closeGraceMs);
     QCOMPARE(a.serial.portName, b.serial.portName);
     QCOMPARE(a.serial.baudRate, b.serial.baudRate);
     QCOMPARE(a.serial.dataBits, b.serial.dataBits);
@@ -345,6 +362,31 @@ class TstConfigJson : public QObject {
         QCOMPARE(partial.value().session.heartbeat.device.number, 2000u);
     }
 
+    void QDV_10_firstResponseTimeoutDefaultsToZeroAndRoundTrips() {
+        const auto missing = mc::McDeviceConfig::fromJson(parseJson(R"({"session": {}})"));
+        QVERIFY(missing.hasValue());
+        QCOMPARE(missing.value().session.firstResponseTimeoutMs, 0u);
+        QCOMPARE(mc::McDeviceConfig{}
+                     .toJson()
+                     .value("session")
+                     .toObject()
+                     .value("firstResponseTimeoutMs")
+                     .toDouble(-1),
+                 0.0);
+
+        const auto set = mc::McDeviceConfig::fromJson(
+            parseJson(R"({"session": {"firstResponseTimeoutMs": 40000}})"));
+        QVERIFY(set.hasValue());
+        QCOMPARE(set.value().session.firstResponseTimeoutMs, 40000u);
+        QCOMPARE(set.value()
+                     .toJson()
+                     .value("session")
+                     .toObject()
+                     .value("firstResponseTimeoutMs")
+                     .toInt(),
+                 40000);
+    }
+
     void QDV_10_missingSubscriptionKeysTakeDefaults() {
         const auto r = mc::McDeviceConfig::fromJson(
             parseJson(R"({"subscriptions": [ {"device": "D5"}, {"count": 7} ]})"));
@@ -361,7 +403,7 @@ class TstConfigJson : public QObject {
             "schema": 1, "future": {"a": 1},
             "frame": { "network": 4, "nope": true },
             "session": { "cycleIntervalMs": 20, "extra": [1, 2] },
-            "transport": { "kind": "Tcp", "tcp": { "port": 6000, "keepAlive": 1 }, "rdma": {} },
+            "transport": { "kind": "Tcp", "tcp": { "port": 6000, "unknownTcpKey": 1 }, "rdma": {} },
             "subscriptions": [ { "device": "D1", "count": 2, "note": "x" } ]
         })"));
         QVERIFY(r.hasValue());
@@ -394,6 +436,14 @@ class TstConfigJson : public QObject {
         QTest::newRow("transport not object") << "" << R"({"transport": "tcp"})" << "transport";
         QTest::newRow("transport.tcp.host number") << "transport.tcp" << R"({"host": 5})"
                                                    << "transport.tcp.host";
+        QTest::newRow("transport.tcp.lowDelay number") << "transport.tcp" << R"({"lowDelay": 1})"
+                                                       << "transport.tcp.lowDelay";
+        QTest::newRow("transport.tcp.keepAlive string")
+            << "transport.tcp" << R"({"keepAlive": "yes"})" << "transport.tcp.keepAlive";
+        QTest::newRow("transport.tcp.closeGraceMs string")
+            << "transport.tcp" << R"({"closeGraceMs": "soon"})" << "transport.tcp.closeGraceMs";
+        QTest::newRow("transport.tcp.closeGraceMs fraction")
+            << "transport.tcp" << R"({"closeGraceMs": 1.5})" << "transport.tcp.closeGraceMs";
         QTest::newRow("transport.serial.portName") << "transport.serial"
                                                    << R"({"portName": []})"
                                                    << "transport.serial.portName";
@@ -421,6 +471,14 @@ class TstConfigJson : public QObject {
                                               << "frame.timeoutMs";
         QTest::newRow("session.cycleMode") << "session" << R"({"cycleMode": "Sometimes"})"
                                            << "session.cycleMode";
+        QTest::newRow("session.firstResponseTimeoutMs string")
+            << "session" << R"({"firstResponseTimeoutMs": "slow"})"
+            << "session.firstResponseTimeoutMs";
+        QTest::newRow("session.firstResponseTimeoutMs negative")
+            << "session" << R"({"firstResponseTimeoutMs": -1})" << "session.firstResponseTimeoutMs";
+        QTest::newRow("session.firstResponseTimeoutMs 2^32")
+            << "session" << R"({"firstResponseTimeoutMs": 4294967296})"
+            << "session.firstResponseTimeoutMs";
         QTest::newRow("session.adHocCapacity 65536") << "session"
                                                      << R"({"adHocCapacity": 65536})"
                                                      << "session.adHocCapacity";
@@ -777,6 +835,9 @@ class TstConfigJson : public QObject {
         QCOMPARE(c.tcp.host, QStringLiteral("192.168.0.1"));
         QCOMPARE(c.tcp.port, quint16{5000});
         QCOMPARE(c.tcp.connectTimeoutMs, 2000);
+        QVERIFY(c.tcp.lowDelay);
+        QVERIFY(c.tcp.keepAlive);
+        QCOMPARE(c.tcp.closeGraceMs, 0);
         QVERIFY(c.serial.portName.isEmpty());
         QCOMPARE(c.serial.baudRate, qint32{9600});
         QVERIFY(c.serial.dataBits == QSerialPort::Data7);
@@ -820,6 +881,67 @@ class TstConfigJson : public QObject {
 
         c.session.maxConsecutiveLinkErrors = 1;
         QVERIFY2(c.validate(&where).hasValue(), qPrintable(where));
+    }
+
+    void QDV_10_firstResponseTimeoutBelowTheFrameTimeoutNamesItsPath() {
+        mc::McDeviceConfig c;
+        c.tcp.host = QStringLiteral("192.168.0.10");
+        c.frame.timeoutMs = 1000;
+        c.session.firstResponseTimeoutMs = 999;
+        QString where;
+        const auto r = c.validate(&where);
+        QVERIFY(!r.hasValue());
+        QCOMPARE(r.error().code, mc::ErrorCode::InvalidConfig);
+        QCOMPARE(where, QStringLiteral("session.firstResponseTimeoutMs"));
+
+        c.session.firstResponseTimeoutMs = 1000;
+        QVERIFY2(c.validate(&where).hasValue(), qPrintable(where));
+        c.session.firstResponseTimeoutMs = 0;
+        QVERIFY2(c.validate(&where).hasValue(), qPrintable(where));
+    }
+
+    void QDV_10_tcpSocketKeysDefaultAndRoundTrip() {
+        const auto missing =
+            mc::McDeviceConfig::fromJson(parseJson(R"({"transport": {"tcp": {}}})"));
+        QVERIFY(missing.hasValue());
+        QVERIFY(missing.value().tcp.lowDelay);
+        QVERIFY(missing.value().tcp.keepAlive);
+        QCOMPARE(missing.value().tcp.closeGraceMs, 0);
+        const QJsonObject defaults =
+            mc::McDeviceConfig{}.toJson().value("transport").toObject().value("tcp").toObject();
+        QCOMPARE(defaults.value("lowDelay").toBool(false), true);
+        QCOMPARE(defaults.value("keepAlive").toBool(false), true);
+        QCOMPARE(defaults.value("closeGraceMs").toInt(-1), 0);
+
+        const auto set = mc::McDeviceConfig::fromJson(parseJson(
+            R"({"transport": {"tcp": {"lowDelay": false, "keepAlive": false, "closeGraceMs": 500}}})"));
+        QVERIFY(set.hasValue());
+        QVERIFY(!set.value().tcp.lowDelay);
+        QVERIFY(!set.value().tcp.keepAlive);
+        QCOMPARE(set.value().tcp.closeGraceMs, 500);
+        const QJsonObject out =
+            set.value().toJson().value("transport").toObject().value("tcp").toObject();
+        QCOMPARE(out.value("lowDelay").toBool(true), false);
+        QCOMPARE(out.value("keepAlive").toBool(true), false);
+        QCOMPARE(out.value("closeGraceMs").toInt(-1), 500);
+    }
+
+    void QDV_10_closeGraceMsOutsideZeroToSixtyThousandNamesItsPath() {
+        mc::McDeviceConfig c;
+        c.tcp.host = QStringLiteral("192.168.0.10");
+        QString where;
+        for (const int ok : {0, 1, 60000}) {
+            c.tcp.closeGraceMs = ok;
+            QVERIFY2(c.validate(&where).hasValue(), qPrintable(where));
+        }
+        for (const int bad : {-1, 60001}) {
+            c.tcp.closeGraceMs = bad;
+            where.clear();
+            const auto r = c.validate(&where);
+            QVERIFY(!r.hasValue());
+            QCOMPARE(r.error().code, mc::ErrorCode::InvalidConfig);
+            QCOMPARE(where, QStringLiteral("transport.tcp.closeGraceMs"));
+        }
     }
 
     void QDV_16_anInvalidSubscriptionNamesItsDevicePath() {

@@ -194,6 +194,22 @@ Batch tester and reviewer after T-079; one commit for both. Done 2026-10-08 (tes
   owner's values, 16 local draft bench profiles (dry-run green), profiles README; the leader then attaches a
   profile/plan pack to the GitHub release v0.1.0 (done 2026-10-08)
 
+### Reconnect follow-up (owner 2026-10-08, after the v0.1.0 field report; leader gates as Phase 8)
+
+Field report "3E Reconnect Stall" (an app on v0.1.0, 3E Binary over TCP): after a cable pull the PLC kept the old
+connection half-open and served the new one only ~40 s later; v0.1.0 faulted the first request after `timeoutMs`
+and the app aborted the connection. Specs amended 2026-10-08 (`SPEC-core-session.md` "First response after
+`linkUp`", SES-28; `SPEC-qt-device.md` "TCP close and socket options", "Reconnecting after a link loss", QDV-12,
+QDV-18, QDV-19). Defaults keep v0.1.0 behaviour; no Ethernet resend, no automatic reconnect.
+
+- [x] T-081 `SessionConfig::firstResponseTimeoutMs` (first frame after `linkUp`), JSON key, GUI field, `MockPlcServer::holdFirstRequest`, SES-28, QDV-18
+- [x] T-082 `TcpSettings` `lowDelay` / `keepAlive` / `closeGraceMs` (graceful close), JSON keys, GUI fields, QDV-12, QDV-19; `virtual_plc --hold-first-ms`
+
+- [x] T-083 Qt 5.15 MSVC **32-bit** (owner installed `msvc2019`, the app's configuration): x86 warning fixes in `src/mock/command_exec.cpp`, `-Arch x86` for `vsdev.ps1` / `build-ads.ps1`, `qt5-msvc32-*` presets, full ctest x86 (GUI included when ADS x86 builds), qmake x86
+
+Batch tester and reviewer after T-083; one commit for all three. Done 2026-10-09 (tester and reviewer PASS, LOW only;
+worktree slots `.wt/` and `scripts/wt-sync.ps1` added for parallel builds). Then the owner decides on a v0.1.1 pre-release.
+
 ### Phase 9: Bench and release
 
 Waits until the owner has finished the HIL captures (owner, 2026-10-04); not delegated.

@@ -9,6 +9,9 @@ temp-docs/
 # Build output: build/ at the root only (SPEC-build-packaging)
 /build/
 
+# Parallel-build git worktrees, mirrors of this tree (scripts/wt-sync.ps1) - owner 2026-10-08
+/.wt/
+
 # IDE and tool state (SPEC-build-packaging open question 2)
 *.user
 *.pro.user*

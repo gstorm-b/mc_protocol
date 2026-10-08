@@ -3,6 +3,17 @@
 Curated by the team leader. One entry, one decision, newest first.
 Format: `- [T-xxx or date] Decision — why. (supersedes: entry, if any)`
 
+- [T-081..T-083] Skill-pack experiment (owner 2026-10-08), developer runs: T-081 WITH skills 30.1 min / 193k tokens /
+  82 tool calls; T-082 WITHOUT 35.1 min / 209k / 81; T-083 WITHOUT 27.1 min / 141k / 47. Batch findings: no HIGH or
+  MEDIUM in any task; LOW: T-081 1 test gap + 1 literal, T-082 2 test gaps (+ spec wording finding by the developer),
+  T-083 2 cosmetic/heuristic. Tasks differ in size, so no conclusion yet — reported to the owner, who decides.
+- [2026-10-08] Owner: parallel builds across toolsets for tester/reviewer; worktree slots `.wt/wt1…wt4`
+  (`/.wt/` git-ignored, owner request) mirror the main tree via `scripts/wt-sync.ps1` (content copy, uncommitted
+  edits included, timestamps kept for unchanged files) — leader; chosen over a `check.ps1 -BuildRoot` parameter.
+- [2026-10-08] Owner: reconnect stall after a cable pull (v0.1.0 field report) is fixed by an opt-in first-response
+  grace after `linkUp` (`SessionConfig::firstResponseTimeoutMs`), TCP graceful close (`closeGraceMs`) and switchable
+  `lowDelay` / `keepAlive`; defaults keep v0.1.0 behaviour. Ethernet resend rejected (3E has no serial number: a
+  late reply pairs with the next request, a write could run twice); still no automatic reconnect. T-081, T-082.
 - [T-078] Qt 5 + MSVC defines `_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING` (the STL's documented switch;
   14.44 deprecates the `stdext` iterators Qt 5.15's headers use) instead of dropping /WX — leader.
   `registerMetaTypes()` registers the `mc::RequestId` alias by name (Qt 5 needs it for queued signals).

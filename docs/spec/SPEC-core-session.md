@@ -70,7 +70,7 @@ tests/core/session/
 ├── test_value_store.cpp   STO-xx
 ├── test_session_poll.cpp  SES-01…08, SES-22, SES-23, SES-26
 ├── test_session_adhoc.cpp SES-09…15
-├── test_session_fault.cpp SES-16…20, SES-24
+├── test_session_fault.cpp SES-16…20, SES-24, SES-28
 ├── test_session_heartbeat.cpp SES-21
 └── test_alloc.cpp         ALC-01, ALC-02
 tests/bench/
@@ -265,6 +265,7 @@ struct SessionConfig {
     uint8_t maxConsecutiveLinkErrors{3};   ///< Serial only: timeouts/protocol errors in a row before LinkFault; 1–255, 0 is rejected by validate() with InvalidConfig (owner 2026-10-03).
     uint16_t serialInterCharMs{100};       ///< Serial only: once a response's first byte has arrived, the deadline is last byte + this (spec §6.3).
     uint16_t serialFlushMs{50};            ///< Serial only: after EOT, discard bytes until the line has been silent this long (restarts on every byte; capped at effectiveTimeoutMs()).
+    uint32_t firstResponseTimeoutMs{0};    ///< Response deadline of the first frame sent after each linkUp; 0 = effectiveTimeoutMs(). Nonzero and below effectiveTimeoutMs() → InvalidConfig. Never a resend (added 2026-10-08, owner decision; see "First response after linkUp").
     HeartbeatConfig heartbeat{};
     LogSink* log{nullptr};                 ///< Not owned; null = NullLogSink. Category "mc.session".
     Expected<void> validate(const FrameConfig& frame) const noexcept;
@@ -459,7 +460,7 @@ bytesIn(D#2 ok, first time)        → Snapshot{D, r2: all Ok}  (D2000.. silent 
 
 | Event | Ethernet (3E, 1E) | Serial (3C, 1C) |
 |---|---|---|
-| Response deadline passes. Ethernet: `effectiveTimeoutMs()` after the send, for the whole response. Serial: `effectiveTimeoutMs()` after the send **until the first byte**; from then on, `serialInterCharMs` after the latest byte (spec §6.3), so a long response at low baud completes and a response cut mid-frame is detected quickly. A line that never stops sending is ended by the receive-buffer overflow row once a frame has started; bytes before any start byte never re-arm the deadline, so junk alone ends at the first-byte deadline (owner decision 2026-10-02, T-055). | In-flight item fails with `Timeout`; queued ad-hoc complete with `LinkDown`; state `Faulted`; emit `LinkFault{Timeout, reopenTransport=true}`. No resend on this connection: a late response would be taken for the next request's (spec §6.1). | Send `EOT` (F4: `EOT CR LF`) when `sendEotOnError`; `Flushing` until the line is silent for `serialFlushMs`; then a **read** is resent up to `readRetries` times; a **write** fails with `Timeout`, never resent (spec §7.3). |
+| Response deadline passes. Ethernet: `effectiveTimeoutMs()` after the send, for the whole response (for the first frame after `linkUp`: `firstResponseTimeoutMs` when set, see below). Serial: `effectiveTimeoutMs()` after the send **until the first byte**; from then on, `serialInterCharMs` after the latest byte (spec §6.3), so a long response at low baud completes and a response cut mid-frame is detected quickly. A line that never stops sending is ended by the receive-buffer overflow row once a frame has started; bytes before any start byte never re-arm the deadline, so junk alone ends at the first-byte deadline (owner decision 2026-10-02, T-055). | In-flight item fails with `Timeout`; queued ad-hoc complete with `LinkDown`; state `Faulted`; emit `LinkFault{Timeout, reopenTransport=true}`. No resend on this connection: a late response would be taken for the next request's (spec §6.1). | Send `EOT` (F4: `EOT CR LF`) when `sendEotOnError`; `Flushing` until the line is silent for `serialFlushMs`; then a **read** is resent up to `readRetries` times; a **write** fails with `Timeout`, never resent (spec §7.3). |
 | Parser fails with a `Protocol` error | Same as timeout, `LinkFault{ProtocolError, reopenTransport=true}`: the byte stream cannot be trusted. | As timeout: EOT, flush, retry reads, fail writes. |
 | Parser fails with a `Plc` error | Item fails with the PLC error; link is healthy; no retry. | Same. |
 | Consecutive timeouts + protocol errors reach `maxConsecutiveLinkErrors` | (never reached: the first one faults) | State `Faulted`; `LinkFault{kind of the last one, reopenTransport=false}`. |
@@ -469,6 +470,17 @@ bytesIn(D#2 ok, first time)        → Snapshot{D, r2: all Ok}  (D2000.. silent 
 | Receive buffer would overflow (sized to the largest possible response at `create`) | `LinkFault{ProtocolError, reopenTransport=true}` | Discard, EOT, flush. |
 
 `readRetries` therefore only acts on serial links. After any `LinkFault` the application chooses: reopen the transport and call `linkDown`/`linkUp`, or just `linkDown`. The engine never reconnects (decision S7).
+
+### First response after `linkUp` (amended 2026-10-08, owner decision)
+
+Field report on v0.1.0 (3E Binary over TCP, cable pulled and re-plugged): the PC drops its socket, the PLC does not see it and keeps the old connection half-open. After the re-plug the PLC accepts the new TCP connection at once but serves MC on it only after its own dead-connection check has cleared the old one, tens of seconds later. The first request therefore waits much longer than a healthy response, and a fault after `effectiveTimeoutMs()` closes the one connection that would have been served. The old driver survived by waiting (it resent on the same socket).
+
+- `SessionConfig::firstResponseTimeoutMs` (default 0 = off) sets the response deadline of the **first frame sent after each `linkUp`**, whatever it is (heartbeat write, polling chunk or ad-hoc request): `send + firstResponseTimeoutMs` instead of `send + effectiveTimeoutMs()`. Every later frame of that link-up uses `effectiveTimeoutMs()`.
+- Ethernet: the deadline covers the whole response. Serial: it covers the time to the first byte, then `serialInterCharMs` applies as usual; a serial resend of that frame (`readRetries`) uses `effectiveTimeoutMs()`.
+- Nothing is resent and no rule of the fault table changes: if the longer deadline passes, the fault is exactly the timeout row. A response can only belong to the one request in flight, so spec §6.1 still holds.
+- `nextDeadline()` reports the longer deadline while that frame is in flight (SES-08 still holds).
+- `validate()`: a nonzero value below `effectiveTimeoutMs()` is `InvalidConfig` ("firstResponseTimeoutMs must be 0 or at least effectiveTimeoutMs()").
+- Choose it above the PLC's dead-connection detection time (the "existence confirmation" setting of the Ethernet port); a slow first response costs nothing on a healthy link, because a healthy PLC answers at once.
 
 ### Exactly-once completion
 
@@ -572,6 +584,7 @@ doctest binary `mc_core_session_tests`, label `core_session`. The harness gives 
 | SES-24 | Unsolicited bytes: Ethernet idle → fault; serial idle → discarded; flushing/faulted/down → discarded |
 | SES-25 | Drain contract: in release, an input with pending outputs discards them and logs `Error` |
 | SES-26 | Clock going backwards is clamped and logged; no deadline fires early |
+| SES-28 | First response after `linkUp` (Ethernet and serial): with `timeoutMs` 1000 and `firstResponseTimeoutMs` 5000, the first frame (heartbeat on and off) is answered at +4000 → no fault, round 1 completes; the second frame times out at +1000; unanswered first frame → `LinkFault{Timeout, reopen}` at exactly +5000 (Ethernet); after `linkDown` + `linkUp` the grace applies again; 0 keeps today's deadline; serial: the grace bounds the first byte only and a resend uses `effectiveTimeoutMs()`; `validate()` rejects 1…999 and accepts 0 and 1000 |
 | ALC-01 | Zero `operator new` calls across rounds 3–10 with changes on every round, heartbeat on, no ad-hoc |
 | ALC-02 | Zero allocations across 1000 `submit` + completion cycles of writes and reads, including `linkDown` with a full queue |
 
@@ -639,3 +652,4 @@ Coverage: with `MC_COVERAGE=ON`, line coverage of `src/core/session` ≥ 95 %; e
 4. **`bitsAsWords` at the top of a device range.** Aligning the end up to 16 can reach past a PLC's configured range and NAK forever. Proposed: document it and let the app turn `bitsAsWords` off; no automatic fallback in v1. *Decision:* as proposed: document the risk in README and the `PlanOptions::bitsAsWords` Doxygen; global switch only in v1. A per-subscription `ReadMode` override may come in v1.x as an additive overload (2026-09-26).
 5. **Defaults** `cycleIntervalMs = 100` (the old `refreshInterval`), `FixedRate`, `maxConsecutiveLinkErrors = 3` (old engine: 5 retries). *Decision:* as proposed: 100 ms, `FixedRate`, 3 (2026-09-26).
 6. **Inter-character timeout** (spec §6.3 "recommended"). *Decision:* yes, serial only: `effectiveTimeoutMs()` to the first byte, then `serialInterCharMs` (default 100 ms) after each byte; Ethernet keeps one overall deadline (2026-09-26). Reason: a 960-word 3C ASCII response takes ~4 s at 9600 baud, longer than the 3 s overall default, so the original proposal would time out healthy responses. Spec body updated (SES-27).
+7. **Reconnect stall after a cable pull** (field report on v0.1.0, 2026-10-08). *Decision (owner 2026-10-08, "làm bước 1"):* a longer deadline for the first response after `linkUp` (`firstResponseTimeoutMs`, off by default), never a resend on Ethernet; the TCP side gains a graceful close and switchable socket options (`SPEC-qt-device.md`). Spec body updated ("First response after `linkUp`", SES-28).

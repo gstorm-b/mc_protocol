@@ -30,7 +30,7 @@ The folder also carries a version, a changelog, a one-command build-and-test scr
 | Language | C++17 | `cxx_std_17` on every target; no compiler extensions |
 | CMake | 3.16 minimum for consumers | The dev workflow uses whatever is installed; no presets in v1 |
 | qmake | The one shipped with the Qt used to build | Standalone qmake build is a `subdirs` project that proves the `.pri` files work |
-| Qt | **5.15**, or 6.2 LTS and later (Qt 5.15 added 2026-10-07, owner decision; verified with the 5.15.0 `msvc2019_64` kit) | Only `mc::device` and its tests use Qt: `Core`, `Network`, `SerialPort`, `Test` |
+| Qt | **5.15**, or 6.2 LTS and later (Qt 5.15 added 2026-10-07, owner decision; verified with the 5.15.0 `msvc2019_64` kit, and from 2026-10-08 (owner decision, T-083) also the 32-bit `msvc2019` kit: x86 builds warning-free and passes the same tests) | Only `mc::device` and its tests use Qt: `Core`, `Network`, `SerialPort`, `Test` |
 | Test framework | doctest, vendored single header (MIT) at `tests/third_party/doctest/doctest.h` | For every std-only test binary. `qt-device` tests use QtTest |
 | Scripts | PowerShell 5.1 (`scripts/check.ps1`) and POSIX sh (`scripts/check.sh`) | No Python, no CI in v1 |
 | Compilers | MSVC 2019+, MinGW GCC, GCC, Clang | Warnings-as-errors only when the library is the top-level project. v1 is verified with MSVC and MinGW GCC on Windows only; GCC/Clang on Linux are not verified. |

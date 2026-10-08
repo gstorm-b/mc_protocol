@@ -98,6 +98,52 @@
         "MC_QT_MAJOR": "5",
         "MC_ADS_DIR": "${sourceDir}/build/ads-qt5-msvc2019_64/install"
       }
+    },
+    {
+      "name": "qt5-msvc32-debug",
+      "displayName": "Qt 5.15 MSVC 14.44 x86 Debug",
+      "description": "32-bit Qt 5.15 (msvc2019) needs the x86 compiler of the MSVC 14.44 toolset: configure from a fresh shell set up with \". scripts/vsdev.ps1 -VcVarsVer 14.44 -Arch x86\". ADS: scripts/build-ads.ps1 -QtDir C:/Qt/5.15.0/msvc2019.",
+      "inherits": [
+        "mc-msvc",
+        "mc-debug"
+      ],
+      "architecture": {
+        "value": "x86",
+        "strategy": "external"
+      },
+      "toolset": {
+        "value": "host=x64,version=14.44",
+        "strategy": "external"
+      },
+      "cacheVariables": {
+        "CMAKE_PREFIX_PATH": "C:/Qt/5.15.0/msvc2019",
+        "CMAKE_MAKE_PROGRAM": "C:/Qt/Tools/Ninja/ninja.exe",
+        "MC_QT_MAJOR": "5",
+        "MC_ADS_DIR": "${sourceDir}/build/ads-qt5-msvc2019/install"
+      }
+    },
+    {
+      "name": "qt5-msvc32-release",
+      "displayName": "Qt 5.15 MSVC 14.44 x86 Release",
+      "description": "32-bit Qt 5.15 (msvc2019) needs the x86 compiler of the MSVC 14.44 toolset: configure from a fresh shell set up with \". scripts/vsdev.ps1 -VcVarsVer 14.44 -Arch x86\". ADS: scripts/build-ads.ps1 -QtDir C:/Qt/5.15.0/msvc2019.",
+      "inherits": [
+        "mc-msvc",
+        "mc-release"
+      ],
+      "architecture": {
+        "value": "x86",
+        "strategy": "external"
+      },
+      "toolset": {
+        "value": "host=x64,version=14.44",
+        "strategy": "external"
+      },
+      "cacheVariables": {
+        "CMAKE_PREFIX_PATH": "C:/Qt/5.15.0/msvc2019",
+        "CMAKE_MAKE_PROGRAM": "C:/Qt/Tools/Ninja/ninja.exe",
+        "MC_QT_MAJOR": "5",
+        "MC_ADS_DIR": "${sourceDir}/build/ads-qt5-msvc2019/install"
+      }
     }
   ],
   "buildPresets": [
@@ -129,6 +175,16 @@
     {
       "name": "qt5-msvc-release",
       "configurePreset": "qt5-msvc-release",
+      "jobs": 32
+    },
+    {
+      "name": "qt5-msvc32-debug",
+      "configurePreset": "qt5-msvc32-debug",
+      "jobs": 32
+    },
+    {
+      "name": "qt5-msvc32-release",
+      "configurePreset": "qt5-msvc32-release",
       "jobs": 32
     }
   ],
@@ -186,6 +242,26 @@
     {
       "name": "qt5-msvc-release",
       "configurePreset": "qt5-msvc-release",
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "jobs": 8
+      }
+    },
+    {
+      "name": "qt5-msvc32-debug",
+      "configurePreset": "qt5-msvc32-debug",
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "jobs": 8
+      }
+    },
+    {
+      "name": "qt5-msvc32-release",
+      "configurePreset": "qt5-msvc32-release",
       "output": {
         "outputOnFailure": true
       },

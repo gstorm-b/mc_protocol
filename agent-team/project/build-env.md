@@ -62,6 +62,24 @@ This PC has **32 logical cores**. Every build and test run uses them:
 Still **never two check scripts or two builds of the same folder at once** — parallelism
 goes inside one build, not across builds sharing a folder.
 
+**Several toolsets at once** (owner 2026-10-08, `rules.md` "Parallel multi-toolset builds"): start each
+kit's build as its own background process in its own tree and split the cores (`--parallel 8`, `jom -j 8`).
+For two `check.ps1` runs, or for a tester and a reviewer building at the same time, use the worktree slots:
+
+```powershell
+# from the main tree: mirror its current files (uncommitted edits included) into the slots
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/wt-sync.ps1            # all slots
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/wt-sync.ps1 -Name wt2  # one slot
+# then build inside a slot exactly as in the main tree, e.g.
+Set-Location .wt/wt2; . scripts/vsdev.ps1; scripts/check.ps1 -QtDir C:/Qt/6.11.1/msvc2022_64 -Jobs 8
+```
+
+Slots: `.wt/wt1` … `.wt/wt4` (git-ignored worktrees, detached). Each has its own `build/`: the first
+build in a slot is a full build, later ones are incremental. Never edit sources in a slot; edit the main
+tree and sync again. ADS is not rebuilt per slot: the synced `CMakeUserPresets.json` and `mc_local.pri` point
+at the main tree's `build/ads-*`; for a hand-written configure pass the main tree's absolute ADS path. New
+slot: `git worktree add --detach .wt/wt5 HEAD`, then sync.
+
 The check scripts are parallel too (T-056): `check.ps1 -Jobs <n>` (default: logical
 processors) and `-JomPath` (default the Qt Creator jom; jom on PATH next; else nmake with a
 "single-threaded" note); `check.sh` reads `MC_CHECK_JOBS` (default `nproc`). Wall times on
@@ -263,6 +281,23 @@ the bar (`-D MC_MIN_COVERAGE=<n>`, default 95, total over `src/core/model`).
   now and then (Qt 6.11 does not): `GUI_02_comPair…` flakes ~1 in 12 on Qt 5 only.
 - ADS for Qt 5 (any kit, the script detects the major): `scripts/build-ads.ps1 -QtDir C:/Qt/5.15.0/msvc2019_64` →
   `build/ads-qt5-msvc2019_64/install` (`mc_local.pri` key `MC_ADS_DIR_QT5`).
+
+## Qt 5.15 MSVC 32-bit / x86 (T-083, 2026-10-08)
+
+- Kit: `C:/Qt/5.15.0/msvc2019` (no `_64`: 32-bit). The owner's Qt Creator kit "Desktop Qt 5.15.0 MSVC2019
+  32bit" uses it with toolset 14.44, `HostX64/x86`, Ninja and `/WX` (trees `build/Desktop_Qt_5_15_0_MSVC2019_32bit_*`:
+  never built by agents).
+- Shell, in a **fresh** PowerShell: `. scripts/vsdev.ps1 -VcVarsVer 14.44 -Arch x86` (`-Arch x64|x86`, default x64;
+  an explicit `-Arch` refuses a shell that already holds another target). `scripts/check.ps1 -QtDir C:/Qt/5.15.0/msvc2019`
+  and `scripts/build-ads.ps1 -QtDir C:/Qt/5.15.0/msvc2019` take the arch from the kit name (no `_64` = x86).
+- ADS for x86: `scripts/build-ads.ps1 -QtDir C:/Qt/5.15.0/msvc2019` -> `build/ads-qt5-msvc2019/install`
+  (`mc_local.pri` key `MC_ADS_DIR_QT5_X86`, read by `mc_gui_deps.pri` when `QT_ARCH` is `i386`).
+- Folders: `build/cmake-qt5-msvc32` (Debug), `build/cmake-qt5-msvc32-release`, `build/qmake-qt5-msvc32`; presets
+  `qt5-msvc32-debug` / `qt5-msvc32-release` (use with `-B`, e.g. `cmake --preset qt5-msvc32-debug -B build/cmake-qt5-msvc32`).
+  Put `C:/Qt/5.15.0/msvc2019/bin` on PATH for a hand-run of the Qt test binaries.
+- x86 pitfall: `size_t` is 32-bit, so a `uint64_t` loop index that subscripts a `std::vector` gives C4244 under `/WX`;
+  use `size_t` for the index (`src/mock/command_exec.cpp`).
+- Do not kill build processes by a broad name match: other builds (and the owner's IDE) run `jom`/`cl` too.
 
 ## Other tools on this PC (T-065, T-066)
 

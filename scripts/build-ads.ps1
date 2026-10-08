@@ -6,7 +6,8 @@
     MC Workbench (tools/mc_workbench, SPEC-gui-tool.md) links ADS as a DLL that is never part of the
     repository. The prebuilt package on this PC is for Qt 6 / MSVC only; this script builds ADS from
     its source with the chosen Qt kit (typically MinGW, or a Qt 5.15 kit), Debug and Release, and
-    installs both into one prefix inside build/:
+    installs both into one prefix inside build/ (an MSVC kit whose folder name has no "_64", such as
+    Qt 5.15 msvc2019, is a 32-bit kit: ADS is then built for x86, see -Arch):
       - Qt 6 kit: build/ads-<kit>/install      (for example build/ads-mingw_64/install)
       - Qt 5 kit: build/ads-qt5-<kit>/install  (for example build/ads-qt5-msvc2019_64/install)
     where <kit> is the folder name of the Qt kit. The Qt major comes from the kit
@@ -20,8 +21,8 @@
 
     At the end the script prints the MC_ADS_DIR to use:
       - CMake: -DMC_ADS_DIR=<install>  (or the environment variable MC_ADS_DIR)
-      - qmake: MC_ADS_DIR (Qt 6 MSVC kits), MC_ADS_DIR_MINGW (Qt 6 MinGW kits) or MC_ADS_DIR_QT5
-        (Qt 5 kits) in the git-ignored mc_local.pri
+      - qmake: MC_ADS_DIR (Qt 6 MSVC kits), MC_ADS_DIR_MINGW (Qt 6 MinGW kits), MC_ADS_DIR_QT5
+        (Qt 5 x64 kits) or MC_ADS_DIR_QT5_X86 (Qt 5 x86 kits) in the git-ignored mc_local.pri
 
 .PARAMETER QtDir
     The Qt kit to build for: a Qt 6 kit or a Qt 5.15 kit. Default C:/Qt/6.11.1/mingw_64. A kit
@@ -39,6 +40,11 @@
     Delete build/ads-<kit> (Qt 5: build/ads-qt5-<kit>) first (only that folder) and build from
     scratch.
 
+.PARAMETER Arch
+    MSVC kits only: x64 or x86, the target architecture of the compiler (vsdev.ps1 -Arch). Empty
+    means: taken from the kit, x86 when the kit folder name has no "_64" (msvc2019), else x64. The
+    folder name of such a kit (for example build/ads-qt5-msvc2019/install) keeps the two apart.
+
 .PARAMETER VcVarsVer
     MSVC kits only: the MSVC toolset to load (vsdev.ps1 -VcVarsVer). Empty means the installation's
     default toolset for a Qt 6 kit and 14.44 for a Qt 5 kit: Qt 5.15 builds use a toolset older than
@@ -49,6 +55,7 @@
     scripts/build-ads.ps1
     scripts/build-ads.ps1 -QtDir C:/Qt/6.11.1/msvc2022_64
     scripts/build-ads.ps1 -QtDir C:/Qt/5.15.0/msvc2019_64
+    scripts/build-ads.ps1 -QtDir C:/Qt/5.15.0/msvc2019      # 32-bit (x86) ADS for Qt 5.15 msvc2019
 #>
 [CmdletBinding()]
 param(
@@ -56,7 +63,9 @@ param(
     [string]$SourceDir = '',
     [int]$Jobs = [Environment]::ProcessorCount,
     [switch]$Clean,
-    [string]$VcVarsVer = ''
+    [string]$VcVarsVer = '',
+    [ValidateSet('', 'x64', 'x86')]
+    [string]$Arch = ''
 )
 
 $ErrorActionPreference = 'Stop'
@@ -83,6 +92,11 @@ $kit = Split-Path -Leaf ($QtDir.TrimEnd('/', '\'))
 if ($qtMajor -eq 5) { $adsRoot = Join-Path $repoRoot "build/ads-qt5-$kit" }
 else { $adsRoot = Join-Path $repoRoot "build/ads-$kit" }
 $install = Join-Path $adsRoot 'install'
+
+# Target architecture of an MSVC kit: given, else read from the kit folder name (msvc2019 is 32-bit).
+if (-not $Arch) {
+    if ($kit -match '(?i)msvc' -and $kit -notmatch '_64$') { $Arch = 'x86' } else { $Arch = 'x64' }
+}
 
 # Extra ADS configure arguments. A Qt 6 kit gets none (unchanged command line: ADS looks for Qt6
 # first); a Qt 5 kit pins ADS to Qt 5 so it never picks up a Qt 6 found elsewhere.
@@ -111,11 +125,11 @@ if ($kit -match 'mingw') {
     # unless -VcVarsVer names another one.
     if (-not $VcVarsVer -and $qtMajor -eq 5) { $VcVarsVer = '14.44' }
     $adsVcVarsVer = $VcVarsVer
-    . (Join-Path $PSScriptRoot 'vsdev.ps1') -VcVarsVer $adsVcVarsVer
+    . (Join-Path $PSScriptRoot 'vsdev.ps1') -VcVarsVer $adsVcVarsVer -Arch $Arch
     if ($adsVcVarsVer -and -not ("$env:VCToolsVersion".StartsWith($adsVcVarsVer))) {
         throw "build-ads: could not load the MSVC $adsVcVarsVer toolset (loaded: '$env:VCToolsVersion')."
     }
-    Write-Host "== build-ads: MSVC toolset $env:VCToolsVersion =="
+    Write-Host "== build-ads: MSVC toolset $env:VCToolsVersion ($Arch) =="
     $env:PATH = "$cmakeDir;$ninjaDir;$env:PATH"
 }
 
@@ -138,7 +152,9 @@ Write-Host ''
 Write-Host "== build-ads: done =="
 Write-Host "MC_ADS_DIR = $installFull"
 Write-Host "  CMake : -DMC_ADS_DIR=$installFull   (or set the environment variable MC_ADS_DIR)"
-if ($qtMajor -eq 5) {
+if ($qtMajor -eq 5 -and $Arch -eq 'x86' -and $kit -notmatch 'mingw') {
+    Write-Host "  qmake : MC_ADS_DIR_QT5_X86 = $installFull   (in mc_local.pri)"
+} elseif ($qtMajor -eq 5) {
     Write-Host "  qmake : MC_ADS_DIR_QT5 = $installFull   (in mc_local.pri)"
 } elseif ($kit -match 'mingw') {
     Write-Host "  qmake : MC_ADS_DIR_MINGW = $installFull   (in mc_local.pri)"

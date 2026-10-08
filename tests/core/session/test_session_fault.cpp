@@ -1679,3 +1679,281 @@ TEST_CASE("SES-16 Serial fault: the in-flight write completes with Timeout and e
         CHECK(r.s.isFaulted());
     }
 }
+
+// =============================================================================================
+// SES-28: first response after linkUp() (spec "First response after linkUp"). Every deadline is a
+// literal: FrameConfig::timeoutMs = 1000 and firstResponseTimeoutMs = 5000 unless a case says so.
+// =============================================================================================
+
+namespace {
+
+FrameConfig graceEthernetFrame() {
+    FrameConfig frame = FrameConfig::frame3E();
+    frame.timeoutMs = 1000;
+    return frame;
+}
+
+SessionConfig graceConfig(uint32_t grace) {
+    SessionConfig cfg;
+    cfg.cycleIntervalMs = 1000000;
+    cfg.firstResponseTimeoutMs = grace;
+    return cfg;
+}
+
+} // namespace
+
+TEST_CASE("SES-28 validate(): firstResponseTimeoutMs 0 or at least effectiveTimeoutMs()") {
+    FrameConfig frame = graceEthernetFrame();
+    SessionConfig cfg;
+    for (uint32_t bad : {1u, 500u, 999u}) {
+        cfg.firstResponseTimeoutMs = bad;
+        auto v = cfg.validate(frame);
+        REQUIRE_FALSE(v.hasValue());
+        CHECK(v.error().code == ErrorCode::InvalidConfig);
+        CHECK_FALSE(Session::create(frame, cfg).hasValue());
+    }
+    for (uint32_t good : {0u, 1000u, 1001u, 40000u}) {
+        cfg.firstResponseTimeoutMs = good;
+        CHECK(cfg.validate(frame).hasValue());
+        CHECK(Session::create(frame, cfg).hasValue());
+    }
+    // Serial: the same rule against that frame's effectiveTimeoutMs().
+    cfg.firstResponseTimeoutMs = 999;
+    CHECK_FALSE(cfg.validate(serialFrame()).hasValue());
+    cfg.firstResponseTimeoutMs = 1000;
+    CHECK(cfg.validate(serialFrame()).hasValue());
+}
+
+TEST_CASE("SES-28 Ethernet: the first poll chunk waits firstResponseTimeoutMs, the second frame "
+          "the normal deadline") {
+    FrameConfig frame = graceEthernetFrame();
+    Session s = makeSession(frame, graceConfig(5000));
+    OutputRecorder rec;
+    ScriptedPeer peer(frame);
+    REQUIRE(s.subscribe(kD100, 1).hasValue());
+
+    s.linkUp(0);
+    rec.drain(s);
+    REQUIRE(rec.size() == 1);
+    CHECK(rec[0].kind == OutputKind::Send);
+    CHECK(s.nextDeadline() == 5000);
+    rec.clear();
+
+    s.tick(4999);
+    rec.drain(s);
+    CHECK(rec.empty());
+    CHECK_FALSE(s.isFaulted());
+
+    // The late response (as after a reconnect) is accepted: no fault, round 1 completes.
+    auto bytes = peer.respond(Request::readWords(kD100, 1), okWords({7}));
+    s.bytesIn(ByteView{bytes.data(), bytes.size()}, 4999);
+    rec.drain(s);
+    REQUIRE(rec.size() == 2);
+    CHECK(rec[0].kind == OutputKind::Snapshot);
+    CHECK(rec[1].kind == OutputKind::CycleDone);
+    CHECK(s.stats().timeouts == 0);
+    rec.clear();
+
+    // The second frame of this link-up uses effectiveTimeoutMs().
+    auto id = s.submit(Request::readWords(kD100, 1), 6000);
+    REQUIRE(id.hasValue());
+    rec.drain(s);
+    REQUIRE(rec.size() == 1);
+    CHECK(rec[0].kind == OutputKind::Send);
+    CHECK(s.nextDeadline() == 7000);
+    rec.clear();
+    s.tick(6999);
+    rec.drain(s);
+    CHECK(rec.empty());
+    s.tick(7000);
+    rec.drain(s);
+    REQUIRE_FALSE(rec.empty());
+    CHECK(rec.back().kind == OutputKind::LinkFault);
+    CHECK(rec.back().fault == LinkFaultKind::Timeout);
+}
+
+TEST_CASE("SES-28 Ethernet: an unanswered first frame faults at exactly +grace, the grace applies "
+          "again after linkDown + linkUp") {
+    FrameConfig frame = graceEthernetFrame();
+    Session s = makeSession(frame, graceConfig(5000));
+    OutputRecorder rec;
+    REQUIRE(s.subscribe(kD100, 1).hasValue());
+
+    s.linkUp(100);
+    rec.drain(s);
+    REQUIRE(rec.size() == 1);
+    CHECK(s.nextDeadline() == 5100);
+    rec.clear();
+    s.tick(1100); // The normal deadline passes: nothing happens.
+    s.tick(5099);
+    rec.drain(s);
+    CHECK(rec.empty());
+    CHECK_FALSE(s.isFaulted());
+    s.tick(5100);
+    rec.drain(s);
+    REQUIRE(rec.size() == 1);
+    CHECK(rec[0].kind == OutputKind::LinkFault);
+    CHECK(rec[0].fault == LinkFaultKind::Timeout);
+    CHECK(rec[0].error.code == ErrorCode::Timeout);
+    CHECK(rec[0].reopenTransport == true);
+    rec.clear();
+
+    s.linkDown(6000);
+    rec.drain(s);
+    rec.clear();
+    s.linkUp(7000);
+    rec.drain(s);
+    REQUIRE(rec.size() == 1);
+    CHECK(rec[0].kind == OutputKind::Send);
+    CHECK(s.nextDeadline() == 12000); // The grace again.
+    rec.clear();
+
+    s.linkDown(8000);
+    rec.drain(s);
+    rec.clear();
+    CHECK(s.nextDeadline() == kNoDeadline);
+}
+
+TEST_CASE("SES-28 Ethernet: firstResponseTimeoutMs 0 keeps effectiveTimeoutMs() for every frame") {
+    FrameConfig frame = graceEthernetFrame();
+    Session s = makeSession(frame, graceConfig(0));
+    OutputRecorder rec;
+    REQUIRE(s.subscribe(kD100, 1).hasValue());
+    s.linkUp(0);
+    rec.drain(s);
+    REQUIRE(rec.size() == 1);
+    CHECK(s.nextDeadline() == 1000);
+    rec.clear();
+    s.tick(999);
+    rec.drain(s);
+    CHECK(rec.empty());
+    s.tick(1000);
+    rec.drain(s);
+    REQUIRE(rec.size() == 1);
+    CHECK(rec[0].kind == OutputKind::LinkFault);
+    CHECK(rec[0].fault == LinkFaultKind::Timeout);
+}
+
+TEST_CASE("SES-28 Ethernet: the first frame may be a heartbeat write or an ad-hoc request") {
+    FrameConfig frame = graceEthernetFrame();
+
+    SUBCASE("heartbeat on: the heartbeat write gets the grace, the poll chunk after it does not") {
+        SessionConfig cfg = graceConfig(5000);
+        cfg.heartbeat.enabled = true;
+        cfg.heartbeat.device = Device{DeviceType::M, 2000};
+        Session s = makeSession(frame, cfg);
+        OutputRecorder rec;
+        ScriptedPeer peer(frame);
+        REQUIRE(s.subscribe(kD100, 1).hasValue());
+
+        s.linkUp(0);
+        rec.drain(s);
+        REQUIRE(rec.size() == 1); // The heartbeat write goes first (round 1 writes 1).
+        CHECK(s.nextDeadline() == 5000);
+        rec.clear();
+
+        uint8_t one = 1;
+        auto hb = peer.respond(Request::writeBits(Device{DeviceType::M, 2000}, ByteView{&one, 1}),
+                               okWords({}));
+        s.bytesIn(ByteView{hb.data(), hb.size()}, 3000);
+        rec.drain(s);
+        REQUIRE(rec.size() == 1); // The poll chunk's read.
+        CHECK(rec[0].kind == OutputKind::Send);
+        CHECK(s.nextDeadline() == 4000); // 3000 + effectiveTimeoutMs().
+    }
+
+    SUBCASE("heartbeat off, empty plan: the first ad-hoc request gets the grace, the next not") {
+        Session s = makeSession(frame, graceConfig(5000));
+        OutputRecorder rec;
+        ScriptedPeer peer(frame);
+        s.linkUp(0);
+        rec.drain(s); // Empty plan: a round with nothing to send.
+        for (const auto& o : rec.all()) {
+            CHECK(o.kind != OutputKind::Send);
+        }
+        rec.clear();
+
+        auto id0 = s.submit(Request::readWords(kD100, 1), 200);
+        REQUIRE(id0.hasValue());
+        rec.drain(s);
+        REQUIRE(rec.size() == 1);
+        CHECK(rec[0].kind == OutputKind::Send);
+        CHECK(s.nextDeadline() == 5200);
+        rec.clear();
+
+        auto bytes = peer.respond(Request::readWords(kD100, 1), okWords({9}));
+        s.bytesIn(ByteView{bytes.data(), bytes.size()}, 300);
+        rec.drain(s);
+        REQUIRE(rec.size() == 1);
+        CHECK(rec[0].kind == OutputKind::RequestDone);
+        rec.clear();
+
+        auto id1 = s.submit(Request::readWords(kD100, 1), 400);
+        REQUIRE(id1.hasValue());
+        rec.drain(s);
+        REQUIRE(rec.size() == 1);
+        CHECK(s.nextDeadline() == 1400);
+    }
+}
+
+TEST_CASE("SES-28 Serial: the grace bounds the time to the first byte; interchar and the resend "
+          "use their normal values") {
+    FrameConfig frame = serialFrame(); // timeoutMs 1000, readRetries 2.
+    const Bytes request = vectorBytes("3c_f1.vec", "V-3C1-01");
+    SessionConfig cfg = serialConfig();
+    cfg.firstResponseTimeoutMs = 5000;
+
+    SUBCASE("no byte: the timeout is at +grace, the resend gets effectiveTimeoutMs()") {
+        Rig r(frame, cfg);
+        REQUIRE(r.s.subscribe(kD100, 3).hasValue());
+        r.up(0);
+        REQUIRE(r.rec.size() == 1);
+        CHECK(isSend(r.rec[0], request));
+        CHECK(r.s.nextDeadline() == 5000);
+        r.rec.clear();
+
+        r.tick(4999);
+        CHECK(r.rec.empty());
+        r.tick(5000);
+        REQUIRE(r.rec.size() == 1);
+        CHECK(isSend(r.rec[0], kEot));
+        r.rec.clear();
+        r.tick(5050); // The flush ends: the read is resent.
+        REQUIRE(r.rec.size() == 1);
+        CHECK(isSend(r.rec[0], request));
+        CHECK(r.s.nextDeadline() == 6050); // 5050 + effectiveTimeoutMs(), not the grace.
+    }
+
+    SUBCASE("a first byte inside the grace switches to serialInterCharMs") {
+        Rig r(frame, cfg);
+        REQUIRE(r.s.subscribe(kD100, 3).hasValue());
+        r.up(0);
+        r.rec.clear();
+        const Bytes response = vectorBytes("3c_f1.vec", "V-3C1-02");
+        r.feed(Bytes{response[0]}, 3000);
+        CHECK(r.s.nextDeadline() == 3100);
+        r.feed(Bytes(response.begin() + 1, response.end()), 3050);
+        REQUIRE(r.rec.size() == 2);
+        CHECK(r.rec[0].kind == OutputKind::Snapshot);
+        CHECK(r.rec[1].kind == OutputKind::CycleDone);
+        CHECK(r.s.stats().timeouts == 0);
+    }
+
+    SUBCASE("the grace applies again after linkDown + linkUp; the second frame is normal") {
+        Rig r(frame, cfg);
+        REQUIRE(r.s.subscribe(kD100, 3).hasValue());
+        r.up(0);
+        r.rec.clear();
+        r.down(100);
+        r.rec.clear();
+        r.up(200);
+        REQUIRE(r.rec.size() == 1);
+        CHECK(r.s.nextDeadline() == 5200);
+        r.rec.clear();
+        r.feed(vectorBytes("3c_f1.vec", "V-3C1-02"), 300);
+        r.rec.clear();
+        auto id = r.submit(Request::readWords(kD100, 3), 400);
+        REQUIRE(id.hasValue());
+        CHECK(r.s.nextDeadline() == 1400);
+    }
+}

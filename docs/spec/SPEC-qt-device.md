@@ -43,6 +43,7 @@ cmake --build build/cmake-debug --target mc_device_tests qt_console_poller virtu
 ctest --test-dir build/cmake-debug -L device --output-on-failure
 $env:MC_TEST_SERIAL_PAIR = "COM10,COM11"   # optional: enables QDV-14 with a virtual COM pair
 build/cmake-debug/examples/virtual_plc --frame 3E --code Binary --port 5000 --set D100=1234 --wiggle D105
+build/cmake-debug/examples/virtual_plc --frame 3E --port 5000 --hold-first-ms 20000   # PLC that serves a new connection late
 build/cmake-debug/examples/qt_console_poller --host 127.0.0.1 --port 5000 --frame 3E --sub D100:64 --sub M0:32
 ```
 
@@ -64,10 +65,11 @@ src/device/
 ├── mc_device.cpp          state, pump, signal queue
 └── meta_types.cpp
 tests/device/
-├── mock_plc_server.h/.cpp   QTcpServer hosting one MockPlc per connection; mute/close/count controls
+├── mock_plc_server.h/.cpp   QTcpServer hosting one MockPlc per connection; mute/close/count/hold-first controls
 ├── serial_bridge.h/.cpp     QSerialPort end of a virtual COM pair hosting a MockPlc (QDV-14)
-├── tst_mc_device.cpp        QDV-01…08, QDV-11…13, QDV-15…17
+├── tst_mc_device.cpp        QDV-01…08, QDV-11…13, QDV-15…18
 ├── tst_mc_device_thread.cpp QDV-09
+├── tst_tcp_transport.cpp   QDV-06 (transport level), QDV-12, QDV-19
 ├── tst_config_json.cpp      QDV-10
 └── tst_serial.cpp           QDV-14 (QSKIP without MC_TEST_SERIAL_PAIR)
 examples/
@@ -125,9 +127,13 @@ struct TcpSettings {
     QString host{QStringLiteral("192.168.0.1")};   ///< Old defaults (mc_msg_tcp_client.h).
     quint16 port{5000};
     int connectTimeoutMs{2000};
+    // Added 2026-10-08 (owner decision, reconnect report on v0.1.0); see "TCP close and socket options".
+    bool lowDelay{true};                           ///< LowDelayOption (no Nagle delay) once connected.
+    bool keepAlive{true};                          ///< KeepAliveOption (OS keep-alive timing) once connected.
+    int closeGraceMs{0};                           ///< close(): 0 = abort (RST) at once; > 0 = disconnectFromHost() (flush, then FIN), abort if the flush is not done after this many ms.
 };
-/// QTcpSocket with LowDelayOption (no Nagle delay on small request frames) and KeepAliveOption.
-/// The connect timeout is a QTimer: QAbstractSocket has none of its own.
+/// QTcpSocket with LowDelayOption (no Nagle delay on small request frames) and KeepAliveOption,
+/// each switchable in TcpSettings. The connect timeout is a QTimer: QAbstractSocket has none of its own.
 class TcpTransport final : public Transport { /* … */ public: explicit TcpTransport(TcpSettings s, QObject* parent = nullptr); };
 
 struct SerialSettings {
@@ -144,6 +150,12 @@ class SerialTransport final : public Transport { /* … */ public: explicit Seri
 ```
 
 The line settings must match the C24 module's parameters; a mismatch shows up as timeouts or NAKs, not as a clear error (spec §8.3, §10.3).
+
+#### TCP close and socket options (amended 2026-10-08, owner decision)
+
+- `lowDelay` / `keepAlive` (default `true`, today's behaviour) choose whether `LowDelayOption` / `KeepAliveOption` are set once the connection is up; `false` leaves the OS default. They exist so a bench can compare against the old driver, which set neither. Keep-alive timing is the OS's (two hours on Windows by default), so it does not detect a pulled cable within seconds.
+- `closeGraceMs` (default 0 = today's behaviour: `abort()`, an RST at once). When positive and the socket is connected, `close()` hands the old socket to a graceful close: `disconnectFromHost()` (unsent bytes are flushed, then FIN), and `abort()` when Qt has not finished the close after `closeGraceMs`. Qt finishes the close as soon as its write buffer is empty and the FIN is handed to the OS; it does not wait for the peer's FIN, so the grace bounds only the time to flush bytes the peer is not taking (amended 2026-10-08, T-082 finding). The `Transport::close()` contract is unchanged: `state()` is `Closed` when `close()` returns, no signal follows, and an `open()` right after it starts a **new** socket while the old one is still closing. The closing socket is a child of the transport: destroying the transport (or the `McDevice`) ends it at once with `abort()`. A socket that is still connecting is always aborted.
+- Validation: `closeGraceMs` must be 0 … 60000 (`transport.tcp.closeGraceMs`).
 
 ### `mc_device_config.h`
 
@@ -186,9 +198,11 @@ JSON shape (every `FrameConfig` and `SessionConfig` field has a key of the same 
   "session": { "cycleIntervalMs": 100, "cycleMode": "FixedRate", "bitsAsWords": true, "maxGap": "auto",
                "adHocCapacity": 64, "adHocArenaBytes": 65536, "maxAdHocBurst": 4,
                "maxConsecutiveLinkErrors": 3, "serialInterCharMs": 100, "serialFlushMs": 50,
+               "firstResponseTimeoutMs": 0,
                "heartbeat": { "enabled": false, "device": "M2000" } },
   "transport": { "kind": "Tcp",
-                 "tcp":    { "host": "192.168.0.10", "port": 5000, "connectTimeoutMs": 2000 },
+                 "tcp":    { "host": "192.168.0.10", "port": 5000, "connectTimeoutMs": 2000,
+                             "lowDelay": true, "keepAlive": true, "closeGraceMs": 0 },
                  "serial": { "portName": "COM3", "baudRate": 9600, "dataBits": 7, "parity": "Even",
                              "stopBits": "1", "flowControl": "None" } },
   "subscriptions": [ { "device": "D2000", "count": 64 }, { "device": "M2000", "count": 64 } ]
@@ -333,6 +347,15 @@ Every public method, transport slot and timer slot ends the same way:
 
 Received bytes: on `readyRead`, read into a fixed 4 KiB buffer until `read` returns 0, calling `session.bytesIn(view, now)` and draining after each read.
 
+### Reconnecting after a link loss (amended 2026-10-08)
+
+The device never reconnects by itself (decision 7); the app decides. Guidance, from the v0.1.0 field report (cable pulled, PLC kept the old connection half-open and served the new one only after its dead-connection check, ~40 s):
+
+- Keep the `McDevice` and call `connectToPlc()` again after `Faulted` / `Disconnected`, with a back-off; rebuilding the device every few seconds also destroys a graceful close in progress.
+- Set `session.firstResponseTimeoutMs` above the PLC's dead-connection detection time, so the first request after a reconnect waits for the PLC instead of faulting and resetting the one connection it would serve (`SPEC-core-session.md`, "First response after `linkUp`").
+- Set `transport.tcp.closeGraceMs` (e.g. 500) so a deliberate close ends with FIN rather than RST.
+- On the PLC, shorten the existence confirmation (KeepAlive / Ping) of the MC port, or open a second MC connection, so a half-open connection does not block the only one.
+
 ### Threads
 
 `McDevice` and its transport and timer are one object tree on one thread. The app may `moveToThread()` the device while it is `Disconnected`; all later calls must come from that thread or through queued connections / `QMetaObject::invokeMethod`. Nothing in the class locks a mutex.
@@ -354,12 +377,14 @@ QtTest binaries under label `device`. The loopback server `MockPlcServer` hosts 
 | QDV-09 | Device moved to a `QThread` before connecting; signals received in the main thread through queued connections; values correct |
 | QDV-10 | `McDeviceConfig` JSON: round trip is equal; missing keys → defaults; wrong type → error with the path; `schema: 2` → error |
 | QDV-11 | Timeout precision: with the mock muted, `linkFault` arrives within `effectiveTimeoutMs() + 100 ms` of the send |
-| QDV-12 | The connected socket has `LowDelayOption` and `KeepAliveOption` set |
+| QDV-12 | The connected socket has `LowDelayOption` and `KeepAliveOption` set by default; with `lowDelay` / `keepAlive` false neither is set by the transport |
 | QDV-13 | Smoke over TCP for 3E ASCII, 1E Binary, 1E ASCII and 3C F1 (serial frame over TCP): one round and one write each |
 | QDV-14 | Serial over a virtual COM pair (`MC_TEST_SERIAL_PAIR`): 3C F4 and 1C F1, a round and a write; `QSKIP` when the variable is unset |
 | QDV-15 | `disconnectFromPlc()` with a request in flight → `requestFinished(LinkDown)` then `(Disconnected, Requested)` |
 | QDV-16 | Invalid config (subscription `"Q10"`) → `connectToPlc()` publishes `(Disconnected, OpenFailed)` naming `subscriptions[0].device`; no socket opened |
 | QDV-17 | Destroying a connected device with 2 queued requests: no crash, no signal after destruction starts, one `Warn` log line naming both ids, the server sees the socket close |
+| QDV-18 | First response after connect (`MockPlcServer::holdFirstRequest`): the server answers each connection's first request after 1500 ms; `timeoutMs` 500 with `firstResponseTimeoutMs` 3000 → `Connected`, round 1 completes, no `linkFault`; then mute → `linkFault(Timeout)` within `timeoutMs + 100 ms`; with `firstResponseTimeoutMs` 0 → `linkFault(Timeout)` at ~500 ms; `connectToPlc()` again → the grace applies to the new connection |
+| QDV-19 | Graceful close (`TcpTransport`): with `closeGraceMs` > 0, bytes written just before `close()` reach the server, then the server sees end-of-stream; `state()` is `Closed` at once and no signal follows; an `open()` right after connects a second socket while the first is closing; a peer that stops reading while bytes are still queued in Qt sees the first socket aborted no earlier than `closeGraceMs` (and within a bounded margin after it); destroying the transport mid-grace aborts at once, no crash; with `closeGraceMs` 0 the bytes are discarded (today's abort) |
 
 ## Boundaries
 
@@ -402,7 +427,7 @@ QtTest binaries under label `device`. The loopback server `MockPlcServer` hosts 
 
 ## Success Criteria
 
-1. QDV-01…13 and 15…17 pass on Windows (MSVC) and Linux (GCC); QDV-14 passes where a virtual COM pair exists and is skipped elsewhere.
+1. QDV-01…13 and 15…19 pass on Windows (MSVC) and Linux (GCC); QDV-14 passes where a virtual COM pair exists and is skipped elsewhere.
 2. No `waitFor`, `QEventLoop`, `QThread` or `QMutex` token appears in `src/device`.
 3. The class compiles with only `mc/core/*.h` and Qt headers; `mc_device` does not link `mc_mock`.
 4. `virtual_plc` and `qt_console_poller` talk to each other on one machine and print round-1 snapshots, then changes caused by `--wiggle`.
@@ -414,3 +439,4 @@ QtTest binaries under label `device`. The loopback server `MockPlcServer` hosts 
 3. **Legacy JSON import.** Read the old `McProtocolConfig` keys (`refreshInterval`, `activeMDevice`, `startMAddress`, …)? Proposed: not in v1; a small helper in the consuming app. *Decision:* no; the library reads only its own schema, migration is the consuming app's job (2026-09-26).
 4. **Runtime subscriptions and `config()`.** Proposed: not written back; the app persists what it wants. *Decision:* not written back; `config()` is always what the app supplied (2026-09-26).
 5. **Destructor.** Proposed: no signals from the destructor; completions require `disconnectFromPlc()` first. *Decision:* no signals from the destructor; if requests are still outstanding it logs one `Warn` line with their count and ids (2026-09-26).
+6. **Reconnect stall after a cable pull** (field report on v0.1.0, 2026-10-08). *Decision (owner 2026-10-08):* new config keys `transport.tcp.lowDelay`, `keepAlive`, `closeGraceMs` and `session.firstResponseTimeoutMs` (defaults keep v0.1.0 behaviour); graceful close in `TcpTransport`; guidance under "Reconnecting after a link loss"; still no automatic reconnect. QDV-12 extended, QDV-18, QDV-19.

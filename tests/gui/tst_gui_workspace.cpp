@@ -695,7 +695,7 @@ private slots:
             cfg.insert(QStringLiteral("session"), session);
             QJsonObject transport = child(cfg, QStringLiteral("transport"));
             QJsonObject tcp = child(transport, QStringLiteral("tcp"));
-            addKey(tcp, QStringLiteral("keepAlive"));
+            addKey(tcp, QStringLiteral("tcpNoDelayHint"));
             transport.insert(QStringLiteral("tcp"), tcp);
             cfg.insert(QStringLiteral("transport"), transport);
             QJsonArray subs = cfg.value(QStringLiteral("subscriptions")).toArray();
@@ -743,7 +743,7 @@ private slots:
                                 QStringLiteral("devices[0].config.topLevelCfg"),
                                 QStringLiteral("devices[0].config.frame.timeoutMS"),
                                 QStringLiteral("devices[0].config.session.heartbeat.period"),
-                                QStringLiteral("devices[0].config.transport.tcp.keepAlive"),
+                                QStringLiteral("devices[0].config.transport.tcp.tcpNoDelayHint"),
                                 QStringLiteral("devices[0].config.subscriptions[0].rate"),
                                 QStringLiteral("mocks[0].serving"),
                                 QStringLiteral("mocks[0].memory[0].endian"),

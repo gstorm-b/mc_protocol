@@ -54,6 +54,10 @@
     lib/cmake/Qt5/Qt5Config.cmake): Qt 5.15's headers do not compile with the 14.50+ (VS 2026)
     standard library. Run from a fresh PowerShell: vsdev.ps1 refuses a shell that already has
     another toolset loaded.
+
+    The target architecture of an MSVC kit comes from its folder name: a kit without "_64" (for
+    example C:/Qt/5.15.0/msvc2019) is a 32-bit kit and loads the x86 compiler
+    (vsdev.ps1 -Arch x86); every other kit loads x64.
 #>
 [CmdletBinding()]
 param(
@@ -127,13 +131,15 @@ if ($isMsvc) {
         $VcVarsVer = '14.44'
     }
     $mcVcVarsVer = $VcVarsVer
-    . "$PSScriptRoot\vsdev.ps1" -VcVarsVer $mcVcVarsVer
+    # A kit folder without "_64" (msvc2019) is the 32-bit kit: load the x86 compiler for it.
+    $mcArch = if ((Split-Path -Leaf $QtDir) -notmatch '_64$') { 'x86' } else { 'x64' }
+    . "$PSScriptRoot\vsdev.ps1" -VcVarsVer $mcVcVarsVer -Arch $mcArch
     if ($mcVcVarsVer -and -not ("$env:VCToolsVersion".StartsWith($mcVcVarsVer))) {
         Write-Error "check.ps1: could not load the MSVC $mcVcVarsVer toolset (loaded: '$env:VCToolsVersion')."
         exit 1
     }
     if ($mcVcVarsVer) {
-        Write-Host "check.ps1: MSVC toolset $env:VCToolsVersion"
+        Write-Host "check.ps1: MSVC toolset $env:VCToolsVersion ($mcArch)"
     }
     # jom is an nmake-compatible parallel make: the given path first, then PATH, else nmake.
     if (Test-Path -LiteralPath $JomPath -PathType Leaf) {

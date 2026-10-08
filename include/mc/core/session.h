@@ -80,7 +80,12 @@ struct SessionConfig {
                                             ///< arrived, the deadline is last byte + this.
     uint16_t serialFlushMs{50};            ///< Serial only: after EOT, discard bytes until the
                                             ///< line has been silent this long.
-    HeartbeatConfig heartbeat{};            ///< Optional heartbeat write.
+    uint32_t firstResponseTimeoutMs{0}; ///< Response deadline of the first frame sent after each
+                                        ///< `linkUp()`: 0 = `FrameConfig::effectiveTimeoutMs()`.
+                                        ///< Never a resend. Serial: bounds the time to the first
+                                        ///< byte only. Nonzero and below `effectiveTimeoutMs()`
+                                        ///< is rejected by `validate()`.
+    HeartbeatConfig heartbeat{};        ///< Optional heartbeat write.
     LogSink* log{nullptr};                  ///< Not owned; null = `NullLogSink`. Category
                                              ///< `"mc.session"`.
 
@@ -90,7 +95,8 @@ struct SessionConfig {
      * @param[in] frame Frame this session would run on; `heartbeat.device` is checked against it
      * when `heartbeat.enabled`.
      * @return Success when every check passes.
-     * @retval ErrorCode::InvalidConfig `maxConsecutiveLinkErrors` is 0, or `heartbeat.enabled` and
+     * @retval ErrorCode::InvalidConfig `maxConsecutiveLinkErrors` is 0, `firstResponseTimeoutMs`
+     * is nonzero and below `frame.effectiveTimeoutMs()`, or `heartbeat.enabled` and
      * `heartbeat.device` is not a bit device supported by `frame`.
      * @par Complexity
      * O(1); no allocation.
@@ -236,7 +242,10 @@ public:
 
     /**
      * @brief The transport is open. Clears every baseline (`ValueStore::resetBaselines`) and
-     * starts round 1 at `now` (the first `Send` is produced by this call).
+     * starts round 1 at `now` (the first `Send` is produced by this call). The first frame sent
+     * after this call (heartbeat, polling chunk or ad-hoc request) waits
+     * `SessionConfig::firstResponseTimeoutMs` for its response when that is nonzero; it is never
+     * resent for it.
      * @param[in] now Current time.
      * @pre `nextOutput()` has drained every output of the previous input call.
      * @post At least one `Send` (or, for an empty plan, a `CycleDone`) is available from
@@ -405,6 +414,11 @@ private:
     /// Sends `plan().chunk(index).request`'s pre-encoded frame and enters `Waiting` for it.
     void sendChunk(size_t index, TimeMs now) noexcept;
 
+    /// Response deadline for a frame being sent now (not a resend): `now +
+    /// firstResponseTimeoutMs` for the first send after `linkUp()` when that is nonzero, else
+    /// `now + effectiveTimeoutMs()`. Clears `m_firstSendPending`.
+    TimeMs newSendDeadline(TimeMs now) noexcept;
+
     /// Sends the ad-hoc queue's head chunk (`m_adHocQueue->nextChunkFrame()`/
     /// `nextChunkRequest()`) and enters `Waiting` for it; sets `m_currentIsAdHoc` so `bytesIn()`
     /// routes the response to `completeAdHocResponse()` instead of `completeCurrentChunk()`;
@@ -559,6 +573,9 @@ private:
     /// While `Waiting`: Ethernet, `effectiveTimeoutMs()` after the send; serial, the same until
     /// the first byte arrives, then `serialInterCharMs` after the latest byte.
     TimeMs m_responseDeadline{kNoDeadline};
+    /// Set by `linkUp()`, cleared by the first new send and by `linkDown()`: that send's deadline
+    /// is `firstResponseTimeoutMs` (when nonzero).
+    bool m_firstSendPending{false};
 
     /// Serial: link errors in a row (timeouts, protocol errors, flushes that reached their
     /// cap); any well-formed response and `linkDown()` reset it.

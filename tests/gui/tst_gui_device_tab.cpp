@@ -73,6 +73,9 @@ QString jsonText(const QJsonValue& v) {
 mc::McDeviceConfig baseConfig() {
     mc::McDeviceConfig cfg;
     cfg.serial.portName = QStringLiteral("COM3"); // so that switching to serial is valid
+    // Nonzero, so that both neighbours of the value (+1, -1) are valid: 0 would only accept +1,
+    // which is below the frame timeout.
+    cfg.session.firstResponseTimeoutMs = 10000;
     return cfg;
 }
 

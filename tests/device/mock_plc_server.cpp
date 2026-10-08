@@ -14,6 +14,7 @@ MockPlcServer::~MockPlcServer() {
             connection->socket->disconnect(this);
             connection->socket->abort();
         }
+        delete connection->holdTimer;
         delete connection;
     }
 }
@@ -51,12 +52,15 @@ void MockPlcServer::mute(bool on) {
     }
 }
 
+void MockPlcServer::holdFirstRequest(int ms) { m_holdFirstRequestMs = ms; }
+
 void MockPlcServer::onNewConnection() {
     while (m_server.hasPendingConnections()) {
         auto* connection = new Connection;
         connection->socket = m_server.nextPendingConnection();
         connection->socket->setParent(this);
         connection->plc = std::make_unique<mc::MockPlc>(m_frame);
+        connection->holdMs = m_holdFirstRequestMs;
         if (m_init) {
             m_init(*connection->plc);
         }
@@ -69,6 +73,11 @@ void MockPlcServer::onNewConnection() {
                 [this, connection]() { onReadyRead(connection); });
         connect(connection->socket, &QTcpSocket::disconnected, this, [this, connection]() {
             connection->open = false;
+            connection->holding = false;
+            connection->held.clear();
+            if (connection->holdTimer != nullptr) {
+                connection->holdTimer->stop();
+            }
             emit clientDisconnected();
         });
         emit clientConnected();
@@ -77,6 +86,34 @@ void MockPlcServer::onNewConnection() {
 
 void MockPlcServer::onReadyRead(Connection* connection) {
     const QByteArray request = connection->socket->readAll();
+    if (connection->holding) {
+        connection->held.append(request); // queue behind the held first request
+        return;
+    }
+    if (connection->holdMs > 0 && !connection->firstSeen) {
+        connection->firstSeen = true;
+        connection->holding = true;
+        connection->held = request;
+        if (connection->holdTimer == nullptr) {
+            connection->holdTimer = new QTimer(this);
+            connection->holdTimer->setSingleShot(true);
+            connect(connection->holdTimer, &QTimer::timeout, this, [this, connection]() {
+                connection->holding = false;
+                const QByteArray bytes = std::move(connection->held);
+                connection->held.clear();
+                if (connection->open && !bytes.isEmpty()) {
+                    deliver(connection, bytes);
+                }
+            });
+        }
+        connection->holdTimer->start(connection->holdMs);
+        return;
+    }
+    connection->firstSeen = true;
+    deliver(connection, request);
+}
+
+void MockPlcServer::deliver(Connection* connection, const QByteArray& request) {
     connection->plc->bytesIn(mc::ByteView{reinterpret_cast<const uint8_t*>(request.constData()),
                                           static_cast<size_t>(request.size())});
     mc::ByteView response;

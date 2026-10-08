@@ -16,12 +16,18 @@ namespace mc {
 
 /**
  * @struct TcpSettings
- * @brief Where a TcpTransport connects and how long it waits.
+ * @brief Where a TcpTransport connects, how long it waits, and its socket options and close style.
  */
 struct TcpSettings {
     QString host{QStringLiteral("192.168.0.1")}; ///< Host name or address (old default).
     quint16 port{5000};                          ///< TCP port (old default).
     int connectTimeoutMs{2000};                  ///< Connect timeout in ms; 0 or less = no timer.
+    bool lowDelay{true};  ///< Set QAbstractSocket::LowDelayOption (no Nagle delay) once connected;
+                          ///< false leaves the OS default.
+    bool keepAlive{true}; ///< Set QAbstractSocket::KeepAliveOption (OS keep-alive timing) once
+                          ///< connected; false leaves the OS default.
+    int closeGraceMs{0};  ///< close() of a connected socket: 0 = abort (RST) at once; > 0 =
+                          ///< disconnectFromHost() (FIN), abort after this many ms at most.
 };
 
 /**
@@ -30,7 +36,11 @@ struct TcpSettings {
  *
  * Small request frames are sent without Nagle delay (QAbstractSocket::LowDelayOption) and
  * keep-alive probes are enabled (QAbstractSocket::KeepAliveOption), both set once the connection
- * is up. The connect timeout is a single-shot QTimer because QAbstractSocket has none of its own.
+ * is up; TcpSettings::lowDelay and TcpSettings::keepAlive switch each off (the OS default then
+ * holds). A deliberate close() ends the connection with a reset by default, or gracefully when
+ * TcpSettings::closeGraceMs is positive.
+ *
+ * The connect timeout is a single-shot QTimer because QAbstractSocket has none of its own.
  *
  * Failures that Qt reports from inside open() are delivered from the event loop, so open() never
  * emits a signal itself.
@@ -47,7 +57,7 @@ class TcpTransport final : public Transport {
      */
     explicit TcpTransport(TcpSettings s, QObject* parent = nullptr);
 
-    /// @brief Aborts the connection silently; emits nothing.
+    /// @brief Aborts the connection and any socket still closing, silently; emits nothing.
     ~TcpTransport() override;
 
     /**
@@ -64,8 +74,16 @@ class TcpTransport final : public Transport {
     void open() override;
 
     /**
-     * @brief Aborts the connection and cancels a pending connect, emitting nothing.
-     * @post state() == State::Closed; no signal follows.
+     * @brief Closes the connection and cancels a pending connect, emitting nothing.
+     *
+     * A connected socket is aborted (reset) when TcpSettings::closeGraceMs is 0. When it is
+     * positive, the socket is handed over to a graceful close: unsent bytes are flushed, then FIN
+     * is sent, and the socket is aborted if the peer has not finished within that many ms. The
+     * transport continues with a new socket, so open() may follow at once. A socket that is
+     * still connecting is always aborted.
+     *
+     * @post state() == State::Closed; no signal follows, not even from a socket that is still
+     *       closing.
      * @see Transport::close
      */
     void close() override;
@@ -108,14 +126,22 @@ class TcpTransport final : public Transport {
     void onReadyRead();
     void onConnectTimeout();
 
-    /// Stops the timer, sets Closed and aborts the socket. Signals the socket raises from inside
+    /// Creates the socket (a child of this object) and connects its signals to the slots above.
+    void createSocket();
+    /// Hands the connected socket to a graceful close and continues with a new one.
+    void closeGracefully();
+
+    /// Stops the timer, sets Closed and aborts the socket (a loss, a failed open or a failed write;
+    /// only close() may end gracefully). Signals the socket raises from inside
     /// abort() find the state Closed and are ignored.
     void finishClosed();
     /// Emits openFailed() now, or from the event loop while open() is still on the stack.
     void reportOpenFailed(const QString& reason);
 
     TcpSettings m_settings;
-    QTcpSocket* m_socket;   ///< Child of this object, so it follows a moveToThread().
+    /// Child of this object, so it follows a moveToThread(). Sockets in a graceful close are
+    /// further children, detached from the slots above.
+    QTcpSocket* m_socket{nullptr};
     QTimer* m_connectTimer; ///< Child of this object; single-shot.
     State m_state{State::Closed};
     /// Bumped by open() and close(); a deferred signal captured under an older value is dropped,

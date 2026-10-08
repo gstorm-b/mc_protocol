@@ -1,5 +1,5 @@
 // tst_tcp_transport.cpp -- T-035: TcpTransport against a local QTcpServer on 127.0.0.1 (an
-// OS-chosen port), and registerMetaTypes(). Test ids: QDV-06 and QDV-12 are the spec's
+// OS-chosen port), and registerMetaTypes(). Test ids: QDV-06, QDV-12 and QDV-19 are the spec's
 // (SPEC-qt-device.md, transport-level parts); TRN-nn cover the Transport contract of transport.h
 // and MTA-nn the meta-type registration. No test gates a positive outcome on a fixed sleep: they
 // wait on signals with a bounded timeout. The few negative checks ("nothing more is emitted")
@@ -11,6 +11,7 @@
 #include <QCoreApplication>
 #include <QElapsedTimer>
 #include <QHostAddress>
+#include <QPointer>
 #include <QSignalSpy>
 #include <QTcpServer>
 #include <QTcpSocket>
@@ -66,6 +67,31 @@ bool knownByName(const char* name) {
 #endif
 }
 
+// Number of QTcpSocket children: the transport's own socket plus any socket still closing.
+int socketsOf(const mc::TcpTransport& transport) {
+    return static_cast<int>(
+        transport.findChildren<QTcpSocket*>(QString(), Qt::FindDirectChildrenOnly).size());
+}
+
+// Writes 4 MB chunks until Qt's write buffer holds 16 MB the kernel has refused. A peer that does
+// not read fills the socket buffers (a few tens of MB on Windows loopback, where the receive window
+// keeps growing for a while); a closing socket with that backlog cannot flush in a few hundred ms,
+// so only the grace timer can end it.
+bool fillUntilTheSocketCannotFlush(mc::TcpTransport& transport) {
+    const QByteArray chunk(4 * 1024 * 1024, 'x');
+    QTcpSocket* socket = transport.findChild<QTcpSocket*>();
+    for (int i = 0; i < 40; ++i) {
+        if (!transport.write(view(chunk))) {
+            return false;
+        }
+        QTest::qWait(10); // lets Qt hand the bytes to the kernel; not a gate on any outcome
+        if (socket->bytesToWrite() >= 16 * 1024 * 1024) {
+            return true;
+        }
+    }
+    return false;
+}
+
 // Waits for one accepted connection; nullptr on timeout.
 QTcpSocket* accept(QTcpServer& server) {
     if (!server.hasPendingConnections()) {
@@ -107,6 +133,199 @@ class TstTcpTransport : public QObject {
         QVERIFY(socket != nullptr);
         QCOMPARE(socket->socketOption(QAbstractSocket::LowDelayOption).toInt(), 1);
         QCOMPARE(socket->socketOption(QAbstractSocket::KeepAliveOption).toInt(), 1);
+    }
+
+    void QDV_12_switchedOffOptionsAreNotSetByTheTransport() {
+        QTcpServer server;
+        QVERIFY(listenOnLoopback(server));
+        mc::TcpSettings s = settingsFor(server.serverPort());
+        s.lowDelay = false;
+        s.keepAlive = false;
+        mc::TcpTransport transport(s);
+        QSignalSpy opened(&transport, &mc::Transport::opened);
+        transport.open();
+        QVERIFY(opened.wait(kWaitMs));
+
+        // The OS default holds: this reads back what the socket really has (0 on Windows).
+        QTcpSocket* socket = transport.findChild<QTcpSocket*>();
+        QVERIFY(socket != nullptr);
+        QCOMPARE(socket->socketOption(QAbstractSocket::LowDelayOption).toInt(), 0);
+        QCOMPARE(socket->socketOption(QAbstractSocket::KeepAliveOption).toInt(), 0);
+    }
+
+    void QDV_12_eachOptionIsSwitchedOnItsOwn() {
+        QTcpServer server;
+        QVERIFY(listenOnLoopback(server));
+        for (int mask = 1; mask <= 2; ++mask) {
+            mc::TcpSettings s = settingsFor(server.serverPort());
+            s.lowDelay = (mask & 1) != 0;
+            s.keepAlive = (mask & 2) != 0;
+            mc::TcpTransport transport(s);
+            QSignalSpy opened(&transport, &mc::Transport::opened);
+            transport.open();
+            QVERIFY(opened.wait(kWaitMs));
+            QTcpSocket* socket = transport.findChild<QTcpSocket*>();
+            QVERIFY(socket != nullptr);
+            QCOMPARE(socket->socketOption(QAbstractSocket::LowDelayOption).toInt(),
+                     s.lowDelay ? 1 : 0);
+            QCOMPARE(socket->socketOption(QAbstractSocket::KeepAliveOption).toInt(),
+                     s.keepAlive ? 1 : 0);
+        }
+    }
+
+    void QDV_19_gracefulCloseDeliversTheBytesThenEndOfStream() {
+        QTcpServer server;
+        QVERIFY(listenOnLoopback(server));
+        mc::TcpSettings s = settingsFor(server.serverPort());
+        s.closeGraceMs = 5000;
+        mc::TcpTransport transport(s);
+        QSignalSpy opened(&transport, &mc::Transport::opened);
+        QSignalSpy failed(&transport, &mc::Transport::openFailed);
+        QSignalSpy lost(&transport, &mc::Transport::lost);
+        transport.open();
+        QVERIFY(opened.wait(kWaitMs));
+        QTcpSocket* peer = accept(server);
+        QVERIFY(peer != nullptr);
+        QByteArray received;
+        QObject::connect(peer, &QTcpSocket::readyRead, peer,
+                         [&]() { received += peer->readAll(); });
+        QSignalSpy peerGone(peer, &QTcpSocket::disconnected);
+
+        // Write and close in the same event-loop turn: the bytes are still in Qt's write buffer.
+        const QByteArray request("graceful-close-bytes");
+        QVERIFY(transport.write(view(request)));
+        transport.close();
+        QCOMPARE(transport.state(), mc::Transport::State::Closed);
+
+        QTRY_COMPARE_WITH_TIMEOUT(peerGone.count(), 1, kWaitMs);
+        received += peer->readAll();
+        QCOMPARE(received, request);
+        // The closing socket deletes itself once the peer has closed too.
+        QTRY_COMPARE_WITH_TIMEOUT(socketsOf(transport), 1, kWaitMs);
+        settle();
+        QCOMPARE(opened.count(), 1);
+        QCOMPARE(failed.count(), 0);
+        QCOMPARE(lost.count(), 0);
+        QCOMPARE(transport.state(), mc::Transport::State::Closed);
+    }
+
+    void QDV_19_withGraceZeroTheBytesWrittenJustBeforeCloseAreDiscarded() {
+        QTcpServer server;
+        QVERIFY(listenOnLoopback(server));
+        mc::TcpTransport transport(settingsFor(server.serverPort())); // closeGraceMs 0
+        QSignalSpy opened(&transport, &mc::Transport::opened);
+        transport.open();
+        QVERIFY(opened.wait(kWaitMs));
+        QTcpSocket* peer = accept(server);
+        QVERIFY(peer != nullptr);
+        QByteArray received;
+        QObject::connect(peer, &QTcpSocket::readyRead, peer,
+                         [&]() { received += peer->readAll(); });
+        QSignalSpy peerGone(peer, &QTcpSocket::disconnected);
+
+        QVERIFY(transport.write(view(QByteArray("never-sent"))));
+        transport.close();
+        QTRY_COMPARE_WITH_TIMEOUT(peerGone.count(), 1, kWaitMs);
+        received += peer->readAll();
+        QVERIFY2(received.isEmpty(), received.constData());
+        QCOMPARE(socketsOf(transport), 1); // abort() leaves no closing socket behind
+    }
+
+    // The peer never takes the bytes: it has a read limit of one byte and does not read, and the
+    // payload is far larger than the kernel buffers, so the closing socket cannot flush. Qt ends a
+    // closing socket as soon as its write buffer is empty (the OS finishes the FIN exchange), so
+    // only the grace timer can end this one.
+    void QDV_19_aStuckPeerSeesTheClosingSocketAbortedAfterTheGraceTime() {
+        QTcpServer server;
+        QVERIFY(listenOnLoopback(server));
+        QSignalSpy connections(&server, &QTcpServer::newConnection);
+        mc::TcpSettings s = settingsFor(server.serverPort());
+        s.closeGraceMs = 400;
+        mc::TcpTransport transport(s);
+        QSignalSpy opened(&transport, &mc::Transport::opened);
+        QSignalSpy failed(&transport, &mc::Transport::openFailed);
+        QSignalSpy lost(&transport, &mc::Transport::lost);
+        transport.open();
+        QVERIFY(opened.wait(kWaitMs));
+        QTcpSocket* first = accept(server);
+        QVERIFY(first != nullptr);
+        first->setReadBufferSize(1);
+        QVERIFY(fillUntilTheSocketCannotFlush(transport));
+
+        QElapsedTimer clock;
+        clock.start();
+        transport.close();
+        QCOMPARE(transport.state(), mc::Transport::State::Closed);
+        QCOMPARE(socketsOf(transport), 2); // the closing socket and the fresh one
+
+        // open() right after close() connects a second socket while the first is closing.
+        transport.open();
+        QCOMPARE(transport.state(), mc::Transport::State::Opening);
+        QTRY_COMPARE_WITH_TIMEOUT(opened.count(), 2, kWaitMs);
+        QCOMPARE(transport.state(), mc::Transport::State::Open);
+        QTRY_COMPARE_WITH_TIMEOUT(connections.count(), 2, kWaitMs);
+        QTcpSocket* second = server.nextPendingConnection();
+        QVERIFY(second != nullptr);
+        const QByteArray again("second");
+        QVERIFY(transport.write(view(again)));
+        QByteArray got;
+        QTRY_VERIFY_WITH_TIMEOUT((got += second->readAll(), got.size() >= again.size()), kWaitMs);
+        QCOMPARE(got, again);
+
+        // The closing socket goes away on the grace timer, not before: the peer never closed.
+        // Only the lower bound is a hard check; an upper bound would depend on the machine load.
+        QTRY_COMPARE_WITH_TIMEOUT(socketsOf(transport), 1, s.closeGraceMs + kWaitMs);
+        QVERIFY2(clock.elapsed() >= s.closeGraceMs - 50,
+                 qPrintable(QString::number(clock.elapsed())));
+        QCOMPARE(transport.state(), mc::Transport::State::Open); // the new socket is untouched
+        QCOMPARE(opened.count(), 2);
+        QCOMPARE(failed.count(), 0);
+        QCOMPARE(lost.count(), 0);
+    }
+
+    void QDV_19_destroyingTheTransportMidGraceAbortsTheClosingSocketAtOnce() {
+        QTcpServer server;
+        QVERIFY(listenOnLoopback(server));
+        mc::TcpSettings s = settingsFor(server.serverPort());
+        s.closeGraceMs = 60000;
+        auto transport = std::make_unique<mc::TcpTransport>(s);
+        QSignalSpy opened(transport.get(), &mc::Transport::opened);
+        QSignalSpy lost(transport.get(), &mc::Transport::lost);
+        QSignalSpy failed(transport.get(), &mc::Transport::openFailed);
+        transport->open();
+        QVERIFY(opened.wait(kWaitMs));
+        QTcpSocket* peer = accept(server);
+        QVERIFY(peer != nullptr);
+        peer->setReadBufferSize(1); // never reads, so the grace stays open
+        QVERIFY(fillUntilTheSocketCannotFlush(*transport));
+
+        QPointer<QTcpSocket> closing = transport->findChild<QTcpSocket*>();
+        QVERIFY(!closing.isNull());
+        transport->close();
+        QCOMPARE(socketsOf(*transport), 2);
+        QVERIFY(!closing.isNull()); // still closing: the 60 s grace has barely begun
+
+        transport.reset(); // no crash, and the closing socket is destroyed with its parent
+        QVERIFY(closing.isNull());
+        settle();
+        QCOMPARE(lost.count(), 0);
+        QCOMPARE(failed.count(), 0);
+        QCOMPARE(opened.count(), 1);
+    }
+
+    void QDV_19_closeWhileConnectingStillAbortsEvenWithAGraceTime() {
+        QTcpServer server;
+        QVERIFY(listenOnLoopback(server));
+        mc::TcpSettings s = settingsFor(server.serverPort());
+        s.closeGraceMs = 5000;
+        mc::TcpTransport transport(s);
+        QSignalSpy opened(&transport, &mc::Transport::opened);
+        transport.open();
+        transport.close();
+        QCOMPARE(transport.state(), mc::Transport::State::Closed);
+        QCOMPARE(socketsOf(transport), 1); // no closing socket was created
+        settle();
+        QCOMPARE(opened.count(), 0);
     }
 
     void QDV_06_openFailsWhenNobodyListensWithinTimeout() {
