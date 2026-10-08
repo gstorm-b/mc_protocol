@@ -7,9 +7,14 @@
 #
 # The docking library is never part of this repository. Use forward slashes.
 
-# MSVC kits: the prebuilt package of this PC, or a script build (see scripts/build-ads.ps1).
+# Qt 6 MSVC kits: the prebuilt package of this PC, or a script build (see scripts/build-ads.ps1).
 MC_ADS_DIR = C:/build_packages/qtadvanceddocking-5.1.1
 
-# MinGW kits: the install folder scripts/build-ads.ps1 prints (a path inside this repository's
+# Qt 6 MinGW kits: the install folder scripts/build-ads.ps1 prints (a path inside this repository's
 # build/ folder; $$PWD is the folder of this file, the repository root).
 MC_ADS_DIR_MINGW = $$PWD/build/ads-mingw_64/install
+
+# Qt 5.15 kits (MSVC msvc2019_64): ADS built for Qt 5 by
+# scripts/build-ads.ps1 -QtDir C:/Qt/5.15.0/msvc2019_64 (its qtadvanceddocking-qt5 library). Read by
+# mc_gui_deps.pri for every Qt 5 kit.
+MC_ADS_DIR_QT5 = $$PWD/build/ads-qt5-msvc2019_64/install

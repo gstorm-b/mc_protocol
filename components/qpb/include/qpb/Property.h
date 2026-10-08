@@ -9,7 +9,11 @@
 #include <QtCore/qmetatype.h>
 #include <QtCore/qstring.h>
 #include <QtCore/qvariant.h>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 #include <QtCore/qvariantmap.h>
+#else
+#include <QtCore/qvariant.h> // QVariantMap in Qt 5
+#endif
 
 #include <functional>
 #include <memory>

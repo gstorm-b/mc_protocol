@@ -2,6 +2,7 @@
 #include <qpb/TypeRegistry.h>
 
 #include "Property_p.h"
+#include "core/compat_p.h"
 
 namespace qpb {
 
@@ -45,12 +46,12 @@ TreeObserver* PropertyPrivate::observer() const
 QVariant PropertyPrivate::convertInitial(const QVariant& input) const
 {
     const TypeHandler* handler = TypeRegistry::global().handler(typeId);
-    if (!handler || !handler->storageType.isValid() || !input.isValid()
-        || input.metaType() == handler->storageType) {
+    if (!handler || !detail::isValidStorageType(handler->storageType) || !input.isValid()
+        || detail::storageTypeOf(input) == handler->storageType) {
         return input;
     }
     QVariant converted = input;
-    return converted.convert(handler->storageType) ? converted : input;
+    return detail::convertTo(converted, handler->storageType) ? converted : input;
 }
 
 bool PropertyPrivate::assign(const QVariant& input, Origin origin)
@@ -72,10 +73,11 @@ bool PropertyPrivate::assign(const QVariant& input, Origin origin)
     };
 
     QVariant candidate = input;
-    if (handler->storageType.isValid() && candidate.metaType() != handler->storageType) {
-        if (!candidate.convert(handler->storageType)) {
+    if (detail::isValidStorageType(handler->storageType)
+        && detail::storageTypeOf(candidate) != handler->storageType) {
+        if (!detail::convertTo(candidate, handler->storageType)) {
             return reject(QStringLiteral("Cannot convert the value to %1")
-                              .arg(QLatin1String(handler->storageType.name())));
+                              .arg(QLatin1String(detail::typeNameOf(handler->storageType))));
         }
     }
     if (handler->normalize)
@@ -364,7 +366,7 @@ namespace {
 
 bool isTruthy(const QVariant& value)
 {
-    switch (value.typeId()) {
+    switch (detail::typeIdOf(detail::storageTypeOf(value))) {
     case QMetaType::Bool:
         return value.toBool();
     case QMetaType::QString:

@@ -114,7 +114,7 @@ QByteArray readFrame(uint32_t number, uint16_t count) {
         return {};
     }
     return QByteArray(reinterpret_cast<const char*>(frame.value().data()),
-                      static_cast<qsizetype>(frame.value().size()));
+                      static_cast<QByteArray::size_type>(frame.value().size()));
 }
 
 // The words of a binary 3E read response (D0 00 + route 5 + length 2 + end code 2 + data), or an

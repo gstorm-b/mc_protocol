@@ -6,6 +6,20 @@ All notable changes to qpb are documented here. Each release has the sections
 From 1.0.0 on, releases within a major version never require changes to consuming code or CMake.
 Release candidates (`-rcN`) may still change the API before 1.0.0 if the RC trial shows a problem.
 
+## 1.7.0 - 2026-10-07
+
+Seventh feature release of 1.x: additions only; code written for 1.0-1.6 builds and behaves the same with Qt 6.
+
+### Added
+- Qt 5.15 support (`README.md`, "Qt 5"): CMake uses the host's Qt 6 or Qt 5, otherwise finds Qt 6, then Qt 5.15.
+  With Qt 5, `Types::*` and `Attr::*` are `QLatin1String` and `TypeHandler::storageType` is an `int` type id.
+
+### Fixed
+- Building the library with MSVC 2019 no longer reports warning C4267 in `src/core/PropertyGroup.cpp`.
+
+### Upgrade notes
+- Nothing to do with Qt 6. Qt 5.15 needs MSVC 2019 / 2022, GCC or Clang (not MSVC 2026).
+
 ## 1.6.1 - 2026-10-02
 
 Documentation release: no change to the API or behaviour.

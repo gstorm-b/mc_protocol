@@ -11,6 +11,7 @@
 #include <cmath>
 #include <limits>
 #include <vector>
+#include "core/compat_p.h"
 
 namespace qpb {
 
@@ -47,7 +48,7 @@ QString affixed(const QString& number, const Property& property)
 TypeHandler boolHandler()
 {
     TypeHandler handler;
-    handler.storageType = QMetaType::fromType<bool>();
+    handler.storageType = detail::storageTypeFor<bool>();
     return handler;
 }
 
@@ -56,7 +57,7 @@ TypeHandler boolHandler()
 TypeHandler intHandler()
 {
     TypeHandler handler;
-    handler.storageType = QMetaType::fromType<int>();
+    handler.storageType = detail::storageTypeFor<int>();
     handler.displayText = [](const QVariant& value, const Property& property) {
         return affixed(QLocale().toString(value.toInt()), property);
     };
@@ -75,7 +76,7 @@ TypeHandler intHandler()
 TypeHandler int64Handler()
 {
     TypeHandler handler;
-    handler.storageType = QMetaType::fromType<qint64>();
+    handler.storageType = detail::storageTypeFor<qint64>();
     handler.displayText = [](const QVariant& value, const Property& property) {
         return affixed(QLocale().toString(value.toLongLong()), property);
     };
@@ -96,7 +97,7 @@ TypeHandler int64Handler()
     handler.fromJson = [](const QJsonValue& json, const Property&) {
         if (json.isString())
             return QVariant(json.toString());
-        return json.isDouble() ? QVariant::fromValue(json.toInteger()) : json.toVariant();
+        return json.isDouble() ? QVariant::fromValue(detail::jsonInteger(json)) : json.toVariant();
     };
     return handler;
 }
@@ -113,14 +114,14 @@ int decimalsOf(const Property& property)
 TypeHandler doubleHandler()
 {
     TypeHandler handler;
-    handler.storageType = QMetaType::fromType<double>();
+    handler.storageType = detail::storageTypeFor<double>();
     handler.displayText = [](const QVariant& value, const Property& property) {
         const QLocale locale;
         QString text = locale.toString(value.toDouble(), 'f', decimalsOf(property));
         const QString point = locale.decimalPoint();
         if (text.contains(point)) {
             while (text.endsWith(locale.zeroDigit()))
-                text.chop(locale.zeroDigit().size());
+                text.chop(QString(locale.zeroDigit()).size()); // a QChar in Qt 5
             if (text.endsWith(point))
                 text.chop(point.size());
         }
@@ -157,7 +158,7 @@ TypeHandler doubleHandler()
 TypeHandler stringHandler()
 {
     TypeHandler handler;
-    handler.storageType = QMetaType::fromType<QString>();
+    handler.storageType = detail::storageTypeFor<QString>();
     handler.displayText = [](const QVariant& value, const Property& property) {
         QString text = value.toString();
         if (property.attribute(Attr::Multiline).toBool()) {
@@ -218,7 +219,7 @@ TypeHandler enumHandler()
         }
         for (const EnumOption& option : options) {
             QVariant converted = value;
-            if (converted.convert(option.value.metaType()) && converted == option.value)
+            if (detail::convertTo(converted, detail::storageTypeOf(option.value)) && converted == option.value)
                 return option.value;
         }
         return value;
@@ -244,7 +245,7 @@ QString nativePath(const QVariant& value, const Property&)
 TypeHandler filePathHandler()
 {
     TypeHandler handler;
-    handler.storageType = QMetaType::fromType<QString>();
+    handler.storageType = detail::storageTypeFor<QString>();
     handler.displayText = nativePath;
     handler.validate = [](const QVariant& value, const Property& property) {
         const QString path = value.toString();
@@ -261,7 +262,7 @@ TypeHandler filePathHandler()
 TypeHandler dirPathHandler()
 {
     TypeHandler handler;
-    handler.storageType = QMetaType::fromType<QString>();
+    handler.storageType = detail::storageTypeFor<QString>();
     handler.displayText = nativePath;
     handler.validate = [](const QVariant& value, const Property& property) {
         const QString path = value.toString();

@@ -1004,8 +1004,29 @@ Known issues, noted only (owner 2026-10-04: no task):
 - The skip message of the serial tests still gives `"COM50,COM51"` as the example (use COM54,COM55).
 - `MockPlc::closeStream()` from inside the `MockOptions::log` sink during `bytesIn()` crashes: documented
   as not re-entrant (doc comment only, owner decision); the GUI never does it.
+- Qt 5.15.0 only: `QSerialPort` re-opening COM54 right after a close fails "Access is denied" now and then, so
+  `GUI_02_comPairMockServesADeviceOverSerial` (`tst_gui_mock_tab.cpp:937`) flakes ~1 in 12 on Qt 5 (tester: 2 of 25 runs; Qt 6: 0).
+  A Qt 5.15.0 limitation; noted like the other flakes (T-079). Qt 5 debug JSON loaders of `mc_hil_tool` run on
+  1 MB stacks (the workbench's file threads got 4 MB); very deep nesting is not tested there.
 - LOW from the T-075..T-077 review: `localhost` is trusted by name; one GUI interleave case relies on a
   3 ms pause; two doc-comment format nits (`hil_types.h:62` width, `mock_runner.h` `///` vs `///<`).
+
+---
+
+## Qt 5.15 support (owner 2026-10-07; follow-up before Phase 9, leader gates as Phase 8)
+
+Details and acceptance criteria in the baton files `tasks/done/T-078.md` and `T-079.md`.
+
+- [x] T-078 Library, examples, Qt tests and `hil_capture` on Qt 5.15 (MSVC `msvc2019_64` kit; CMake and qmake)
+- [x] T-079 GUI `mc_workbench` on Qt 5.15 (ADS for Qt5; qpb 1.7.0)
+- [x] Batch tester and reviewer PASS; Qt 6 kits unchanged and green; one commit
+
+### Pre-release v0.1.0 (owner 2026-10-08)
+- [ ] Build + test through the Qt Creator MCP server with every build option (Qt 6 MSVC/MinGW Debug/Release presets,
+  Qt 5 MSVC Debug/Release presets, qmake kits); results recorded
+  (owner 2026-10-08: if the Qt Creator MCP server cannot be reached then, skip this item and go on)
+- [ ] `CHANGELOG.md` `Unreleased` → `[0.1.0] - <date>` marked pre-release; `version.h` stays 0.1.0; tag `v0.1.0`
+- [ ] Export a new git bundle (`git bundle create … --all`) to `build/release/` and verify it (`git bundle verify`, clone test)
 
 ---
 

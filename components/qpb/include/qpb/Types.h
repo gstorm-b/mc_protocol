@@ -20,6 +20,7 @@ using TypeId = QString;
 // TypeRegistry::global() (and their editors in EditorFactory::global()).
 namespace Types {
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 // bool
 inline constexpr QLatin1StringView Bool {"bool"};
 // int. See Attr::Minimum, Maximum, Step, Prefix, Suffix.
@@ -40,6 +41,22 @@ inline constexpr QLatin1StringView Group {"group"};
 // qint64. See Attr::Minimum, Maximum, Step, Prefix, Suffix (qint64 values).
 // Since 1.2; registered after the seven types of 1.0.
 inline constexpr QLatin1StringView Int64 {"int64"};
+
+#else
+
+// Qt 5 (since 1.7): the same constants as QLatin1String, which converts to
+// QString like QLatin1StringView does.
+inline constexpr QLatin1String Bool {"bool", 4};
+inline constexpr QLatin1String Int {"int", 3};
+inline constexpr QLatin1String Double {"double", 6};
+inline constexpr QLatin1String String {"string", 6};
+inline constexpr QLatin1String Enum {"enum", 4};
+inline constexpr QLatin1String FilePath {"filepath", 8};
+inline constexpr QLatin1String DirPath {"dirpath", 7};
+inline constexpr QLatin1String Group {"group", 5};
+inline constexpr QLatin1String Int64 {"int64", 5};
+
+#endif
 
 } // namespace Types
 

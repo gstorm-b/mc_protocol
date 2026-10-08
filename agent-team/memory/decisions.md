@@ -3,6 +3,22 @@
 Curated by the team leader. One entry, one decision, newest first.
 Format: `- [T-xxx or date] Decision — why. (supersedes: entry, if any)`
 
+- [T-078] Qt 5 + MSVC defines `_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING` (the STL's documented switch;
+  14.44 deprecates the `stdext` iterators Qt 5.15's headers use) instead of dropping /WX — leader.
+  `registerMetaTypes()` registers the `mc::RequestId` alias by name (Qt 5 needs it for queued signals).
+  `SPEC-build-packaging.md` rows for `mc_device` targets, `MC_BUILD_DEVICE` and BLD-02 amended to the
+  versionless Qt targets (owner's Qt 5.15 decision).
+- [T-078] Qt 5 trees build with MSVC toolset 14.44 (v143), Qt 6 with the default 14.51: Qt 5.15.0 headers
+  break on the 14.51 STL and qpb 1.7.0 excludes MSVC 2026 for Qt 5 — leader; no compat shim.
+- [2026-10-07] Owner: qpb is being updated to **1.7.0** with Qt 5.15 support; it replaces the vendored
+  1.6.1 in `components/qpb` (unmodified) for T-079. No local patches or Qt5 fallback editor.
+- [2026-10-08] Owner: `.gitignore` gains `.mcp.json` (the owner's own change; it goes into the T-078/T-079 commit).
+- [2026-10-07] Owner: subagents run on **Opus** for the Qt 5.15 batch (T-078, T-079); the owner edited
+  `.claude/settings.json` themselves after the leader's own edit was blocked as self-modification.
+- [2026-10-07] Owner: support building with **Qt 5.15**, everything including the GUI; a follow-up
+  before Phase 9 with Phase 8's delegation (T-078 library and tools, T-079 GUI). Qt 5.15.0
+  `msvc2019_64` is the only Qt5 kit installed (MSVC-only verification). qpb requires Qt 6.5: port
+  it or a Qt5 fallback editor is the owner's choice. (The T-078 id below was never used.)
 - [2026-10-04] Owner: no T-078 — the GUI-08 `liveRunners()` flake and the COM50 skip-message example
   are noted in `tasks/todo.md` only; `closeStream()` re-entrancy from the log sink is documented in
   `mock_plc.h` (no guard); Phase 9 waits until the owner has finished the HIL captures.

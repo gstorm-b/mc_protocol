@@ -245,7 +245,7 @@ void DeviceTab::buildUi() {
                                                 ? QStringLiteral("bits: 1 0 1")
                                                 : QStringLiteral("words: 1 2 0x10"));
     };
-    connect(m_consoleOp, &QComboBox::currentIndexChanged, this, syncConsoleFields);
+    connect(m_consoleOp, qOverload<int>(&QComboBox::currentIndexChanged), this, syncConsoleFields);
     syncConsoleFields();
 }
 

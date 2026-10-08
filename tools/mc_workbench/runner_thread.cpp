@@ -1,5 +1,7 @@
 #include "mc_workbench/runner_thread.h"
 
+#include "mc_workbench/qt_compat.h"
+
 #include <QMetaObject>
 #include <QPointer>
 #include <QThread>
@@ -51,8 +53,8 @@ RunnerThread::RunnerThread(const QString& name, Factory factory, QObject* parent
             return;
         }
         if (state->runner != nullptr) {
-            QObject::connect(state->runner, &RunnerBase::failed, self.data(),
-                             &RunnerThread::failed, Qt::QueuedConnection);
+            staticConnect(state->runner, &RunnerBase::failed, self.data(), &RunnerThread::failed,
+                          Qt::QueuedConnection);
         } else {
             QMetaObject::invokeMethod(self.data(), "failed", Qt::QueuedConnection,
                                       Q_ARG(QString, problem));

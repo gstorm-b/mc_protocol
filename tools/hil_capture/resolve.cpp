@@ -813,7 +813,7 @@ bool frameHasCode(const FrameConfig& f, DeviceType t) {
 
 QString hexText(const ByteBuf& bytes) {
     QString text;
-    text.reserve(static_cast<qsizetype>(bytes.size()) * 3);
+    text.reserve(static_cast<QString::size_type>(bytes.size()) * 3);
     for (size_t i = 0; i < bytes.size(); ++i) {
         if (i != 0) {
             text += QLatin1Char(' ');

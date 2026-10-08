@@ -45,7 +45,7 @@ const char* opName(mc::Op op) {
 QString deviceText(const mc::Device& device, mc::XyNumbering xy) {
     char buffer[16];
     const size_t size = mc::formatDevice(device, buffer, sizeof(buffer), xy);
-    return QString::fromLatin1(buffer, static_cast<qsizetype>(size));
+    return QString::fromLatin1(buffer, static_cast<QString::size_type>(size));
 }
 
 QChar parityLetter(int parity) {
@@ -207,7 +207,7 @@ void MockRunner::onReadyRead(QIODevice* io) {
         io->write(reinterpret_cast<const char*>(response.data), static_cast<qint64>(response.size));
         collectFrame(m_clock->nowNs(), false,
                      QByteArray(reinterpret_cast<const char*>(response.data),
-                                static_cast<qsizetype>(response.size)),
+                                static_cast<QByteArray::size_type>(response.size)),
                      decoder);
     }
     m_statsDirty = true;
@@ -307,7 +307,7 @@ void MockRunner::flushNow(bool force) {
         const size_t kept = std::min<size_t>(seen, kMaxRequestsPerBatch);
         batch.dropped = static_cast<quint32>(seen - kept) + m_pendingRequestsDropped;
         m_pendingRequestsDropped = 0;
-        batch.entries.reserve(static_cast<qsizetype>(kept));
+        batch.entries.reserve(static_cast<QVector<MockRequestEntry>::size_type>(kept));
         const qint64 now = m_clock->nowNs();
         for (size_t i = seen - kept; i < seen; ++i) {
             const mc::MockRequestRecord& record = records[i];

@@ -135,7 +135,7 @@ QString MockMemoryEditor::deviceName(int row) const {
     device.number += static_cast<uint32_t>(row);
     char buffer[16];
     const size_t size = mc::formatDevice(device, buffer, sizeof(buffer), m_xy);
-    return QString::fromLatin1(buffer, static_cast<qsizetype>(size));
+    return QString::fromLatin1(buffer, static_cast<QString::size_type>(size));
 }
 
 QString MockMemoryEditor::valueText(quint16 value) const {

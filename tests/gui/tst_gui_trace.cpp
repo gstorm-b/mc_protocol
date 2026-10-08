@@ -95,7 +95,8 @@ QByteArray encodeRequest(const mc::FrameConfig& frame, const mc::Request& reques
     const mc::McProtocol protocol(frame);
     uint8_t buffer[512];
     const mc::Expected<size_t> size = protocol.encode(request, mc::MutableByteView{buffer, sizeof(buffer)});
-    return size ? QByteArray(reinterpret_cast<const char*>(buffer), static_cast<qsizetype>(size.value()))
+    return size ? QByteArray(reinterpret_cast<const char*>(buffer),
+                             static_cast<QByteArray::size_type>(size.value()))
                 : QByteArray();
 }
 
@@ -106,7 +107,8 @@ QByteArray answerOf(mc::MockPlc& mock, const QByteArray& request) {
     QByteArray answer;
     mc::ByteView view;
     while (mock.nextResponse(view)) {
-        answer.append(reinterpret_cast<const char*>(view.data), static_cast<qsizetype>(view.size));
+        answer.append(reinterpret_cast<const char*>(view.data),
+                      static_cast<QByteArray::size_type>(view.size));
     }
     return answer;
 }

@@ -1,4 +1,6 @@
-# qpb.pri -- builds the vendored qpb 1.6.1 (components/qpb, MIT, unmodified) through qmake.
+# qpb.pri -- builds the vendored qpb 1.7.0 (components/qpb, MIT, unmodified) through qmake, with
+# Qt 5.15 or Qt 6.5 and newer (qpb's minimums; src/core/compat_p.h and src/widgets/compat_p.h hold
+# qpb's own Qt 5 / Qt 6 differences).
 #
 # qpb ships CMake files only; this wrapper sits OUTSIDE the vendored folder (which is replaced
 # wholesale on an update, see components/qpb/README.md) and lists qpb's sources. The sources are
@@ -12,6 +14,12 @@ MC_QPB_PRI_INCLUDED = 1
 QT += core widgets
 CONFIG += c++17
 DEFINES += QPB_STATIC
+
+# Qt 5: qpb's sources rely on the Qt API deprecated before 5.15 being hidden, as qpb's own CMake
+# file does for its targets (cmake/qpbTargetHelpers.cmake): with the deprecated
+# QComboBox::activated(const QString&) still declared, &QComboBox::activated is ambiguous. qmake
+# compiles qpb into the including project, so the definition applies to that whole project.
+equals(QT_MAJOR_VERSION, 5): DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x050F00
 
 QPB_DIR = $$PWD/qpb
 
@@ -48,6 +56,7 @@ HEADERS += \
     $$QPB_DIR/include/qpb/qpbglobal.h \
     $$QPB_DIR/src/core/QObjectPropertySource_p.h \
     $$QPB_DIR/src/core/Property_p.h \
+    $$QPB_DIR/src/core/compat_p.h \
     $$QPB_DIR/include/qpb/widgets/EditorFactory.h \
     $$QPB_DIR/include/qpb/widgets/PropertyDelegate.h \
     $$QPB_DIR/include/qpb/widgets/PropertyFormView.h \
@@ -55,6 +64,7 @@ HEADERS += \
     $$QPB_DIR/include/qpb/qpb.h \
     $$QPB_DIR/src/widgets/Int64SpinBox_p.h \
     $$QPB_DIR/src/widgets/PathEdit_p.h \
+    $$QPB_DIR/src/widgets/compat_p.h \
     $$QPB_DIR/src/widgets/widgets_p.h
 
 SOURCES += \

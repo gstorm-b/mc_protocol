@@ -8,6 +8,7 @@
 // write with a read-back; a console, trend and pane check complete the picture.
 #include "gui_suites.h"
 
+#include "mc/device/meta_types.h"
 #include "mc_workbench/config_binding.h"
 #include "mc_workbench/console_model.h"
 #include "mc_workbench/device_host.h"
@@ -15,6 +16,7 @@
 #include "mc_workbench/main_window.h"
 #include "mc_workbench/mock_host.h"
 #include "mc_workbench/point_table_model.h"
+#include "mc_workbench/qt_compat.h"
 #include "mc_workbench/runner_types.h"
 #include "mc_workbench/trend_widget.h"
 
@@ -63,7 +65,7 @@ QString jsonText(const QJsonValue& v) {
         return v.toBool() ? QStringLiteral("true") : QStringLiteral("false");
     }
     if (v.isDouble()) {
-        return QString::number(v.toInteger());
+        return QString::number(jsonInteger(v));
     }
     return v.toString();
 }
@@ -241,7 +243,7 @@ private slots:
                 break;
             case FieldKind::Int:
             case FieldKind::Int64: {
-                const qint64 now = current.toInteger();
+                const qint64 now = jsonInteger(current);
                 if (now + 1 <= field.maximum) {
                     candidates.push_back(now + 1);
                 }

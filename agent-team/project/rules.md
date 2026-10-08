@@ -73,6 +73,11 @@ contradict `agent-team/core/`, this file wins.
   builds) run on Phase 8's terms: leader plans, fresh developer per task, one fresh tester and
   reviewer over the batch, one commit after both pass. A change T-077 needs outside the test code
   and build files (library behaviour, a spec) goes back to the owner. Phase 9 still waits.
+- **Qt 5.15 support delegated, owner 2026-10-07:** scope "Toàn bộ, kể cả GUI"; "Follow-up trước Phase 9,
+  giao quyền như Phase 8". T-078 and T-079 run on Phase 8's terms (fresh developer per task, one
+  batch tester and reviewer, one commit). The leader may amend the Qt minimum in the specs and
+  rules to "Qt 5.15 or 6.2+" (owner decision). Changing the vendored qpb stays the owner's choice
+  (T-079 step 2). Checking `C:\Qt` for kits was allowed by the owner.
 - Work on `main` unless the owner says otherwise.
 
 ## Phase-batched verification (owner decision 2026-09-27)
@@ -141,6 +146,10 @@ subagents, their subagents, and so on down.
     model other than `sonnet`.
 - Spawns omit `model` or pass `sonnet` — never another model. Do not edit or
   bypass the two files above; changing them is an owner decision.
+- **Exception, owner 2026-10-07:** for the Qt 5.15 work (T-078, T-079 and their batch tester and
+  reviewer) subagents run on **Opus**. The owner changed `.claude/settings.json` themselves
+  (`CLAUDE_CODE_SUBAGENT_MODEL=opus`, FORCE kept; verified by a probe agent: `claude-opus-5-5`).
+  Spawns omit `model`. After that batch the owner decides whether to switch back to Sonnet.
 - The main session (leader) keeps its own model; the rule covers subagents.
 - Verified 2026-09-27 after a session restart: `general-purpose` and
   `claude-code-guide` (normally Haiku) both reported Sonnet.
@@ -183,7 +192,7 @@ A vendored subset of addyosmani/agent-skills (MIT) lives in
 
   | Role | Skills (`skill-pack/skills/…`) |
   |---|---|
-  | developer | `test-driven-development`, `incremental-implementation`, `source-driven-development` (Qt 6.2 "since" checks), `debugging-and-error-recovery` |
+  | developer | `test-driven-development`, `incremental-implementation`, `source-driven-development` (Qt 5.15 / 6.2 "since" checks), `debugging-and-error-recovery` |
   | tester | `test-driven-development` (the Prove-It pattern for bug reports) |
   | reviewer | `code-review-and-quality`; plus `doubt-driven-development` on `protocol-core` tasks |
 
@@ -221,9 +230,10 @@ on top of its acceptance criteria. Links in the skill pack to
   deferred "to a later task".
 - Checkpoints require both compilers (MSVC + MinGW GCC 13.1) green. The daily
   loop of a task is MSVC (`build/cmake-debug`). v1 is verified on Windows only.
-- Qt usage stays within the **Qt 6.2 API surface** (owner decision 2026-09-27;
-  only 6.11 is installed): the reviewer checks the "since" version in the Qt
-  docs of every Qt class, function or enum a diff starts using.
+- Qt usage compiles on **Qt 5.15 and Qt 6.2+**; the GUI `tools/mc_workbench` on Qt 5.15 or
+  Qt 6.5+ (owner decisions 2026-09-27 and 2026-10-07; installed: Qt 5.15.0 `msvc2019_64` and
+  Qt 6.11.1): the reviewer checks the "since" version in the Qt docs of every Qt class, function
+  or enum a diff starts using.
 - Doc comments follow `docs/rules/doc_comment_style.md` (owner decision
   2026-09-27: `/** */` + tags). Mechanically checked on every diff: each
   header under `include/mc/` has a `@file` block; every public symbol has a

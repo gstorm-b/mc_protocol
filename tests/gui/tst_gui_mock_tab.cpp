@@ -694,7 +694,7 @@ private slots:
         const CommandResult listening = resultOf(done, host.listen(0));
         QVERIFY(listening.ok);
 
-        constexpr int kBurst = MockRunner::kMaxRequestsPerBatch + 500;
+        static constexpr int kBurst = MockRunner::kMaxRequestsPerBatch + 500;
         std::atomic<int> fed{0};
         host.post([&fed](MockRunner& runner) {
             mc::Request read;

@@ -13,9 +13,9 @@ namespace {
 QString digestOf(const QString& dryRun, const QString& confirmation, const QString& profileId) {
     QCryptographicHash hash(QCryptographicHash::Sha256);
     hash.addData(profileId.toUtf8());
-    hash.addData(QByteArrayView("\n--\n"));
+    hash.addData(QByteArrayLiteral("\n--\n"));
     hash.addData(dryRun.toUtf8());
-    hash.addData(QByteArrayView("\n--\n"));
+    hash.addData(QByteArrayLiteral("\n--\n"));
     hash.addData(confirmation.toUtf8());
     return QString::fromLatin1(hash.result().toHex());
 }

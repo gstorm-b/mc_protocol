@@ -40,8 +40,13 @@ function(qpb_add_library target)
             QT_NO_CAST_FROM_ASCII
             QT_NO_CAST_TO_ASCII
             QT_NO_URL_CAST_FROM_STRING
-            QT_DISABLE_DEPRECATED_UP_TO=0x060500
     )
+    # API deprecated before the minimum Qt version must not be used.
+    if(QPB_QT_MAJOR EQUAL 5)
+        target_compile_definitions(${target} PRIVATE QT_DISABLE_DEPRECATED_BEFORE=0x050F00)
+    else()
+        target_compile_definitions(${target} PRIVATE QT_DISABLE_DEPRECATED_UP_TO=0x060500)
+    endif()
 
     if(MSVC)
         target_compile_options(${target} PRIVATE /W4 /permissive- /Zc:__cplusplus /utf-8)

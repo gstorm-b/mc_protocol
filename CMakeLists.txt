@@ -6,6 +6,7 @@ project(mc_protocol VERSION ${MC_VERSION} LANGUAGES CXX)
 
 include(cmake/mc_warnings.cmake)
 include(cmake/mc_coverage.cmake)
+include(cmake/mc_qt.cmake)
 
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
     set(MC_IS_TOP_LEVEL ON)
@@ -13,7 +14,7 @@ else()
     set(MC_IS_TOP_LEVEL OFF)
 endif()
 
-option(MC_BUILD_DEVICE "Build mc_device; when OFF, find_package(Qt6) is never called" ON)
+option(MC_BUILD_DEVICE "Build mc_device; when OFF, Qt is never searched for" ON)
 option(MC_BUILD_MOCK "Build mc_mock" ON)
 option(MC_BUILD_TESTS "Build test binaries and register them with ctest" ${MC_IS_TOP_LEVEL})
 option(MC_BUILD_EXAMPLES "Build example programs" ${MC_IS_TOP_LEVEL})

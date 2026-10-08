@@ -33,7 +33,13 @@ struct TypeHandler
 {
     // Type every value is converted to before it is stored. An invalid
     // QMetaType stores values unconverted.
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     QMetaType storageType;
+#else
+    // Qt 5 (since 1.7): a type id such as qMetaTypeId<QColor>();
+    // QMetaType::UnknownType stores values unconverted.
+    int storageType = QMetaType::UnknownType;
+#endif
     // Text shown for a value when it is not being edited.
     // Empty: QVariant::toString().
     std::function<QString(const QVariant& value, const Property& property)> displayText;
@@ -71,7 +77,11 @@ public:
     // Same, with handler.storageType set to T.
     template <class T> bool registerType(const TypeId& id, TypeHandler handler)
     {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         handler.storageType = QMetaType::fromType<T>();
+#else
+        handler.storageType = qMetaTypeId<T>();
+#endif
         return registerType(id, handler);
     }
 

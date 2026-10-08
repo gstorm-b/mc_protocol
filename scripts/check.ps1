@@ -12,7 +12,8 @@
                            MC_VERSION_STRING (from include/mc/version.h) (BLD-08, script half).
       2. cmake-core     — MC_BUILD_DEVICE=OFF, CMAKE_PREFIX_PATH unset and the Qt kit's own
                            directory removed from PATH; configure, build, ctest; fails if the
-                           --trace-expand output contains "find_package(Qt6" (BLD-02).
+                           --trace-expand output contains a find_package() whose package name
+                           starts with Qt5, Qt6 or QT (BLD-02).
       3. qmake          — <kit>/bin/qmake.exe mc_protocol.pro, then jom (MSVC; nmake if no jom
                            is found) or mingw32-make (MinGW), then the same tool with "check"
                            (BLD-03).
@@ -46,6 +47,13 @@
     Creator copy. If that file is missing, a jom on PATH is used; if there is none either, the
     script falls back to single-threaded nmake and prints a note. MinGW kits use
     "mingw32-make -j<Jobs>" and ignore this parameter.
+
+.PARAMETER VcVarsVer
+    MSVC kits only: the MSVC toolset to load (vsdev.ps1 -VcVarsVer), e.g. 14.44. Empty means the
+    installation's default toolset for a Qt 6 kit and 14.44 for a Qt 5 kit (one with
+    lib/cmake/Qt5/Qt5Config.cmake): Qt 5.15's headers do not compile with the 14.50+ (VS 2026)
+    standard library. Run from a fresh PowerShell: vsdev.ps1 refuses a shell that already has
+    another toolset loaded.
 #>
 [CmdletBinding()]
 param(
@@ -57,7 +65,9 @@ param(
     [ValidateRange(1, 1024)]
     [int]$Jobs = [Environment]::ProcessorCount,
 
-    [string]$JomPath = 'C:\Qt\Tools\QtCreator\bin\jom\jom.exe'
+    [string]$JomPath = 'C:\Qt\Tools\QtCreator\bin\jom\jom.exe',
+
+    [string]$VcVarsVer = ''
 )
 
 $ErrorActionPreference = 'Stop'
@@ -110,7 +120,21 @@ if (-not $isMsvc -and -not $isMingw) {
 }
 
 if ($isMsvc) {
-    . "$PSScriptRoot\vsdev.ps1"
+    # Qt 5.15's headers do not compile with the 14.50+ (VS 2026) standard library: a Qt 5 kit gets
+    # an older toolset unless -VcVarsVer names one.
+    $isQt5Kit = Test-Path -LiteralPath (Join-Path $QtDir 'lib/cmake/Qt5/Qt5Config.cmake')
+    if (-not $VcVarsVer -and $isQt5Kit) {
+        $VcVarsVer = '14.44'
+    }
+    $mcVcVarsVer = $VcVarsVer
+    . "$PSScriptRoot\vsdev.ps1" -VcVarsVer $mcVcVarsVer
+    if ($mcVcVarsVer -and -not ("$env:VCToolsVersion".StartsWith($mcVcVarsVer))) {
+        Write-Error "check.ps1: could not load the MSVC $mcVcVarsVer toolset (loaded: '$env:VCToolsVersion')."
+        exit 1
+    }
+    if ($mcVcVarsVer) {
+        Write-Host "check.ps1: MSVC toolset $env:VCToolsVersion"
+    }
     # jom is an nmake-compatible parallel make: the given path first, then PATH, else nmake.
     if (Test-Path -LiteralPath $JomPath -PathType Leaf) {
         $makeTool = $JomPath
@@ -193,10 +217,12 @@ try {
     )
 
     # Anchored on the trace's own "<file>(<line>):  <command>(" prefix so this matches only an
-    # actual find_package(Qt6 ...) call, not the substring appearing inside another command's
-    # argument text (e.g. the MC_BUILD_DEVICE option()'s own help string in CMakeLists.txt).
-    if (Select-String -LiteralPath $traceFile -Pattern '\):\s+find_package\(Qt6' -Quiet) {
-        Stop-Stage -Name 'cmake-core' -Detail "$traceFile contains a find_package(Qt6 call"
+    # actual Qt search -- any package name starting with Qt5, Qt6 or QT: find_package(Qt6 ...),
+    # find_package(Qt5Core ...), the find_package(QT NAMES ...) of cmake/mc_qt.cmake -- not the
+    # substring appearing inside another command's argument text (e.g. the MC_BUILD_DEVICE option()'s
+    # own help string in CMakeLists.txt). Case-sensitive: a prefix match, as the BLD-02 spec row says.
+    if (Select-String -LiteralPath $traceFile -Pattern '\):\s+find_package\((Qt5|Qt6|QT)' -CaseSensitive -Quiet) {
+        Stop-Stage -Name 'cmake-core' -Detail "$traceFile contains a find_package call for Qt"
     }
 
     Invoke-Checked -StageName 'cmake-core' -Exe 'cmake' `

@@ -60,6 +60,44 @@
         "CMAKE_MAKE_PROGRAM": "C:/Qt/Tools/Ninja/ninja.exe",
         "MC_ADS_DIR": "${sourceDir}/build/ads-mingw_64/install"
       }
+    },
+    {
+      "name": "qt5-msvc-debug",
+      "displayName": "Qt 5.15 MSVC 14.44 x64 Debug",
+      "description": "Qt 5.15 needs the MSVC 14.44 toolset (the VS 2026 14.50+ library breaks the Qt 5.15 headers): configure from a shell set up with \". scripts/vsdev.ps1 -VcVarsVer 14.44\".",
+      "inherits": [
+        "mc-msvc",
+        "mc-debug"
+      ],
+      "toolset": {
+        "value": "host=x64,version=14.44",
+        "strategy": "external"
+      },
+      "cacheVariables": {
+        "CMAKE_PREFIX_PATH": "C:/Qt/5.15.0/msvc2019_64",
+        "CMAKE_MAKE_PROGRAM": "C:/Qt/Tools/Ninja/ninja.exe",
+        "MC_QT_MAJOR": "5",
+        "MC_ADS_DIR": "${sourceDir}/build/ads-qt5-msvc2019_64/install"
+      }
+    },
+    {
+      "name": "qt5-msvc-release",
+      "displayName": "Qt 5.15 MSVC 14.44 x64 Release",
+      "description": "Qt 5.15 needs the MSVC 14.44 toolset (the VS 2026 14.50+ library breaks the Qt 5.15 headers): configure from a shell set up with \". scripts/vsdev.ps1 -VcVarsVer 14.44\".",
+      "inherits": [
+        "mc-msvc",
+        "mc-release"
+      ],
+      "toolset": {
+        "value": "host=x64,version=14.44",
+        "strategy": "external"
+      },
+      "cacheVariables": {
+        "CMAKE_PREFIX_PATH": "C:/Qt/5.15.0/msvc2019_64",
+        "CMAKE_MAKE_PROGRAM": "C:/Qt/Tools/Ninja/ninja.exe",
+        "MC_QT_MAJOR": "5",
+        "MC_ADS_DIR": "${sourceDir}/build/ads-qt5-msvc2019_64/install"
+      }
     }
   ],
   "buildPresets": [
@@ -81,6 +119,16 @@
     {
       "name": "mingw-release",
       "configurePreset": "mingw-release",
+      "jobs": 32
+    },
+    {
+      "name": "qt5-msvc-debug",
+      "configurePreset": "qt5-msvc-debug",
+      "jobs": 32
+    },
+    {
+      "name": "qt5-msvc-release",
+      "configurePreset": "qt5-msvc-release",
       "jobs": 32
     }
   ],
@@ -118,6 +166,26 @@
     {
       "name": "mingw-release",
       "configurePreset": "mingw-release",
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "jobs": 8
+      }
+    },
+    {
+      "name": "qt5-msvc-debug",
+      "configurePreset": "qt5-msvc-debug",
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "jobs": 8
+      }
+    },
+    {
+      "name": "qt5-msvc-release",
+      "configurePreset": "qt5-msvc-release",
       "output": {
         "outputOnFailure": true
       },

@@ -29,7 +29,7 @@ It never blocks, never starts a thread, never reconnects by itself (decision 7),
 
 | Item | Choice |
 |---|---|
-| Qt | 6.2 LTS minimum: `Core`, `Network`, `SerialPort`; `Test` for tests (capability-map assumption 1, 6) |
+| Qt | **5.15**, or 6.2 LTS and later (5.15 added 2026-10-07, owner decision): `Core`, `Network`, `SerialPort`; `Test` for tests (capability-map assumption 1, 6) |
 | Language | C++17, `AUTOMOC ON` |
 | Threads | none inside the library; the app may `moveToThread` |
 | Test framework | QtTest; the loopback server wraps `mc::MockPlc` |

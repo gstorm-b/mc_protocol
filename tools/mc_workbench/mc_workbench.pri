@@ -18,6 +18,7 @@ INCLUDEPATH += $$PWD/..
 
 HEADERS += \
     $$PWD/component_versions.h \
+    $$PWD/qt_compat.h \
     $$PWD/runner_types.h \
     $$PWD/runner_base.h \
     $$PWD/runner_thread.h \

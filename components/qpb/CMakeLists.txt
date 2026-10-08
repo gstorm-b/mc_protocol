@@ -30,15 +30,24 @@ set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${CMAKE_CURRENT_
 
 option(QPB_BUILD_SHARED "Build qpb as shared libraries instead of static ones" OFF)
 
-set(QPB_MIN_QT_VERSION 6.5)
+set(QPB_MIN_QT6_VERSION 6.5)
+set(QPB_MIN_QT5_VERSION 5.15) # since 1.7
 
-# Reuse the host project's Qt if it has already been found; otherwise find it here.
+# Reuse the host project's Qt if it has already been found (Qt 6 before Qt 5);
+# otherwise find Qt 6 here, or Qt 5 when there is no Qt 6.
 if(TARGET Qt6::Widgets)
-    if(DEFINED Qt6_VERSION AND Qt6_VERSION VERSION_LESS QPB_MIN_QT_VERSION)
-        message(FATAL_ERROR "qpb requires Qt >= ${QPB_MIN_QT_VERSION}, found ${Qt6_VERSION}")
-    endif()
+    set(QPB_QT_MAJOR 6)
+elseif(TARGET Qt5::Widgets)
+    set(QPB_QT_MAJOR 5)
 else()
-    find_package(Qt6 ${QPB_MIN_QT_VERSION} REQUIRED COMPONENTS Core Widgets)
+    find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)
+    set(QPB_QT_MAJOR ${QT_VERSION_MAJOR})
+    find_package(Qt${QPB_QT_MAJOR} ${QPB_MIN_QT${QPB_QT_MAJOR}_VERSION} REQUIRED COMPONENTS Core Widgets)
+endif()
+set(_qpb_qt_version "${Qt${QPB_QT_MAJOR}_VERSION}")
+if(_qpb_qt_version AND _qpb_qt_version VERSION_LESS QPB_MIN_QT${QPB_QT_MAJOR}_VERSION)
+    message(FATAL_ERROR
+        "qpb requires Qt >= ${QPB_MIN_QT${QPB_QT_MAJOR}_VERSION}, found ${_qpb_qt_version}")
 endif()
 
 include("${CMAKE_CURRENT_LIST_DIR}/cmake/qpbTargetHelpers.cmake")
@@ -49,7 +58,7 @@ configure_file(
     @ONLY
 )
 
-# --- qpb::core (Qt6::Core only) ----------------------------------------------
+# --- qpb::core (QtCore only) ------------------------------------------------
 
 qpb_add_library(qpb_core
     EXPORT_DEFINE QPB_BUILD_CORE_LIB
@@ -71,6 +80,7 @@ qpb_add_library(qpb_core
         "${CMAKE_CURRENT_BINARY_DIR}/include/qpb/qpbversion.h"
         src/core/Property.cpp
         src/core/PropertyBuilders.cpp
+        src/core/compat_p.h
         src/core/PropertyFilterProxyModel.cpp
         src/core/PropertyGroup.cpp
         src/core/PropertyModel.cpp
@@ -81,10 +91,10 @@ qpb_add_library(qpb_core
         src/core/TypeRegistry.cpp
         src/core/qpbglobal.cpp
 )
-target_link_libraries(qpb_core PUBLIC Qt6::Core)
+target_link_libraries(qpb_core PUBLIC Qt${QPB_QT_MAJOR}::Core)
 add_library(qpb::core ALIAS qpb_core)
 
-# --- qpb::widgets (Qt6::Widgets) ---------------------------------------------
+# --- qpb::widgets (QtWidgets) -----------------------------------------------
 
 qpb_add_library(qpb_widgets
     EXPORT_DEFINE QPB_BUILD_WIDGETS_LIB
@@ -96,6 +106,7 @@ qpb_add_library(qpb_widgets
         include/qpb/widgets/PropertyTreeView.h
         include/qpb/qpb.h
         src/widgets/EditorFactory.cpp
+        src/widgets/compat_p.h
         src/widgets/Int64SpinBox.cpp
         src/widgets/Int64SpinBox_p.h
         src/widgets/PathEdit.cpp
@@ -106,5 +117,5 @@ qpb_add_library(qpb_widgets
         src/widgets/widgets_p.cpp
         src/widgets/widgets_p.h
 )
-target_link_libraries(qpb_widgets PUBLIC qpb_core Qt6::Widgets)
+target_link_libraries(qpb_widgets PUBLIC qpb_core Qt${QPB_QT_MAJOR}::Widgets)
 add_library(qpb::widgets ALIAS qpb_widgets)

@@ -101,8 +101,8 @@ endif()
 
 # mc_device (SPEC-qt-device.md): the Qt device layer. It links mc_core and Qt only, never mc_mock
 # (BLD-05 rule d). The source list is a variable, defined whether or not the target is built, so
-# BLD-04 can compare mc_device.pri with it under -DMC_BUILD_DEVICE=OFF too; find_package(Qt6) is
-# called only inside the option, so a core-only configure never searches for Qt (BLD-02).
+# BLD-04 can compare mc_device.pri with it under -DMC_BUILD_DEVICE=OFF too; Qt is
+# searched for (mc_find_qt) only inside the option, so a core-only configure never does (BLD-02).
 set(_mc_device_sources
     device/tcp_transport.cpp
     device/serial_transport.cpp
@@ -118,8 +118,8 @@ set(_mc_device_sources
 )
 
 if(MC_BUILD_DEVICE)
-    # Qt 6.2 LTS is the minimum (SPEC-build-packaging.md); only that API surface is used.
-    find_package(Qt6 6.2 REQUIRED COMPONENTS Core Network SerialPort)
+    # Qt 5.15 or 6.2+ (SPEC-build-packaging.md); only the API surface common to both is used.
+    mc_find_qt(Core Network SerialPort)
 
     add_library(mc_device STATIC ${_mc_device_sources})
     add_library(mc::device ALIAS mc_device)
@@ -129,7 +129,9 @@ if(MC_BUILD_DEVICE)
         PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
         PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
     )
-    target_link_libraries(mc_device PUBLIC mc::core Qt6::Core Qt6::Network Qt6::SerialPort)
+    target_link_libraries(mc_device PUBLIC mc::core Qt::Core Qt::Network Qt::SerialPort)
+    # Qt 5 with MSVC only: silence the STL's stdext deprecation the Qt 5.15 headers trigger.
+    mc_apply_qt5_msvc(mc_device PUBLIC)
 
     mc_apply_warnings(mc_device)
     mc_apply_coverage(mc_device)

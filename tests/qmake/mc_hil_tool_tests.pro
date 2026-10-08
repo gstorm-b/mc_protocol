@@ -45,6 +45,13 @@ CONFIG(debug, debug|release) {
     DEFINES += MC_REPLAY_TESTS_PATH=\\\"$$OUT_PWD/release/mc_replay_tests$$VIRTUAL_PLC_SUFFIX\\\"
 }
 
+# The program itself (tools/qmake/hil_capture.pro), run once for its console encoding.
+CONFIG(debug, debug|release) {
+    DEFINES += MC_HIL_CAPTURE_PATH=\\\"$$OUT_PWD/../../tools/qmake/debug/hil_capture$$VIRTUAL_PLC_SUFFIX\\\"
+} else {
+    DEFINES += MC_HIL_CAPTURE_PATH=\\\"$$OUT_PWD/../../tools/qmake/release/hil_capture$$VIRTUAL_PLC_SUFFIX\\\"
+}
+
 INCLUDEPATH += $$PWD/../hil $$PWD/..
 
 HEADERS += \

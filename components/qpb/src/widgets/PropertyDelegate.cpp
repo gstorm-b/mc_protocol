@@ -14,6 +14,7 @@
 #include <QtWidgets/qtooltip.h>
 
 #include "widgets_p.h"
+#include "widgets/compat_p.h"
 
 namespace qpb {
 
@@ -290,11 +291,11 @@ bool PropertyDelegate::editorEvent(QEvent* event, QAbstractItemModel* model,
     case QEvent::MouseButtonDblClick: {
         const auto* mouse = static_cast<QMouseEvent*>(event);
         return mouse->button() == Qt::LeftButton
-            && option.rect.contains(mouse->position().toPoint());
+            && option.rect.contains(detail::eventPosition(mouse));
     }
     case QEvent::MouseButtonRelease: {
         const auto* mouse = static_cast<QMouseEvent*>(event);
-        if (mouse->button() != Qt::LeftButton || !option.rect.contains(mouse->position().toPoint()))
+        if (mouse->button() != Qt::LeftButton || !option.rect.contains(detail::eventPosition(mouse)))
             return false;
         toggle();
         return true;

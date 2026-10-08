@@ -135,10 +135,12 @@ PATH=$old_path
 export PATH
 
 # Anchored on the trace's own "<file>(<line>):  <command>(" prefix so this matches only an
-# actual find_package(Qt6 ...) call, not the substring appearing inside another command's
-# argument text (e.g. the MC_BUILD_DEVICE option()'s own help string in CMakeLists.txt).
-if grep -Eq '\):[[:space:]]+find_package\(Qt6' "$trace_file"; then
-    fail_stage cmake-core "$trace_file contains a find_package(Qt6 call"
+# actual Qt search -- any package name starting with Qt5, Qt6 or QT: find_package(Qt6 ...),
+# find_package(Qt5Core ...), the find_package(QT NAMES ...) of cmake/mc_qt.cmake -- not the
+# substring appearing inside another command's argument text (e.g. the MC_BUILD_DEVICE option()'s
+# own help string in CMakeLists.txt). Case-sensitive: a prefix match, as the BLD-02 spec row says.
+if grep -Eq '\):[[:space:]]+find_package\((Qt5|Qt6|QT)' "$trace_file"; then
+    fail_stage cmake-core "$trace_file contains a find_package call for Qt"
 fi
 
 run cmake-core cmake --build "$dir" --parallel "$JOBS"

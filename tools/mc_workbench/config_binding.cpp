@@ -1,5 +1,7 @@
 #include "mc_workbench/config_binding.h"
 
+#include "mc_workbench/qt_compat.h"
+
 #include <qpb/PropertyGroup.h>
 #include <qpb/PropertyModel.h>
 #include <qpb/ValidationResult.h>
@@ -284,7 +286,8 @@ QVariant toPropertyValue(const FieldInfo& field, const QJsonObject& json) {
         for (const QJsonValue& item : json.value(QLatin1String(kPathSubscriptions)).toArray()) {
             mc::SubscriptionSpec spec;
             spec.device = item.toObject().value(QStringLiteral("device")).toString();
-            spec.count = static_cast<quint32>(item.toObject().value(QStringLiteral("count")).toInteger());
+            spec.count =
+                static_cast<quint32>(jsonInteger(item.toObject().value(QStringLiteral("count"))));
             subs.push_back(spec);
         }
         return subscriptionsText(subs);
@@ -294,11 +297,11 @@ QVariant toPropertyValue(const FieldInfo& field, const QJsonObject& json) {
     case FieldKind::Bool:
         return v.toBool();
     case FieldKind::Int:
-        return static_cast<int>(v.toInteger());
+        return static_cast<int>(jsonInteger(v));
     case FieldKind::Int64:
-        return static_cast<qint64>(v.toInteger());
+        return jsonInteger(v);
     case FieldKind::MaxGap:
-        return v.isString() ? v.toString() : QString::number(v.toInteger());
+        return v.isString() ? v.toString() : QString::number(jsonInteger(v));
     case FieldKind::Enum:
     case FieldKind::Text:
     case FieldKind::Subscriptions:

@@ -5,6 +5,7 @@
 #include "hil_capture/tool.h"
 #include "mc_workbench/capture_export.h"
 #include "mc_workbench/hil_prepare.h"
+#include "mc_workbench/qt_compat.h"
 
 #include <QCoreApplication>
 #include <QDir>
@@ -296,6 +297,10 @@ void HilRunner::run(quint64 token, const HilRunRequest& request) {
     QTextStream out(&outSink);
     QTextStream err(&errSink);
     QTextStream in(&promptIn);
+    // Both sinks decode UTF-8 (Qt 6's default); Qt 5 would write the locale's code page.
+    // PromptInput only ever yields '\n', the same byte in every encoding.
+    useUtf8(out);
+    useUtf8(err);
     mc::hil::ToolIo io;
     io.out = &out;
     io.err = &err;
@@ -430,7 +435,7 @@ void HilRunner::runReplay(quint64 token, const QString& program, const QString& 
             finish(false, -1);
         }
     });
-    connect(process, &QProcess::finished, process,
+    connect(process, qOverload<int, QProcess::ExitStatus>(&QProcess::finished), process,
             [process, finish](int code, QProcess::ExitStatus status) {
                 finish(true, status == QProcess::NormalExit ? code : -3);
             });

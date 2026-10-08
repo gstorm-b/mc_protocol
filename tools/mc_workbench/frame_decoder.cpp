@@ -26,7 +26,7 @@ const char* opName(mc::Op op) {
 QString deviceText(const mc::Device& device, mc::XyNumbering xy) {
     char buffer[24];
     const size_t size = mc::formatDevice(device, buffer, sizeof(buffer), xy);
-    return QString::fromLatin1(buffer, static_cast<qsizetype>(size));
+    return QString::fromLatin1(buffer, static_cast<QString::size_type>(size));
 }
 
 mc::ByteView viewOf(const QByteArray& bytes) {

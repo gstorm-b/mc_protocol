@@ -14,8 +14,10 @@ void QueueLogSink::write(mc::LogLevel level, std::string_view category,
         LogLine line;
         line.tNs = m_clock->nowNs();
         line.level = level;
-        line.category = QString::fromUtf8(category.data(), static_cast<qsizetype>(category.size()));
-        line.message = QString::fromUtf8(message.data(), static_cast<qsizetype>(message.size()));
+        line.category =
+            QString::fromUtf8(category.data(), static_cast<QString::size_type>(category.size()));
+        line.message =
+            QString::fromUtf8(message.data(), static_cast<QString::size_type>(message.size()));
         m_lines.push_back(std::move(line));
     } catch (const std::bad_alloc&) {
         ++m_dropped; // a sink must not throw into the library

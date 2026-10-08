@@ -10,12 +10,13 @@ replacing the folder: within a major version (1.x) your code and CMake never nee
 
 Contents: [Requirements](#requirements) - [Integration](#integration) - [Features](#features) -
 [Quick start](#quick-start) - [API](#api) - [Developer guide](#developer-guide) - [Style sheets](#style-sheets) -
-[Compatibility](#compatibility) - [Version history](#version-history)
+[Qt 5](#qt-5) - [Compatibility](#compatibility) - [Version history](#version-history)
 
 ## Requirements
 
-- C++17 or newer, Qt 6.5 or newer (Core, Widgets), CMake 3.21 or newer.
-- Any compiler and platform supported by Qt 6 (MSVC, GCC, Clang; Windows, Linux, macOS).
+- C++17 or newer, Qt 6.5 or newer or (since 1.7) Qt 5.15 (Core, Widgets), CMake 3.21 or newer.
+- Any compiler and platform supported by that Qt (MSVC, GCC, Clang; Windows, Linux, macOS); see [Qt 5](#qt-5) for
+  the compilers Qt 5.15 accepts.
 
 ## Integration
 
@@ -39,7 +40,7 @@ target_link_libraries(my_app PRIVATE qpb::widgets)   # or qpb::core without widg
 - Static libraries by default. `-DQPB_BUILD_SHARED=ON` builds shared ones; then deploy the qpb libraries next to your
   executable.
 - The folder changes none of your project's CMake settings (standard, flags, output directories, AUTOMOC are set on
-  qpb's own targets only). If your project has already found Qt, that Qt is used.
+  qpb's own targets only). If your project has already found Qt (6 or 5), that Qt is used; otherwise Qt 6 is preferred to Qt 5.
 - To update: delete the folder, put the new version in its place, rebuild, and read the new version's *Upgrade notes*
   in `CHANGELOG.md`. Never extract a new version over the old folder: files removed by the new version would remain.
 - The version of the folder is in `VERSION`, at compile time in `QPB_VERSION` and at run time from `qpb::version()`.
@@ -322,9 +323,27 @@ checked tool buttons. `qproperty-` values stay when a sheet is removed; set them
 to a theme without them. A `::branch` rule replaces the tree's expand arrows and then needs `image:` for `:closed` and
 `:open`. Only these property names and values are part of the API, not the class names of internal widgets.
 
+## Qt 5
+
+Since 1.7 the folder also builds with Qt 5.15. CMake uses the Qt your project has already found (Qt 6 first), and
+otherwise looks for Qt 6, then Qt 5.15. Everything in this README applies to both, with two differences where Qt 5
+has no equivalent:
+
+- `Types::*` and `Attr::*` are `QLatin1String` constants (with Qt 6: `QLatin1StringView`). Both convert to `QString`,
+  so code that uses them as type ids or attribute keys is the same.
+- `TypeHandler::storageType` is an `int` type id, `QMetaType::UnknownType` by default (with Qt 6: a `QMetaType`).
+  `registerType<T>(id, handler)` sets it in both; with Qt 5 you can also write `handler.storageType =
+  qMetaTypeId<T>();`.
+
+Compilers: Qt 5.15's own headers do not compile with MSVC 2026 (they use `stdext::checked_array_iterator`, which its
+standard library no longer has). Use MSVC 2019 or 2022, GCC or Clang with Qt 5.15.
+
+The compatibility promise below holds for each Qt major: an application built with Qt 5 keeps building with Qt 5 when
+the folder is updated, and the same for Qt 6.
+
 ## Compatibility
 
-Within 1.x, updating the folder never requires changes to your code or CMake:
+Within 1.x, updating the folder never requires changes to your code or CMake (with the same Qt major):
 
 - Nothing public is removed or changed, only added. Enum values and model roles keep their numbers; new ones are
   appended.
@@ -340,6 +359,8 @@ Within 1.x, updating the folder never requires changes to your code or CMake:
 
 Details and upgrade notes for every version: `CHANGELOG.md`.
 
+- **1.7.0** - Qt 5.15 support (see [Qt 5](#qt-5)); Qt 6 builds unchanged. Fixed: MSVC 2019 warning C4267 when
+  building the library.
 - **1.6.1** - Documentation only: this README; the changelog and header comments refer to it instead of documents
   outside the folder.
 - **1.6.0** - Theming with style sheets: tree view colour properties (`groupBackground`, `groupForeground`,

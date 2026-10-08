@@ -30,7 +30,7 @@ The folder also carries a version, a changelog, a one-command build-and-test scr
 | Language | C++17 | `cxx_std_17` on every target; no compiler extensions |
 | CMake | 3.16 minimum for consumers | The dev workflow uses whatever is installed; no presets in v1 |
 | qmake | The one shipped with the Qt used to build | Standalone qmake build is a `subdirs` project that proves the `.pri` files work |
-| Qt | 6.2 LTS minimum | Only `mc::device` and its tests use Qt: `Core`, `Network`, `SerialPort`, `Test` |
+| Qt | **5.15**, or 6.2 LTS and later (Qt 5.15 added 2026-10-07, owner decision; verified with the 5.15.0 `msvc2019_64` kit) | Only `mc::device` and its tests use Qt: `Core`, `Network`, `SerialPort`, `Test` |
 | Test framework | doctest, vendored single header (MIT) at `tests/third_party/doctest/doctest.h` | For every std-only test binary. `qt-device` tests use QtTest |
 | Scripts | PowerShell 5.1 (`scripts/check.ps1`) and POSIX sh (`scripts/check.sh`) | No Python, no CI in v1 |
 | Compilers | MSVC 2019+, MinGW GCC, GCC, Clang | Warnings-as-errors only when the library is the top-level project. v1 is verified with MSVC and MinGW GCC on Windows only; GCC/Clang on Linux are not verified. |
@@ -154,7 +154,7 @@ mc_protocol/
 |---|---|---|---|---|---|
 | `mc_core` | `mc::core` | static | `src/core/**` | `include/` | nothing |
 | `mc_mock` | `mc::mock` | static | `src/mock/**` | `include/` | `mc::core` |
-| `mc_device` | `mc::device` | static, `AUTOMOC ON` | `src/device/**` | `include/` | `mc::core`, `Qt6::Core`, `Qt6::Network`, `Qt6::SerialPort` |
+| `mc_device` | `mc::device` | static, `AUTOMOC ON` | `src/device/**` | `include/` | `mc::core`, `Qt::Core`, `Qt::Network`, `Qt::SerialPort` (versionless; Qt 5.15 or Qt 6, `cmake/mc_qt.cmake`) |
 
 Every target gets `target_compile_features(... PUBLIC cxx_std_17)`, `target_include_directories(... PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> PRIVATE src)` and `mc_apply_warnings()`.
 
@@ -172,7 +172,7 @@ Every target gets `target_compile_features(... PUBLIC cxx_std_17)`, `target_incl
 
 | Option | Default | Meaning |
 |---|---|---|
-| `MC_BUILD_DEVICE` | `ON` | Build `mc_device`; when `OFF`, `find_package(Qt6)` is never called |
+| `MC_BUILD_DEVICE` | `ON` | Build `mc_device`; when `OFF`, `find_package(Qt…)` is never called (neither Qt 5 nor Qt 6) |
 | `MC_BUILD_MOCK` | `ON` | Build `mc_mock` |
 | `MC_BUILD_TESTS` | `ON` when top-level, `OFF` when consumed | Test binaries and `ctest` registration |
 | `MC_BUILD_EXAMPLES` | `ON` when top-level, `OFF` when consumed | Example programs |
@@ -261,7 +261,7 @@ The build is the thing under test. Every item below runs from `scripts/check.*` 
 | ID | Test | How |
 |---|---|---|
 | BLD-01 | Full CMake build with Qt configures, builds, and `ctest` is green | script stage 1 |
-| BLD-02 | Core-only build never touches Qt | script stage 2 runs with `CMAKE_PREFIX_PATH` unset and `Qt*` removed from `PATH`; configure must succeed and the CMake trace must not contain `find_package(Qt6` |
+| BLD-02 | Core-only build never touches Qt | script stage 2 runs with `CMAKE_PREFIX_PATH` unset and `Qt*` removed from `PATH`; configure must succeed and the CMake trace must not contain `find_package(Qt6`, `find_package(Qt5` or `find_package(QT` |
 | BLD-03 | qmake standalone build compiles every test and example through the `.pri` files, and `make check` passes | script stage 3 |
 | BLD-04 | `pri_sync` | `ctest` script: parse `HEADERS`/`SOURCES` from each `.pri`, compare as sets with the CMake source lists exported to `build/…/mc_sources.txt`; any difference fails and is printed |
 | BLD-05 | `include_hygiene` | `ctest` script over `include/mc/**` and `src/**`: (a) every `#include "…"` resolves under `mc/`; (b) no `#include <Q`, `QT_`, or `Q_OBJECT` token in `include/mc/core`, `include/mc/mock`, `src/core`, `src/mock`; (c) no file under `include/mc/` includes anything from `src/`; (d) no file under `include/mc/device` or `src/device` includes `mc/mock/…`, and the `LINK_LIBRARIES` property of `mc_device` does not contain `mc_mock` |

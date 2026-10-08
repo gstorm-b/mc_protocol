@@ -12,6 +12,10 @@ namespace mc::workbench {
 namespace {
 // How long a destructor waits for a file-writing thread (the stop bound of RunnerThread).
 constexpr int kWorkerBoundMs = 3000;
+// The stack of a file thread. The default 1 MB is not enough for the JSON parser of a Qt 5.15 debug
+// build: on a deeply nested file it overflows the stack (a crash) at about 900 levels, before its
+// own limit of 1024 levels reports "too deeply nested". 2 MB was enough when measured.
+constexpr uint kWorkerStackBytes = 4u * 1024u * 1024u;
 } // namespace
 
 WorkspaceIo::WorkspaceIo(QObject* parent) : QObject(parent) {
@@ -36,6 +40,7 @@ WorkspaceIo::~WorkspaceIo() {
 
 void WorkspaceIo::run(std::function<void()> job) {
     QThread* worker = QThread::create(std::move(job));
+    worker->setStackSize(kWorkerStackBytes);
     m_workers.push_back(worker);
     connect(worker, &QThread::finished, this, [this, worker]() {
         m_workers.removeOne(worker);

@@ -1,5 +1,7 @@
 #include "mc_workbench/hil_host.h"
 
+#include "mc_workbench/qt_compat.h"
+
 #include <QPointer>
 
 namespace mc::workbench {
@@ -15,16 +17,16 @@ HilHost::HilHost(const QString& name, QObject* parent)
         if (!self.isNull()) {
             HilHost* host = self.data();
             const auto queued = Qt::QueuedConnection;
-            QObject::connect(runner, &HilRunner::checked, host, &HilHost::checked, queued);
-            QObject::connect(runner, &HilRunner::stepStarted, host, &HilHost::stepStarted, queued);
-            QObject::connect(runner, &HilRunner::stepOutcome, host, &HilHost::stepOutcome, queued);
-            QObject::connect(runner, &HilRunner::outputLine, host, &HilHost::outputLine, queued);
-            QObject::connect(runner, &HilRunner::promptRequested, host, &HilHost::promptRequested,
-                             queued);
-            QObject::connect(runner, &HilRunner::runFinished, host, &HilHost::runFinished, queued);
-            QObject::connect(runner, &HilRunner::fileRead, host, &HilHost::fileRead, queued);
-            QObject::connect(runner, &HilRunner::replayDone, host, &HilHost::replayDone, queued);
-            QObject::connect(runner, &HilRunner::benchReady, host, &HilHost::benchReady, queued);
+            staticConnect(runner, &HilRunner::checked, host, &HilHost::checked, queued);
+            staticConnect(runner, &HilRunner::stepStarted, host, &HilHost::stepStarted, queued);
+            staticConnect(runner, &HilRunner::stepOutcome, host, &HilHost::stepOutcome, queued);
+            staticConnect(runner, &HilRunner::outputLine, host, &HilHost::outputLine, queued);
+            staticConnect(runner, &HilRunner::promptRequested, host, &HilHost::promptRequested,
+                          queued);
+            staticConnect(runner, &HilRunner::runFinished, host, &HilHost::runFinished, queued);
+            staticConnect(runner, &HilRunner::fileRead, host, &HilHost::fileRead, queued);
+            staticConnect(runner, &HilRunner::replayDone, host, &HilHost::replayDone, queued);
+            staticConnect(runner, &HilRunner::benchReady, host, &HilHost::benchReady, queued);
         }
         return runner;
     });

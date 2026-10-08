@@ -442,12 +442,12 @@ private slots:
 
         // An unknown group is a typo, not "run nothing".
         input.profilePath = exampleProfile(QStringLiteral("q03ude-eth-3e-bin"));
-        input.only = {QStringLiteral("ZZ")};
+        input.only = QStringList{QStringLiteral("ZZ")};
         QVERIFY(checkVia(host, input, &r));
         QCOMPARE(r.exitCode, 2);
         QVERIFY(r.errorText.contains(QStringLiteral("ZZ")));
         options.profilePath = input.profilePath;
-        options.only = {QStringLiteral("ZZ")};
+        options.only = QStringList{QStringLiteral("ZZ")};
         QCOMPARE(runCli(options).code, 2);
 
         input.only.clear();

@@ -20,7 +20,7 @@ namespace {
 QString hexLine(const QByteArray& bytes) {
     QString text;
     text.reserve(bytes.size() * 3);
-    for (qsizetype i = 0; i < bytes.size(); ++i) {
+    for (QByteArray::size_type i = 0; i < bytes.size(); ++i) {
         if (i != 0) {
             text += QLatin1Char(' ');
         }
@@ -368,7 +368,7 @@ SessionEvent writeInput(Op op, const Device& head, quint16 count, const ByteBuf&
     putU32(e.payload, head.number);
     putU16(e.payload, count);
     e.payload.append(reinterpret_cast<const char*>(data.data()),
-                     static_cast<qsizetype>(data.size()));
+                     static_cast<QByteArray::size_type>(data.size()));
     static const char* const ops[] = {"ReadBits", "ReadWords", "WriteBits", "WriteWords"};
     e.keys.push_back({QStringLiteral("op"), QLatin1String(ops[static_cast<int>(op)])});
     e.keys.push_back({QStringLiteral("device"), deviceText(head, xy)});

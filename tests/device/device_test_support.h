@@ -95,8 +95,10 @@ class CaptureSink final : public mc::LogSink {
 
     void write(mc::LogLevel level, std::string_view category,
                std::string_view message) noexcept override {
-        lines.append(Line{level, QString::fromUtf8(category.data(), static_cast<qsizetype>(category.size())),
-                          QString::fromUtf8(message.data(), static_cast<qsizetype>(message.size()))});
+        lines.append(Line{
+            level,
+            QString::fromUtf8(category.data(), static_cast<QString::size_type>(category.size())),
+            QString::fromUtf8(message.data(), static_cast<QString::size_type>(message.size()))});
     }
 
     // The lines of one level and category.

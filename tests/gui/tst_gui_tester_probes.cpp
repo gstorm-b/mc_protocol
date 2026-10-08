@@ -4,7 +4,8 @@
 //   - the export rule for tests/vectors/captured: a capture of a mock must not land there;
 //   - the GUI thread under load and under faults with the real views on screen;
 //   - a HIL run stuck in a step while the host is destroyed;
-//   - workspace files the developers' damaged-file list does not hold.
+//   - workspace files the developers' damaged-file list does not hold;
+//   - T-078/T-079 (Qt 5.15): jsonInteger() against toInteger()'s rule, and UTF-8 HIL run lines.
 // No real PLC: every target is a mock or a listener on loopback.
 #include "gui_suites.h"
 #include "gui_test_support.h"
@@ -22,6 +23,7 @@
 #include "mc_workbench/mock_fault_panel.h"
 #include "mc_workbench/mock_tab.h"
 #include "mc_workbench/point_table_model.h"
+#include "mc_workbench/qt_compat.h"
 #include "mc_workbench/runner_base.h"
 #include "mc_workbench/runner_thread.h"
 #include "mc_workbench/workspace_controller.h"
@@ -48,6 +50,7 @@
 #include <QTest>
 
 #include <functional>
+#include <limits>
 #include <memory>
 
 using namespace mc::workbench;
@@ -456,7 +459,7 @@ private slots:
         const auto encoded = mc::McProtocol(mc::FrameConfig::frame3E()).encode(read);
         QVERIFY(encoded.hasValue());
         const QByteArray whole(reinterpret_cast<const char*>(encoded.value().data()),
-                               static_cast<qsizetype>(encoded.value().size()));
+                               static_cast<QByteArray::size_type>(encoded.value().size()));
         const auto connectSock = [&](QTcpSocket& s) {
             s.connectToHost(QHostAddress::LocalHost, mock.port);
             s.setSocketOption(QAbstractSocket::LowDelayOption, 1);
@@ -473,7 +476,8 @@ private slots:
                 },
                 kWait);
             QVERIFY2(got.size() == 19, what);
-            QVERIFY2(static_cast<quint8>(got[0]) == 0xD0 && got[9] == 0 && got[10] == 0, what);
+            QVERIFY2(static_cast<quint8>(got[0]) == 0xD0 && got.at(9) == 0 && got.at(10) == 0,
+                     what);
             QVERIFY2(static_cast<quint8>(got[11]) == 10 && static_cast<quint8>(got[13]) == 20 &&
                          static_cast<quint8>(got[15]) == 30 && static_cast<quint8>(got[17]) == 40,
                      what);
@@ -1106,6 +1110,81 @@ private slots:
         }
         QVERIFY2(leaks.isEmpty(), qPrintable(leaks.join(QStringLiteral("; "))));
         QVERIFY(!QFileInfo::exists(QStringLiteral(MC_TESTS_SOURCE_DIR) + QStringLiteral("/vectors/captured")));
+    }
+
+    // ---- T-078/T-079 tester probes: the Qt 5 / Qt 6 compat helpers ---------------------------
+
+    // jsonInteger() keeps QJsonValue::toInteger()'s rule on both majors: a whole number inside
+    // qint64 comes back exactly (the config fields go up to 2^32 - 1), anything else is 0.
+    void T10_jsonIntegerKeepsTheRuleOfToIntegerOnBothMajors() {
+        QCOMPARE(jsonInteger(QJsonValue(0)), qint64(0));
+        QCOMPARE(jsonInteger(QJsonValue(-1)), qint64(-1));
+        QCOMPARE(jsonInteger(QJsonValue(65535)), qint64(65535));
+        QCOMPARE(jsonInteger(QJsonValue(4294967295.0)), qint64(4294967295LL));
+        QCOMPARE(jsonInteger(QJsonValue(4294967296.0)), qint64(4294967296LL));
+        QCOMPARE(jsonInteger(QJsonValue(9007199254740992.0)), qint64(9007199254740992LL)); // 2^53
+        QCOMPARE(jsonInteger(QJsonValue(-9007199254740992.0)), qint64(-9007199254740992LL));
+        QCOMPARE(jsonInteger(QJsonValue(1.5)), qint64(0));
+        QCOMPARE(jsonInteger(QJsonValue(-0.25)), qint64(0));
+        QCOMPARE(jsonInteger(QJsonValue(4294967295.5)), qint64(0));
+        QCOMPARE(jsonInteger(QJsonValue(9223372036854775808.0)), qint64(0)); // 2^63
+        QCOMPARE(jsonInteger(QJsonValue(1e300)), qint64(0));
+        QCOMPARE(jsonInteger(QJsonValue(-1e300)), qint64(0));
+        QCOMPARE(jsonInteger(QJsonValue(std::numeric_limits<double>::infinity())), qint64(0));
+        QCOMPARE(jsonInteger(QJsonValue(QStringLiteral("12"))), qint64(0));
+        QCOMPARE(jsonInteger(QJsonValue(true)), qint64(0));
+        QCOMPARE(jsonInteger(QJsonValue()), qint64(0));
+        QCOMPARE(jsonInteger(QJsonValue(QJsonArray{1})), qint64(0));
+        // As a workspace or config file is read.
+        const QJsonObject parsed =
+            QJsonDocument::fromJson("{\"a\":4294967295,\"b\":1e3,\"c\":2.5,\"d\":-7,\"e\":\"5\"}")
+                .object();
+        QCOMPARE(jsonInteger(parsed.value(QStringLiteral("a"))), qint64(4294967295LL));
+        QCOMPARE(jsonInteger(parsed.value(QStringLiteral("b"))), qint64(1000));
+        QCOMPARE(jsonInteger(parsed.value(QStringLiteral("c"))), qint64(0));
+        QCOMPARE(jsonInteger(parsed.value(QStringLiteral("d"))), qint64(-7));
+        QCOMPARE(jsonInteger(parsed.value(QStringLiteral("e"))), qint64(0));
+        QCOMPARE(jsonInteger(parsed.value(QStringLiteral("missing"))), qint64(0));
+    }
+
+    // A HIL run on the runner thread reports its lines in UTF-8 on both majors (useUtf8(); Qt 5
+    // would otherwise write the locale's code page into the UTF-8 line sink): an output folder
+    // with non-ASCII characters comes back unchanged in "capture written to ...".
+    void T10_aHilRunReportsANonAsciiOutputFolderUnchanged() {
+        MockRig mock(QStringLiteral("t10-utf8"));
+        QVERIFY(mock.ok);
+        const QString dir = freshOutputDir(QStringLiteral("t10-utf8"));
+        const QString profile = writeProfile(dir, QStringLiteral("t10-utf8"), mock.port);
+        const QString plan = dir + QStringLiteral("/plan.json");
+        writeBytes(plan, QByteArray(kOtherPlan));
+        // Greek capital omega, u umlaut, Vietnamese e with circumflex and dot below.
+        const QString nonAscii = QString::fromUtf8("\xCE\xA9\xC3\xBC\xE1\xBB\x87");
+        const QString out = dir + QStringLiteral("/out-") + nonAscii;
+
+        HilHost host(QStringLiteral("t10-utf8"));
+        HilCheckInput input;
+        input.profilePath = profile;
+        input.planPath = plan;
+        HilCheckResult check;
+        QVERIFY(checkVia(host, input, &check));
+        QVERIFY2(check.ok(), qPrintable(check.errorText + check.refusalText));
+        QSignalSpy output(&host, &HilHost::outputLine);
+        HilRunResult run;
+        QVERIFY(runVia(host, requestFor(input, check, out), &run));
+        QVERIFY2(run.status == HilRunStatus::Finished, qPrintable(run.reason));
+        QString lines;
+        const auto collect = [&]() {
+            QStringList all;
+            for (const QList<QVariant>& args : output) {
+                all << args.at(0).toString();
+            }
+            lines = all.join(QLatin1Char('\n'));
+            return lines.contains(QStringLiteral("capture written to"));
+        };
+        (void)QTest::qWaitFor(collect, kWait);
+        QVERIFY2(!lines.contains(QChar(0xFFFD)), qPrintable(lines));
+        QVERIFY2(lines.contains(QStringLiteral("capture written to")), qPrintable(lines));
+        QVERIFY2(lines.contains(QStringLiteral("out-") + nonAscii), qPrintable(lines));
     }
 };
 

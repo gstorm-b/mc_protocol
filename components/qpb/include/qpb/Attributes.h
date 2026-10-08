@@ -17,6 +17,7 @@ namespace qpb {
 // may define their own keys (a prefix such as "myapp." is recommended).
 namespace Attr {
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 // Int, Double: smallest accepted value (int / double). Values are clamped.
 inline constexpr QLatin1StringView Minimum {"minimum"};
 // Int, Double: largest accepted value (int / double). Values are clamped.
@@ -55,6 +56,29 @@ inline constexpr QLatin1StringView MustExist {"mustExist"};
 // Any type: ID of the editor to use for this property instead of the editor
 // registered for its type (TypeId). See EditorFactory.
 inline constexpr QLatin1StringView EditorId {"editorId"};
+
+#else
+
+// Qt 5 (since 1.7): the same constants as QLatin1String, which converts to
+// QString like QLatin1StringView does.
+inline constexpr QLatin1String Minimum {"minimum", 7};
+inline constexpr QLatin1String Maximum {"maximum", 7};
+inline constexpr QLatin1String Step {"step", 4};
+inline constexpr QLatin1String Decimals {"decimals", 8};
+inline constexpr QLatin1String Prefix {"prefix", 6};
+inline constexpr QLatin1String Suffix {"suffix", 6};
+inline constexpr QLatin1String MaxLength {"maxLength", 9};
+inline constexpr QLatin1String Placeholder {"placeholder", 11};
+inline constexpr QLatin1String RegularExpression {"regularExpression", 17};
+inline constexpr QLatin1String Multiline {"multiline", 9};
+inline constexpr QLatin1String Options {"options", 7};
+inline constexpr QLatin1String Filter {"filter", 6};
+inline constexpr QLatin1String DialogMode {"dialogMode", 10};
+inline constexpr QLatin1String DefaultDir {"defaultDir", 10};
+inline constexpr QLatin1String MustExist {"mustExist", 9};
+inline constexpr QLatin1String EditorId {"editorId", 8};
+
+#endif
 
 } // namespace Attr
 

@@ -47,7 +47,7 @@ are marked "n/a" with a reason, never silently skipped.
       same task; complexity matches the spec's complexity table.
 - [ ] No exception crosses a public boundary; `noexcept` wherever the spec
       requires it.
-- [ ] Qt code uses only the Qt 6.2 API surface.
+- [ ] Qt code compiles on Qt 5.15 and Qt 6.2+ (GUI: Qt 5.15 or 6.5+).
 - [ ] No golden vector (`.vec`) was edited to make a test pass. A vector change
       is its own `protocol-core` task, citing the `docs/mc_reference/` section.
 

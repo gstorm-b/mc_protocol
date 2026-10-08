@@ -29,7 +29,7 @@ endif()
 # executables land in this directory (build/<dir>/examples/), as the spec's commands show.
 if(MC_BUILD_DEVICE AND MC_BUILD_MOCK)
     # Imported Qt targets are directory-scoped, so this directory finds Qt itself.
-    find_package(Qt6 6.2 REQUIRED COMPONENTS Core Network SerialPort)
+    mc_find_qt(Core Network SerialPort)
 
     add_executable(virtual_plc virtual_plc/main.cpp)
     target_link_libraries(virtual_plc PRIVATE mc::device mc::mock)

@@ -3,6 +3,8 @@
 
 #include <QtCore/qregularexpression.h>
 
+#include "core/compat_p.h"
+
 namespace qpb {
 
 namespace detail {
@@ -28,7 +30,7 @@ PropertyFilterProxyModel::~PropertyFilterProxyModel() = default;
 bool PropertyFilterProxyModel::filterAcceptsRow(
     int sourceRow, const QModelIndex& sourceParent) const
 {
-    if (filterRegularExpression().pattern().isEmpty())
+    if (detail::filterExpression(*this).pattern().isEmpty())
         return true;
     const QModelIndex index
         = sourceModel()->index(sourceRow, PropertyModel::NameColumn, sourceParent);
@@ -38,7 +40,7 @@ bool PropertyFilterProxyModel::filterAcceptsRow(
         return true;
     // Descendants of a matching group. Done here rather than with
     // autoAcceptChildRows so that subclasses still see every row.
-    const QRegularExpression expression = filterRegularExpression();
+    const QRegularExpression expression = detail::filterExpression(*this);
     for (QModelIndex group = sourceParent; group.isValid(); group = group.parent()) {
         if (expression.match(group.data(filterRole()).toString()).hasMatch())
             return true;

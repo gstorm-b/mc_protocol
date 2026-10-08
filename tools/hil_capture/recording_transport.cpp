@@ -34,7 +34,7 @@ bool RecordingTransport::write(ByteView bytes) {
     if (accepted && bytes.size != 0) {
         m_chunks.push_back(WireChunk{t, WireDirection::Tx,
                                      QByteArray(reinterpret_cast<const char*>(bytes.data),
-                                                static_cast<qsizetype>(bytes.size))});
+                                                static_cast<QByteArray::size_type>(bytes.size))});
     }
     return accepted;
 }
@@ -43,7 +43,7 @@ size_t RecordingTransport::read(MutableByteView out) {
     const size_t n = std::min(out.size, static_cast<size_t>(m_unread.size()));
     if (n != 0) {
         std::copy(m_unread.constData(), m_unread.constData() + n, out.data);
-        m_unread.remove(0, static_cast<qsizetype>(n));
+        m_unread.remove(0, static_cast<QByteArray::size_type>(n));
     }
     return n;
 }
@@ -77,7 +77,7 @@ void RecordingTransport::onInnerReadyRead() {
         if (n == 0) {
             break;
         }
-        arrived.append(buffer.constData(), static_cast<qsizetype>(n));
+        arrived.append(buffer.constData(), static_cast<QByteArray::size_type>(n));
     }
     if (arrived.isEmpty()) {
         return;

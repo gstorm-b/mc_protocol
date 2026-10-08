@@ -7,8 +7,15 @@
 cmake_minimum_required(VERSION 3.16)
 project(mc_consumer_cmake LANGUAGES CXX)
 
-# Imported Qt targets are directory-scoped, so the consumer finds Qt itself.
-find_package(Qt6 6.2 REQUIRED COMPONENTS Core Network SerialPort)
+# Imported Qt targets are directory-scoped, so the consumer finds Qt itself: Qt 6.2+ or 5.15,
+# whichever CMAKE_PREFIX_PATH points at. The library's own search then reuses the cached QT_DIR,
+# so both sides use the same Qt.
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)
+if(QT_VERSION_MAJOR EQUAL 5)
+    find_package(Qt5 5.15 REQUIRED COMPONENTS Core Network SerialPort)
+else()
+    find_package(Qt6 6.2 REQUIRED COMPONENTS Core Network SerialPort)
+endif()
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../.. mc_protocol)
 

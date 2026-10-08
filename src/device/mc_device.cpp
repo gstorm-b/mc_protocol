@@ -36,7 +36,8 @@ QByteArray bytesOf(ByteView v) {
     if (v.size == 0) {
         return QByteArray();
     }
-    return QByteArray(reinterpret_cast<const char*>(v.data), static_cast<qsizetype>(v.size));
+    return QByteArray(reinterpret_cast<const char*>(v.data),
+                      static_cast<QByteArray::size_type>(v.size));
 }
 
 } // namespace
@@ -221,7 +222,7 @@ Expected<RequestId> McDevice::writeWords(QStringView head, const QVector<quint16
     }
     QByteArray bytes;
     bytes.resize(values.size() * 2);
-    for (qsizetype i = 0; i < values.size(); ++i) {
+    for (QVector<quint16>::size_type i = 0; i < values.size(); ++i) {
         bytes[i * 2] = static_cast<char>(values[i] & 0xFF);
         bytes[i * 2 + 1] = static_cast<char>((values[i] >> 8) & 0xFF);
     }
@@ -242,7 +243,7 @@ Expected<RequestId> McDevice::writeBits(QStringView head, const QVector<bool>& v
     }
     QByteArray bytes;
     bytes.resize(values.size());
-    for (qsizetype i = 0; i < values.size(); ++i) {
+    for (QVector<bool>::size_type i = 0; i < values.size(); ++i) {
         bytes[i] = static_cast<char>(values[i] ? 1 : 0);
     }
     return submit(Request::writeBits(device.value(), viewOf(bytes)));
@@ -346,7 +347,7 @@ void McDevice::rebuildSession() {
     }
     m_session.emplace(std::move(created.value()));
 
-    for (qsizetype i = 0; i < m_config.subscriptions.size(); ++i) {
+    for (QVector<SubscriptionSpec>::size_type i = 0; i < m_config.subscriptions.size(); ++i) {
         const SubscriptionSpec& spec = m_config.subscriptions[i];
         const Expected<Device> head = parseHead(spec.device, m_config.frame.xyNotation);
         const Expected<SubscriptionId> id = head ? m_session->subscribe(head.value(), spec.count)
@@ -455,7 +456,7 @@ void McDevice::drainOnce(bool& writeFailed) {
             break;
         case OutputKind::ValuesChanged: {
             ValuesChangedSignal s{out.deviceType, out.round, {}};
-            s.changes.reserve(static_cast<qsizetype>(out.changeCount));
+            s.changes.reserve(static_cast<QVector<Change>::size_type>(out.changeCount));
             for (size_t i = 0; i < out.changeCount; ++i) {
                 s.changes.append(out.changes[i]);
             }
@@ -494,30 +495,30 @@ DeviceSnapshot McDevice::buildSnapshot(const Output& out) const {
 
     const ValueStore& store = m_session->values();
     const size_t segmentCount = store.segmentCount(out.deviceType);
-    snapshot.segments.reserve(static_cast<qsizetype>(segmentCount));
+    snapshot.segments.reserve(static_cast<QVector<SnapshotSegment>::size_type>(segmentCount));
     for (size_t i = 0; i < segmentCount; ++i) {
         const SegmentView view = store.segment(out.deviceType, i);
         SnapshotSegment segment;
         segment.head = view.head;
         segment.count = view.count;
         if (view.words != nullptr) { // normalized: two bytes little-endian per word
-            segment.values.resize(static_cast<qsizetype>(view.count) * 2);
+            segment.values.resize(static_cast<QByteArray::size_type>(view.count) * 2);
             for (quint32 k = 0; k < view.count; ++k) {
-                segment.values[static_cast<qsizetype>(k) * 2] =
+                segment.values[static_cast<QByteArray::size_type>(k) * 2] =
                     static_cast<char>(view.words[k] & 0xFF);
-                segment.values[static_cast<qsizetype>(k) * 2 + 1] =
+                segment.values[static_cast<QByteArray::size_type>(k) * 2 + 1] =
                     static_cast<char>((view.words[k] >> 8) & 0xFF);
             }
         } else if (view.bits != nullptr) { // normalized: one byte per point, 0 or 1
             segment.values = QByteArray(reinterpret_cast<const char*>(view.bits),
-                                        static_cast<qsizetype>(view.count));
+                                        static_cast<QByteArray::size_type>(view.count));
         }
         segment.states = QByteArray(reinterpret_cast<const char*>(view.states),
-                                    static_cast<qsizetype>(view.count));
+                                    static_cast<QByteArray::size_type>(view.count));
         snapshot.segments.append(std::move(segment));
     }
 
-    snapshot.chunks.reserve(static_cast<qsizetype>(out.chunkCount));
+    snapshot.chunks.reserve(static_cast<QVector<ChunkStatus>::size_type>(out.chunkCount));
     for (size_t i = 0; i < out.chunkCount; ++i) {
         snapshot.chunks.append(
             ChunkStatus{out.chunks[i].request, out.chunks[i].state, out.chunks[i].lastError});

@@ -169,7 +169,7 @@ void PropertyTreeView::setModel(QAbstractItemModel* model)
         });
     d->connections << connect(model, &QAbstractItemModel::dataChanged, this,
         [this](
-            const QModelIndex& topLeft, const QModelIndex& bottomRight, const QList<int>& roles) {
+            const QModelIndex& topLeft, const QModelIndex& bottomRight, const QVector<int>& roles) {
             if (roles.isEmpty() || roles.contains(PropertyModel::IsVisibleRole)
                 || roles.contains(PropertyModel::IsGroupRole)) {
                 d->updateRows(topLeft.parent(), topLeft.row(), bottomRight.row(), false);

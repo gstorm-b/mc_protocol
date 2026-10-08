@@ -1,6 +1,7 @@
 #include "mc_workbench/mock_host.h"
 
 #include "mc_workbench/mock_runner.h"
+#include "mc_workbench/qt_compat.h"
 
 #include <QPointer>
 
@@ -22,36 +23,30 @@ MockHost::MockHost(const QString& name, const mc::FrameConfig& frame, const Mock
         if (!self.isNull()) {
             MockHost* host = self.data();
             const auto queued = Qt::QueuedConnection;
-            QObject::connect(runner, &MockRunner::listening, host, &MockHost::listening, queued);
-            QObject::connect(runner, &MockRunner::clientConnected, host,
-                             &MockHost::clientConnected, queued);
-            QObject::connect(runner, &MockRunner::clientDisconnected, host,
-                             &MockHost::clientDisconnected, queued);
-            QObject::connect(runner, &MockRunner::servingChanged, host, &MockHost::servingChanged,
-                             queued);
-            QObject::connect(runner, &MockRunner::serialError, host, &MockHost::serialError,
-                             queued);
-            QObject::connect(runner, &MockRunner::statsChanged, host, &MockHost::statsChanged,
-                             queued);
-            QObject::connect(runner, &MockRunner::requestsLogged, host, &MockHost::requestsLogged,
-                             queued);
-            QObject::connect(runner, &MockRunner::logBatch, host, &MockHost::logBatch, queued);
-            QObject::connect(runner, &MockRunner::memoryRead, host, &MockHost::memoryRead, queued);
-            QObject::connect(runner, &MockRunner::commandDone, host, &MockHost::commandDone,
-                             queued);
-            QObject::connect(runner, &MockRunner::threadReport, host, &MockHost::threadReport,
-                             queued);
-            QObject::connect(runner, &MockRunner::framesBatch, host, &MockHost::framesBatch,
-                             queued);
-            QObject::connect(runner, &MockRunner::framesDropped, host, &MockHost::framesDropped,
-                             queued);
-            QObject::connect(runner, &MockRunner::captureStatusChanged, host,
-                             &MockHost::captureStatusChanged, queued);
-            QObject::connect(runner, &MockRunner::captureSaved, host, &MockHost::captureSaved,
-                             queued);
+            staticConnect(runner, &MockRunner::listening, host, &MockHost::listening, queued);
+            staticConnect(runner, &MockRunner::clientConnected, host, &MockHost::clientConnected,
+                          queued);
+            staticConnect(runner, &MockRunner::clientDisconnected, host,
+                          &MockHost::clientDisconnected, queued);
+            staticConnect(runner, &MockRunner::servingChanged, host, &MockHost::servingChanged,
+                          queued);
+            staticConnect(runner, &MockRunner::serialError, host, &MockHost::serialError, queued);
+            staticConnect(runner, &MockRunner::statsChanged, host, &MockHost::statsChanged, queued);
+            staticConnect(runner, &MockRunner::requestsLogged, host, &MockHost::requestsLogged,
+                          queued);
+            staticConnect(runner, &MockRunner::logBatch, host, &MockHost::logBatch, queued);
+            staticConnect(runner, &MockRunner::memoryRead, host, &MockHost::memoryRead, queued);
+            staticConnect(runner, &MockRunner::commandDone, host, &MockHost::commandDone, queued);
+            staticConnect(runner, &MockRunner::threadReport, host, &MockHost::threadReport, queued);
+            staticConnect(runner, &MockRunner::framesBatch, host, &MockHost::framesBatch, queued);
+            staticConnect(runner, &MockRunner::framesDropped, host, &MockHost::framesDropped,
+                          queued);
+            staticConnect(runner, &MockRunner::captureStatusChanged, host,
+                          &MockHost::captureStatusChanged, queued);
+            staticConnect(runner, &MockRunner::captureSaved, host, &MockHost::captureSaved, queued);
             // The last signal of a batch: once it arrives here every batch before it has been
             // consumed, and the acknowledgement lets the runner emit the next one.
-            QObject::connect(runner, &MockRunner::flushed, host, &MockHost::onFlushed, queued);
+            staticConnect(runner, &MockRunner::flushed, host, &MockHost::onFlushed, queued);
             runner->enableFlowControl(true);
         }
         return runner;

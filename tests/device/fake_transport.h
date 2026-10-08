@@ -59,7 +59,8 @@ class FakeTransport : public mc::Transport {
             QTimer::singleShot(0, this, [this]() { emit lost(QStringLiteral("fake: write failed")); });
             return false;
         }
-        written.append(reinterpret_cast<const char*>(bytes.data), static_cast<qsizetype>(bytes.size));
+        written.append(reinterpret_cast<const char*>(bytes.data),
+                       static_cast<QByteArray::size_type>(bytes.size));
         return true;
     }
 
@@ -67,7 +68,7 @@ class FakeTransport : public mc::Transport {
         const size_t n = std::min(out.size, static_cast<size_t>(m_incoming.size()));
         if (n > 0) {
             std::memcpy(out.data, m_incoming.constData(), n);
-            m_incoming.remove(0, static_cast<qsizetype>(n));
+            m_incoming.remove(0, static_cast<QByteArray::size_type>(n));
         }
         return n;
     }

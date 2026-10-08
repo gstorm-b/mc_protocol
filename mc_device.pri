@@ -7,6 +7,15 @@ include($$PWD/mc_core.pri)
 
 QT += core network serialport
 
+# Qt 5.15 with MSVC needs a toolset older than 14.50 (VS 2026 removed the stdext checked iterators
+# the Qt 5.15 headers use); the older toolsets deprecate them, so their warning is silenced with
+# the standard library's own switch. cmake/mc_qt.cmake does the same.
+msvc:lessThan(QT_MAJOR_VERSION, 6): DEFINES += _SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING
+msvc:lessThan(QT_MAJOR_VERSION, 6):greaterThan(QMAKE_MSC_VER, 1949) {
+    warning(Qt $$QT_VERSION with MSVC $$QMAKE_MSC_VER: the Qt 5.15 headers need an MSVC toolset \
+            older than 14.50 - run qmake from a shell set up with scripts/vsdev.ps1 -VcVarsVer 14.44)
+}
+
 HEADERS += \
     $$PWD/include/mc/device/transport.h \
     $$PWD/include/mc/device/tcp_transport.h \

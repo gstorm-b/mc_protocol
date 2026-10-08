@@ -159,7 +159,7 @@ Property* PropertyGroup::child(const QString& id) const
 QList<Property*> PropertyGroup::children() const
 {
     QList<Property*> result;
-    result.reserve(qsizetype(d_func()->children.size()));
+    result.reserve(static_cast<int>(d_func()->children.size()));
     for (const auto& child : d_func()->children)
         result.append(child.get());
     return result;

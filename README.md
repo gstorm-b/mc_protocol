@@ -34,9 +34,25 @@ to a header under `include/mc/` bumps `major`.
 
 ## Verified platforms
 
-v1 is verified on **Windows only**: MSVC and MinGW GCC 13.1, both against Qt 6.11.1. Linux
-(GCC/Clang) is not verified. The library's own Qt usage stays within the Qt 6.2 LTS API
-surface, even though only Qt 6.11 is installed on the verification machine.
+v1 is verified on **Windows only**: MSVC and MinGW GCC 13.1 against Qt 6.11.1, and MSVC against
+Qt 5.15.0 (`msvc2019_64` kit; no Qt 5 MinGW kit is verified). Linux (GCC/Clang) is not verified.
+The library builds with **Qt 5.15, or Qt 6.2 and later**: its Qt usage stays within the API
+surface the two have in common. The MC Workbench GUI (`tools/mc_workbench`) needs Qt 5.15, or
+Qt 6.5 and later (the minimums of its property browser, qpb 1.7.0), and the docking library built
+for the same Qt major: `qtadvanceddocking-qt5` for Qt 5 (`scripts/build-ads.ps1 -QtDir <Qt 5
+kit>`; CMake `MC_ADS_DIR`, qmake `MC_ADS_DIR_QT5` in `mc_local.pri`), `qtadvanceddocking-qt6` for
+Qt 6. With an older Qt, or without that docking library, both build systems skip it with a
+message.
+
+CMake uses the Qt that `CMAKE_PREFIX_PATH` points at, Qt 6 first when a prefix holds both. On a
+machine with both majors, `-DMC_QT_MAJOR=5` (or `6`) forces one; switching the major of an
+existing build folder needs a fresh configure. qmake uses the Qt of the `qmake` that runs.
+
+Qt 5.15 with MSVC needs a toolset older than 14.50: the Qt 5.15 headers use the `stdext` checked
+iterators, which the VS 2026 (14.50) standard library removed. Load an older toolset of the same
+Visual Studio before configuring, e.g. `. scripts/vsdev.ps1 -VcVarsVer 14.44` (the verified one);
+`scripts/check.ps1` does this by itself for a Qt 5 kit. CMake and qmake warn when a Qt 5 build
+meets a newer `cl`.
 
 ## Building this repository
 

@@ -7,6 +7,7 @@
 #include <qpb/Types.h>
 
 #include "QObjectPropertySource_p.h"
+#include "core/compat_p.h"
 
 namespace qpb {
 
@@ -45,7 +46,7 @@ bool flag(const QVariantMap& metadata, const char* key)
     const QVariant value = metadata.value(QLatin1String(key));
     if (!value.isValid())
         return false;
-    return value.typeId() == QMetaType::Bool ? value.toBool()
+    return detail::typeIdOf(detail::storageTypeOf(value)) == QMetaType::Bool ? value.toBool()
                                              : value.toString().trimmed() != QLatin1String("false");
 }
 
@@ -69,9 +70,9 @@ QList<QMetaProperty> propertiesOf(const QMetaObject* meta)
 }
 
 // TypeId for a Q_PROPERTY of type metaType; empty if none fits.
-TypeId typeFor(QMetaType metaType)
+TypeId typeFor(StorageType metaType)
 {
-    switch (metaType.id()) {
+    switch (typeIdOf(metaType)) {
     case QMetaType::Bool:
         return Types::Bool;
     case QMetaType::Int:
@@ -283,7 +284,7 @@ PropertyGroup* QObjectPropertySource::addObject(
         } else {
             const TypeId type = metadata.contains(QStringLiteral("type"))
                 ? metadata.value(QStringLiteral("type")).toString().trimmed()
-                : detail::typeFor(metaProperty.metaType());
+                : detail::typeFor(detail::storageTypeOf(metaProperty));
             if (type.isEmpty() || !TypeRegistry::global().contains(type))
                 continue;
             property = &group.add(type, name, value);

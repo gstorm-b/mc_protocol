@@ -4,6 +4,7 @@
 #include <limits>
 
 #include "Int64SpinBox_p.h"
+#include "core/compat_p.h"
 
 namespace qpb::detail {
 
@@ -13,7 +14,7 @@ namespace {
 qint64 saturatedAdd(qint64 a, qint64 b)
 {
     qint64 result = 0;
-    if (!qAddOverflow(a, b, &result))
+    if (!addOverflow(a, b, &result))
         return result;
     return b > 0 ? std::numeric_limits<qint64>::max() : std::numeric_limits<qint64>::min();
 }
@@ -21,7 +22,7 @@ qint64 saturatedAdd(qint64 a, qint64 b)
 qint64 saturatedMultiply(qint64 a, qint64 b)
 {
     qint64 result = 0;
-    if (!qMulOverflow(a, b, &result))
+    if (!mulOverflow(a, b, &result))
         return result;
     return (a > 0) == (b > 0) ? std::numeric_limits<qint64>::max()
                               : std::numeric_limits<qint64>::min();

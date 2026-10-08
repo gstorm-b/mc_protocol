@@ -317,17 +317,18 @@ endif()
 # tst_*.cpp (each has its own QTEST_GUILESS_MAIN), all loopback on 127.0.0.1. Built only when the
 # device layer is, so a core-only configure (-DMC_BUILD_DEVICE=OFF) never searches for Qt.
 if(MC_BUILD_DEVICE)
-    find_package(Qt6 6.2 REQUIRED COMPONENTS Test Network)
+    mc_find_qt(Test Network)
 
     # A QtTest binary links the Qt DLLs; ctest runs it from the build tree, where the loader finds
     # them only through PATH. Prepend the directory of the Qt kit's own DLLs (the one the imported
-    # Qt6::Core points at) to the test's PATH, so ctest works from any shell with no Qt on PATH.
+    # Qt5::Core or Qt6::Core points at; the versionless Qt::Core of Qt 5.15 is an interface target
+    # with no file) to the test's PATH, so ctest works from any shell with no Qt on PATH.
     # ENVIRONMENT_MODIFICATION needs CMake 3.22; an older CMake leaves PATH untouched (the
     # developer then has the kit's bin directory on PATH, as before).
     function(mc_add_qt_test target)
         add_executable(${target} ${ARGN})
         set_target_properties(${target} PROPERTIES AUTOMOC ON)
-        target_link_libraries(${target} PRIVATE mc::device Qt6::Test)
+        target_link_libraries(${target} PRIVATE mc::device Qt::Test)
         mc_apply_warnings(${target})
         mc_apply_coverage(${target})
 
@@ -342,7 +343,7 @@ if(MC_BUILD_DEVICE)
         # QT_ASSUME_STDERR_HAS_CONSOLE: without it QtTest prints nothing when its output is a
         # pipe (ctest, an IDE, an agent shell) on Windows, so a failing test would say nothing.
         if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.22)
-            set(_mc_qt_env "PATH=path_list_prepend:$<TARGET_FILE_DIR:Qt6::Core>")
+            set(_mc_qt_env "PATH=path_list_prepend:$<TARGET_FILE_DIR:Qt${QT_VERSION_MAJOR}::Core>")
             set_tests_properties(${_mc_group}.${target} PROPERTIES ENVIRONMENT_MODIFICATION
                 "${_mc_qt_env};QT_ASSUME_STDERR_HAS_CONSOLE=set:1")
         else()
@@ -439,11 +440,15 @@ if(MC_BUILD_DEVICE)
             else()
                 target_compile_definitions(mc_hil_tool_tests PRIVATE MC_REPLAY_TESTS_PATH="")
             endif()
+            # The program itself is run once, for its console encoding (tools/hil_capture/main.cpp).
+            target_compile_definitions(mc_hil_tool_tests PRIVATE
+                "MC_HIL_CAPTURE_PATH=\"$<TARGET_FILE:hil_capture>\"")
+            add_dependencies(mc_hil_tool_tests hil_capture)
             add_test(NAME hil_tool.mc_hil_tool_serial COMMAND mc_hil_tool_tests --suite serial)
             set_tests_properties(hil_tool.mc_hil_tool_serial PROPERTIES
                 LABELS "hil_tool" TIMEOUT 120 RESOURCE_LOCK mc_serial_pair)
             if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.22)
-                set(_mc_qt_env "PATH=path_list_prepend:$<TARGET_FILE_DIR:Qt6::Core>")
+                set(_mc_qt_env "PATH=path_list_prepend:$<TARGET_FILE_DIR:Qt${QT_VERSION_MAJOR}::Core>")
                 set_tests_properties(hil_tool.mc_hil_tool_serial PROPERTIES
                     ENVIRONMENT_MODIFICATION "${_mc_qt_env};QT_ASSUME_STDERR_HAS_CONSOLE=set:1")
             else()
@@ -455,15 +460,18 @@ if(MC_BUILD_DEVICE)
             # makes a link fault on purpose when a replay fixture has to be captured again. Built so
             # it cannot rot; no ctest entry and no qmake twin.
             add_executable(hil_fault_proxy hil/fixtures/make/fault_proxy.cpp)
-            target_link_libraries(hil_fault_proxy PRIVATE Qt6::Core Qt6::Network)
+            target_link_libraries(hil_fault_proxy PRIVATE Qt::Core Qt::Network)
             mc_apply_warnings(hil_fault_proxy)
+            # Links Qt without mc::device, so it does not inherit the Qt 5 + MSVC define.
+            mc_apply_qt5_msvc(hil_fault_proxy PRIVATE)
 
             # mc_workbench_tests (SPEC-gui-tool.md "Testing", label gui): the GUI cases, offscreen.
-            # Exists only when tools/ enabled the GUI (Qt >= 6.5, docking library found). The
-            # docking library is a DLL the test finds through PATH; QT_QPA_PLATFORM makes the run
-            # headless (the test's own main() sets it too, for runs outside ctest).
+            # Exists only when tools/ enabled the GUI (Qt 5.15 or >= 6.5, docking library for that
+            # Qt major found). The docking library (ads::qtadvanceddocking-qt5 or -qt6) is a DLL the
+            # test finds through PATH; QT_QPA_PLATFORM makes the run headless (the test's own main()
+            # sets it too, for runs outside ctest).
             if(TARGET mc_workbench_ui)
-                find_package(Qt6 6.5 REQUIRED COMPONENTS Widgets)
+                find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
                 set(MC_QT_TEST_GROUP gui)
                 mc_add_qt_test(mc_workbench_tests
                     gui/gui_tests_main.cpp
@@ -481,7 +489,7 @@ if(MC_BUILD_DEVICE)
                     gui/tst_gui_mock_streams.cpp
                     gui/tst_gui_tester_probes.cpp)
                 unset(MC_QT_TEST_GROUP)
-                target_link_libraries(mc_workbench_tests PRIVATE mc_workbench_ui Qt6::Widgets)
+                target_link_libraries(mc_workbench_tests PRIVATE mc_workbench_ui Qt::Widgets)
                 target_include_directories(mc_workbench_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/gui)
                 # What a test writes goes under the build tree, never to tests/vectors/captured/.
                 target_compile_definitions(mc_workbench_tests PRIVATE
@@ -509,7 +517,7 @@ if(MC_BUILD_DEVICE)
                     target_compile_definitions(mc_workbench_tests PRIVATE MC_REPLAY_TESTS_PATH="")
                 endif()
                 set_tests_properties(gui.mc_workbench_tests PROPERTIES ENVIRONMENT_MODIFICATION
-                    "PATH=path_list_prepend:$<TARGET_FILE_DIR:Qt6::Core>;PATH=path_list_prepend:$<TARGET_FILE_DIR:ads::qtadvanceddocking-qt6>;QT_ASSUME_STDERR_HAS_CONSOLE=set:1;QT_QPA_PLATFORM=set:offscreen")
+                    "PATH=path_list_prepend:$<TARGET_FILE_DIR:Qt${QT_VERSION_MAJOR}::Core>;PATH=path_list_prepend:$<TARGET_FILE_DIR:ads::qtadvanceddocking-qt${QT_VERSION_MAJOR}>;QT_ASSUME_STDERR_HAS_CONSOLE=set:1;QT_QPA_PLATFORM=set:offscreen")
                 # GUI-03 holds the first port of MC_TEST_SERIAL_PAIR open (when it is set), like every
                 # other entry that opens the pair.
                 set_tests_properties(gui.mc_workbench_tests PROPERTIES RESOURCE_LOCK mc_serial_pair)

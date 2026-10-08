@@ -25,6 +25,7 @@
 #include <vector>
 
 #include "widgets_p.h"
+#include "widgets/compat_p.h"
 
 namespace qpb {
 
@@ -294,7 +295,7 @@ public:
             return;
         }
 
-        row.form->setRowVisible(row.editor, visible);
+        setFormRowVisible(row.form, row.editor, visible);
         row.label->setText(displayName);
         row.label->setToolTip(toolTip);
         row.label->setEnabled(enabled);

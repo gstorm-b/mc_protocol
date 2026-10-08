@@ -242,6 +242,28 @@ the bar (`-D MC_MIN_COVERAGE=<n>`, default 95, total over `src/core/model`).
   scratch client can post JSON-RPC to the `/message?session=` endpoint it announces. Tools include
   `build`, `run_tests`, `list_build_configs`, `call_action`.
 
+## Qt 5.15 (T-078, 2026-10-07)
+
+- Kit: `C:/Qt/5.15.0/msvc2019_64` only (no Qt 5 MinGW kit): Qt 5 is verified on MSVC only.
+- **Toolset 14.44, never 14.51:** Qt 5.15.0's headers fail with the VS 2026 (14.51) standard library,
+  and qpb 1.7.0 excludes MSVC 2026 for Qt 5. In a **fresh** PowerShell:
+  `. scripts/vsdev.ps1 -VcVarsVer 14.44` (refuses if the shell already holds another toolset).
+  `scripts/check.ps1 -QtDir C:/Qt/5.15.0/msvc2019_64` loads 14.44 by itself. CMake and qmake warn
+  when Qt 5 meets MSVC ≥ 14.50.
+- Folders: `build/cmake-qt5-msvc` (Debug), `build/cmake-qt5-msvc-release`, `build/qmake-qt5-msvc`
+  (all configured with 14.44); presets `qt5-msvc-debug` / `qt5-msvc-release` (use with `-B`).
+- `_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING` is defined (PUBLIC on `mc_device`, and in
+  `mc_device.pri`) only for Qt 5 + MSVC: 14.44 deprecates the `stdext` iterators Qt 5's headers use.
+- CMake: `cmake/mc_qt.cmake` (`MC_QT_MAJOR`, `mc_find_qt()`, versionless `Qt::` targets);
+  `$<TARGET_FILE_DIR:Qt::Core>` does not work on Qt 5 — use `Qt${QT_VERSION_MAJOR}::Core`.
+- GUI on Qt 5 (T-079): qpb 1.7.0; `tools/mc_workbench/qt_compat.h` holds the only version checks
+  (`jsonInteger`, `useUtf8`, `staticConnect` for C4573 on 14.44). The CMake GUI on Qt 5 needs
+  `MC_ADS_DIR` = the Qt 5 ADS (presets set it; `check.ps1` skips the GUI in its CMake stage otherwise).
+  Qt 5.15.0 `QSerialPort` re-open of a virtual COM port right after close fails "Access is denied"
+  now and then (Qt 6.11 does not): `GUI_02_comPair…` flakes ~1 in 12 on Qt 5 only.
+- ADS for Qt 5 (any kit, the script detects the major): `scripts/build-ads.ps1 -QtDir C:/Qt/5.15.0/msvc2019_64` →
+  `build/ads-qt5-msvc2019_64/install` (`mc_local.pri` key `MC_ADS_DIR_QT5`).
+
 ## Other tools on this PC (T-065, T-066)
 
 - Vendor manuals (PDF) are in `docs/mc_reference/`. Extract text with Git Bash's

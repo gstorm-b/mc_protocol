@@ -4,6 +4,7 @@
 #pragma once
 
 #include "mc/device/mc_device_config.h"
+#include "mc/device/meta_types.h"
 #include "mc_workbench/mock_host.h"
 #include "mc_workbench/runner_types.h"
 

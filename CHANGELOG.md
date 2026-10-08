@@ -8,6 +8,20 @@ All notable changes to this project are documented in this file. The format foll
 
 ### Added
 
+- Qt 5.15 support: the library, the examples, the Qt tests and `tools/hil_capture` build and pass
+  with Qt 5.15 as well as Qt 6.2 and later, under CMake and qmake. CMake links the versionless
+  `Qt::` targets and takes the Qt that `CMAKE_PREFIX_PATH` points at; the cache variable
+  `MC_QT_MAJOR` (`5` or `6`) forces a major. Qt 5.15 with MSVC needs a toolset older than 14.50
+  (VS 2026 removed the `stdext` iterators its headers use): `scripts/vsdev.ps1 -VcVarsVer <ver>`
+  loads one, `scripts/check.ps1` loads 14.44 for a Qt 5 kit, and CMake and qmake warn when a Qt 5
+  build meets a newer `cl`. `registerMetaTypes()` also
+  registers the name `mc::RequestId`, which Qt 5 needs to queue `requestFinished()` across
+  threads. The MC Workbench GUI (`mc_workbench`, `mc_workbench_tests`) builds and passes on Qt 5.15
+  too; it needs Qt 5.15, or Qt 6.5 and later. With Qt 5 it links the Qt 5 build of the docking
+  library (`qtadvanceddocking-qt5`, built by `scripts/build-ads.ps1 -QtDir <Qt 5 kit>` into
+  `build/ads-qt5-<kit>/install`), found through `MC_ADS_DIR` (CMake) or `MC_ADS_DIR_QT5` in
+  `mc_local.pri` (qmake); the presets `qt5-msvc-debug` and `qt5-msvc-release` of
+  `CMakeUserPresets.json.example` set `MC_ADS_DIR` to that folder.
 - `MockPlc` input streams, one per client of a server: `MockStreamId`, `openStream()`,
   `closeStream()`, `bytesIn(id, bytes)`, `nextResponse(id, out)` and `MockRequestRecord::stream`.
   Each stream has its own partial request, serial scan state and response queue; memory, faults,
@@ -262,3 +276,10 @@ All notable changes to this project are documented in this file. The format foll
   `check.sh` pass; line coverage on MinGW: `src/core/model` 98.1 %, `src/core/protocol` 97.9 %, `src/core/session`
   97.9 %, `src/mock` 97.3 %, `src/device` 92.3 % (report only), `tools/mc_workbench` core 90.8 % and ui 85.4 % (report
   only).
+
+### Changed
+
+- The vendored property browser `qpb` (`components/qpb`, MIT, unmodified) is updated from 1.6.1 to
+  1.7.0, which adds Qt 5.15 support; Qt 6 builds are unchanged. `components/qpb.pri` lists its two
+  new private headers and, for Qt 5, hides the Qt API deprecated before 5.15 as qpb's own CMake
+  file does.

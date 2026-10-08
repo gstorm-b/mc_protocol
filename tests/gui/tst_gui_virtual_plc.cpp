@@ -184,7 +184,7 @@ private slots:
         QProcess program;
         program.setProcessEnvironment(environment);
         program.setProcessChannelMode(QProcess::MergedChannels);
-        program.start(path, {});
+        program.start(path, QStringList());
         QVERIFY(program.waitForStarted(5000));
         QTest::qWait(2500);
         const bool stillRunning = program.state() == QProcess::Running;

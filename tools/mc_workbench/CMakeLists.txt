@@ -1,6 +1,6 @@
-# MC Workbench (SPEC-gui-tool.md), added by tools/CMakeLists.txt once Qt >= 6.5 and the docking
-# library are known to be there. Three targets, so the QtTest binary (tests/gui) and the program
-# compile the very same sources once:
+# MC Workbench (SPEC-gui-tool.md), added by tools/CMakeLists.txt once Qt (5.15, or 6.5 and newer)
+# and the docking library are known to be there. Three targets, so the QtTest binary (tests/gui) and
+# the program compile the very same sources once:
 #   mc_workbench_core  STATIC  non-UI part: runner threads (DeviceRunner, MockRunner and their hosts),
 #                              later the models; Qt Core and Network only, no widgets
 #   mc_workbench_ui    STATIC  everything with widgets: main window, docks (ADS, qpb)
@@ -20,6 +20,7 @@ endif()
 add_library(mc_workbench_core STATIC
     component_versions.h
     component_versions.cpp
+    qt_compat.h
     runner_types.h
     runner_types.cpp
     runner_base.h
@@ -82,7 +83,7 @@ set_target_properties(mc_workbench_core PROPERTIES AUTOMOC ON)
 target_include_directories(mc_workbench_core PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/..")
 # mc_hil_tool brings RecordingTransport (and mc::mock, mc::device); the runners use its public API.
 target_link_libraries(mc_workbench_core PUBLIC mc_hil_tool mc::device mc::mock qpb::core
-    Qt6::Core Qt6::Network)
+    Qt::Core Qt::Network)
 mc_apply_warnings(mc_workbench_core)
 mc_apply_coverage(mc_workbench_core)
 
@@ -120,8 +121,8 @@ set_target_properties(mc_workbench_ui PROPERTIES AUTOMOC ON)
 target_link_libraries(mc_workbench_ui PUBLIC
     mc_workbench_core
     qpb::widgets
-    ads::qtadvanceddocking-qt6
-    Qt6::Widgets)
+    ads::${MC_ADS_PACKAGE}
+    Qt::Widgets)
 mc_apply_warnings(mc_workbench_ui)
 mc_apply_coverage(mc_workbench_ui)
 
@@ -134,5 +135,5 @@ mc_apply_coverage(mc_workbench)
 # are (windeployqt is not used). Tests get it through PATH instead (tests/CMakeLists.txt).
 add_custom_command(TARGET mc_workbench POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "$<TARGET_FILE:ads::qtadvanceddocking-qt6>" "$<TARGET_FILE_DIR:mc_workbench>"
+        "$<TARGET_FILE:ads::${MC_ADS_PACKAGE}>" "$<TARGET_FILE_DIR:mc_workbench>"
     VERBATIM)

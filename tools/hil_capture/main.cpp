@@ -13,6 +13,13 @@ int main(int argc, char** argv) {
     QTextStream out(stdout);
     QTextStream err(stderr);
     QTextStream in(stdin);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    // Qt 6 streams are UTF-8; Qt 5 ones use the locale's codec (the ANSI code page on Windows),
+    // which loses the characters of a non-ASCII path or note. Same text on both majors.
+    for (QTextStream* stream : {&out, &err, &in}) {
+        stream->setCodec("UTF-8");
+    }
+#endif
 
     const mc::hil::ParseResult parsed = mc::hil::parseOptions(app.arguments());
     switch (parsed.status) {

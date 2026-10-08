@@ -174,7 +174,7 @@ class PerConnectionPlc : public QObject {
                 ByteView out;
                 while (c->plc->nextResponse(out)) {
                     const QByteArray response(reinterpret_cast<const char*>(out.data),
-                                              static_cast<qsizetype>(out.size));
+                                              static_cast<QByteArray::size_type>(out.size));
                     QTimer::singleShot(m_delayMs, socket, [this, socket, response]() {
                         if (!m_silent) {
                             socket->write(response);
@@ -1399,6 +1399,32 @@ class HilRunTests : public QObject {
                  qPrintable(run.out + run.err));
         QCOMPARE(countsOf(run.out).passed, 1);
         QVERIFY(!run.out.contains(QStringLiteral("G2-01")));
+    }
+
+    // The program itself (tools/hil_capture/main.cpp), not runTool(): its console streams are
+    // UTF-8 with Qt 5 and Qt 6 alike, so a non-ASCII path in an error message keeps every
+    // character (Qt 5's default codec, the ANSI code page, turned it into '?').
+    void HIL_01_theProgramWritesNonAsciiConsoleTextAsUtf8() {
+        const QString program = QStringLiteral(MC_HIL_CAPTURE_PATH);
+        if (program.isEmpty() || !QFileInfo::exists(program)) {
+            QSKIP(qPrintable(
+                QStringLiteral("tools/hil_capture is not built here (%1)").arg(program)));
+        }
+        // U+03A9 U+00FC U+1EC7, escaped so the literal does not depend on the source encoding.
+        const QByteArray name("missing-\xCE\xA9\xC3\xBC\xE1\xBB\x87.json");
+        const QString profile =
+            QStringLiteral(MC_HIL_OUTPUT_DIR) + QLatin1Char('/') + QString::fromUtf8(name);
+        QVERIFY(!QFileInfo::exists(profile));
+
+        QProcess p;
+        p.start(program, {QStringLiteral("--profile"), profile, QStringLiteral("--plan"),
+                          QStringLiteral(MC_TESTS_SOURCE_DIR "/hil/e2e/plan_3e.json"),
+                          QStringLiteral("--dry-run")});
+        QVERIFY(p.waitForFinished(30000));
+        QCOMPARE(p.exitStatus(), QProcess::NormalExit);
+        QCOMPARE(p.exitCode(), static_cast<int>(ExitCode::BadInput));
+        const QByteArray err = p.readAllStandardError();
+        QVERIFY2(err.contains(name), err.toHex(' ').constData());
     }
 };
 

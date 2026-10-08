@@ -35,6 +35,7 @@ T-002–T-005 build skeleton ── A0
                                                       └── T-056–T-063 hil-capture tool + replay ── F (+ owner gate)
                                                              └── T-066 X/Y octal, T-067–T-073 GUI tool (McDevice in an app) ── H
                                                                     └── T-075–T-077 follow-ups (mock streams, typed confirmation, Release builds)
+                                                                    └── T-078 Qt 5.15 library + tools ── T-079 Qt 5.15 GUI
                                                                     └── P9-1–P9-2 bench captures, findings
                                                                            └── P9-3 release 1.0 ── G
 ```
@@ -166,6 +167,22 @@ Follow-ups (owner 2026-10-04, leader gates as Phase 8), done in commit `11bc5f0`
 - [x] T-077 Release builds green on MSVC and MinGW; Release CMake presets
 
 Also: CMake presets for Qt Creator (`6da2242`); known issues noted without a task in `tasks/todo.md` (owner 2026-10-04).
+
+### Qt 5.15 support (owner 2026-10-07; follow-up before Phase 9, leader gates as Phase 8)
+
+Scope: everything, the GUI included. Qt 5.15.0 is installed with the `msvc2019_64` kit only, so Qt5 is verified on MSVC; Qt 6 stays supported unchanged.
+
+- [x] T-078 Library, examples, Qt tests and `hil_capture` on Qt 5.15 (CMake and qmake, presets, check script); spec minimum "Qt 5.15 or 6.2+"
+- [x] T-079 GUI `mc_workbench` on Qt 5.15: ADS built for Qt5, qpb 1.7.0 (Qt 5.15 support, from the owner), app sources
+
+Batch tester and reviewer after T-079; one commit for both. Done 2026-10-08 (tester and reviewer PASS after one rework).
+
+**Pre-release v0.1.0** (owner 2026-10-08), after T-078/T-079 are committed:
+
+- [ ] Build and test again through the Qt Creator MCP server with every build option (presets msvc/mingw ×
+  Debug/Release, qt5-msvc Debug/Release, qmake kits)
+- [ ] `CHANGELOG.md`: `Unreleased` → `[0.1.0]` (pre-release); `include/mc/version.h` already 0.1.0; tag `v0.1.0`
+  on that commit (spec "Versioning"); export a new git bundle of the repository
 
 ### Phase 9: Bench and release
 

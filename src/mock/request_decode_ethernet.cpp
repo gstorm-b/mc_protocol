@@ -355,12 +355,14 @@ template <class Codec> bool decodeE1Device(ByteView field, XyNumbering xy, Devic
         }
         if (info.e1Code != kNoCode && info.e1Code == code.value()) {
             uint32_t index = number.value();
-            if (ascii && asciiNumberBase(info, xy) == 8) {
-                uint64_t octal = 0;
-                if (!parseDeviceNumber(numberField, 8, octal)) {
-                    return false;
+            if constexpr (ascii) {
+                if (asciiNumberBase(info, xy) == 8) {
+                    uint64_t octal = 0;
+                    if (!parseDeviceNumber(numberField, 8, octal)) {
+                        return false;
+                    }
+                    index = static_cast<uint32_t>(octal);
                 }
-                index = static_cast<uint32_t>(octal);
             }
             out = Device{info.type, index};
             return true;

@@ -178,7 +178,8 @@ class TstSerial : public QObject {
                 if (n == 0) {
                     return;
                 }
-                into.append(reinterpret_cast<const char*>(buffer), static_cast<qsizetype>(n));
+                into.append(reinterpret_cast<const char*>(buffer),
+                            static_cast<QByteArray::size_type>(n));
             }
         };
 

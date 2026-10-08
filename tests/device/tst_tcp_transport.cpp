@@ -56,6 +56,16 @@ mc::ByteView view(const QByteArray& b) {
 
 bool listenOnLoopback(QTcpServer& server) { return server.listen(QHostAddress::LocalHost, 0); }
 
+// True when the meta-type system knows a type by this name. QMetaType::fromName() is Qt 6;
+// Qt 5.15 has only QMetaType::type(), which Qt 6 deprecates.
+bool knownByName(const char* name) {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    return QMetaType::fromName(name).isValid();
+#else
+    return QMetaType::type(name) != QMetaType::UnknownType;
+#endif
+}
+
 // Waits for one accepted connection; nullptr on timeout.
 QTcpSocket* accept(QTcpServer& server) {
     if (!server.hasPendingConnections()) {
@@ -422,10 +432,11 @@ class TstTcpTransport : public QObject {
         mc::registerMetaTypes();
         QCOMPARE(qMetaTypeId<mc::Change>(), changeId);
 
-        QVERIFY(QMetaType::fromName("mc::DeviceType").isValid());
-        QVERIFY(QMetaType::fromName("mc::Error").isValid());
-        QVERIFY(QMetaType::fromName("mc::Change").isValid());
-        QVERIFY(QMetaType::fromName("mc::CycleInfo").isValid());
+        QVERIFY(knownByName("mc::DeviceType"));
+        QVERIFY(knownByName("mc::Error"));
+        QVERIFY(knownByName("mc::Change"));
+        QVERIFY(knownByName("mc::CycleInfo"));
+        QVERIFY(knownByName("mc::RequestId")); // the alias requestFinished() names
         QVERIFY(QMetaType::fromType<QVector<mc::Change>>().isValid());
     }
 

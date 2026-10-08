@@ -1,6 +1,7 @@
 #include "mc_workbench/device_host.h"
 
 #include "mc_workbench/device_runner.h"
+#include "mc_workbench/qt_compat.h"
 
 #include <QPointer>
 
@@ -21,34 +22,32 @@ DeviceHost::DeviceHost(const QString& name, const mc::McDeviceConfig& cfg, QObje
             if (!self.isNull()) {
                 DeviceHost* host = self.data();
                 const auto queued = Qt::QueuedConnection;
-                QObject::connect(runner, &DeviceRunner::linkStateChanged, host,
-                                 &DeviceHost::linkStateChanged, queued);
-                QObject::connect(runner, &DeviceRunner::linkFault, host, &DeviceHost::linkFault,
-                                 queued);
-                QObject::connect(runner, &DeviceRunner::valuesBatch, host,
-                                 &DeviceHost::valuesBatch, queued);
-                QObject::connect(runner, &DeviceRunner::framesBatch, host,
-                                 &DeviceHost::framesBatch, queued);
-                QObject::connect(runner, &DeviceRunner::logBatch, host, &DeviceHost::logBatch,
-                                 queued);
-                QObject::connect(runner, &DeviceRunner::cycleDone, host, &DeviceHost::cycleDone,
-                                 queued);
-                QObject::connect(runner, &DeviceRunner::requestFinished, host,
-                                 &DeviceHost::requestFinished, queued);
-                QObject::connect(runner, &DeviceRunner::commandDone, host,
-                                 &DeviceHost::commandDone, queued);
-                QObject::connect(runner, &DeviceRunner::threadReport, host,
-                                 &DeviceHost::threadReport, queued);
-                QObject::connect(runner, &DeviceRunner::framesDropped, host,
-                                 &DeviceHost::framesDropped, queued);
-                QObject::connect(runner, &DeviceRunner::captureStatusChanged, host,
-                                 &DeviceHost::captureStatusChanged, queued);
-                QObject::connect(runner, &DeviceRunner::captureSaved, host,
-                                 &DeviceHost::captureSaved, queued);
+                staticConnect(runner, &DeviceRunner::linkStateChanged, host,
+                              &DeviceHost::linkStateChanged, queued);
+                staticConnect(runner, &DeviceRunner::linkFault, host, &DeviceHost::linkFault,
+                              queued);
+                staticConnect(runner, &DeviceRunner::valuesBatch, host, &DeviceHost::valuesBatch,
+                              queued);
+                staticConnect(runner, &DeviceRunner::framesBatch, host, &DeviceHost::framesBatch,
+                              queued);
+                staticConnect(runner, &DeviceRunner::logBatch, host, &DeviceHost::logBatch, queued);
+                staticConnect(runner, &DeviceRunner::cycleDone, host, &DeviceHost::cycleDone,
+                              queued);
+                staticConnect(runner, &DeviceRunner::requestFinished, host,
+                              &DeviceHost::requestFinished, queued);
+                staticConnect(runner, &DeviceRunner::commandDone, host, &DeviceHost::commandDone,
+                              queued);
+                staticConnect(runner, &DeviceRunner::threadReport, host, &DeviceHost::threadReport,
+                              queued);
+                staticConnect(runner, &DeviceRunner::framesDropped, host,
+                              &DeviceHost::framesDropped, queued);
+                staticConnect(runner, &DeviceRunner::captureStatusChanged, host,
+                              &DeviceHost::captureStatusChanged, queued);
+                staticConnect(runner, &DeviceRunner::captureSaved, host, &DeviceHost::captureSaved,
+                              queued);
                 // The last signal of a batch: once it arrives here every batch before it has been
                 // consumed, and the acknowledgement lets the runner emit the next one.
-                QObject::connect(runner, &DeviceRunner::flushed, host, &DeviceHost::onFlushed,
-                                 queued);
+                staticConnect(runner, &DeviceRunner::flushed, host, &DeviceHost::onFlushed, queued);
                 runner->enableFlowControl(true);
             }
             return runner;
