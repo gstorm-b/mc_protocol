@@ -179,9 +179,10 @@ Batch tester and reviewer after T-079; one commit for both. Done 2026-10-08 (tes
 
 **Pre-release v0.1.0** (owner 2026-10-08), after T-078/T-079 are committed:
 
-- [ ] Build and test again through the Qt Creator MCP server with every build option (presets msvc/mingw ×
-  Debug/Release, qt5-msvc Debug/Release, qmake kits)
-- [ ] `CHANGELOG.md`: `Unreleased` → `[0.1.0]` (pre-release); `include/mc/version.h` already 0.1.0; tag `v0.1.0`
+- [x] Build and test again through the Qt Creator MCP server: kit `msvc-release` built (0 warnings) and `ctest`
+  35/35; the MCP cannot switch kits, so the other five kits were skipped by the owner (2026-10-08) — all six were
+  verified on the command line by the batch tester
+- [x] `CHANGELOG.md`: `Unreleased` → `[0.1.0]` (pre-release); `include/mc/version.h` already 0.1.0; tag `v0.1.0`
   on that commit (spec "Versioning"); export a new git bundle of the repository
 
 ### Phase 9: Bench and release

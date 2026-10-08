@@ -6,6 +6,12 @@ All notable changes to this project are documented in this file. The format foll
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-10-08
+
+First pre-release (owner, 2026-10-08). Not yet verified against real PLCs: the bench captures and
+the 1.0 release follow (Phase 9). Verified on Windows: Qt 6.11.1 (MSVC 2022 x64, MinGW 13.1) and
+Qt 5.15.0 (MSVC toolset 14.44), CMake and qmake, Debug and Release.
+
 ### Added
 
 - Qt 5.15 support: the library, the examples, the Qt tests and `tools/hil_capture` build and pass

@@ -1022,10 +1022,12 @@ Details and acceptance criteria in the baton files `tasks/done/T-078.md` and `T-
 - [x] Batch tester and reviewer PASS; Qt 6 kits unchanged and green; one commit
 
 ### Pre-release v0.1.0 (owner 2026-10-08)
-- [ ] Build + test through the Qt Creator MCP server with every build option (Qt 6 MSVC/MinGW Debug/Release presets,
+- [x] Build + test through the Qt Creator MCP server with every build option (Qt 6 MSVC/MinGW Debug/Release presets,
   Qt 5 MSVC Debug/Release presets, qmake kits); results recorded
   (owner 2026-10-08: if the Qt Creator MCP server cannot be reached then, skip this item and go on)
-- [ ] `CHANGELOG.md` `Unreleased` → `[0.1.0] - <date>` marked pre-release; `version.h` stays 0.1.0; tag `v0.1.0`
+  Done 2026-10-08: `msvc-release` built in Qt Creator (0 warnings), `ctest` 35/35 through the MCP; the MCP cannot
+  switch kits, the owner skipped the other five (verified on the command line by the T-078/T-079 tester).
+- [x] `CHANGELOG.md` `Unreleased` → `[0.1.0] - <date>` marked pre-release; `version.h` stays 0.1.0; tag `v0.1.0`
 - [ ] Export a new git bundle (`git bundle create … --all`) to `build/release/` and verify it (`git bundle verify`, clone test)
 
 ---
