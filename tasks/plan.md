@@ -183,7 +183,9 @@ Batch tester and reviewer after T-079; one commit for both. Done 2026-10-08 (tes
   35/35; the MCP cannot switch kits, so the other five kits were skipped by the owner (2026-10-08) — all six were
   verified on the command line by the batch tester
 - [x] `CHANGELOG.md`: `Unreleased` → `[0.1.0]` (pre-release); `include/mc/version.h` already 0.1.0; tag `v0.1.0`
-  on that commit (spec "Versioning"); export a new git bundle of the repository
+  on that commit (spec "Versioning"); export a new git bundle of the repository. Done 2026-10-08: commit `1d09f6b`,
+  local annotated tag `v0.1.0` (not pushed; publishing is the owner's later decision), bundle
+  `build/release/mc_protocol-v0.1.0.bundle` (`--all`, verified, test clone OK)
 
 ### Phase 9: Bench and release
 

@@ -1028,7 +1028,8 @@ Details and acceptance criteria in the baton files `tasks/done/T-078.md` and `T-
   Done 2026-10-08: `msvc-release` built in Qt Creator (0 warnings), `ctest` 35/35 through the MCP; the MCP cannot
   switch kits, the owner skipped the other five (verified on the command line by the T-078/T-079 tester).
 - [x] `CHANGELOG.md` `Unreleased` → `[0.1.0] - <date>` marked pre-release; `version.h` stays 0.1.0; tag `v0.1.0`
-- [ ] Export a new git bundle (`git bundle create … --all`) to `build/release/` and verify it (`git bundle verify`, clone test)
+- [x] Export a new git bundle (`git bundle create … --all`) to `build/release/` and verify it (`git bundle verify`, clone test)
+  — `build/release/mc_protocol-v0.1.0.bundle`; tag `v0.1.0` local only; GitHub publishing waits for the owner
 
 ---
 
