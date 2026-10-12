@@ -6,6 +6,13 @@ All notable changes to this project are documented in this file. The format foll
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-10-12
+
+Third pre-release (owner, 2026-10-12). Follows the first bench captures on a Q03UDE (3E Binary and ASCII over
+Ethernet, 3C Format 1 over a QJ71C24N). **Behaviour change:** serial ports now assert DTR and RTS after opening.
+Still not verified against every bench PLC (Phase 9). Verified on Windows: Qt 6.11.1 (MSVC 2022 x64, MinGW 13.1),
+Qt 5.15.0 MSVC toolset 14.44 x64 and x86, CMake and qmake.
+
 ### Added
 
 - `SerialSettings::dataTerminalReady` and `requestToSend` (JSON `transport.serial.dataTerminalReady` /

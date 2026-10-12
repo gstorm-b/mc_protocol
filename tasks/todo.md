@@ -1091,6 +1091,7 @@ lines", QDV-20) and `SPEC-gui-tool.md` (HIL runner row, GUI-06, GUI-07).
 - [x] T-085 GUI config drafts (TCP → Serial switch)
 - [x] T-086 HIL Confirm button
 - [x] Batch tester and reviewer; one commit; `CHANGELOG.md` `Unreleased`
+- [x] Pre-release v0.1.2 (2026-10-12): version, CHANGELOG, tag, bundle, pushed, GitHub pre-release
 - [ ] Owner: re-capture the Q03UDE serial profiles with Y removed from scratch (Y0–Y7 = QJ71C24N I/O), Y0–Y7 reset and
   CH1 ERR cleared; fill the `FILL:` notes of `run.meta` (firmware, adapter)
 

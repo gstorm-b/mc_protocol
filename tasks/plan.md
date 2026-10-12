@@ -230,6 +230,15 @@ are the QJ71C24N's own I/O — the owner re-captures). Bench findings for the to
 - [x] T-086 HIL runner: one Confirm button for every profile, no typed id (GUI-07); `hil_capture` CLI unchanged
 
 Batch tester and reviewer after T-086; one commit. Done 2026-10-12 (reviewer FAIL on one MEDIUM → Rework 1 → both PASS).
+Commit `63aef65`.
+
+**Pre-release v0.1.2** (owner 2026-10-12: "hãy commit và push. Tạo bản pre-release 0.1.2"):
+
+- [x] `include/mc/version.h` 0.1.2; `CHANGELOG.md` `[0.1.2] - 2026-10-12`; full ctest Qt 6 MSVC (COM54,COM55) and
+  Qt 5.15 x86 with the GUI in `.wt/`
+- [x] Tag `v0.1.2`, bundle `build/release/mc_protocol-v0.1.2.bundle`; `main` and the tag pushed to gstorm-b/mc_protocol;
+  GitHub pre-release with the bundle
+
 Replay divergences of the captures (mock 4031/C059/NAK fidelity,
 RPL-05 checks) go to P9-2.
 
