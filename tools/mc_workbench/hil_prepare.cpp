@@ -97,20 +97,7 @@ HilPrepared prepareHil(const HilCheckInput& input) {
     return p;
 }
 
-bool skipTypingAllowed(const HilCheckResult& check) {
-    // runTool(): `--yes` counts only when `gate.readOnlyFrames.isEmpty()`. The GUI adds: only for a
-    // profile that talks TCP to this computer (owner decision C, 2026-10-04). Another host or any
-    // COM port always needs the typed id. `loopbackTcp` is derived from the profile on the thread
-    // that runs the check, never taken from the request.
-    return check.loopbackTcp && check.readOnlyFrames.isEmpty();
-}
-
-bool mustTypeProfileId(const HilCheckResult& check, bool skipTyping) {
-    return !skipTyping || !skipTypingAllowed(check);
-}
-
-bool confirmationAccepted(const HilCheckResult& check, const QString& typedId, bool skipTyping,
-                          QString* why) {
+bool confirmationAccepted(const HilCheckResult& check, bool confirmed, QString* why) {
     const auto no = [&](const QString& text) {
         if (why != nullptr) {
             *why = text;
@@ -120,19 +107,8 @@ bool confirmationAccepted(const HilCheckResult& check, const QString& typedId, b
     if (!check.ok()) {
         return no(QStringLiteral("the gate did not pass; nothing was sent"));
     }
-    if (mustTypeProfileId(check, skipTyping) && typedId.trimmed() != check.profileId) {
-        if (!check.readOnlyFrames.isEmpty()) {
-            return no(QStringLiteral("not confirmed: the run holds read-only frames the gate "
-                                     "could not decode, so the profile id (%1) must be typed")
-                          .arg(check.profileId));
-        }
-        if (skipTyping && !check.loopbackTcp) {
-            return no(QStringLiteral("not confirmed: only a profile that talks to this computer "
-                                     "(a loopback TCP host) may be confirmed without typing; "
-                                     "type the profile id (%1)")
-                          .arg(check.profileId));
-        }
-        return no(QStringLiteral("not confirmed: type the profile id (%1)").arg(check.profileId));
+    if (!confirmed) {
+        return no(QStringLiteral("not confirmed: the Confirm button was not pressed"));
     }
     return true;
 }

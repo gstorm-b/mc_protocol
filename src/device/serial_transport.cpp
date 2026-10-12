@@ -81,6 +81,12 @@ void SerialTransport::completeOpen(quint64 generation) {
         emit openFailed(reason);
         return;
     }
+    // A refused line is not fatal and the transport has no log path, so the result is dropped.
+    // QSerialPort's Windows open leaves DTR asserted, so "off" must be set, not just left alone.
+    (void)m_port->setDataTerminalReady(m_settings.dataTerminalReady);
+    if (m_settings.requestToSend && m_settings.flowControl != QSerialPort::HardwareControl) {
+        (void)m_port->setRequestToSend(true);
+    }
     m_state = State::Open;
     emit opened();
 }

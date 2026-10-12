@@ -1,6 +1,6 @@
 // Phase 8 tester probes (T-074, Checkpoint H, tester step): cases the developers did not write.
-//   - the HIL gate and the typed confirmation: every way the tester found to reach a connection
-//     without the gate or without the typed profile id (a listener on loopback counts connections);
+//   - the HIL gate and the confirmation: every way the tester found to reach a connection
+//     without the gate or without the dialog's Confirm (a listener on loopback counts connections);
 //   - the export rule for tests/vectors/captured: a capture of a mock must not land there;
 //   - the GUI thread under load and under faults with the real views on screen;
 //   - a HIL run stuck in a step while the host is destroyed;
@@ -172,7 +172,7 @@ HilRunRequest requestFor(const HilCheckInput& input, const HilCheckResult& check
     HilRunRequest r;
     r.input = input;
     r.expectedDigest = check.digest;
-    r.typedId = check.profileId;
+    r.confirmed = true;
     r.outputRoot = outputRoot;
     r.source = CaptureSource::MockPlc;
     r.benchReps = 3;
@@ -209,9 +209,9 @@ class TesterProbesTest : public QObject {
 private slots:
     void initTestCase() { registerRunnerMetaTypes(); }
 
-    // ---- the gate and the typed confirmation: nothing reaches the listener -------------------
+    // ---- the gate and the confirmation: nothing reaches the listener -------------------
 
-    void T8_noWayAroundTheTypedIdOrTheGateReachesTheListener() {
+    void T8_noWayAroundTheConfirmationOrTheGateReachesTheListener() {
         const QString dir = freshOutputDir(QStringLiteral("t8-gate"));
         Listener listener;
         QVERIFY(listener.ok);
@@ -235,31 +235,10 @@ private slots:
             QVERIFY2(!QFileInfo::exists(out + QStringLiteral("/t8-ro")), what);
         };
 
-        { // --yes style skip with read-only frames and nothing typed
+        { // read-only frames and the dialog's Confirm never pressed
             HilRunRequest r = requestFor(input, check, out);
-            r.typedId.clear();
-            r.skipTyping = true;
-            expectNotRun("skipTyping, nothing typed, read-only frames", r, HilRunStatus::NotConfirmed);
-        }
-        { // skip with a wrong id
-            HilRunRequest r = requestFor(input, check, out);
-            r.typedId = QStringLiteral("anything");
-            r.skipTyping = true;
-            expectNotRun("skipTyping, wrong id", r, HilRunStatus::NotConfirmed);
-        }
-        { // other case
-            HilRunRequest r = requestFor(input, check, out);
-            r.typedId = QStringLiteral("T8-RO");
-            expectNotRun("typed id in another case", r, HilRunStatus::NotConfirmed);
-        }
-        { // a prefix / a longer id
-            HilRunRequest r = requestFor(input, check, out);
-            r.typedId = QStringLiteral("t8-r");
-            expectNotRun("typed id a prefix", r, HilRunStatus::NotConfirmed);
-            r.typedId = QStringLiteral("t8-ro-");
-            expectNotRun("typed id longer", r, HilRunStatus::NotConfirmed);
-            r.typedId = QStringLiteral("t8-ro\nx");
-            expectNotRun("typed id with a line", r, HilRunStatus::NotConfirmed);
+            r.confirmed = false;
+            expectNotRun("not confirmed, read-only frames", r, HilRunStatus::NotConfirmed);
         }
         { // no digest / another digest
             HilRunRequest r = requestFor(input, check, out);
@@ -309,13 +288,12 @@ private slots:
             HilCheckInput refusedInput = input;
             refusedInput.planPath = refused;
             HilRunRequest r = requestFor(refusedInput, check, out);
-            r.skipTyping = true;
             expectNotRun("refused plan", r, HilRunStatus::GateRefused);
         }
         QCOMPARE(listener.connectionsAfter(500), 0);
     }
 
-    void T8_theConfirmationDialogCannotBeSkippedForReadOnlyFrames() {
+    void T8_theConfirmationDialogStartsNothingUnlessConfirmIsPressed() {
         const QString dir = freshOutputDir(QStringLiteral("t8-dialog"));
         Listener listener;
         QVERIFY(listener.ok);
@@ -330,36 +308,31 @@ private slots:
         QVERIFY(!view.lastCheck().readOnlyFrames.isEmpty());
         QVERIFY(view.canRun());
 
-        bool acceptedByCall = true;
-        bool enabledAtStart = true;
-        bool skipOffered = true;
-        quint64 token = 99;
-        {
-            DialogDriver driver([&](HilConfirmDialog* d) {
-                enabledAtStart = d->acceptEnabled() || d->okButton()->isEnabled();
-                skipOffered = d->skipTypingAvailable();
-                d->setSkipTyping(true);
-                d->accept(); // programmatic accept without the typed id
-                acceptedByCall = d->result() == QDialog::Accepted;
-                QTest::keyClick(d, Qt::Key_Return);
-                QTest::keyClick(d, Qt::Key_Enter);
-                const bool stillOpen = d->isVisible();
-                if (stillOpen) {
-                    d->okButton()->click();
-                }
-                acceptedByCall = acceptedByCall || d->result() == QDialog::Accepted;
-                if (d->isVisible()) {
-                    d->reject();
-                }
-            });
-            token = view.requestRun();
-            QVERIFY(driver.seen());
+        // Escape, the window's close and Cancel all end the dialog without a run
+        for (const int how : {0, 1, 2}) {
+            bool enabledAtStart = false;
+            quint64 token = 99;
+            {
+                DialogDriver driver([&](HilConfirmDialog* d) {
+                    enabledAtStart = d->okButton()->isEnabled();
+                    if (how == 0) {
+                        QTest::keyClick(d, Qt::Key_Escape);
+                    } else if (how == 1) {
+                        d->close();
+                    } else {
+                        d->reject();
+                    }
+                    if (d->isVisible()) {
+                        d->reject();
+                    }
+                });
+                token = view.requestRun();
+                QVERIFY(driver.seen());
+            }
+            QVERIFY(enabledAtStart); // Confirm is there at once, for the operator to press or not
+            QCOMPARE(token, quint64(0));
+            QVERIFY(!view.isRunning());
         }
-        QVERIFY(!enabledAtStart);
-        QVERIFY(!skipOffered);
-        QVERIFY(!acceptedByCall);
-        QCOMPARE(token, quint64(0));
-        QVERIFY(!view.isRunning());
         QCOMPARE(listener.connectionsAfter(500), 0);
     }
 
@@ -512,12 +485,12 @@ private slots:
         askAndCheck(steady, "steady client after the churn");
     }
 
-    // ---- T-076 batch tester (tester9): skipTyping for non-loopback spellings and edited profiles --
+    // ---- T-076 batch tester (tester9): non-loopback spellings and edited profiles --
 
     // Every host spelling that is NOT loopback (all aimed at TEST-NET-1 / reserved / invalid names, never
-    // at anything real) must be refused by the runner thread when skipTyping is forced: NotConfirmed, no
+    // at anything real) must be refused by the runner thread when the dialog's Confirm is missing: NotConfirmed, no
     // capture folder, quickly (no connect attempt). A spelling the profile loader refuses is also safe.
-    void T9_noNonLoopbackSpellingGetsASkippedTyping() {
+    void T9_noNonLoopbackSpellingRunsWithoutTheConfirmation() {
         const QString dir = freshOutputDir(QStringLiteral("t9-spell"));
         const QString plan = dir + QStringLiteral("/simple.json");
         writeBytes(plan, kSimplePlan);
@@ -558,17 +531,12 @@ private slots:
                 bad.push_back(spelling + QStringLiteral(" (loopbackTcp)"));
                 continue;
             }
-            if (skipTypingAllowed(check)) {
-                bad.push_back(spelling + QStringLiteral(" (skipTypingAllowed)"));
-                continue;
-            }
             if (checkOnly) {
                 qInfo("spelling '%s': check only, loopbackTcp=0", qPrintable(spelling));
                 continue;
             }
             HilRunRequest r = requestFor(input, check, out);
-            r.typedId.clear();
-            r.skipTyping = true;
+            r.confirmed = false; // never aimed at anything non-loopback with Confirm
             QElapsedTimer timer;
             timer.start();
             HilRunResult result;
@@ -603,15 +571,15 @@ private slots:
             input.planPath = plan;
             HilCheckResult check;
             QVERIFY(checkVia(host, input, &check));
-            qInfo("profile host '%s': check ok=%d loopbackTcp=%d skipAllowed=%d", qPrintable(spelling),
-                  check.ok() ? 1 : 0, check.loopbackTcp ? 1 : 0, skipTypingAllowed(check) ? 1 : 0);
+            qInfo("profile host '%s': check ok=%d loopbackTcp=%d", qPrintable(spelling),
+                  check.ok() ? 1 : 0, check.loopbackTcp ? 1 : 0);
         }
     }
 
     // The profile changes between the check and the run: loopback -> another host / a COM profile.
-    // The runner re-derives everything, so skipTyping (and the old digest) buy nothing, through the
-    // host and through the view.
-    void T9_aProfileEditedAfterTheCheckCannotSkipTyping() {
+    // The runner re-derives everything, so the old digest buys nothing even with Confirm pressed,
+    // through the host and through the view.
+    void T9_aProfileEditedAfterTheCheckDoesNotRunOnTheOldConfirmation() {
         const QString dir = freshOutputDir(QStringLiteral("t9-edit"));
         Listener listener;
         QVERIFY(listener.ok);
@@ -626,20 +594,17 @@ private slots:
         HilCheckResult check;
         QVERIFY(checkVia(host, input, &check));
         QVERIFY2(check.ok() && check.loopbackTcp, qPrintable(check.errorText));
-        QVERIFY(skipTypingAllowed(check));
 
         // 1. host changed to TEST-NET-1 after the check
         writeProfile(dir, QStringLiteral("t9-ed"), listener.port(), 400, QStringLiteral("192.0.2.10"));
         {
             HilRunRequest r = requestFor(input, check, out);
-            r.typedId.clear();
-            r.skipTyping = true;
             HilRunResult result;
             QVERIFY(runVia(host, r, &result));
             QVERIFY2(result.status == HilRunStatus::NotConfirmed, qPrintable(result.reason));
             QVERIFY(!QFileInfo::exists(out + QStringLiteral("/t9-ed")));
         }
-        // 2. the same, as the view does it (skipTyping, no id, the stale loopback check on screen)
+        // 2. the same, as the view does it (Confirm, the stale loopback check on screen)
         {
             writeProfile(dir, QStringLiteral("t9-ed"), listener.port());
             HilView view;
@@ -652,7 +617,7 @@ private slots:
             QVERIFY(view.lastCheck().loopbackTcp);
             writeProfile(dir, QStringLiteral("t9-ed"), listener.port(), 400, QStringLiteral("192.0.2.10"));
             QSignalSpy done(&view, &HilView::runDone);
-            QVERIFY(view.runWith(QString(), true) != 0);
+            QVERIFY(view.runWith(true) != 0);
             QTRY_COMPARE_WITH_TIMEOUT(done.count(), 1, kWait);
             QVERIFY2(view.lastRun().status == HilRunStatus::NotConfirmed, qPrintable(view.lastRun().reason));
             QVERIFY(!QFileInfo::exists(out + QStringLiteral("/t9-ed")));
@@ -665,8 +630,6 @@ private slots:
             com.insert(QStringLiteral("profile"), p);
             writeBytes(profile, QJsonDocument(com).toJson());
             HilRunRequest r = requestFor(input, check, out);
-            r.typedId.clear();
-            r.skipTyping = true;
             HilRunResult result;
             QElapsedTimer timer;
             timer.start();

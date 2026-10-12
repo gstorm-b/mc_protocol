@@ -66,6 +66,10 @@ QVector<FieldInfo> buildFields() {
              {QStringLiteral("1"), QStringLiteral("1.5"), QStringLiteral("2")});
     addField(f, "transport/serial/flowControl", "Flow control", FieldKind::Enum, "Flow control",
              {QStringLiteral("None"), QStringLiteral("Hardware"), QStringLiteral("Software")});
+    addField(f, "transport/serial/dataTerminalReady", "DTR on after open", FieldKind::Bool,
+             "DTR on after open (most devices, e.g. a C24 with DTR/DSR control, need it)");
+    addField(f, "transport/serial/requestToSend", "RTS on after open", FieldKind::Bool,
+             "RTS on after open (ignored with hardware flow control)");
 
     // frame
     addField(f, "frame/frame", "Frame", FieldKind::Enum,
@@ -356,15 +360,53 @@ const QVector<FieldInfo>& ConfigBinding::fields() {
 }
 
 struct ConfigBinding::Candidate {
-    bool ok{false};
+    bool parsed{false}; // fromJson() accepted it: a well-formed edit
+    bool ok{false};     // and validate() accepted the whole configuration
     mc::McDeviceConfig cfg;
     QString message;
+    QString where; // validate()'s JSON path (dotted) when parsed && !ok
 };
 
+QString ConfigBinding::invalidAttribute() {
+    return QStringLiteral("mcInvalid");
+}
+
+namespace {
+
+// validate() names a field with a dotted JSON path ("transport.serial.portName",
+// "subscriptions[0].device"); the grid's path uses '/'. Falls back to the nearest ancestor that is
+// a field ("subscriptions"); empty when nothing matches.
+QString propertyPathFor(const QString& where) {
+    QString path = where;
+    path.replace(QLatin1Char('.'), QLatin1Char('/'));
+    while (!path.isEmpty()) {
+        const int bracket = path.indexOf(QLatin1Char('['));
+        if (bracket >= 0) {
+            path.truncate(bracket);
+        }
+        if (findField(path) != nullptr) {
+            return path;
+        }
+        const int slash = path.lastIndexOf(QLatin1Char('/'));
+        // A group named after its main field: validate() says "frame" for the field "frame/frame".
+        const QString sameName = path + QLatin1Char('/') + path.mid(slash + 1);
+        if (findField(sameName) != nullptr) {
+            return sameName;
+        }
+        if (slash < 0) {
+            break;
+        }
+        path.truncate(slash);
+    }
+    return findField(path) != nullptr ? path : QString();
+}
+
+} // namespace
+
 ConfigBinding::ConfigBinding(const mc::McDeviceConfig& cfg, QObject* parent)
-    : QObject(parent), m_config(cfg) {
+    : QObject(parent), m_config(cfg.validate() ? cfg : mc::McDeviceConfig{}) {
     buildTree();
-    syncModel();
+    setConfig(cfg);
     connect(m_model, &qpb::PropertyModel::validationFailed, this,
             [this](const QString& path, const QVariant&, const QString& message) {
                 m_lastMessage = message;
@@ -376,18 +418,51 @@ ConfigBinding::ConfigBinding(const mc::McDeviceConfig& cfg, QObject* parent)
                     return;
                 }
                 const Candidate c = candidate(path, value);
-                if (!c.ok) { // the validator accepted it a moment ago; stay consistent anyway
+                if (!c.parsed) { // the validator accepted it a moment ago; stay consistent anyway
                     syncModel();
                     return;
                 }
-                m_config = c.cfg;
                 m_lastMessage.clear();
+                m_draft = c.cfg;
+                m_draftValid = c.ok;
+                m_draftMessage = c.ok ? QString() : c.message;
+                m_draftWhere = c.ok ? QString() : propertyPathFor(c.where);
+                const bool valid = c.ok;
+                if (valid) {
+                    m_config = c.cfg;
+                }
                 syncModel();
-                emit configChanged(m_config);
+                applyDraftMark();
+                if (valid) {
+                    emit configChanged(m_config);
+                }
+                emit draftChanged();
             });
 }
 
 ConfigBinding::~ConfigBinding() = default;
+
+void ConfigBinding::applyDraftMark() {
+    if (!m_markedPath.isEmpty()) {
+        if (qpb::Property* old = m_model->find(m_markedPath)) {
+            const FieldInfo* field = findField(m_markedPath);
+            old->removeAttribute(invalidAttribute());
+            old->setDisplayName(field->label);
+            old->setToolTip(field->toolTip);
+        }
+        m_markedPath.clear();
+    }
+    if (m_draftValid || m_draftWhere.isEmpty()) {
+        return;
+    }
+    if (qpb::Property* property = m_model->find(m_draftWhere)) {
+        const FieldInfo* field = findField(m_draftWhere);
+        property->setAttribute(invalidAttribute(), m_draftMessage);
+        property->setDisplayName(field->label + QStringLiteral(" (!)"));
+        property->setToolTip(m_draftMessage);
+        m_markedPath = m_draftWhere;
+    }
+}
 
 void ConfigBinding::buildTree() {
     auto root = qpb::PropertyGroup::create(QStringLiteral("device"));
@@ -414,7 +489,8 @@ void ConfigBinding::buildTree() {
                 return qpb::ValidationResult::valid();
             }
             const Candidate c = candidate(path, value);
-            return c.ok ? qpb::ValidationResult::valid() : qpb::ValidationResult::error(c.message);
+            return c.parsed ? qpb::ValidationResult::valid()
+                            : qpb::ValidationResult::error(c.message);
         };
         const QVariant initial = toPropertyValue(field, defaults);
         switch (field.kind) {
@@ -478,7 +554,7 @@ ConfigBinding::Candidate ConfigBinding::candidate(const QString& path, const QVa
     if (!toJsonValue(*field, value, replacement, c.message)) {
         return c;
     }
-    QJsonObject json = m_config.toJson();
+    QJsonObject json = m_draft.toJson();
     setJsonAt(json, path, replacement);
     // The heartbeat device is text read in the X/Y notation of the frame; keep the device itself
     // out of the parse unless this edit is the device, so that a notation change cannot make an
@@ -494,9 +570,10 @@ ConfigBinding::Candidate ConfigBinding::candidate(const QString& path, const QVa
         c.message = libraryMessage(parsed.error(), where);
         return c;
     }
+    c.parsed = true;
     c.cfg = parsed.value();
     if (!heartbeatEdit) {
-        c.cfg.session.heartbeat.device = m_config.session.heartbeat.device;
+        c.cfg.session.heartbeat.device = m_draft.session.heartbeat.device;
     }
 
     const mc::Expected<void> valid = c.cfg.validate(&where);
@@ -505,16 +582,27 @@ ConfigBinding::Candidate ConfigBinding::candidate(const QString& path, const QVa
         return c;
     }
     c.message = libraryMessage(valid.error(), where);
+    c.where = where;
 
-    if (path == QLatin1String(kPathFrameType)) {
-        // The other frame values may belong to the old family: try that family's defaults.
+    if (path == QLatin1String(kPathFrameType) && c.where.startsWith(QLatin1String("frame"))) {
+        // The other frame values may belong to the old family: try that family's defaults. The
+        // library checks the frame first, so an alternative that fails outside "frame" has a good
+        // frame: it is kept, as valid or as a draft marked on that other field (for example the
+        // serial port name that is still empty).
         bool known = false;
         mc::McDeviceConfig alternative = c.cfg;
-        alternative.frame = presetFor(c.cfg.frame.frame, m_config.frame, known);
-        if (known && alternative.validate(&where)) {
+        alternative.frame = presetFor(c.cfg.frame.frame, m_draft.frame, known);
+        QString alternativeWhere;
+        const mc::Expected<void> alternativeValid = alternative.validate(&alternativeWhere);
+        if (known && alternativeValid) {
             c.cfg = alternative;
             c.ok = true;
             c.message.clear();
+            c.where.clear();
+        } else if (known && !alternativeWhere.startsWith(QLatin1String("frame"))) {
+            c.cfg = alternative;
+            c.message = libraryMessage(alternativeValid.error(), alternativeWhere);
+            c.where = alternativeWhere;
         }
     }
     return c;
@@ -523,7 +611,7 @@ ConfigBinding::Candidate ConfigBinding::candidate(const QString& path, const QVa
 void ConfigBinding::syncModel() {
     const bool wasSyncing = m_syncing;
     m_syncing = true;
-    const QJsonObject json = m_config.toJson();
+    const QJsonObject json = m_draft.toJson();
     m_model->beginBatch();
     for (const FieldInfo& field : fields()) {
         m_model->setValue(field.path, toPropertyValue(field, json));
@@ -535,16 +623,19 @@ void ConfigBinding::syncModel() {
 bool ConfigBinding::setConfig(const mc::McDeviceConfig& cfg, QString* message) {
     QString where;
     const mc::Expected<void> valid = cfg.validate(&where);
-    if (!valid) {
-        if (message != nullptr) {
-            *message = libraryMessage(valid.error(), where);
-        }
-        return false;
+    m_draft = cfg;
+    m_draftValid = static_cast<bool>(valid);
+    m_draftMessage = valid ? QString() : libraryMessage(valid.error(), where);
+    m_draftWhere = valid ? QString() : propertyPathFor(where);
+    if (valid) {
+        m_config = cfg;
+    } else if (message != nullptr) {
+        *message = m_draftMessage;
     }
-    m_config = cfg;
     m_lastMessage.clear();
     syncModel();
-    return true;
+    applyDraftMark();
+    return m_draftValid;
 }
 
 void ConfigBinding::setEditable(bool editable) {

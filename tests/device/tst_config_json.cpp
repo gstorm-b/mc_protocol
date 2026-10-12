@@ -73,8 +73,8 @@ const QStringList kSessionKeys = {"cycleIntervalMs",
 const QStringList kHeartbeatKeys = {"enabled", "device"};
 const QStringList kTcpKeys = {"host",     "port",      "connectTimeoutMs",
                               "lowDelay", "keepAlive", "closeGraceMs"};
-const QStringList kSerialKeys = {"portName", "baudRate", "dataBits",
-                                 "parity",   "stopBits", "flowControl"};
+const QStringList kSerialKeys = {"portName", "baudRate",    "dataBits",          "parity",
+                                 "stopBits", "flowControl", "dataTerminalReady", "requestToSend"};
 
 QStringList sortedKeys(const QJsonObject& o) {
     QStringList keys = o.keys();
@@ -151,6 +151,8 @@ mc::McDeviceConfig nonDefaultConfig() {
     c.serial.parity = QSerialPort::OddParity;
     c.serial.stopBits = QSerialPort::TwoStop;
     c.serial.flowControl = QSerialPort::HardwareControl;
+    c.serial.dataTerminalReady = false;
+    c.serial.requestToSend = false;
 
     c.subscriptions = {
         {QStringLiteral("D2000"), 64}, {QStringLiteral("M2000"), 32}, {QStringLiteral("x1F"), 1}};
@@ -223,6 +225,8 @@ void expectSame(const mc::McDeviceConfig& a, const mc::McDeviceConfig& b) {
     QCOMPARE(a.serial.parity, b.serial.parity);
     QCOMPARE(a.serial.stopBits, b.serial.stopBits);
     QCOMPARE(a.serial.flowControl, b.serial.flowControl);
+    QCOMPARE(a.serial.dataTerminalReady, b.serial.dataTerminalReady);
+    QCOMPARE(a.serial.requestToSend, b.serial.requestToSend);
     QCOMPARE(a.subscriptions.size(), b.subscriptions.size());
     for (int i = 0; i < a.subscriptions.size(); ++i) {
         QCOMPARE(a.subscriptions[i].device, b.subscriptions[i].device);
@@ -498,6 +502,11 @@ class TstConfigJson : public QObject {
                                            << "transport.serial.stopBits";
         QTest::newRow("serial.flowControl") << "transport.serial" << R"({"flowControl": "XON"})"
                                             << "transport.serial.flowControl";
+        QTest::newRow("serial.dataTerminalReady string")
+            << "transport.serial" << R"({"dataTerminalReady": "on"})"
+            << "transport.serial.dataTerminalReady";
+        QTest::newRow("serial.requestToSend number")
+            << "transport.serial" << R"({"requestToSend": 1})" << "transport.serial.requestToSend";
     }
 
     void QDV_10_wrongTypeOrValueFailsWithItsPath() {
@@ -844,6 +853,8 @@ class TstConfigJson : public QObject {
         QVERIFY(c.serial.parity == QSerialPort::EvenParity);
         QVERIFY(c.serial.stopBits == QSerialPort::OneStop);
         QVERIFY(c.serial.flowControl == QSerialPort::NoFlowControl);
+        QVERIFY(c.serial.dataTerminalReady);
+        QVERIFY(c.serial.requestToSend);
         QVERIFY(c.subscriptions.isEmpty());
     }
 
@@ -924,6 +935,28 @@ class TstConfigJson : public QObject {
         QCOMPARE(out.value("lowDelay").toBool(true), false);
         QCOMPARE(out.value("keepAlive").toBool(true), false);
         QCOMPARE(out.value("closeGraceMs").toInt(-1), 500);
+    }
+
+    void QDV_10_serialControlLineKeysDefaultToTrueAndRoundTrip() {
+        const auto missing =
+            mc::McDeviceConfig::fromJson(parseJson(R"({"transport": {"serial": {}}})"));
+        QVERIFY(missing.hasValue());
+        QVERIFY(missing.value().serial.dataTerminalReady);
+        QVERIFY(missing.value().serial.requestToSend);
+        const QJsonObject defaults =
+            mc::McDeviceConfig{}.toJson().value("transport").toObject().value("serial").toObject();
+        QCOMPARE(defaults.value("dataTerminalReady").toBool(false), true);
+        QCOMPARE(defaults.value("requestToSend").toBool(false), true);
+
+        const auto set = mc::McDeviceConfig::fromJson(parseJson(
+            R"({"transport": {"serial": {"dataTerminalReady": false, "requestToSend": false}}})"));
+        QVERIFY(set.hasValue());
+        QVERIFY(!set.value().serial.dataTerminalReady);
+        QVERIFY(!set.value().serial.requestToSend);
+        const QJsonObject out =
+            set.value().toJson().value("transport").toObject().value("serial").toObject();
+        QCOMPARE(out.value("dataTerminalReady").toBool(true), false);
+        QCOMPARE(out.value("requestToSend").toBool(true), false);
     }
 
     void QDV_10_closeGraceMsOutsideZeroToSixtyThousandNamesItsPath() {

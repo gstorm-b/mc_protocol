@@ -53,7 +53,7 @@ Workspace WorkspaceController::capture() const {
         if (const DeviceTab* tab = devices->deviceAt(i)) {
             WorkspaceDevice device;
             device.name = tab->name();
-            device.config = tab->binding()->config();
+            device.config = tab->binding()->draft(); // a draft is saved as typed
             ws.devices.push_back(device);
         }
     }

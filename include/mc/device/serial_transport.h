@@ -29,6 +29,8 @@ struct SerialSettings {
     QSerialPort::Parity parity{QSerialPort::EvenParity};              ///< Parity check.
     QSerialPort::StopBits stopBits{QSerialPort::OneStop};             ///< Stop bits.
     QSerialPort::FlowControl flowControl{QSerialPort::NoFlowControl}; ///< Flow control.
+    bool dataTerminalReady{true}; ///< Assert DTR once the port is open; false keeps it off.
+    bool requestToSend{true};     ///< Assert RTS once open; ignored with HardwareControl.
 };
 
 /**
@@ -41,6 +43,13 @@ struct SerialSettings {
  * keeps the Transport default, false. A serial line has no peer that could close it, and a
  * parameter mismatch with the PLC is not an error here: it shows up as timeouts or NAKs in the
  * Session.
+ *
+ * Right after the port opens, and before opened(), the transport asserts DTR when
+ * SerialSettings::dataTerminalReady is set and RTS when SerialSettings::requestToSend is set and
+ * the flow control is not hardware (the driver owns RTS then). DTR set to false is cleared
+ * explicitly, because the port may open with it asserted; RTS set to false is left as the port
+ * opened it. A refused line is not an error: the port stays open and the
+ * transport has no log path, so the refusal goes unreported.
  *
  * Nothing blocks: every call returns at once and outcomes arrive as signals.
  *

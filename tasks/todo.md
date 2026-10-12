@@ -1018,6 +1018,14 @@ Known issues, noted only (owner 2026-10-04: no task):
   has no automated test (`qt_console_poller` cannot set the session config); QDV-19's stuck-peer case is
   verified on Windows only; `gui.mc_workbench_tests` runs 67–91 s against the 120 s ctest timeout and timed
   out once under five parallel builds (passed alone).
+- T-084..T-086 batch (LOW, documented): QDV-20 cannot prove DTR-true is needed (com0com: Qt's open already asserts
+  DTR) and the HardwareControl RTS guard is invisible (mutant survives) — proof needs the real adapter + C24; RTS false is
+  left untouched (a driver opening with RTS asserted keeps it); a refused control line is not logged (no transport log
+  path); Confirm for other-host and COM profiles is tested only up to the confirmation (no real transport opened);
+  `HilView::runWith(bool)` is a public test seam; the draft frame fallback relies on `validate()` checking the frame
+  first, and "always take the family defaults" survives as a mutant (only the shown draft differs); a valid edit clears
+  an unrelated message line; some added lines not clang-format clean in files that were not clean before; the Qt 5.15.0
+  COM re-open "Access is denied" flake also hits QDV-14/QDV-20 now and then.
 - LOW from the T-075..T-077 review: `localhost` is trusted by name; one GUI interleave case relies on a
   3 ms pause; two doc-comment format nits (`hil_types.h:62` width, `mock_runner.h` `///` vs `///<`).
 
@@ -1071,6 +1079,20 @@ Details and acceptance criteria in the baton files `tasks/done/T-081.md`, `T-082
 - [x] Owner: v0.1.1 pre-release (2026-10-09: built, tagged, bundled; published as a GitHub pre-release with the bundle)
 - [ ] Owner: forward the guide doc "mc 0.1.1 Reconnect Fix Guide" (leader, 2026-10-09) to the app team (bench steps: `firstResponseTimeoutMs`, `closeGraceMs`, PLC existence
   confirmation, Wireshark trace)
+
+---
+
+## Bench follow-up (owner 2026-10-12; leader gates as Phase 8)
+
+Details in `tasks/done/T-084.md`, `T-085.md`, `T-086.md`; spec amendments in `SPEC-qt-device.md` ("Serial control
+lines", QDV-20) and `SPEC-gui-tool.md` (HIL runner row, GUI-06, GUI-07).
+
+- [x] T-084 Serial DTR/RTS on by default, settings to keep them off
+- [x] T-085 GUI config drafts (TCP → Serial switch)
+- [x] T-086 HIL Confirm button
+- [x] Batch tester and reviewer; one commit; `CHANGELOG.md` `Unreleased`
+- [ ] Owner: re-capture the Q03UDE serial profiles with Y removed from scratch (Y0–Y7 = QJ71C24N I/O), Y0–Y7 reset and
+  CH1 ERR cleared; fill the `FILL:` notes of `run.meta` (firmware, adapter)
 
 ---
 

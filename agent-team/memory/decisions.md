@@ -3,6 +3,10 @@
 Curated by the team leader. One entry, one decision, newest first.
 Format: `- [T-xxx or date] Decision — why. (supersedes: entry, if any)`
 
+- [2026-10-12] Owner: QJ71C24N I/O starts at Y0 on the bench (Y0–Y7 were never a safe scratch; Q03UDE captures to be
+  redone). T-084 `SerialSettings::dataTerminalReady` / `requestToSend`, default true (QSerialPort opens Windows ports
+  with DTR off; a C24 with DTR/DSR control stays silent); T-085 GUI keeps an invalid config as a marked draft, Connect
+  disabled; T-086 HIL runs confirmed by one Confirm button for every profile (supersedes decision C, 2026-10-04).
 - [2026-10-09] Owner allowed publishing v0.1.1 with their account: `main` and tag `v0.1.1` pushed to
   gstorm-b/mc_protocol, GitHub pre-release with `mc_protocol-v0.1.1.bundle`; gh back to dev39-hash. A guide doc for the
   app team ("mc 0.1.1 Reconnect Fix Guide") was written for the owner to forward.

@@ -42,8 +42,9 @@ class TrendWidget;
 /**
  * @brief The "Device tab" row of the spec's Functions table.
  *
- * Shows the `McDeviceConfig` in a qpb grid (every edit checked with the library's `validate()`;
- * a refused edit keeps the old value and shows the library's message), connect / disconnect, the
+ * Shows the `McDeviceConfig` in a qpb grid (a malformed edit is refused with the library's message;
+ * a config that fails `validate()` is kept as a marked draft and Connect stays disabled, the runner
+ * only gets valid configs), connect / disconnect, the
  * link state and the last fault, the subscribed points with live values (changed values
  * highlighted), a trend of ticked points and a console for ad-hoc reads and writes with their
  * token and request id.
@@ -104,6 +105,14 @@ public:
     /// @return Plain text.
     QString message() const;
 
+    /// @brief Whether the Connect button is enabled: Disconnected and the draft is valid.
+    /// @return true when the user can connect.
+    bool connectEnabled() const;
+
+    /// @brief The Connect button's tool tip: the draft's message while it is invalid, else empty.
+    /// @return Plain text.
+    QString connectToolTip() const;
+
     /// @brief The link state line (state, reason and detail) next to the buttons.
     /// @return Plain text.
     QString linkStatusText() const;
@@ -117,11 +126,14 @@ public:
     int runtimeSubscriptionCount() const;
 
     /**
-     * @brief Loads a whole configuration into the grid and sends it to the runner.
-     * @param[in] cfg The configuration.
-     * @param[out] error Optional. The library's message when @p cfg is refused, or why the tab
-     *             could not apply it (the link is not Disconnected).
-     * @return true when it was loaded and sent; `configApplied()` reports the runner's answer.
+     * @brief Loads a whole configuration into the grid; a valid one is sent to the runner.
+     * @param[in] cfg The configuration. One that fails `validate()` is loaded as a draft: the
+     *            failing field is marked, Connect stays disabled and the runner keeps its
+     *            configuration.
+     * @param[out] error Optional. The library's message when @p cfg is a draft, or why the tab
+     *             could not load it (the link is not Disconnected; then false is returned).
+     * @return true when it was loaded (valid and sent, or as a draft); `configApplied()` reports
+     *         the runner's answer for a valid one.
      */
     bool setConfig(const mc::McDeviceConfig& cfg, QString* error = nullptr);
 
@@ -178,6 +190,7 @@ private:
     void onCommandDone(const CommandResult& result);
     void showMessage(const QString& text, bool isError);
     void updateButtons();
+    void onDraftChanged();
     void onSendClicked();
     void onAddSubscription();
     void onRemoveSubscription();

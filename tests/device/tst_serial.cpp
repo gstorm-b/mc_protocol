@@ -209,6 +209,80 @@ class TstSerial : public QObject {
         QCOMPARE(lost.count(), 0); // close() never reports a loss
     }
 
+    // QDV-20: control lines. The pair is wired DTR -> peer DSR and RTS -> peer CTS.
+    void QDV_20_controlLinesFollowTheSettings_data() {
+        QTest::addColumn<bool>("dtr");
+        QTest::addColumn<bool>("rts");
+        QTest::addColumn<int>("flow");
+        QTest::addColumn<bool>("expectDsr");
+        QTest::addColumn<bool>("expectCts");
+        QTest::addColumn<bool>("checkCts");
+        const int none = QSerialPort::NoFlowControl;
+        const int hardware = QSerialPort::HardwareControl;
+        QTest::newRow("defaults assert both") << true << true << none << true << true << true;
+        QTest::newRow("dtr false") << false << true << none << false << true << true;
+        QTest::newRow("rts false") << true << false << none << true << false << true;
+        QTest::newRow("both false") << false << false << none << false << false << true;
+        // With hardware flow control the driver owns RTS, so CTS is not asserted either way.
+        QTest::newRow("hardware flow") << true << true << hardware << true << false << false;
+    }
+
+    void QDV_20_controlLinesFollowTheSettings() {
+        const std::optional<SerialPairNames> pair = serialPairFromEnvironment();
+        if (!pair) {
+            QSKIP(kNoPair);
+        }
+        QFETCH(bool, dtr);
+        QFETCH(bool, rts);
+        QFETCH(int, flow);
+        QFETCH(bool, expectDsr);
+        QFETCH(bool, expectCts);
+        QFETCH(bool, checkCts);
+
+        mc::SerialSettings line = lineFor(pair->devicePort);
+        line.dataTerminalReady = dtr;
+        line.requestToSend = rts;
+        line.flowControl = static_cast<QSerialPort::FlowControl>(flow);
+
+        QSerialPort peer;
+        peer.setPortName(pair->bridgePort);
+        peer.setBaudRate(line.baudRate);
+        peer.setDataBits(line.dataBits);
+        peer.setParity(line.parity);
+        peer.setStopBits(line.stopBits);
+        QVERIFY2(peer.open(QIODevice::ReadWrite), qPrintable(peer.errorString()));
+        // The previous row's close must have dropped the lines before this one starts.
+        QTRY_VERIFY_WITH_TIMEOUT(!(peer.pinoutSignals() & (QSerialPort::DataSetReadySignal |
+                                                           QSerialPort::ClearToSendSignal)),
+                                 kWaitMs);
+
+        mc::SerialTransport transport(line);
+        QSignalSpy opened(&transport, &mc::Transport::opened);
+        QSignalSpy failed(&transport, &mc::Transport::openFailed);
+        transport.open();
+        QTRY_COMPARE_WITH_TIMEOUT(opened.count(), 1, kWaitMs);
+        QCOMPARE(failed.count(), 0);
+
+        if (expectDsr) {
+            QTRY_VERIFY_WITH_TIMEOUT(peer.pinoutSignals() & QSerialPort::DataSetReadySignal,
+                                     kWaitMs);
+        } else {
+            QTest::qWait(150); // bounded negative wait: the line must stay off
+            QVERIFY(!(peer.pinoutSignals() & QSerialPort::DataSetReadySignal));
+        }
+        if (checkCts) {
+            if (expectCts) {
+                QTRY_VERIFY_WITH_TIMEOUT(peer.pinoutSignals() & QSerialPort::ClearToSendSignal,
+                                         kWaitMs);
+            } else {
+                QTest::qWait(150);
+                QVERIFY(!(peer.pinoutSignals() & QSerialPort::ClearToSendSignal));
+            }
+        }
+        transport.close();
+        QCOMPARE(transport.state(), mc::Transport::State::Closed);
+    }
+
     void QDV_14_threeCFormat4OverAComPair() {
         const std::optional<SerialPairNames> pair = serialPairFromEnvironment();
         if (!pair) {

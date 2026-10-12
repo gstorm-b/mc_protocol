@@ -6,6 +6,26 @@ All notable changes to this project are documented in this file. The format foll
 
 ## [Unreleased]
 
+### Added
+
+- `SerialSettings::dataTerminalReady` and `requestToSend` (JSON `transport.serial.dataTerminalReady` /
+  `requestToSend`, default `true`): `SerialTransport` asserts DTR, and RTS unless hardware flow control is used,
+  right after the port opens. A QJ71C24N with DTR/DSR control (its RS-232 default) behind a USB adapter stayed
+  silent because QSerialPort opens a Windows port with DTR off. `false` keeps the line off (DTR is then cleared
+  explicitly). A line Qt refuses to set does not fail the open.
+- `mc_workbench`: the config grid keeps a config that fails `validate()` as a **draft**. The failing field is
+  marked (" (!)" and its message), Connect is disabled until the draft is valid, and the runner only ever gets a
+  valid config. Switching TCP → Serial with an empty port name is now possible. Workspaces save and restore drafts.
+
+### Changed
+
+- **Behaviour change:** serial ports now assert DTR (and RTS) by default; set the two settings to `false` for the
+  0.1.1 behaviour.
+- `mc_workbench` HIL runner: a run is confirmed with one **Confirm** button for every profile; the typed profile id
+  and the loopback-only skip box are gone. The dialog shows the profile, the endpoint, the scratch areas and the
+  dry run; Cancel is the default button. The safety gate is unchanged, and the `hil_capture` command line keeps its
+  prompt and `--yes`.
+
 ## [0.1.1] - 2026-10-09
 
 Second pre-release (owner, 2026-10-09). Follows a field report on 0.1.0 (3E over TCP: after a cable

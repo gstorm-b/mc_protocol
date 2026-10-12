@@ -2,8 +2,9 @@
 // McDeviceConfig, and a device tab driven offscreen against a MockRunner.
 //
 // GUI-06: every field of McDeviceConfig has a property, every field round-trips through the grid,
-// every field is editable, and a value the library refuses is rejected with the library's own
-// validate() message and not applied. The tab cases connect a DeviceTab (its McDevice lives on a
+// every field is editable, a malformed value (what fromJson() refuses) is rejected with the library's
+// message, and a config that only fails validate() is kept as a marked draft (amended 2026-10-12,
+// T-085). The tab cases connect a DeviceTab (its McDevice lives on a
 // runner thread) to a MockHost, subscribe, watch values and a trend sample, and run an ad-hoc
 // write with a read-back; a console, trend and pane check complete the picture.
 #include "gui_suites.h"
@@ -229,8 +230,9 @@ private slots:
     }
 
     // GUI-06: every field is editable. For each field, each alternative value is either accepted
-    // (config() carries it, configChanged fires once) or rejected with a message and leaves the
-    // value and the configuration as they were; each field accepts at least one alternative.
+    // (config() carries it and configChanged fires once; or, when validate() refuses the whole, it is
+    // kept as a draft: config() unchanged, no configChanged) or rejected with a message and leaves
+    // the value and the configuration as they were; each field accepts at least one alternative.
     void GUI_06_everyFieldIsEditableAndRefusalsLeaveEverythingUnchanged() {
         const mc::McDeviceConfig base = baseConfig();
         ConfigBinding binding(base);
@@ -284,11 +286,18 @@ private slots:
                 if (took) {
                     ++accepted;
                     ++acceptedHere;
-                    QCOMPARE(changed.count(), 1);
-                    QVERIFY2(binding.config().toJson() != before, qPrintable(field.path));
+                    const QJsonObject shown = binding.draft().toJson();
+                    QVERIFY2(shown != before, qPrintable(field.path));
+                    if (binding.draftValid()) {
+                        QCOMPARE(changed.count(), 1);
+                        QCOMPARE(binding.config().toJson(), shown);
+                    } else { // a draft: the runner-side config stays
+                        QCOMPARE(changed.count(), 0);
+                        QCOMPARE(binding.config().toJson(), before);
+                        QVERIFY2(!binding.draftMessage().isEmpty(), qPrintable(field.path));
+                    }
                     if (field.kind != FieldKind::Subscriptions) {
-                        QCOMPARE(jsonText(jsonAt(binding.config().toJson(), field.path)),
-                                 value.toString());
+                        QCOMPARE(jsonText(jsonAt(shown, field.path)), value.toString());
                     }
                 } else {
                     ++rejected;
@@ -296,6 +305,7 @@ private slots:
                     QVERIFY2(refused.count() >= 1, qPrintable(field.path));
                     QVERIFY2(!refused.last().at(1).toString().isEmpty(), qPrintable(field.path));
                     QCOMPARE(binding.config().toJson(), before);
+                    QCOMPARE(binding.draft().toJson(), before);
                 }
             }
             QVERIFY2(acceptedHere >= 1, qPrintable(field.path));
@@ -304,62 +314,182 @@ private slots:
         QVERIFY(rejected >= 0);
     }
 
-    // GUI-06: a value the library refuses shows the library's message (with the field path it
-    // names), keeps the old value in the grid, and does not reach config().
-    void GUI_06_invalidValuesShowTheLibraryMessageAndAreNotApplied() {
+    // GUI-06: a malformed value (what fromJson() refuses) shows the library's message, keeps the old
+    // value in the grid, and changes neither draft() nor config().
+    void GUI_06_malformedValuesShowTheLibraryMessageAndAreNotApplied() {
         ConfigBinding binding;
         const QJsonObject before = binding.config().toJson();
         QSignalSpy changed(&binding, &ConfigBinding::configChanged);
+        QSignalSpy draftSignal(&binding, &ConfigBinding::draftChanged);
         QSignalSpy refused(&binding, &ConfigBinding::rejected);
-
-        // validate(): "TCP port is 0" at transport.tcp.port
-        QVERIFY(!binding.model()->setValue(QStringLiteral("transport/tcp/port"), 0));
-        QCOMPARE(refused.count(), 1);
-        const QString portMessage = refused.last().at(1).toString();
-        QVERIFY2(portMessage.contains(QStringLiteral("TCP port is 0")), qPrintable(portMessage));
-        QVERIFY2(portMessage.contains(QStringLiteral("transport.tcp.port")), qPrintable(portMessage));
-        QCOMPARE(binding.lastMessage(), portMessage);
-        QCOMPARE(binding.model()->find(QStringLiteral("transport/tcp/port"))->value().toInt(), 5000);
-
-        // validate(): an empty host
-        QVERIFY(!binding.model()->setValue(QStringLiteral("transport/tcp/host"), QStringLiteral("")));
-        QVERIFY2(refused.last().at(1).toString().contains(QStringLiteral("TCP host is empty")),
-                 qPrintable(refused.last().at(1).toString()));
-
-        // the Session's rule: at least one link error
-        QVERIFY(!binding.model()->setValue(QStringLiteral("session/maxConsecutiveLinkErrors"), 0));
-        QVERIFY2(refused.last().at(1).toString().contains(QStringLiteral("session.maxConsecutiveLinkErrors")),
-                 qPrintable(refused.last().at(1).toString()));
 
         // fromJson(): a heartbeat device that is not a device, a max gap that is not a number
         QVERIFY(!binding.model()->setValue(QStringLiteral("session/heartbeat/device"), QStringLiteral("ZZ9")));
         QVERIFY2(refused.last().at(1).toString().contains(QStringLiteral("not a device")),
                  qPrintable(refused.last().at(1).toString()));
+        QCOMPARE(binding.lastMessage(), refused.last().at(1).toString());
         QVERIFY(!binding.model()->setValue(QStringLiteral("session/maxGap"), QStringLiteral("many")));
         QVERIFY2(refused.last().at(1).toString().contains(QStringLiteral("auto")),
                  qPrintable(refused.last().at(1).toString()));
 
-        // a subscription the frame cannot carry, and text that is no subscription at all
-        QVERIFY(!binding.model()->setValue(QStringLiteral("subscriptions"), QStringLiteral("D100:0")));
-        QVERIFY2(refused.last().at(1).toString().contains(QStringLiteral("subscriptions[0].count")),
-                 qPrintable(refused.last().at(1).toString()));
+        // text that is no subscription at all
         QVERIFY(!binding.model()->setValue(QStringLiteral("subscriptions"), QStringLiteral("D100:four")));
         QVERIFY2(refused.last().at(1).toString().contains(QStringLiteral("DEVICE:COUNT")),
                  qPrintable(refused.last().at(1).toString()));
 
-        // a reserved frame family
-        QVERIFY(!binding.model()->setValue(QStringLiteral("frame/frame"), QStringLiteral("4E")));
-
+        QCOMPARE(refused.count(), 3);
         QCOMPARE(changed.count(), 0);
+        QCOMPARE(draftSignal.count(), 0);
+        QVERIFY(binding.draftValid());
         QCOMPARE(binding.config().toJson(), before);
+        QCOMPARE(binding.draft().toJson(), before);
+    }
 
-        // setConfig() refuses an invalid whole configuration the same way.
+    // GUI-06 (amended): a value that parses but fails validate() is kept as a draft. The failing field
+    // is marked with the library's message, config() keeps the last valid configuration and no
+    // configChanged is emitted for the draft; fixing the value makes the draft valid again.
+    void GUI_06_valuesThatFailValidateAreKeptAsADraftAndMarked() {
+        ConfigBinding binding;
+        const QJsonObject valid = binding.config().toJson();
+        QSignalSpy changed(&binding, &ConfigBinding::configChanged);
+        QSignalSpy draftSignal(&binding, &ConfigBinding::draftChanged);
+        QSignalSpy refused(&binding, &ConfigBinding::rejected);
+        const QString attr = ConfigBinding::invalidAttribute();
+
+        struct Case {
+            const char* path;
+            QVariant bad;
+            QVariant good;
+            const char* text;  // in the message
+            const char* where; // property path of the mark
+        };
+        const Case cases[] = {
+            {"transport/tcp/port", 0, 5000, "TCP port is 0", "transport/tcp/port"},
+            {"transport/tcp/host", QStringLiteral(""), QStringLiteral("192.168.0.1"), "TCP host is empty",
+             "transport/tcp/host"},
+            {"session/maxConsecutiveLinkErrors", 0, 3, "maxConsecutiveLinkErrors",
+             "session/maxConsecutiveLinkErrors"},
+            {"subscriptions", QStringLiteral("D100:0"), QStringLiteral(""), "subscriptions[0].count",
+             "subscriptions"},
+        };
+        int round = 0;
+        for (const Case& c : cases) {
+            const QString path = QString::fromLatin1(c.path);
+            QVERIFY2(binding.model()->setValue(path, c.bad), c.path); // accepted: a draft
+            ++round;
+            QVERIFY2(!binding.draftValid(), c.path);
+            QVERIFY2(binding.draftMessage().contains(QLatin1String(c.text)), qPrintable(binding.draftMessage()));
+            QCOMPARE(binding.draftWhere(), QString::fromLatin1(c.where));
+            QCOMPARE(binding.config().toJson(), valid); // the last valid one
+            QVERIFY(binding.draft().toJson() != valid);
+            QCOMPARE(draftSignal.count(), 2 * round - 1);
+            // The grid shows the draft and marks the failing field.
+            const qpb::Property* property = binding.model()->find(path);
+            QCOMPARE(property->attribute(attr).toString(), binding.draftMessage());
+            QCOMPARE(property->toolTip(), binding.draftMessage());
+            QVERIFY(property->displayName().endsWith(QStringLiteral("(!)")));
+
+            QVERIFY2(binding.model()->setValue(path, c.good), c.path); // fixed
+            QVERIFY2(binding.draftValid(), c.path);
+            QVERIFY(binding.draftMessage().isEmpty());
+            QVERIFY(binding.draftWhere().isEmpty());
+            QCOMPARE(binding.config().toJson(), valid);
+            QVERIFY(!property->hasAttribute(attr));
+            QVERIFY(!property->displayName().endsWith(QStringLiteral("(!)")));
+            QCOMPARE(draftSignal.count(), 2 * round);
+        }
+        // configChanged fired only for the fixes, never for a draft.
+        QCOMPARE(changed.count(), 4);
+        QCOMPARE(refused.count(), 0);
+
+        // A reserved frame family is a draft too, marked on the frame field.
+        QVERIFY(binding.model()->setValue(QStringLiteral("frame/frame"), QStringLiteral("4E")));
+        QVERIFY(!binding.draftValid());
+        QCOMPARE(binding.draftWhere(), QStringLiteral("frame/frame"));
+        QCOMPARE(binding.config().toJson(), valid);
+        QCOMPARE(changed.count(), 4);
+
+        // setConfig() with an invalid whole configuration loads it as a draft, marked, and says so.
         mc::McDeviceConfig bad;
         bad.tcp.port = 0;
         QString message;
         QVERIFY(!binding.setConfig(bad, &message));
         QVERIFY2(message.contains(QStringLiteral("TCP port is 0")), qPrintable(message));
-        QCOMPARE(binding.config().toJson(), before);
+        QCOMPARE(binding.config().toJson(), valid);
+        QCOMPARE(binding.draft().tcp.port, quint16(0));
+        QVERIFY(!binding.draftValid());
+        QCOMPARE(binding.draftWhere(), QStringLiteral("transport/tcp/port"));
+        QVERIFY(binding.model()->find(QStringLiteral("transport/tcp/port"))->hasAttribute(attr));
+        QVERIFY(!binding.model()->find(QStringLiteral("frame/frame"))->hasAttribute(attr)); // the mark moved
+        // A valid configuration clears the draft.
+        QVERIFY(binding.setConfig(mc::McDeviceConfig{}));
+        QVERIFY(binding.draftValid());
+        QVERIFY(!binding.model()->find(QStringLiteral("transport/tcp/port"))->hasAttribute(attr));
+
+        // A binding built from an invalid configuration starts as a draft.
+        ConfigBinding fresh(bad);
+        QVERIFY(!fresh.draftValid());
+        QCOMPARE(fresh.draft().tcp.port, quint16(0));
+        QCOMPARE(fresh.config().toJson(), mc::McDeviceConfig{}.toJson());
+    }
+
+    // GUI-06 (amended): TCP to Serial with the empty default port name. The kind edit is accepted as
+    // a draft and the Serial fields are editable at once; entering a port makes it valid.
+    void GUI_06_tcpToSerialWithAnEmptyPortNameIsADraftUntilThePortIsEntered() {
+        ConfigBinding binding;
+        const QJsonObject valid = binding.config().toJson();
+        QSignalSpy changed(&binding, &ConfigBinding::configChanged);
+        QSignalSpy refused(&binding, &ConfigBinding::rejected);
+        qpb::PropertyModel* model = binding.model();
+        const QString attr = ConfigBinding::invalidAttribute();
+        QVERIFY(!model->find(QStringLiteral("transport/serial/portName"))->isEnabled());
+
+        QVERIFY(model->setValue(QStringLiteral("transport/kind"), QStringLiteral("Serial")));
+        QCOMPARE(refused.count(), 0);
+        QVERIFY(!binding.draftValid());
+        QCOMPARE(binding.draftWhere(), QStringLiteral("transport/serial/portName"));
+        QCOMPARE(binding.config().toJson(), valid);
+        QCOMPARE(changed.count(), 0);
+        QCOMPARE(binding.draft().transport, mc::TransportKind::Serial);
+        QVERIFY(model->find(QStringLiteral("transport/serial/portName"))->isEnabled());
+        QVERIFY(!model->find(QStringLiteral("transport/tcp/host"))->isEnabled());
+        QVERIFY(model->find(QStringLiteral("transport/serial/portName"))->hasAttribute(attr));
+
+        QVERIFY(model->setValue(QStringLiteral("transport/serial/portName"), QStringLiteral("COM54")));
+        QVERIFY(binding.draftValid());
+        QCOMPARE(changed.count(), 1);
+        QCOMPARE(binding.config().transport, mc::TransportKind::Serial);
+        QCOMPARE(binding.config().serial.portName, QStringLiteral("COM54"));
+        QVERIFY(!model->find(QStringLiteral("transport/serial/portName"))->hasAttribute(attr));
+
+        // Serial to TCP with an empty host behaves the same way.
+        QVERIFY(model->setValue(QStringLiteral("transport/tcp/host"), QStringLiteral(""))); // inactive: valid
+        QVERIFY(binding.draftValid());
+        QCOMPARE(changed.count(), 2);
+        const QJsonObject serialValid = binding.config().toJson();
+        QVERIFY(model->setValue(QStringLiteral("transport/kind"), QStringLiteral("Tcp")));
+        QVERIFY(!binding.draftValid());
+        QCOMPARE(binding.draftWhere(), QStringLiteral("transport/tcp/host"));
+        QCOMPARE(binding.config().toJson(), serialValid);
+        QCOMPARE(changed.count(), 2);
+        QVERIFY(model->find(QStringLiteral("transport/tcp/host"))->isEnabled());
+        QVERIFY(model->setValue(QStringLiteral("transport/tcp/host"), QStringLiteral("10.0.0.5")));
+        QVERIFY(binding.draftValid());
+        QCOMPARE(changed.count(), 3);
+        QCOMPARE(binding.config().transport, mc::TransportKind::Tcp);
+        QCOMPARE(binding.config().tcp.host, QStringLiteral("10.0.0.5"));
+
+        // A malformed edit while a draft exists is still refused and leaves the draft as it was.
+        QVERIFY(model->setValue(QStringLiteral("transport/kind"), QStringLiteral("Serial")));
+        QVERIFY(model->setValue(QStringLiteral("transport/serial/portName"), QStringLiteral("")));
+        QVERIFY(!binding.draftValid());
+        const QJsonObject draftBefore = binding.draft().toJson();
+        const QString messageBefore = binding.draftMessage();
+        QVERIFY(!model->setValue(QStringLiteral("session/heartbeat/device"), QStringLiteral("ZZ9")));
+        QCOMPARE(refused.count(), 1);
+        QCOMPARE(binding.draft().toJson(), draftBefore);
+        QCOMPARE(binding.draftMessage(), messageBefore);
+        QVERIFY(!binding.draftValid());
     }
 
     // Choosing another frame family loads that family's defaults when the old values do not fit.
@@ -375,9 +505,166 @@ private slots:
                  QStringLiteral("Ascii"));
     }
 
-    // The tab sends an accepted edit to its runner and keeps the previous configuration when an
-    // edit is refused: the refused port never reaches the device, so it still connects.
-    void GUI_06_tabAppliesAcceptedEditsAndKeepsTheOldConfigOnRefusal() {
+    // GUI-06 (amended): the frame-family defaults also load while another field keeps the draft
+    // invalid (Serial with an empty port name); the draft is then marked on that other field. The
+    // order of the two edits does not matter.
+    void GUI_06_draftSurvivesUnrelatedEditsAndAFrameChangeInEitherOrder() {
+        for (const bool serialFirst : {true, false}) {
+            ConfigBinding binding;
+            QSignalSpy changed(&binding, &ConfigBinding::configChanged);
+            qpb::PropertyModel* model = binding.model();
+            if (serialFirst) {
+                QVERIFY(model->setValue(QStringLiteral("transport/kind"), QStringLiteral("Serial")));
+                QVERIFY(!binding.draftValid());
+                QVERIFY(model->setValue(QStringLiteral("session/cycleIntervalMs"),
+                                        static_cast<qint64>(20)));
+                QVERIFY(!binding.draftValid());
+                QCOMPARE(changed.count(), 0);
+                QCOMPARE(binding.draft().session.cycleIntervalMs, 20);
+                QVERIFY(model->setValue(QStringLiteral("frame/frame"), QStringLiteral("3C")));
+            } else {
+                QVERIFY(model->setValue(QStringLiteral("frame/frame"), QStringLiteral("3C")));
+                QVERIFY(binding.draftValid());
+                QCOMPARE(changed.count(), 1);
+                QVERIFY(model->setValue(QStringLiteral("session/cycleIntervalMs"),
+                                        static_cast<qint64>(20)));
+                QCOMPARE(changed.count(), 2);
+                QVERIFY(model->setValue(QStringLiteral("transport/kind"), QStringLiteral("Serial")));
+            }
+            QVERIFY(!binding.draftValid());
+            QCOMPARE(binding.draftWhere(), QStringLiteral("transport/serial/portName"));
+            QCOMPARE(binding.draft().frame.frame, mc::FrameType::F3C);
+            QCOMPARE(binding.draft().frame.code, mc::DataCode::Ascii);
+            QVERIFY(binding.draft().frame.validate());
+            QCOMPARE(binding.config().transport, mc::TransportKind::Tcp);
+            QVERIFY(model->find(QStringLiteral("transport/serial/portName"))
+                        ->hasAttribute(ConfigBinding::invalidAttribute()));
+            QVERIFY(!model->find(QStringLiteral("frame/frame"))
+                         ->hasAttribute(ConfigBinding::invalidAttribute()));
+            const int before = changed.count();
+
+            QVERIFY(model->setValue(QStringLiteral("transport/serial/portName"),
+                                    QStringLiteral("COM54")));
+            QVERIFY(binding.draftValid());
+            QCOMPARE(changed.count(), before + 1);
+            QCOMPARE(binding.config().session.cycleIntervalMs, 20);
+            QCOMPARE(binding.config().transport, mc::TransportKind::Serial);
+            QCOMPARE(binding.config().frame.frame, mc::FrameType::F3C);
+            QCOMPARE(binding.config().frame.code, mc::DataCode::Ascii);
+            QCOMPARE(binding.config().toJson(), binding.draft().toJson());
+        }
+    }
+
+    // GUI-06 (amended): the mark follows the failing field and is removed when the draft is valid.
+    void GUI_06_theMarkIsClearedAndMovesWithTheFailingField() {
+        ConfigBinding binding;
+        qpb::PropertyModel* model = binding.model();
+        const QString attr = ConfigBinding::invalidAttribute();
+        qpb::Property* host = model->find(QStringLiteral("transport/tcp/host"));
+        qpb::Property* port = model->find(QStringLiteral("transport/serial/portName"));
+        const QString hostName = host->displayName();
+        const QString hostTip = host->toolTip();
+        const QString portName = port->displayName();
+        const QString portTip = port->toolTip();
+        QVERIFY(!hostName.contains(QStringLiteral("(!)")));
+
+        QVERIFY(model->setValue(QStringLiteral("transport/tcp/host"), QStringLiteral("")));
+        QVERIFY(!binding.draftValid());
+        QVERIFY(host->hasAttribute(attr));
+        QVERIFY(host->displayName().contains(QStringLiteral("(!)")));
+        QCOMPARE(host->toolTip(), binding.draftMessage());
+
+        // The failing field moves: Serial is selected while the TCP host is still empty (inactive).
+        QVERIFY(model->setValue(QStringLiteral("transport/kind"), QStringLiteral("Serial")));
+        QVERIFY(!binding.draftValid());
+        QCOMPARE(binding.draftWhere(), QStringLiteral("transport/serial/portName"));
+        QVERIFY(!host->hasAttribute(attr));
+        QCOMPARE(host->displayName(), hostName);
+        QCOMPARE(host->toolTip(), hostTip);
+        QVERIFY(port->hasAttribute(attr));
+
+        QVERIFY(model->setValue(QStringLiteral("transport/serial/portName"), QStringLiteral("COM9")));
+        QVERIFY(binding.draftValid());
+        QVERIFY(!port->hasAttribute(attr));
+        QCOMPARE(port->displayName(), portName);
+        QCOMPARE(port->toolTip(), portTip);
+
+        // setConfig() with a valid configuration over an invalid draft clears the mark too.
+        QVERIFY(model->setValue(QStringLiteral("transport/serial/portName"), QStringLiteral("")));
+        QVERIFY(port->hasAttribute(attr));
+        QVERIFY(binding.setConfig(mc::McDeviceConfig{}));
+        QVERIFY(!port->hasAttribute(attr));
+        QCOMPARE(port->displayName(), portName);
+        QVERIFY(binding.draftValid());
+        QVERIFY(binding.draftMessage().isEmpty());
+        QVERIFY(binding.draftWhere().isEmpty());
+    }
+
+    // GUI-06 (amended): the DTR and RTS fields belong to the Serial transport (T-084).
+    void GUI_06_serialControlLineFieldsAreSerialOnly() {
+        ConfigBinding binding;
+        qpb::PropertyModel* model = binding.model();
+        const QStringList paths = {QStringLiteral("transport/serial/dataTerminalReady"),
+                                   QStringLiteral("transport/serial/requestToSend")};
+        for (const QString& p : paths) {
+            QVERIFY(model->find(p) != nullptr);
+            QVERIFY(!model->find(p)->isEnabled());
+            QVERIFY(model->find(p)->value().toBool());
+        }
+        QVERIFY(model->setValue(QStringLiteral("transport/kind"), QStringLiteral("Serial")));
+        for (const QString& p : paths) {
+            QVERIFY(model->find(p)->isEnabled());
+            QVERIFY(model->setValue(p, false));
+        }
+        QVERIFY(!binding.draft().serial.dataTerminalReady);
+        QVERIFY(!binding.draft().serial.requestToSend);
+        QVERIFY(!binding.draftValid());
+        QVERIFY(model->setValue(QStringLiteral("transport/serial/portName"), QStringLiteral("COM9")));
+        QVERIFY(!binding.config().serial.dataTerminalReady);
+        QVERIFY(!binding.config().serial.requestToSend);
+        QVERIFY(model->setValue(QStringLiteral("transport/kind"), QStringLiteral("Tcp")));
+        QVERIFY(!model->find(QStringLiteral("transport/serial/requestToSend"))->isEnabled());
+    }
+
+    // GUI-06 (amended): a connected tab refuses edits and a new configuration; after the disconnect
+    // an invalid draft keeps Connect off and nothing invalid reaches the runner.
+    void GUI_06_aConnectedTabBlocksEditsAndAnInvalidDraftNeverReachesTheRunner() {
+        MockRig mock;
+        QVERIFY(mock.ok);
+        DeviceTab tab(QStringLiteral("gui06-connected"));
+        QSignalSpy applied(&tab, &DeviceTab::configApplied);
+        QString error;
+        QVERIFY2(tab.setConfig(tcpConfig(mock.port), &error), qPrintable(error));
+        QTRY_COMPARE_WITH_TIMEOUT(applied.count(), 1, kWaitMs);
+        tab.connectToPlc();
+        QTRY_COMPARE_WITH_TIMEOUT(tab.linkState(), mc::LinkState::Connected, kWaitMs);
+        QVERIFY(!tab.connectEnabled());
+        // setConfig() while connected is refused, valid or not.
+        mc::McDeviceConfig bad;
+        bad.transport = mc::TransportKind::Serial;
+        QVERIFY(!tab.setConfig(bad, &error));
+        QVERIFY(!tab.setConfig(tcpConfig(mock.port), &error));
+        QVERIFY(tab.binding()->draftValid());
+        QCOMPARE(applied.count(), 1);
+        QVERIFY(tab.binding()->model()->root()->isReadOnly());
+        // After the disconnect the grid is editable again; an invalid draft keeps Connect off.
+        tab.disconnectFromPlc();
+        QTRY_COMPARE_WITH_TIMEOUT(tab.linkState(), mc::LinkState::Disconnected, kWaitMs);
+        QVERIFY(!tab.binding()->model()->root()->isReadOnly());
+        QVERIFY(tab.connectEnabled());
+        QVERIFY(tab.binding()->model()->setValue(QStringLiteral("transport/kind"),
+                                                 QStringLiteral("Serial")));
+        QVERIFY(!tab.connectEnabled());
+        tab.connectToPlc();
+        QTest::qWait(200);
+        QCOMPARE(tab.linkState(), mc::LinkState::Disconnected);
+        QCOMPARE(applied.count(), 1);
+    }
+
+    // GUI-06 (amended): the tab sends a valid edit to its runner. An edit that fails validate() is a
+    // marked draft: nothing is sent, Connect is disabled and the old valid configuration still connects
+    // once the draft is fixed.
+    void GUI_06_tabAppliesAcceptedEditsAndKeepsTheOldConfigOnADraft() {
         MockRig mock;
         QVERIFY(mock.ok);
         DeviceTab tab(QStringLiteral("t069-edit"));
@@ -392,12 +679,23 @@ private slots:
         for (const QList<QVariant>& args : applied) {
             QVERIFY(args.at(0).toBool());
         }
+        QVERIFY(tab.connectEnabled());
 
-        QVERIFY(!model->setValue(QStringLiteral("transport/tcp/port"), 0));
+        QVERIFY(model->setValue(QStringLiteral("transport/tcp/port"), 0)); // a draft
         QVERIFY2(tab.message().contains(QStringLiteral("TCP port is 0")), qPrintable(tab.message()));
         QCOMPARE(tab.binding()->config().tcp.port, mock.port);
+        QVERIFY(!tab.connectEnabled());
+        QVERIFY2(tab.connectToolTip().contains(QStringLiteral("TCP port is 0")), qPrintable(tab.connectToolTip()));
+        tab.connectToPlc(); // refused while the draft is invalid
         QTest::qWait(100);
-        QCOMPARE(applied.count(), 5); // nothing was sent for the refused edit
+        QCOMPARE(tab.linkState(), mc::LinkState::Disconnected);
+        QCOMPARE(applied.count(), 5); // nothing was sent for the draft
+
+        QVERIFY(model->setValue(QStringLiteral("transport/tcp/port"), static_cast<int>(mock.port)));
+        QVERIFY(tab.connectEnabled());
+        QVERIFY(tab.connectToolTip().isEmpty());
+        QVERIFY(tab.message().isEmpty());
+        QTRY_COMPARE_WITH_TIMEOUT(applied.count(), 6, kWaitMs);
 
         tab.connectToPlc();
         QTRY_COMPARE_WITH_TIMEOUT(tab.linkState(), mc::LinkState::Connected, kWaitMs);
@@ -405,6 +703,70 @@ private slots:
 
         // Connected: the grid is read-only for the user.
         QVERIFY(tab.binding()->model()->root()->isReadOnly());
+    }
+
+    // GUI-06 (amended): the owner case. A fresh tab, TCP to Serial with the empty port name: the edit
+    // is accepted as a draft, the port-name field is marked and selected, Connect is disabled and the
+    // runner keeps the old valid configuration; entering COM54 enables Connect and emits
+    // configChanged. (The port is never opened here.)
+    void GUI_06_tabSwitchToSerialIsADraftUntilThePortNameIsEntered() {
+        DeviceTab tab(QStringLiteral("t085-serial"));
+        QSignalSpy applied(&tab, &DeviceTab::configApplied);
+        QSignalSpy changed(tab.binding(), &ConfigBinding::configChanged);
+        qpb::PropertyModel* model = tab.binding()->model();
+        QVERIFY(tab.connectEnabled());
+        const QJsonObject valid = tab.binding()->config().toJson();
+
+        QVERIFY(model->setValue(QStringLiteral("transport/kind"), QStringLiteral("Serial")));
+        QVERIFY(!tab.binding()->draftValid());
+        QVERIFY(!tab.connectEnabled());
+        QVERIFY2(tab.connectToolTip().contains(QStringLiteral("transport.serial.portName")),
+                 qPrintable(tab.connectToolTip()));
+        QVERIFY(tab.message().contains(QStringLiteral("transport.serial.portName")));
+        const qpb::Property* port = model->find(QStringLiteral("transport/serial/portName"));
+        QVERIFY(port->hasAttribute(ConfigBinding::invalidAttribute()));
+        QVERIFY(port->isEnabled()); // editable at once
+        QCOMPARE(tab.binding()->config().toJson(), valid);
+        QCOMPARE(changed.count(), 0);
+        tab.connectToPlc();
+        QTest::qWait(100);
+        QCOMPARE(tab.linkState(), mc::LinkState::Disconnected);
+        QCOMPARE(applied.count(), 0); // the runner never saw the draft
+
+        QVERIFY(model->setValue(QStringLiteral("transport/serial/portName"), QStringLiteral("COM54")));
+        QVERIFY(tab.binding()->draftValid());
+        QVERIFY(tab.connectEnabled());
+        QVERIFY(tab.connectToolTip().isEmpty());
+        QVERIFY(tab.message().isEmpty());
+        QCOMPARE(changed.count(), 1);
+        QTRY_COMPARE_WITH_TIMEOUT(applied.count(), 1, kWaitMs);
+        QVERIFY(applied.last().at(0).toBool());
+    }
+
+    // GUI-06/GUI-08 (amended): setConfig() with a configuration that fails validate() loads it as a
+    // draft (marked, Connect disabled, nothing sent) and still returns true.
+    void GUI_06_tabSetConfigLoadsAnInvalidConfigAsADraft() {
+        DeviceTab tab(QStringLiteral("t085-setconfig"));
+        QSignalSpy applied(&tab, &DeviceTab::configApplied);
+        mc::McDeviceConfig bad;
+        bad.transport = mc::TransportKind::Serial; // portName empty
+        QString error;
+        QVERIFY(tab.setConfig(bad, &error));
+        QVERIFY2(error.contains(QStringLiteral("transport.serial.portName")), qPrintable(error));
+        QVERIFY(!tab.binding()->draftValid());
+        QCOMPARE(tab.binding()->draft().transport, mc::TransportKind::Serial);
+        QCOMPARE(tab.binding()->config().transport, mc::TransportKind::Tcp);
+        QVERIFY(!tab.connectEnabled());
+        QVERIFY(tab.message().contains(QStringLiteral("transport.serial.portName")));
+        QTest::qWait(100);
+        QCOMPARE(applied.count(), 0);
+        QVERIFY(tab.binding()->model()->find(QStringLiteral("transport/serial/portName"))->hasAttribute(ConfigBinding::invalidAttribute()));
+
+        QVERIFY(tab.setConfig(mc::McDeviceConfig{}, &error));
+        QVERIFY(tab.binding()->draftValid());
+        QVERIFY(tab.connectEnabled());
+        QVERIFY(tab.message().isEmpty());
+        QTRY_COMPARE_WITH_TIMEOUT(applied.count(), 1, kWaitMs);
     }
 
     // Acceptance: a device tab connects to a MockRunner, subscribes, sees values and a trend

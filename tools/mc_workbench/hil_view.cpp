@@ -331,8 +331,8 @@ void HilView::onChecked(const HilCheckResult& result) {
                            .arg(result.stepCount)
                            .arg(result.planId, result.profileId);
         if (!result.readOnlyFrames.isEmpty()) {
-            text += QStringLiteral("\n%1 read-only frame(s) the gate could not decode (the profile "
-                                   "id must be typed to run):\n")
+            text += QStringLiteral("\n%1 read-only frame(s) the gate could not decode (the Confirm "
+                                   "dialog lists them; press Confirm to run):\n")
                         .arg(result.readOnlyFrames.size());
             for (const HilGateFrame& frame : result.readOnlyFrames) {
                 text += QStringLiteral("  %1  %2\n    %3\n").arg(frame.stepId, frame.what, frame.hex);
@@ -341,7 +341,7 @@ void HilView::onChecked(const HilCheckResult& result) {
         m_gate->setPlainText(text);
         m_dry->setPlainText(result.dryRunText);
         setSource(result.loopbackTcp ? CaptureSource::MockPlc : CaptureSource::RealPlc);
-        setStatus(QStringLiteral("Gate passed. Read the dry run, then Run."));
+        setStatus(QStringLiteral("Gate passed. Read the dry run, then Run and Confirm."));
     } else if (result.exitCode == 3) {
         m_gate->setPlainText(QStringLiteral("REFUSED by the safety gate. Nothing can be sent.\n\n") +
                              result.refusalText);
@@ -372,10 +372,10 @@ quint64 HilView::requestRun() {
         setStatus(QStringLiteral("Not confirmed; nothing was sent."));
         return 0;
     }
-    return runWith(dialog.typedId(), dialog.skipTyping());
+    return runWith(true);
 }
 
-quint64 HilView::runWith(const QString& typedId, bool skipTyping) {
+quint64 HilView::runWith(bool confirmed) {
     // A refused plan has no run button and no run call: the view never even asks the runner.
     if (!m_hasCheck || !m_check.ok() || m_running || m_checking) {
         return 0;
@@ -383,8 +383,7 @@ quint64 HilView::runWith(const QString& typedId, bool skipTyping) {
     HilRunRequest request;
     request.input = m_checkedInput;
     request.expectedDigest = m_check.digest;
-    request.typedId = typedId;
-    request.skipTyping = skipTyping;
+    request.confirmed = confirmed;
     request.outputRoot = m_output->text().trimmed();
     request.capturedRoot = m_capturedRoot;
     request.source = source();

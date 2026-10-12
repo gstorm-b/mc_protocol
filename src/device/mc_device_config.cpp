@@ -313,7 +313,9 @@ bool readSerial(const QJsonObject& o, const QString& base, SerialSettings& c, Fa
     c.dataBits = static_cast<QSerialPort::DataBits>(dataBits);
     return readEnum(o, "parity", base, kParities, c.parity, f) &&
            readEnum(o, "stopBits", base, kStopBits, c.stopBits, f) &&
-           readEnum(o, "flowControl", base, kFlowControls, c.flowControl, f);
+           readEnum(o, "flowControl", base, kFlowControls, c.flowControl, f) &&
+           readBool(o, "dataTerminalReady", base, c.dataTerminalReady, f) &&
+           readBool(o, "requestToSend", base, c.requestToSend, f);
 }
 
 bool readTransport(const QJsonObject& o, const QString& base, McDeviceConfig& c, Failure& f) {
@@ -522,6 +524,8 @@ QJsonObject McDeviceConfig::toJson() const {
     serialObject.insert(QStringLiteral("parity"), enumJson(kParities, serial.parity));
     serialObject.insert(QStringLiteral("stopBits"), enumJson(kStopBits, serial.stopBits));
     serialObject.insert(QStringLiteral("flowControl"), enumJson(kFlowControls, serial.flowControl));
+    serialObject.insert(QStringLiteral("dataTerminalReady"), serial.dataTerminalReady);
+    serialObject.insert(QStringLiteral("requestToSend"), serial.requestToSend);
 
     QJsonObject transportObject;
     transportObject.insert(QStringLiteral("kind"), enumJson(kTransportKinds, transport));

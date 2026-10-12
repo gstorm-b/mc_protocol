@@ -87,6 +87,11 @@ contradict `agent-team/core/`, this file wins.
   and reviewer, one commit). Still excluded: any automatic reconnect or Ethernet resend, and a release/tag.
   Extended the same day: "duyệt T-083" — Qt 5.15 MSVC **32-bit** (`C:\Qt\5.15.0\msvc2019`, installed by the
   owner) joins the batch on the same terms; the leader amends the verified-kit note in `SPEC-build-packaging.md`.
+- **Bench follow-up delegated, owner 2026-10-12:** after the first Q03UDE captures, the owner decided: T-084 serial DTR
+  on by default with a setting to keep it off (RTS too, not with hardware flow); T-085 GUI config drafts (option b);
+  T-086 HIL confirmation by one Confirm button, no typed id (supersedes decision C). The leader writes the spec
+  amendments (`SPEC-qt-device.md`, `SPEC-gui-tool.md`). Phase 8 terms: fresh developer per task, one batch tester and
+  reviewer, one commit. `tools/hil_capture` CLI confirmation unchanged. Phase 9 still waits for the captures.
 - Work on `main` unless the owner says otherwise.
 
 ## Phase-batched verification (owner decision 2026-09-27)
@@ -236,6 +241,8 @@ A vendored subset of addyosmani/agent-skills (MIT) lives in
   owner wants to see whether implementation time and quality improve. T-081's developer (spawned before) used
   them and is the reference. Tester and reviewer keep their skills. The leader records per developer: wall time,
   tokens, tool calls, and the batch tester/reviewer findings per task, and reports the comparison to the owner.
+  Carried on by the leader for the bench follow-up (T-084…T-086, 2026-10-12) to gather more runs; the owner can
+  stop it at any time.
 - Void steps: anything in a skill that commits, pushes, opens or merges a PR,
   installs tools, or asks for one approval covering many tasks.
   `incremental-implementation` step 4 "Commit" becomes "record the slice in

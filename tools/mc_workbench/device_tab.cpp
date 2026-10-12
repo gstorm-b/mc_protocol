@@ -7,6 +7,7 @@
 #include "mc_workbench/tab_telemetry.h"
 #include "mc_workbench/trend_widget.h"
 
+#include <qpb/Property.h>
 #include <qpb/PropertyModel.h>
 #include <qpb/widgets/PropertyTreeView.h>
 
@@ -80,6 +81,7 @@ DeviceTab::DeviceTab(const QString& name, QWidget* parent) : QWidget(parent), m_
             [this](const QString&, const QString& message) {
                 showMessage(QStringLiteral("Not applied: %1").arg(message), true);
             });
+    connect(m_binding, &ConfigBinding::draftChanged, this, &DeviceTab::onDraftChanged);
 
     connect(m_host, &DeviceHost::linkStateChanged, this, &DeviceTab::onLinkState);
     connect(m_host, &DeviceHost::linkFault, this, &DeviceTab::onFault);
@@ -271,8 +273,18 @@ void DeviceTab::showMessage(const QString& text, bool isError) {
     m_messageLabel->setToolTip(text);
 }
 
+bool DeviceTab::connectEnabled() const {
+    return m_connectButton->isEnabled();
+}
+
+QString DeviceTab::connectToolTip() const {
+    return m_connectButton->toolTip();
+}
+
 void DeviceTab::updateButtons() {
-    m_connectButton->setEnabled(m_state == mc::LinkState::Disconnected);
+    const bool disconnected = m_state == mc::LinkState::Disconnected;
+    m_connectButton->setEnabled(disconnected && m_binding->draftValid());
+    m_connectButton->setToolTip(m_binding->draftValid() ? QString() : m_binding->draftMessage());
     m_disconnectButton->setEnabled(m_state != mc::LinkState::Disconnected);
     m_binding->setEditable(m_state == mc::LinkState::Disconnected);
 }
@@ -295,17 +307,42 @@ bool DeviceTab::setConfig(const mc::McDeviceConfig& cfg, QString* error) {
     }
     QString message;
     if (!m_binding->setConfig(cfg, &message)) {
+        // Loaded as a draft: marked in the grid, Connect disabled, the runner keeps its
+        // configuration.
         if (error != nullptr) {
             *error = message;
         }
-        showMessage(QStringLiteral("Not applied: %1").arg(message), true);
-        return false;
+        onDraftChanged();
+        return true;
     }
+    showMessage(QString(), false);
+    updateButtons();
     sendConfig(cfg);
     return true;
 }
 
+void DeviceTab::onDraftChanged() {
+    if (m_binding->draftValid()) {
+        showMessage(QString(), false);
+    } else {
+        showMessage(QStringLiteral("Not valid yet: %1").arg(m_binding->draftMessage()), true);
+        qpb::Property* property = m_binding->draftWhere().isEmpty()
+                                      ? nullptr
+                                      : m_binding->model()->find(m_binding->draftWhere());
+        if (property != nullptr) {
+            const QModelIndex index =
+                m_binding->model()->indexOf(property, qpb::PropertyModel::ValueColumn);
+            m_grid->setCurrentIndex(index);
+            m_grid->scrollTo(index);
+        }
+    }
+    updateButtons();
+}
+
 void DeviceTab::connectToPlc() {
+    if (!m_binding->draftValid()) {
+        return;
+    }
     m_connectButton->setEnabled(false);
     m_faultLabel->clear();
     m_host->connectToPlc();

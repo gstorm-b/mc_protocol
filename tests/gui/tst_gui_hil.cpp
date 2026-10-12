@@ -1,6 +1,6 @@
 // GUI-07 (SPEC-gui-tool.md "Testing"): the HIL runner view. The gate decisions and the dry runs equal
 // those of hil_capture on every committed plan and example profile; a refused plan sends nothing; the
-// confirmation for read-only frames needs the typed profile id and cannot be skipped; a run against a
+// run needs the dialog's Confirm for every profile (nothing is typed); a run against a
 // MockRunner writes a capture that replays green. No real PLC: every target is a mock or a listener
 // on loopback.
 #include "gui_suites.h"
@@ -17,6 +17,7 @@
 #include "mc_workbench/runner_thread.h"
 
 #include <QApplication>
+#include <QCheckBox>
 #include <QDir>
 #include <QElapsedTimer>
 #include <QFile>
@@ -25,6 +26,9 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QLabel>
+#include <QLineEdit>
+#include <QPlainTextEdit>
 #include <QPushButton>
 #include <QSignalSpy>
 #include <QTcpServer>
@@ -126,7 +130,7 @@ QString writePlan(const QString& dir, const QString& name, const QByteArray& jso
 // tests/hil/e2e/plan_3e.json without E-10. E-10's follow-up read expects the fresh image of a new
 // virtual_plc connection (D100 = 1234), while a mock tab keeps one memory for all its clients; the
 // full plan, E-10 included, runs against a mock tab in tst_gui_mock_streams.cpp (T-075). E-09
-// stays: it is a read-only frame too, so the typed confirmation is part of the run.
+// stays: it is a read-only frame too, so the run holds one.
 QString mockPlan(const QString& dir) {
     QJsonObject plan = readJson(e2ePlan("plan_3e.json"));
     QJsonArray kept;
@@ -211,7 +215,7 @@ HilRunRequest requestFor(const HilCheckInput& input, const HilCheckResult& check
     HilRunRequest r;
     r.input = input;
     r.expectedDigest = check.digest;
-    r.typedId = check.profileId;
+    r.confirmed = true;
     r.outputRoot = outputRoot;
     r.source = source;
     r.benchReps = 3;
@@ -384,7 +388,7 @@ private slots:
         QCOMPARE(cli.err, direct.refusalText);
         QVERIFY(cli.out.isEmpty());
 
-        // The runner thread refuses it too, whatever the request says: typed id, --yes, a digest.
+        // The runner thread refuses it too, whatever the request says: confirmed or not, a digest.
         HilHost host(QStringLiteral("gui07-refused"));
         HilCheckResult viaThread;
         QVERIFY(checkVia(host, input, &viaThread));
@@ -393,10 +397,9 @@ private slots:
         QVERIFY(viaThread.digest.isEmpty());
 
         const QString root = dir + QStringLiteral("/captured");
-        for (const bool skip : {false, true}) {
+        for (const bool confirmed : {false, true}) {
             HilRunRequest request = requestFor(input, viaThread, root);
-            request.typedId = QStringLiteral("gui-refuse");
-            request.skipTyping = skip;
+            request.confirmed = confirmed;
             HilRunResult result;
             QVERIFY(runVia(host, request, &result));
             QVERIFY(result.status == HilRunStatus::GateRefused);
@@ -419,7 +422,7 @@ private slots:
         QVERIFY(view.dryRunText().isEmpty());
         QVERIFY(!view.canRun());
         QCOMPARE(view.requestRun(), quint64(0));
-        QCOMPARE(view.runWith(QStringLiteral("gui-refuse"), true), quint64(0));
+        QCOMPARE(view.runWith(true), quint64(0));
 
         QCOMPARE(target.connectionsAfter(400), 0); // the loopback listener never saw a connection
     }
@@ -456,78 +459,11 @@ private slots:
         QCOMPARE(r.exitCode, 2);
     }
 
-    // ---- GUI-07: the typed confirmation cannot be skipped --------------------------------------
+    // ---- GUI-07: one Confirm button, for every profile ------------------------------------------
 
-    void GUI_07_confirmationRuleIsTheRuleOfHilCapture() {
-        HilCheckResult withFrames;
-        withFrames.exitCode = 0;
-        withFrames.loopbackTcp = true;
-        withFrames.profileId = QStringLiteral("prof-1");
-        withFrames.readOnlyFrames = {{QStringLiteral("E-09"), QStringLiteral("frame"), QStringLiteral("50 00")}};
-        HilCheckResult plain = withFrames;
-        plain.readOnlyFrames.clear();
-
-        // read-only frames: only the exact id confirms, whatever --yes says
-        for (const bool skip : {false, true}) {
-            QVERIFY(!confirmationAccepted(withFrames, QString(), skip));
-            QVERIFY(!confirmationAccepted(withFrames, QStringLiteral("prof"), skip));
-            QVERIFY(!confirmationAccepted(withFrames, QStringLiteral("PROF-1"), skip));
-            QVERIFY(!confirmationAccepted(withFrames, QStringLiteral("prof-1 x"), skip));
-            QVERIFY(confirmationAccepted(withFrames, QStringLiteral("prof-1"), skip));
-            QVERIFY(confirmationAccepted(withFrames, QStringLiteral("  prof-1 "), skip));
-            QVERIFY(mustTypeProfileId(withFrames, skip));
-        }
-        // no read-only frames: the id, or --yes
-        QVERIFY(!confirmationAccepted(plain, QString(), false));
-        QVERIFY(confirmationAccepted(plain, QStringLiteral("prof-1"), false));
-        QVERIFY(confirmationAccepted(plain, QString(), true));
-        QVERIFY(!mustTypeProfileId(plain, true));
-        // a run the gate did not pass is never confirmed
-        HilCheckResult refused = plain;
-        refused.exitCode = 3;
-        QVERIFY(!confirmationAccepted(refused, QStringLiteral("prof-1"), true));
-        QString why;
-        QVERIFY(!confirmationAccepted(withFrames, QString(), true, &why));
-        QVERIFY2(why.contains(QStringLiteral("read-only")), qPrintable(why));
-    }
-
-    void GUI_07_theDialogEnablesRunOnlyForTheTypedIdWhenReadOnlyFramesExist() {
-        HilCheckResult withFrames;
-        withFrames.exitCode = 0;
-        withFrames.loopbackTcp = true;
-        withFrames.profileId = QStringLiteral("prof-1");
-        withFrames.confirmationText = QStringLiteral("summary");
-        withFrames.readOnlyFrames = {{QStringLiteral("E-09"), QStringLiteral("frame"), QStringLiteral("50 00")}};
-        HilConfirmDialog dialog(withFrames);
-        QVERIFY(!dialog.skipTypingAvailable());
-        QVERIFY(!dialog.acceptEnabled());
-        QVERIFY(!dialog.okButton()->isEnabled());
-        dialog.setSkipTyping(true); // there is no such box: ignored
-        QVERIFY(!dialog.skipTyping());
-        QVERIFY(!dialog.acceptEnabled());
-        dialog.typeId(QStringLiteral("prof-"));
-        QVERIFY(!dialog.okButton()->isEnabled());
-        dialog.accept(); // programmatic accept does not get past the rule
-        QVERIFY(dialog.result() != QDialog::Accepted);
-        dialog.typeId(QStringLiteral("prof-1"));
-        QVERIFY(dialog.okButton()->isEnabled());
-        dialog.accept();
-        QCOMPARE(dialog.result(), static_cast<int>(QDialog::Accepted));
-
-        HilCheckResult plain = withFrames;
-        plain.readOnlyFrames.clear();
-        HilConfirmDialog repeat(plain);
-        QVERIFY(repeat.skipTypingAvailable());
-        QVERIFY(!repeat.acceptEnabled());
-        repeat.setSkipTyping(true);
-        QVERIFY(repeat.acceptEnabled());
-        QVERIFY(repeat.okButton()->isEnabled());
-    }
-
-    // T-076 (owner decision C, 2026-10-04): "confirm without typing" only for a loopback TCP profile
-    // whose run has no read-only frames. {loopback TCP, other TCP host, COM} x {read-only frames,
-    // none} x {typed right, typed wrong, nothing typed} x {skip off, skip on}.
-    void GUI_07_skipTypingTruthTable() {
+    // {loopback TCP, other TCP host, COM} x {read-only frames, none}: the gate passed and the
+    // operator confirmed is the whole rule; a check the gate did not pass is never confirmed.
+    void GUI_07_confirmationRuleIsTheGatePassedAndConfirmed() {
         enum class Target { Loopback, OtherHost, Com };
         for (const Target target : {Target::Loopback, Target::OtherHost, Target::Com}) {
             for (const bool readOnly : {false, true}) {
@@ -538,54 +474,74 @@ private slots:
                 if (readOnly) {
                     check.readOnlyFrames = {{QStringLiteral("E-09"), QStringLiteral("frame"), QStringLiteral("50 00")}};
                 }
-                const bool allowed = target == Target::Loopback && !readOnly;
-                QCOMPARE(skipTypingAllowed(check), allowed);
-                for (const QString& typed : {QStringLiteral("prof-1"), QStringLiteral("wrong"), QString()}) {
-                    for (const bool skip : {false, true}) {
-                        const bool right = typed == QLatin1String("prof-1");
-                        const bool expected = right || (skip && allowed);
-                        QString why;
-                        const bool got = confirmationAccepted(check, typed, skip, &why);
-                        QVERIFY2(got == expected,
-                                 qPrintable(QStringLiteral("target %1 readOnly %2 typed '%3' skip %4: got %5")
-                                                .arg(static_cast<int>(target)).arg(readOnly).arg(typed)
-                                                .arg(skip).arg(got)));
-                        QCOMPARE(mustTypeProfileId(check, skip), !(skip && allowed));
-                        QCOMPARE(why.isEmpty(), expected);
+                const QByteArray name = QByteArray::number(static_cast<int>(target)) + (readOnly ? "ro" : "");
+                QString why;
+                QVERIFY2(confirmationAccepted(check, true, &why), name.constData());
+                QVERIFY2(why.isEmpty(), name.constData());
+                QVERIFY2(!confirmationAccepted(check, false, &why), name.constData());
+                QVERIFY2(why.contains(QStringLiteral("Confirm")), qPrintable(why));
 
-                        // the dialog follows the same rule, and offers the box only where it counts
-                        HilCheckResult shown = check;
-                        shown.confirmationText = QStringLiteral("summary");
-                        HilConfirmDialog dialog(shown);
-                        QCOMPARE(dialog.skipTypingAvailable(), allowed);
-                        dialog.setSkipTyping(skip);
-                        QCOMPARE(dialog.skipTyping(), skip && allowed);
-                        dialog.typeId(typed);
-                        QCOMPARE(dialog.acceptEnabled(), expected);
-                        QCOMPARE(dialog.okButton()->isEnabled(), expected);
-                        dialog.accept();
-                        QCOMPARE(dialog.result() == QDialog::Accepted, expected);
-                    }
-                }
+                // the dialog: a Confirm button, enabled, and nothing to type or to tick
+                check.confirmationText = QStringLiteral("summary");
+                HilConfirmDialog dialog(check);
+                QCOMPARE(dialog.okButton()->text(), QStringLiteral("Confirm"));
+                QVERIFY2(dialog.acceptEnabled(), name.constData());
+                QVERIFY2(dialog.okButton()->isEnabled(), name.constData());
+                QVERIFY2(dialog.findChildren<QLineEdit*>().isEmpty(), name.constData());
+                QVERIFY2(dialog.findChildren<QCheckBox*>().isEmpty(), name.constData());
+                dialog.accept();
+                QCOMPARE(dialog.result(), static_cast<int>(QDialog::Accepted));
+
+                HilConfirmDialog cancelled(check);
+                cancelled.reject();
+                QCOMPARE(cancelled.result(), static_cast<int>(QDialog::Rejected));
             }
         }
-        // a run the gate did not pass is never confirmed, loopback or not
+        // a run the gate did not pass is never confirmed, and its dialog offers no Confirm
         HilCheckResult refused;
         refused.exitCode = 3;
         refused.loopbackTcp = true;
         refused.profileId = QStringLiteral("prof-1");
-        QVERIFY(!confirmationAccepted(refused, QStringLiteral("prof-1"), true));
-        // the refusal says why a non-loopback profile cannot skip
-        HilCheckResult other;
-        other.exitCode = 0;
-        other.profileId = QStringLiteral("prof-1");
         QString why;
-        QVERIFY(!confirmationAccepted(other, QString(), true, &why));
-        QVERIFY2(why.contains(QStringLiteral("loopback")), qPrintable(why));
+        QVERIFY(!confirmationAccepted(refused, true, &why));
+        QVERIFY2(why.contains(QStringLiteral("gate")), qPrintable(why));
+        HilConfirmDialog dialog(refused);
+        QVERIFY(!dialog.acceptEnabled());
+        QVERIFY(!dialog.okButton()->isEnabled());
+        dialog.accept(); // a programmatic accept does not get past the rule
+        QVERIFY(dialog.result() != QDialog::Accepted);
+    }
+
+    // The dialog shows the profile id, the endpoint and the scratch areas of the check, and the dry
+    // run.
+    void GUI_07_theDialogShowsTheProfileEndpointScratchAndDryRun() {
+        const QString dir = freshOutputDir(QStringLiteral("gui-t086-show"));
+        HilCheckInput input;
+        input.profilePath = writeProfileHost(dir, QStringLiteral("q03ude-eth-3e-bin"),
+                                             QStringLiteral("t86-show"), QStringLiteral("192.0.2.10"));
+        input.planPath = writePlan(dir, QStringLiteral("simple.json"), kSimplePlan);
+        const HilCheckResult check = prepareHil(input).toResult();
+        QVERIFY(check.ok());
+        HilConfirmDialog dialog(check);
+        QString all;
+        const auto edits = dialog.findChildren<QPlainTextEdit*>();
+        for (const auto* edit : edits) {
+            all += edit->toPlainText();
+        }
+        const auto labels = dialog.findChildren<QLabel*>();
+        for (const auto* label : labels) {
+            all += label->text();
+        }
+        QVERIFY2(all.contains(QStringLiteral("t86-show")), qPrintable(all));
+        QVERIFY2(all.contains(QStringLiteral("192.0.2.10")), qPrintable(all));
+        QVERIFY2(all.contains(QStringLiteral("Scratch:")), qPrintable(all));
+        QVERIFY2(all.contains(QStringLiteral("DRY RUN")), qPrintable(all));
+        QVERIFY2(all.contains(QStringLiteral("tx ")), qPrintable(all));
     }
 
     // The check derives loopbackTcp from the profile: 127.0.0.0/8, ::1, localhost (as isLoopbackHost)
-    // are loopback; another host and a COM profile are not.
+    // are loopback; another host and a COM profile are not. (It picks the capture source; it no
+    // longer changes the confirmation.)
     void GUI_07_loopbackIsDerivedFromTheProfile() {
         const QString dir = freshOutputDir(QStringLiteral("gui-t076-derive"));
         const QString plan = writePlan(dir, QStringLiteral("simple.json"), kSimplePlan);
@@ -603,7 +559,6 @@ private slots:
                                                             QStringLiteral("t76-loop"), host));
             QVERIFY2(r.ok(), qPrintable(host));
             QVERIFY2(r.loopbackTcp, qPrintable(host));
-            QVERIFY2(skipTypingAllowed(r), qPrintable(host));
         }
         for (const QString& host : {QStringLiteral("192.0.2.10"), QStringLiteral("10.0.0.1"),
                                     QStringLiteral("example.invalid"), QStringLiteral("128.0.0.1")}) {
@@ -611,7 +566,6 @@ private slots:
                                                             QStringLiteral("t76-other"), host));
             QVERIFY2(r.ok(), qPrintable(host));
             QVERIFY2(!r.loopbackTcp, qPrintable(host));
-            QVERIFY2(!skipTypingAllowed(r), qPrintable(host));
         }
         // a COM profile, even one whose (unused) tcp block names 127.0.0.1
         const QString com = writeProfileHost(dir, QStringLiteral("q03ude-c24-3c-f4"),
@@ -619,202 +573,237 @@ private slots:
         const HilCheckResult r = check(com);
         QVERIFY(r.ok());
         QVERIFY(!r.loopbackTcp);
-        QVERIFY(!skipTypingAllowed(r));
     }
 
-    // The runner thread refuses skipTyping for a non-loopback or COM profile on its own, whatever the
-    // dialog did. The profiles are the committed examples (192.0.2.10, COM1): a run that got past the
-    // refusal would try to connect or open the port, so the check is the status, the missing capture
-    // folder and the time it took. A loopback listener cannot stand in for a non-loopback host (the
-    // profile would then be loopback), so the runner is also shown to start and connect for a
-    // loopback profile in the same setup, and the decision function carries the truth table above.
-    void GUI_07_theRunnerRefusesSkipTypingForANonLoopbackOrComProfile() {
-        const QString dir = freshOutputDir(QStringLiteral("gui-t076-runner"));
-        const QString plan = writePlan(dir, QStringLiteral("simple.json"), kSimplePlan);
-        const QString root = dir + QStringLiteral("/captured");
+    // Another TCP host and a COM port, with and without read-only frames: Cancel or closing the
+    // dialog sends nothing; Confirm lets the run past the confirmation. No real PLC: the capture
+    // folder is made to exist already, so the runner stops at the output rule right after the
+    // confirmation (OutputRefused, never NotConfirmed) and has opened no transport. A request that
+    // lacks the dialog's confirmation is refused by the runner on its own.
+    void GUI_07_confirmIsTheOnlyStepForAnotherHostAndAComPort() {
+        const QString dir = freshOutputDir(QStringLiteral("gui-t086-other"));
+        const QString simple = writePlan(dir, QStringLiteral("simple.json"), kSimplePlan);
         struct Case {
             const char* name;
             QString profile;
             QString id;
+            QString plan;
+            bool readOnly;
         };
         const QVector<Case> cases = {
             {"other tcp host", writeProfileHost(dir, QStringLiteral("q03ude-eth-3e-bin"),
-                                                QStringLiteral("t76-other"), QStringLiteral("192.0.2.10")),
-             QStringLiteral("t76-other")},
+                                                QStringLiteral("t86-other"), QStringLiteral("192.0.2.10")),
+             QStringLiteral("t86-other"), simple, false},
+            {"other tcp host, read-only frames",
+             writeProfileHost(dir, QStringLiteral("q03ude-eth-3e-bin"), QStringLiteral("t86-other-ro"),
+                              QStringLiteral("192.0.2.10")),
+             QStringLiteral("t86-other-ro"), e2ePlan("plan_3e.json"), true},
             {"com port", writeProfileHost(dir, QStringLiteral("q03ude-c24-3c-f4"),
-                                          QStringLiteral("t76-com"), QStringLiteral("192.0.2.10")),
-             QStringLiteral("t76-com")},
+                                          QStringLiteral("t86-com"), QStringLiteral("192.0.2.10")),
+             QStringLiteral("t86-com"), simple, false},
+            {"com port, read-only frames",
+             writeProfileHost(dir, QStringLiteral("q03ude-c24-3c-f4"), QStringLiteral("t86-com-ro"),
+                              QStringLiteral("192.0.2.10")),
+             QStringLiteral("t86-com-ro"), e2ePlan("plan_3c.json"), true},
         };
-        HilHost host(QStringLiteral("gui07-t076"));
+        const QString root = dir + QStringLiteral("/captured");
         for (const Case& c : cases) {
-            HilCheckInput input;
-            input.profilePath = c.profile;
-            input.planPath = plan;
-            HilCheckResult check;
-            QVERIFY2(checkVia(host, input, &check), c.name);
-            QVERIFY2(check.ok(), qPrintable(check.errorText + check.refusalText));
-            QVERIFY2(check.readOnlyFrames.isEmpty(), c.name);
-            QVERIFY2(!check.loopbackTcp, c.name);
-
-            for (const QString& typed : {QString(), QStringLiteral("wrong")}) {
-                HilRunRequest request = requestFor(input, check, root);
-                request.typedId = typed;
-                request.skipTyping = true; // as if the dialog had been bypassed
-                QElapsedTimer timer;
-                timer.start();
-                HilRunResult result;
-                QVERIFY2(runVia(host, request, &result), c.name);
-                QVERIFY2(result.status == HilRunStatus::NotConfirmed, c.name);
-                QVERIFY2(result.reason.contains(c.id), qPrintable(result.reason));
-                QVERIFY2(!result.onGuiThread, c.name);
-                QVERIFY2(timer.elapsed() < 1500, c.name); // no connect attempt, no port open
-                QVERIFY2(!QDir(root).exists(), c.name);
-            }
-            // typed id, no skip: allowed by the rule (the request is only judged, not run, here:
-            // the digest of another check keeps it from starting)
-            HilRunRequest typed = requestFor(input, check, root);
-            typed.expectedDigest = QStringLiteral("0000");
-            HilRunResult result;
-            QVERIFY(runVia(host, typed, &result));
-            QVERIFY(result.status == HilRunStatus::NotConfirmed);
-            QVERIFY(result.reason.contains(QStringLiteral("changed")));
-        }
-
-        // the view: its dialog does not offer the box for these profiles, and the view's own call
-        // with skipTyping and no id still reaches the runner's refusal
-        for (const Case& c : cases) {
+            QVERIFY2(QDir().mkpath(root + QStringLiteral("/") + c.id), c.name);
             HilView view;
             view.setProfilePath(c.profile);
-            view.setPlanPath(plan);
+            view.setPlanPath(c.plan);
             view.setOutputRoot(root);
             QSignalSpy checked(&view, &HilView::checkDone);
             view.check();
             QTRY_COMPARE_WITH_TIMEOUT(checked.count(), 1, kWait);
-            QVERIFY2(view.lastCheck().ok(), c.name);
+            QVERIFY2(view.lastCheck().ok(), qPrintable(QLatin1String(c.name) + view.gateText()));
+            QVERIFY2(!view.lastCheck().loopbackTcp, c.name);
+            QCOMPARE(!view.lastCheck().readOnlyFrames.isEmpty(), c.readOnly);
             QVERIFY2(view.canRun(), c.name);
-            bool skipBox = true;
-            bool enabled = true;
+
+            // Cancel: nothing starts
+            {
+                bool enabled = false;
+                DialogDriver driver([&](HilConfirmDialog* d) {
+                    enabled = d->okButton()->isEnabled();
+                    d->reject();
+                });
+                QCOMPARE(view.requestRun(), quint64(0));
+                QVERIFY2(driver.seen(), c.name);
+                QVERIFY2(enabled, c.name); // Confirm is available at once
+            }
+            QVERIFY2(!view.isRunning(), c.name);
+            QVERIFY2(view.statusText().contains(QStringLiteral("Not confirmed")), c.name);
+
+            // a request without the confirmation is refused by the runner on its own
+            QSignalSpy done(&view, &HilView::runDone);
+            QElapsedTimer timer;
+            timer.start();
+            QVERIFY2(view.runWith(false) != 0, c.name);
+            QTRY_COMPARE_WITH_TIMEOUT(done.count(), 1, kWait);
+            QVERIFY2(view.lastRun().status == HilRunStatus::NotConfirmed, c.name);
+            QVERIFY2(timer.elapsed() < 1500, c.name); // no connect attempt, no port open
+
+            // Confirm: the run is past the confirmation
+            {
+                DialogDriver driver([&](HilConfirmDialog* d) { d->okButton()->click(); });
+                QVERIFY2(view.requestRun() != 0, c.name);
+                QVERIFY2(driver.seen(), c.name);
+            }
+            QTRY_COMPARE_WITH_TIMEOUT(done.count(), 2, kWait);
+            QVERIFY2(view.lastRun().status == HilRunStatus::OutputRefused,
+                     qPrintable(QLatin1String(c.name) + QStringLiteral(": ") + view.lastRun().reason));
+            QVERIFY2(view.lastRun().reason.contains(QStringLiteral("exists")), c.name);
+        }
+    }
+
+    // Loopback profile, with and without read-only frames: Cancel sends nothing (the listener sees no
+    // connection), a request without the confirmation is refused, and the run with the confirmation
+    // goes to the mock (see the run tests below).
+    void GUI_07_cancelAndAnUnconfirmedRequestSendNothingForALoopbackProfile() {
+        Listener target;
+        QVERIFY(target.ok);
+        const QString dir = freshOutputDir(QStringLiteral("gui-t086-loop"));
+        for (const bool readOnly : {false, true}) {
+            const QString id = readOnly ? QStringLiteral("t86-loop-ro") : QStringLiteral("t86-loop");
+            HilView view;
+            view.setProfilePath(writeProfile(dir, QStringLiteral("q03ude-eth-3e-bin"), id, target.port()));
+            view.setPlanPath(readOnly ? e2ePlan("plan_3e.json")
+                                      : writePlan(dir, QStringLiteral("simple.json"), kSimplePlan));
+            view.setOutputRoot(dir + QStringLiteral("/captured"));
+            QSignalSpy checked(&view, &HilView::checkDone);
+            view.check();
+            QTRY_COMPARE_WITH_TIMEOUT(checked.count(), 1, kWait);
+            QVERIFY(view.canRun());
+            QCOMPARE(!view.lastCheck().readOnlyFrames.isEmpty(), readOnly);
+            // Nothing is typed any more: the gate text never says so, and it points to Confirm.
+            QVERIFY2(!view.gateText().contains(QStringLiteral("typed"), Qt::CaseInsensitive),
+                     qPrintable(view.gateText()));
+            if (readOnly) {
+                QVERIFY2(view.gateText().contains(QStringLiteral("Confirm")), qPrintable(view.gateText()));
+            }
+            bool enabled = false;
             {
                 DialogDriver driver([&](HilConfirmDialog* d) {
-                    skipBox = d->skipTypingAvailable();
-                    d->setSkipTyping(true);
                     enabled = d->okButton()->isEnabled();
-                    d->accept();
                     d->reject();
                 });
                 QCOMPARE(view.requestRun(), quint64(0));
                 QVERIFY(driver.seen());
             }
-            QVERIFY2(!skipBox, c.name);
-            QVERIFY2(!enabled, c.name);
+            QVERIFY(enabled);
+            QVERIFY(!view.isRunning());
+            QCOMPARE(target.connectionsAfter(200), 0);
             QSignalSpy done(&view, &HilView::runDone);
-            QVERIFY2(view.runWith(QString(), true) != 0, c.name);
+            QVERIFY(view.runWith(false) != 0);
             QTRY_COMPARE_WITH_TIMEOUT(done.count(), 1, kWait);
-            QVERIFY2(view.lastRun().status == HilRunStatus::NotConfirmed, c.name);
-            QVERIFY2(!QDir(root).exists(), c.name);
+            QVERIFY(view.lastRun().status == HilRunStatus::NotConfirmed);
+            QCOMPARE(target.connectionsAfter(200), 0);
         }
-
-        // the loopback twin of the first profile does take --yes (to a mock, on the runner thread)
-        MockRig mock(QStringLiteral("gui07-t076"));
-        QVERIFY(mock.ok);
-        mock.host.setWords(QStringLiteral("D100"), {1234});
-        HilCheckInput input;
-        input.profilePath = writeProfile(dir, QStringLiteral("q03ude-eth-3e-bin"),
-                                         QStringLiteral("t76-loop"), mock.port);
-        input.planPath = plan;
-        HilCheckResult check;
-        QVERIFY(checkVia(host, input, &check));
-        QVERIFY(check.loopbackTcp);
-        HilRunRequest request = requestFor(input, check, root);
-        request.typedId.clear();
-        request.skipTyping = true;
-        HilRunResult result;
-        QVERIFY(runVia(host, request, &result));
-        QVERIFY2(result.status == HilRunStatus::Finished, qPrintable(result.reason));
+        QVERIFY(!QDir(dir + QStringLiteral("/captured")).exists());
     }
 
-    void GUI_07_aRunWithReadOnlyFramesIsNotStartedWithoutTheTypedId() {
+    // The Enter key must not confirm: Cancel is the default button and Confirm needs a click.
+    void GUI_07_theEnterKeyDoesNotConfirmTheDialog() {
+        HilCheckResult check;
+        check.exitCode = 0;
+        check.profileId = QStringLiteral("p");
+        {
+            HilConfirmDialog dialog(check);
+            dialog.show();
+            QVERIFY(dialog.okButton()->isEnabled());
+            QVERIFY(!dialog.okButton()->isDefault());
+            QVERIFY(!dialog.okButton()->autoDefault());
+            QTest::keyClick(&dialog, Qt::Key_Return);
+            QVERIFY(dialog.result() != QDialog::Accepted);
+            QVERIFY(!dialog.isVisible());
+        }
+        {
+            HilConfirmDialog dialog(check);
+            dialog.show();
+            QTest::keyClick(&dialog, Qt::Key_Enter);
+            QVERIFY(dialog.result() != QDialog::Accepted);
+        }
+        HilConfirmDialog dialog(check);
+        dialog.show();
+        dialog.okButton()->click();
+        QCOMPARE(dialog.result(), static_cast<int>(QDialog::Accepted));
+
+        // Through the view: Return starts no run, one click on Confirm does.
         Listener target;
         QVERIFY(target.ok);
-        const QString dir = freshOutputDir(QStringLiteral("gui-t072-confirm"));
-        HilCheckInput input;
-        input.profilePath = writeProfile(dir, QStringLiteral("q03ude-eth-3e-bin"),
-                                         QStringLiteral("gui-confirm"), target.port());
-        input.planPath = e2ePlan("plan_3e.json"); // E-09 and E-10 are declared readOnly
-        HilHost host(QStringLiteral("gui07-confirm"));
-        HilCheckResult check;
-        QVERIFY(checkVia(host, input, &check));
-        QCOMPARE(check.exitCode, 0);
-        QVERIFY2(check.readOnlyFrames.size() >= 2, "plan_3e holds read-only frames");
-        const QString root = dir + QStringLiteral("/captured");
-
-        const auto attempt = [&](const QString& typed, bool skip, const QString& digest,
-                                 HilRunResult* result) {
-            HilRunRequest request = requestFor(input, check, root);
-            request.typedId = typed;
-            request.skipTyping = skip;
-            request.expectedDigest = digest;
-            return runVia(host, request, result);
-        };
-        HilRunResult r;
-        QVERIFY(attempt(QString(), true, check.digest, &r)); // --yes, nothing typed
-        QVERIFY(r.status == HilRunStatus::NotConfirmed);
-        QVERIFY2(r.reason.contains(QStringLiteral("read-only")), qPrintable(r.reason));
-        QVERIFY(attempt(QStringLiteral("wrong"), true, check.digest, &r));
-        QVERIFY(r.status == HilRunStatus::NotConfirmed);
-        QVERIFY(attempt(QStringLiteral("wrong"), false, check.digest, &r));
-        QVERIFY(r.status == HilRunStatus::NotConfirmed);
-        // the right id, but for a check other than the one on the table
-        QVERIFY(attempt(QStringLiteral("gui-confirm"), false, QStringLiteral("0000"), &r));
-        QVERIFY(r.status == HilRunStatus::NotConfirmed);
-        QVERIFY2(r.reason.contains(QStringLiteral("changed")), qPrintable(r.reason));
-        QVERIFY(!QDir(root).exists());
-        QCOMPARE(target.connectionsAfter(300), 0);
-
-        // The view: cancelling the dialog, or a wrong id, starts nothing; Run stays disabled in the
-        // dialog until the exact id is typed.
+        const QString dir = freshOutputDir(QStringLiteral("gui-rework1-enter"));
+        // The capture folder exists, so a confirmed run stops at the output check and opens nothing.
+        QVERIFY(QDir().mkpath(dir + QStringLiteral("/captured/r1-enter")));
         HilView view;
-        view.setProfilePath(input.profilePath);
-        view.setPlanPath(input.planPath);
-        view.setOutputRoot(root);
+        view.setProfilePath(
+            writeProfile(dir, QStringLiteral("q03ude-eth-3e-bin"), QStringLiteral("r1-enter"), target.port()));
+        view.setPlanPath(writePlan(dir, QStringLiteral("simple.json"), kSimplePlan));
+        view.setOutputRoot(dir + QStringLiteral("/captured"));
         QSignalSpy checked(&view, &HilView::checkDone);
         view.check();
         QTRY_COMPARE_WITH_TIMEOUT(checked.count(), 1, kWait);
         QVERIFY(view.canRun());
-        QVERIFY(view.dryRunText().contains(QStringLiteral("tx ")));
-        QVERIFY(view.gateText().contains(QStringLiteral("read-only")));
-
-        bool enabledAfterWrong = true;
-        bool skipBoxAvailable = true;
-        bool openAfterAccept = false;
         {
-            DialogDriver driver([&](HilConfirmDialog* d) {
-                skipBoxAvailable = d->skipTypingAvailable();
-                d->setSkipTyping(true);
-                d->typeId(QStringLiteral("wrong"));
-                enabledAfterWrong = d->okButton()->isEnabled();
-                d->accept();
-                openAfterAccept = d->isVisible();
-                d->reject();
-            });
+            DialogDriver driver([&](HilConfirmDialog* d) { QTest::keyClick(d, Qt::Key_Return); });
             QCOMPARE(view.requestRun(), quint64(0));
             QVERIFY(driver.seen());
         }
-        QVERIFY(!skipBoxAvailable);
-        QVERIFY(!enabledAfterWrong);
-        QVERIFY(openAfterAccept);
         QVERIFY(!view.isRunning());
-        QVERIFY(view.statusText().contains(QStringLiteral("Not confirmed")));
-        QCOMPARE(target.connectionsAfter(300), 0);
-
-        // The view's own call with a wrong id still reaches the runner's rule.
+        QCOMPARE(target.connectionsAfter(200), 0);
         QSignalSpy done(&view, &HilView::runDone);
-        const quint64 token = view.runWith(QStringLiteral("wrong"), true);
-        QVERIFY(token != 0);
+        {
+            DialogDriver driver([&](HilConfirmDialog* d) { d->okButton()->click(); });
+            QVERIFY(view.requestRun() != 0);
+            QVERIFY(driver.seen());
+        }
         QTRY_COMPARE_WITH_TIMEOUT(done.count(), 1, kWait);
-        QVERIFY(view.lastRun().status == HilRunStatus::NotConfirmed);
-        QCOMPARE(target.connectionsAfter(300), 0);
-        QVERIFY(!QDir(root).exists());
+        QVERIFY(view.lastRun().status == HilRunStatus::OutputRefused);
+        QCOMPARE(target.connectionsAfter(200), 0);
+    }
+
+    // An input changed after the check offers no run and no dialog; a plan file edited on disk after
+    // the check is refused by the runner even when Confirm is pressed.
+    void GUI_07_staleInputsNeverReachTheTarget() {
+        Listener target;
+        QVERIFY(target.ok);
+        const QString dir = freshOutputDir(QStringLiteral("gui-rework1-stale"));
+        HilView view;
+        view.setProfilePath(
+            writeProfile(dir, QStringLiteral("q03ude-eth-3e-bin"), QStringLiteral("r1-stale"), target.port()));
+        const QString plan = writePlan(dir, QStringLiteral("simple.json"), kSimplePlan);
+        view.setPlanPath(plan);
+        view.setOutputRoot(dir + QStringLiteral("/captured"));
+        QSignalSpy checked(&view, &HilView::checkDone);
+        view.check();
+        QTRY_COMPARE_WITH_TIMEOUT(checked.count(), 1, kWait);
+        QVERIFY(view.canRun());
+
+        view.setPlanPath(writePlan(dir, QStringLiteral("other.json"), kSimplePlan));
+        QVERIFY(!view.canRun());
+        {
+            DialogDriver driver([&](HilConfirmDialog* d) { d->reject(); });
+            QCOMPARE(view.requestRun(), quint64(0));
+            QVERIFY(!driver.seen());
+        }
+        QCOMPARE(target.connectionsAfter(200), 0);
+
+        view.setPlanPath(plan);
+        QVERIFY(view.canRun());
+        {
+            QFile f(plan);
+            QVERIFY(f.open(QIODevice::WriteOnly | QIODevice::Truncate));
+            f.write(QByteArray(kSimplePlan).replace("gui_simple", "gui_edited"));
+        }
+        QSignalSpy done(&view, &HilView::runDone);
+        {
+            DialogDriver driver([&](HilConfirmDialog* d) { d->okButton()->click(); });
+            QVERIFY(view.requestRun() != 0);
+            QVERIFY(driver.seen());
+        }
+        QTRY_COMPARE_WITH_TIMEOUT(done.count(), 1, kWait);
+        QVERIFY(view.lastRun().status != HilRunStatus::Finished);
+        QCOMPARE(target.connectionsAfter(200), 0);
     }
 
     // ---- a run against a MockRunner ------------------------------------------------------------
@@ -847,7 +836,6 @@ private slots:
         QSignalSpy done(&view, &HilView::runDone);
         {
             DialogDriver driver([&](HilConfirmDialog* d) {
-                d->typeId(QStringLiteral("gui-run-3e"));
                 d->okButton()->click();
             });
             QVERIFY(view.requestRun() != 0);
@@ -928,17 +916,17 @@ private slots:
         view.check();
         QTRY_COMPARE_WITH_TIMEOUT(checked.count(), 2, kWait);
         QSignalSpy again(&view, &HilView::runDone);
-        view.runWith(QStringLiteral("gui-run-3e"));
+        view.runWith(true);
         QTRY_COMPARE_WITH_TIMEOUT(again.count(), 1, kWait);
         QVERIFY(view.lastRun().status == HilRunStatus::OutputRefused);
         QVERIFY(view.lastRun().reason.contains(QStringLiteral("exists")));
         view.setOverwrite(true);
-        view.runWith(QStringLiteral("gui-run-3e"));
+        view.runWith(true);
         QTRY_COMPARE_WITH_TIMEOUT(again.count(), 2, kRunWait);
         QVERIFY2(view.lastRun().status == HilRunStatus::Finished, qPrintable(view.lastRun().reason));
     }
 
-    void GUI_07_confirmingWithoutTypingWorksOnlyWhenNoReadOnlyFrameExists() {
+    void GUI_07_aRunWithoutReadOnlyFramesStartsOnlyWithTheConfirmation() {
         MockRig mock(QStringLiteral("gui07-skip"));
         QVERIFY(mock.ok);
         mock.host.setWords(QStringLiteral("D100"), {1234});
@@ -954,11 +942,11 @@ private slots:
         QVERIFY(check.readOnlyFrames.isEmpty());
 
         HilRunRequest request = requestFor(input, check, dir + QStringLiteral("/captured"));
-        request.typedId.clear();
+        request.confirmed = false;
         HilRunResult r;
-        QVERIFY(runVia(host, request, &r)); // nothing typed, no --yes
+        QVERIFY(runVia(host, request, &r));
         QVERIFY(r.status == HilRunStatus::NotConfirmed);
-        request.skipTyping = true; // --yes
+        request.confirmed = true;
         QVERIFY(runVia(host, request, &r));
         QVERIFY2(r.status == HilRunStatus::Finished, qPrintable(r.reason));
         QCOMPARE(r.passed, 2);
@@ -980,7 +968,7 @@ private slots:
         QTRY_COMPARE_WITH_TIMEOUT(checked.count(), 1, kWait);
         QVERIFY2(view.lastCheck().ok(), qPrintable(view.gateText()));
         QSignalSpy done(&view, &HilView::runDone);
-        QVERIFY(view.runWith(QString(), true) != 0);
+        QVERIFY(view.runWith(true) != 0);
         QTRY_VERIFY_WITH_TIMEOUT(!view.pendingPrompt().isEmpty(), kRunWait);
         QVERIFY2(view.pendingPrompt().contains(QStringLiteral("Pull the cable now")),
                  qPrintable(view.pendingPrompt()));
@@ -1008,7 +996,7 @@ private slots:
         view.check();
         QTRY_COMPARE_WITH_TIMEOUT(checked.count(), 1, kWait);
         QSignalSpy done(&view, &HilView::runDone);
-        view.runWith(QString(), true);
+        view.runWith(true);
         QTRY_VERIFY_WITH_TIMEOUT(!view.pendingPrompt().isEmpty(), kRunWait);
         view.cancelRun(); // also releases the prompt the run waits on
         QTRY_COMPARE_WITH_TIMEOUT(done.count(), 1, kRunWait);
@@ -1018,7 +1006,7 @@ private slots:
         QVERIFY(!QDir(root + QStringLiteral("/gui-cancel")).exists());
 
         // and the view can run again
-        view.runWith(QString(), true);
+        view.runWith(true);
         QTRY_VERIFY_WITH_TIMEOUT(!view.pendingPrompt().isEmpty(), kRunWait);
         view.continueRun();
         QTRY_COMPARE_WITH_TIMEOUT(done.count(), 2, kRunWait);
@@ -1043,7 +1031,6 @@ private slots:
         for (const CaptureSource source : {CaptureSource::MockPlc, CaptureSource::VirtualPlc}) {
             HilRunRequest request = requestFor(input, check, fakeRoot, source);
             request.capturedRoot = fakeRoot;
-            request.skipTyping = true;
             HilRunResult r;
             QVERIFY(runVia(host, request, &r));
             QVERIFY2(r.status == HilRunStatus::OutputRefused, qPrintable(r.reason));
@@ -1056,7 +1043,6 @@ private slots:
         // a loopback profile cannot be passed off as a real PLC
         HilRunRequest real = requestFor(input, check, dir + QStringLiteral("/other"), CaptureSource::RealPlc);
         real.capturedRoot = fakeRoot;
-        real.skipTyping = true;
         HilRunResult r;
         QVERIFY(runVia(host, real, &r));
         QVERIFY(r.status == HilRunStatus::OutputRefused);
@@ -1080,7 +1066,7 @@ private slots:
             QSignalSpy checked(view.get(), &HilView::checkDone);
             view->check();
             QTRY_COMPARE_WITH_TIMEOUT(checked.count(), 1, kWait);
-            view->runWith(QString(), true);
+            view->runWith(true);
             QTRY_VERIFY_WITH_TIMEOUT(!view->pendingPrompt().isEmpty(), kRunWait);
             QElapsedTimer closing;
             closing.start();

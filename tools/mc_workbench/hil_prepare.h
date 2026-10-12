@@ -44,30 +44,14 @@ struct HilPrepared {
  */
 HilPrepared prepareHil(const HilCheckInput& input);
 
-/// @brief Whether "confirm without typing" may be offered and honoured for @p check: the profile
-/// talks TCP to this computer (loopback host) and the run holds no read-only frame.
-/// @param[in] check The check the operator looked at.
-/// @return true only for a loopback profile without read-only frames.
-bool skipTypingAllowed(const HilCheckResult& check);
-
 /**
- * @brief The confirmation rule of `runTool()`, narrowed for the GUI: the profile id must be typed,
- * except when the run is repeated with `--yes`, holds no read-only frame and the profile is a
- * loopback TCP one (`skipTypingAllowed()`). Another host or a COM port always needs the id.
+ * @brief The confirmation rule of the GUI: the gate passed and the operator pressed Confirm in
+ * `HilConfirmDialog`. Nothing is typed, for any profile.
  * @param[in] check The check the operator looked at.
- * @param[in] typedId What was typed (surrounding blanks ignored).
- * @param[in] skipTyping The operator asked to confirm without typing (`--yes`).
+ * @param[in] confirmed The operator pressed Confirm.
  * @param[out] why Why it does not hold (may be null).
  * @return true when the run is confirmed.
  */
-bool confirmationAccepted(const HilCheckResult& check, const QString& typedId, bool skipTyping,
-                          QString* why = nullptr);
-
-/// @brief Whether a confirmation must be typed for @p check (always, when read-only frames exist
-/// or the profile is not a loopback TCP one).
-/// @param[in] check The check.
-/// @param[in] skipTyping The operator's `--yes`.
-/// @return true when the profile id has to be typed.
-bool mustTypeProfileId(const HilCheckResult& check, bool skipTyping);
+bool confirmationAccepted(const HilCheckResult& check, bool confirmed, QString* why = nullptr);
 
 } // namespace mc::workbench

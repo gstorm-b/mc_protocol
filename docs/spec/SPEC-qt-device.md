@@ -71,7 +71,7 @@ tests/device/
 ├── tst_mc_device_thread.cpp QDV-09
 ├── tst_tcp_transport.cpp   QDV-06 (transport level), QDV-12, QDV-19
 ├── tst_config_json.cpp      QDV-10
-└── tst_serial.cpp           QDV-14 (QSKIP without MC_TEST_SERIAL_PAIR)
+└── tst_serial.cpp           QDV-14, QDV-20 (QSKIP without MC_TEST_SERIAL_PAIR)
 examples/
 ├── qt_console_poller/       connect, subscribe from arguments, print snapshots and changes
 └── virtual_plc/             Qt console PLC: QTcpServer or QSerialPort in front of mc::MockPlc
@@ -143,6 +143,9 @@ struct SerialSettings {
     QSerialPort::Parity parity{QSerialPort::EvenParity};
     QSerialPort::StopBits stopBits{QSerialPort::OneStop};
     QSerialPort::FlowControl flowControl{QSerialPort::NoFlowControl};
+    // Added 2026-10-12 (owner decision); see "Serial control lines".
+    bool dataTerminalReady{true};                  ///< Assert DTR once the port is open; false = leave it off.
+    bool requestToSend{true};                      ///< Assert RTS once open; ignored with HardwareControl (the driver owns RTS).
 };
 /// QSerialPort; open() completes on the next event-loop turn so both transports behave alike.
 class SerialTransport final : public Transport { /* … */ public: explicit SerialTransport(SerialSettings s, QObject* parent = nullptr); };
@@ -150,6 +153,15 @@ class SerialTransport final : public Transport { /* … */ public: explicit Seri
 ```
 
 The line settings must match the C24 module's parameters; a mismatch shows up as timeouts or NAKs, not as a clear error (spec §8.3, §10.3).
+
+#### Serial control lines (amended 2026-10-12, owner decision)
+
+Bench finding: QSerialPort opens a Windows port with DTR off, and a QJ71C24N with DTR/DSR control (its default on the RS-232 channel) then never answers, so `readyRead` never comes. 0.1.1 set no control line.
+
+- `dataTerminalReady` (default **true**): `setDataTerminalReady(true)` right after `open()` succeeds and before `opened()`; `false` sets DTR off explicitly (Qt's Windows open can leave it asserted, T-084 finding) for a device that treats DTR as a reset or needs it low. The application turns it off through `SerialSettings::dataTerminalReady` or the JSON key.
+- `requestToSend` (default **true**): `setRequestToSend(true)` at the same point, only when `flowControl` is not `HardwareControl` (with hardware flow control the driver drives RTS; setting it is an error in Qt).
+- A failure to set a line is not fatal: the port stays open and `opened()` follows. It is not logged: a transport has no log path (amended 2026-10-12, T-084 finding).
+- The defaults change 0.1.1 behaviour on purpose: a device that needs a control line asserted works out of the box.
 
 #### TCP close and socket options (amended 2026-10-08, owner decision)
 
@@ -204,7 +216,8 @@ JSON shape (every `FrameConfig` and `SessionConfig` field has a key of the same 
                  "tcp":    { "host": "192.168.0.10", "port": 5000, "connectTimeoutMs": 2000,
                              "lowDelay": true, "keepAlive": true, "closeGraceMs": 0 },
                  "serial": { "portName": "COM3", "baudRate": 9600, "dataBits": 7, "parity": "Even",
-                             "stopBits": "1", "flowControl": "None" } },
+                             "stopBits": "1", "flowControl": "None",
+                             "dataTerminalReady": true, "requestToSend": true } },
   "subscriptions": [ { "device": "D2000", "count": 64 }, { "device": "M2000", "count": 64 } ]
 }
 ```
@@ -380,6 +393,7 @@ QtTest binaries under label `device`. The loopback server `MockPlcServer` hosts 
 | QDV-12 | The connected socket has `LowDelayOption` and `KeepAliveOption` set by default; with `lowDelay` / `keepAlive` false neither is set by the transport |
 | QDV-13 | Smoke over TCP for 3E ASCII, 1E Binary, 1E ASCII and 3C F1 (serial frame over TCP): one round and one write each |
 | QDV-14 | Serial over a virtual COM pair (`MC_TEST_SERIAL_PAIR`): 3C F4 and 1C F1, a round and a write; `QSKIP` when the variable is unset |
+| QDV-20 | Serial control lines over the virtual COM pair (com0com wiring: DTR → peer DSR, RTS → peer CTS): defaults → after `opened()` the peer sees DSR and CTS; `dataTerminalReady` false → no DSR; `requestToSend` false → no CTS; `HardwareControl` → RTS left to the driver and the port opens; QDV-10 covers the two JSON keys; `QSKIP` without `MC_TEST_SERIAL_PAIR` |
 | QDV-15 | `disconnectFromPlc()` with a request in flight → `requestFinished(LinkDown)` then `(Disconnected, Requested)` |
 | QDV-16 | Invalid config (subscription `"Q10"`) → `connectToPlc()` publishes `(Disconnected, OpenFailed)` naming `subscriptions[0].device`; no socket opened |
 | QDV-17 | Destroying a connected device with 2 queued requests: no crash, no signal after destruction starts, one `Warn` log line naming both ids, the server sees the socket close |
@@ -427,7 +441,7 @@ QtTest binaries under label `device`. The loopback server `MockPlcServer` hosts 
 
 ## Success Criteria
 
-1. QDV-01…13 and 15…19 pass on Windows (MSVC) and Linux (GCC); QDV-14 passes where a virtual COM pair exists and is skipped elsewhere.
+1. QDV-01…13 and 15…19 pass on Windows (MSVC) and Linux (GCC); QDV-14 and QDV-20 pass where a virtual COM pair exists and are skipped elsewhere.
 2. No `waitFor`, `QEventLoop`, `QThread` or `QMutex` token appears in `src/device`.
 3. The class compiles with only `mc/core/*.h` and Qt headers; `mc_device` does not link `mc_mock`.
 4. `virtual_plc` and `qt_console_poller` talk to each other on one machine and print round-1 snapshots, then changes caused by `--wiggle`.

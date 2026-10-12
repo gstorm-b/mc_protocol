@@ -43,7 +43,7 @@ struct HilCheckResult {
     QString refusalText;      ///< Gate refusal: every offending step, as `hil_capture` prints it.
     QString dryRunText;       ///< The frames the run would send (empty unless the gate passed).
     QString confirmationText; ///< PLC identity, transport, scratch area, read-only frames.
-    QString profileId;        ///< The id the operator types to confirm.
+    QString profileId;        ///< The profile id.
     QString planId;           ///< The plan's id.
     int stepCount{0};         ///< Resolved steps (skipped ones included).
     QVector<HilGateFrame> readOnlyFrames; ///< Frames the gate could not decode.
@@ -58,8 +58,7 @@ struct HilCheckResult {
 struct HilRunRequest {
     HilCheckInput input;                 ///< Profile, plan, groups, PLC state.
     QString expectedDigest;              ///< The digest of the check the operator looked at.
-    QString typedId;                     ///< What the operator typed to confirm.
-    bool skipTyping{false};              ///< `--yes`: confirm without typing (only a loopback TCP profile without read-only frames)
+    bool confirmed{false};               ///< The operator pressed Confirm in the dialog.
     QString outputRoot;                  ///< The capture goes to `<outputRoot>/<profile id>/`.
     QString capturedRoot;                ///< `tests/vectors/captured/` of the repository (may be empty).
     CaptureSource source{CaptureSource::MockPlc}; ///< What the run talks to.

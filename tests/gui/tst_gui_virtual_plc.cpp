@@ -290,7 +290,6 @@ private slots:
         QSignalSpy done(&view, &HilView::runDone);
         {
             DialogHand hand([&](HilConfirmDialog* d) {
-                d->typeId(QStringLiteral("gui-vp-3e"));
                 d->okButton()->click();
             });
             QVERIFY(view.requestRun() != 0);

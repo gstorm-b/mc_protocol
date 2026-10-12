@@ -169,7 +169,6 @@ QList<DamagedCase> damagedCases() {
         {"wrong format", "format", "format: expected"},
         {"future version", "version", "version: unsupported version 2"},
         {"missing version", "noversion", "version: missing required key"},
-        {"port zero", "port0", "devices[0].config.transport.tcp.port"},
         {"wrong type in a config", "wrongtype", "devices[0].config.frame.timeoutMs"},
         {"unknown key in a config", "unknowncfg", "devices[0].config.frame.timeoutMS: unknown key"},
         {"unknown key in a mock grid", "unknownmock", "mocks[0].settings.Frame.bogus: unknown key"},
@@ -435,6 +434,60 @@ private slots:
         QCOMPARE(RunnerBase::liveRunners(), base + 1);
     }
 
+    // GUI-06/GUI-08 (amended 2026-10-12): a device tab that holds an invalid draft is saved as typed and
+    // loaded back as the same draft, marked, with Connect disabled and no problem reported. (A file
+    // with a config that fails validate(), such as port 0, used to be refused as damaged.)
+    void GUI_08_anInvalidDraftSurvivesSaveAndLoad() {
+        const QString dir = mc::workbench::test::freshOutputDir(QStringLiteral("gui-t085-draft"));
+        const QString file = QDir(dir).absoluteFilePath(QStringLiteral("draft.json"));
+
+        mc::McDeviceConfig valid = tcp3E(1, 5001);
+        QJsonObject draftJson;
+        {
+            MainWindow window;
+            window.setWorkspaceDialogs(false);
+            DeviceTab* tab = window.devicePane()->addDevice();
+            QString error;
+            QVERIFY2(tab->setConfig(valid, &error), qPrintable(error));
+            // TCP to Serial with no port name yet: a draft.
+            QVERIFY(tab->binding()->model()->setValue(QStringLiteral("transport/kind"), QStringLiteral("Serial")));
+            QVERIFY(!tab->binding()->draftValid());
+            QVERIFY(tab->binding()->config().transport == mc::TransportKind::Tcp);
+            draftJson = tab->binding()->draft().toJson();
+            QCOMPARE(window.workspace()->capture().devices.at(0).config.toJson(), draftJson);
+
+            QSignalSpy saved(window.workspace(), &WorkspaceController::saveFinished);
+            QVERIFY(window.workspace()->save(file));
+            QTRY_COMPARE_WITH_TIMEOUT(saved.count(), 1, kLoadWait);
+            QVERIFY2(saved.first().at(1).toBool(), qPrintable(saved.first().at(2).toString()));
+        }
+
+        // The file parses without a problem; the config is the draft.
+        Workspace reread;
+        QVector<WorkspaceProblem> problems;
+        QVERIFY2(workspaceFromBytes(readAll(file), reread, problems), qPrintable(workspaceProblemsText(problems)));
+        QCOMPARE(reread.devices.size(), 1);
+        QCOMPARE(reread.devices.at(0).config.toJson(), draftJson);
+
+        MainWindow window;
+        window.setWorkspaceDialogs(false);
+        QSignalSpy loaded(window.workspace(), &WorkspaceController::loadFinished);
+        QVERIFY(window.workspace()->load(file));
+        QTRY_COMPARE_WITH_TIMEOUT(loaded.count(), 1, kLoadWait);
+        QVERIFY2(loaded.first().at(1).toBool(), qPrintable(loaded.first().at(2).toString()));
+        QCOMPARE(window.devicePane()->deviceCount(), 1);
+        DeviceTab* tab = window.devicePane()->deviceAt(0);
+        QCOMPARE(tab->binding()->draft().toJson(), draftJson);
+        QVERIFY(!tab->binding()->draftValid());
+        QCOMPARE(tab->binding()->draftWhere(), QStringLiteral("transport/serial/portName"));
+        QVERIFY(tab->binding()->model()->find(QStringLiteral("transport/serial/portName"))
+                    ->hasAttribute(ConfigBinding::invalidAttribute()));
+        QVERIFY(!tab->connectEnabled());
+        QVERIFY(tab->message().contains(QStringLiteral("transport.serial.portName")));
+        // The runner never got the draft: the last valid configuration is the tab's default.
+        QCOMPARE(tab->binding()->config().toJson(), mc::McDeviceConfig{}.toJson());
+    }
+
     // A damaged file is refused with a message, the window stays exactly as it was, and it stays
     // usable: another tab can be added, a good file loads, a save works.
     void GUI_08_aDamagedFileIsRefusedAndTheAppStaysUsable() {
@@ -520,14 +573,6 @@ private slots:
             edit([](QJsonObject& r) { r.insert(QStringLiteral("version"), 2); });
         } else if (name == QLatin1String("noversion")) {
             edit([](QJsonObject& r) { r.remove(QStringLiteral("version")); });
-        } else if (name == QLatin1String("port0")) {
-            edit([&](QJsonObject& r) {
-                QJsonObject d = device0(r);
-                QJsonObject cfg = d.value(QStringLiteral("config")).toObject();
-                setNested(cfg, {QStringLiteral("transport"), QStringLiteral("tcp"), QStringLiteral("port")}, 0);
-                d.insert(QStringLiteral("config"), cfg);
-                setDevice0(r, d);
-            });
         } else if (name == QLatin1String("wrongtype")) {
             edit([&](QJsonObject& r) {
                 QJsonObject d = device0(r);

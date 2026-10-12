@@ -220,6 +220,19 @@ worktree slots `.wt/` and `scripts/wt-sync.ps1` added for parallel builds). Comm
   gstorm-b/mc_protocol; GitHub pre-release https://github.com/gstorm-b/mc_protocol/releases/tag/v0.1.1 with the bundle
   (SHA-256 on GitHub matches); gh switched back to dev39-hash
 
+### Bench follow-up (owner 2026-10-12, after the first Q03UDE captures; leader gates as Phase 8)
+
+First captures: 4 Q03UDE profiles (3E Binary/ASCII all passed; 3C F1 sum/no-sum one Y0 timeout each, because Y0–Y7
+are the QJ71C24N's own I/O — the owner re-captures). Bench findings for the tools and the library:
+
+- [x] T-084 `SerialSettings::dataTerminalReady` / `requestToSend` (default true), JSON keys, GUI fields, QDV-20
+- [x] T-085 GUI config grid keeps an incomplete config as a marked draft; Connect disabled until valid (GUI-06)
+- [x] T-086 HIL runner: one Confirm button for every profile, no typed id (GUI-07); `hil_capture` CLI unchanged
+
+Batch tester and reviewer after T-086; one commit. Done 2026-10-12 (reviewer FAIL on one MEDIUM → Rework 1 → both PASS).
+Replay divergences of the captures (mock 4031/C059/NAK fidelity,
+RPL-05 checks) go to P9-2.
+
 ### Phase 9: Bench and release
 
 Waits until the owner has finished the HIL captures (owner, 2026-10-04); not delegated.

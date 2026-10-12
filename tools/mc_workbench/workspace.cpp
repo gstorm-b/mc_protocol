@@ -381,14 +381,9 @@ bool workspaceFromJson(const QJsonObject& json, Workspace& out, QVector<Workspac
                     problems.push_back({where.isEmpty() ? cp : childPath(cp, where),
                                         QString::fromUtf8(parsed.error().message)});
                 } else {
-                    QString validateWhere;
-                    const auto valid = parsed.value().validate(&validateWhere);
-                    if (!valid) {
-                        problems.push_back({validateWhere.isEmpty() ? cp : childPath(cp, validateWhere),
-                                            QString::fromUtf8(valid.error().message)});
-                    } else {
-                        device.config = parsed.value();
-                    }
+                    // A well-formed config that fails validate() is kept: the device tab loads it
+                    // as a draft and marks the failing field (GUI-06, GUI-08).
+                    device.config = parsed.value();
                 }
             }
             ws.devices.push_back(device);

@@ -238,8 +238,8 @@ private slots:
 
         Ticker ticker;
         QSignalSpy done(&view, &HilView::runDone);
-        // The plan holds read-only frames: the id is typed, there is no way to skip it.
-        QVERIFY(view.runWith(QStringLiteral("gui-mock-3e"), false) != 0);
+        // The plan holds read-only frames: the run still needs the confirmation (runWith(true)).
+        QVERIFY(view.runWith(true) != 0);
         QTRY_COMPARE_WITH_TIMEOUT(done.count(), 1, kRunWaitMs);
         const HilRunResult run = view.lastRun();
         const QString lines = run.lines.join(QLatin1Char('\n'));

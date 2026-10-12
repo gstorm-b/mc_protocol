@@ -128,7 +128,8 @@ QByteArray workspaceToBytes(const Workspace& workspace);
  * Every problem is collected, not only the first: a wrong type, a value out of range, a missing
  * `format`, a `version` this build does not know, and every key nobody reads ("unknown key", with
  * its path, also inside a device configuration, where `McDeviceConfig::fromJson()` itself would
- * ignore it). A device configuration must pass `McDeviceConfig::validate()` as well.
+ * ignore it). A device configuration need not pass `McDeviceConfig::validate()`: such a device is
+ * loaded as a draft (GUI-06).
  *
  * @param[in] json The object.
  * @param[out] out The workspace; left empty when @p problems is not.

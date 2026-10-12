@@ -34,9 +34,9 @@ class HilHost;
  * replay and the bench report. The view renders and forwards value copies.
  *
  * The safety gate is the gate of `hil_capture`. The "Run" button is enabled only after a check
- * that passed it, with the inputs unchanged since; it opens `HilConfirmDialog`, which needs the
- * typed profile id whenever the run holds read-only frames; the runner repeats the pipeline and
- * the confirmation rule before it starts anything. A refused plan shows the refusal text and
+ * that passed it, with the inputs unchanged since; it opens `HilConfirmDialog`, whose Confirm
+ * button is the whole confirmation; the runner repeats the pipeline and needs the confirmation
+ * before it starts anything. A refused plan shows the refusal text and
  * offers no way to run.
  *
  * @note GUI thread only.
@@ -148,17 +148,16 @@ public:
     quint64 requestRun();
 
     /**
-     * @brief Sends a run request with a confirmation already typed (what the dialog hands over).
+     * @brief Sends a run request with the dialog's confirmation (what the dialog hands over).
      *
-     * The runner repeats the check and the confirmation rule; a wrong id or a refused plan comes
-     * back as a `runFinished` with a refusal status and sends nothing. Public so tests can prove
-     * that; there is no argument that skips the rule.
+     * The runner repeats the check and the confirmation rule; a missing confirmation or a refused
+     * plan comes back as a `runFinished` with a refusal status and sends nothing. Public so tests
+     * can prove that.
      *
-     * @param[in] typedId What the operator typed.
-     * @param[in] skipTyping The operator asked to confirm without typing (`--yes`).
+     * @param[in] confirmed The operator pressed Confirm in the dialog.
      * @return The token of the `runFinished` that answers; 0 when no check passed yet.
      */
-    quint64 runWith(const QString& typedId, bool skipTyping = false);
+    quint64 runWith(bool confirmed);
 
     /// @brief Asks the run to stop after the current step.
     void cancelRun();
