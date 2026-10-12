@@ -237,7 +237,8 @@ Commit `63aef65`.
 - [x] `include/mc/version.h` 0.1.2; `CHANGELOG.md` `[0.1.2] - 2026-10-12`; full ctest Qt 6 MSVC (COM54,COM55) and
   Qt 5.15 x86 with the GUI in `.wt/`
 - [x] Tag `v0.1.2`, bundle `build/release/mc_protocol-v0.1.2.bundle`; `main` and the tag pushed to gstorm-b/mc_protocol;
-  GitHub pre-release with the bundle
+  GitHub pre-release https://github.com/gstorm-b/mc_protocol/releases/tag/v0.1.2 with the bundle (SHA-256 matches;
+  release commit `2ad582c`); gh switched back to dev39-hash
 
 Replay divergences of the captures (mock 4031/C059/NAK fidelity,
 RPL-05 checks) go to P9-2.

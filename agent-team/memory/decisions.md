@@ -3,6 +3,8 @@
 Curated by the team leader. One entry, one decision, newest first.
 Format: `- [T-xxx or date] Decision — why. (supersedes: entry, if any)`
 
+- [2026-10-12] Owner: "hãy commit và push. Tạo bản pre-release 0.1.2" — `main`, tag `v0.1.2` pushed to gstorm-b/mc_protocol,
+  GitHub pre-release with `mc_protocol-v0.1.2.bundle` (gh back to dev39-hash).
 - [2026-10-12] Owner: QJ71C24N I/O starts at Y0 on the bench (Y0–Y7 were never a safe scratch; Q03UDE captures to be
   redone). T-084 `SerialSettings::dataTerminalReady` / `requestToSend`, default true (QSerialPort opens Windows ports
   with DTR off; a C24 with DTR/DSR control stays silent); T-085 GUI keeps an invalid config as a marked draft, Connect
