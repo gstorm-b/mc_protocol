@@ -253,6 +253,10 @@ Waits until the owner has finished the HIL captures (owner, 2026-10-04); not del
   - [x] T-087 1E ASCII odd bit write appends one dummy '0' (F-001)
   - [x] T-088 Per-target point caps in `FrameConfig` (F-002, F-003; option a)
   - [x] T-089 Import the captures, `FINDINGS.md` entries, `divergences.txt` (replay green)
+  - Commit `a8a36db` (T-087..T-089, 2026-10-15).
+  - [x] Pre-release v0.1.3 (owner 2026-10-15: "hãy xuất một bundle và publish"): `include/mc/version.h` 0.1.3;
+    `CHANGELOG.md` `[0.1.3] - 2026-10-15`; full ctest Qt 6 MSVC and Qt 5.15 x86 with the GUI in `.wt/` (serial pair
+    not available: the virtual COM driver was not running); tag `v0.1.3`, bundle, pushed, GitHub pre-release
   - [ ] Owner decides the open FINDINGS entries (mock fidelity, replay checker, `hil_capture` reconnect wait) → follow-ups
   - [ ] Remaining captures: FX3 serial 1C ×3, FX5U RS-485 ×2; re-capture `fx3-eth-1e-ascii` after T-087
 - [ ] P9-3 Release 1.0

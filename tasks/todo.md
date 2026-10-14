@@ -1132,6 +1132,7 @@ lines", QDV-20) and `SPEC-gui-tool.md` (HIL runner row, GUI-06, GUI-07).
 - [x] T-088 `FrameConfig` caps `maxReadWords` / `maxWriteWords` / `maxReadBits` / `maxWriteBits` (F-002, F-003)
 - [x] T-089 Import 11 captures, `FINDINGS.md`, `divergences.txt`; replay green
 - [x] Batch tester and reviewer; one commit (owner confirms the capture file list); `CHANGELOG.md` `Unreleased`
+- [x] Pre-release v0.1.3 (2026-10-15): version, CHANGELOG, tag, bundle, pushed, GitHub pre-release
 - [ ] Owner: decide the open FINDINGS entries; capture FX3 serial 1C ×3, FX5U RS-485 ×2; re-capture `fx3-eth-1e-ascii`
 
 

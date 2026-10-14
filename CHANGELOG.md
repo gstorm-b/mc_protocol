@@ -6,8 +6,12 @@ All notable changes to this project are documented in this file. The format foll
 
 ## [Unreleased]
 
-Bench findings triage (P9-2, owner 2026-10-14) after 11 captures on a Q03UDE, an FX5U and an FX3U with
-FX3U-ENET-ADP.
+## [0.1.3] - 2026-10-15
+
+Fourth pre-release (owner, 2026-10-15). Follows the bench findings triage (P9-2, owner 2026-10-14) after 11 captures on
+a Q03UDE, an FX5U and an FX3U with FX3U-ENET-ADP. **Behaviour change:** 1E ASCII odd bit writes carry a dummy `'0'`.
+Still not verified against every bench PLC (FX3 serial 1C and FX5U RS-485 not captured yet). Verified on Windows:
+Qt 6.11.1 (MSVC 2022 x64, MinGW 13.1), Qt 5.15.0 MSVC toolset 14.44 x64 and x86, CMake and qmake.
 
 ### Added
 
