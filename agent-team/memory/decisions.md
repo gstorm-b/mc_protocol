@@ -3,6 +3,8 @@
 Curated by the team leader. One entry, one decision, newest first.
 Format: `- [T-xxx or date] Decision — why. (supersedes: entry, if any)`
 
+- [2026-10-15] Owner: "hãy xuất một bundle và publish" — pre-release v0.1.3: `main`, tag `v0.1.3` pushed to
+  gstorm-b/mc_protocol, GitHub pre-release with `mc_protocol-v0.1.3.bundle` (gh back to dev39-hash).
 - [2026-10-14] Owner, P9-2 Gate 2 answers: (1) the 11 capture folders (5 files each, incl. `divergences.txt`) and
   `docs/hil/BENCH.md` approved for commit, about 35 MB, `FILL:` notes may stay; (2) F-006 / Q4 stays `decided — keep`,
   noting that FX5U and FX3U-ENET-ADP close the connection on a non-zero padding nibble (the library always sends 0);
