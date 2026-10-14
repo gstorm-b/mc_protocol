@@ -1,0 +1,20 @@
+# step id, FINDINGS id (docs/hil/FINDINGS.md); the replay test reports these as known-divergence
+G7-01+2 F-017  # EOT answered by NAK recorded as ok
+G4-02-STS F-010 # supports ignored by the mock
+G4-02-STC F-010 # supports ignored by the mock
+G4-02-STN F-010 # supports ignored by the mock
+G4-02-R F-010  # supports ignored by the mock
+G4-02-ZR F-010 # supports ignored by the mock
+G5-02 F-008    # error code differs
+G5-03 F-008    # error code differs
+G5-04 F-008    # error code differs
+G7-03 F-008    # error code differs
+G8-Q1 F-008    # error code differs
+G9-01-F3 F-009 # route / probes not modelled by the mock
+G9-05 F-009    # route / probes not modelled by the mock
+G9-05-M F-009  # route / probes not modelled by the mock
+G7-06 F-019    # 1 ms rounding of CycleInfo.durationMs
+GV-01 F-015    # RPL-05 read-back check
+GV-03 F-015    # RPL-05 read-back check
+G2-01 F-015    # RPL-05 read-back check
+G8-Q1 F-015    # RPL-05 read-back check

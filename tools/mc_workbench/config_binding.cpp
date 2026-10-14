@@ -119,6 +119,18 @@ QVector<FieldInfo> buildFields() {
              "Multiple-of-16 head rule for word access to bit devices");
     addField(f, "frame/splitWrites", "Split writes", FieldKind::Bool,
              "Allow a write across several commands (v1.1)");
+    addField(f, "frame/maxReadWords", "Max read words", FieldKind::Int,
+             "Max words per read (0 = frame default; FX5 ASCII 480, FX3-ENET-ADP 1E 32)", {}, 0,
+             u16);
+    addField(f, "frame/maxWriteWords", "Max write words", FieldKind::Int,
+             "Max words per write (0 = frame default; FX5 ASCII 480, FX3-ENET-ADP 1E 10)", {}, 0,
+             u16);
+    addField(f, "frame/maxReadBits", "Max read bits", FieldKind::Int,
+             "Max bits per read (0 = frame default; FX5 ASCII 1792, FX3-ENET-ADP 1E 256)", {}, 0,
+             u16);
+    addField(f, "frame/maxWriteBits", "Max write bits", FieldKind::Int,
+             "Max bits per write (0 = frame default; FX5 ASCII 1792, FX3-ENET-ADP 1E 160)", {}, 0,
+             u16);
     addField(f, "frame/timeoutMs", "Timeout (ms)", FieldKind::Int64, "0 = derived", {}, 0, u32);
     addField(f, "frame/readRetries", "Read retries", FieldKind::Int, "Serial links only", {}, 0,
              u8);

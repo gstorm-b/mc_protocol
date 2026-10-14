@@ -248,7 +248,13 @@ RPL-05 checks) go to P9-2.
 Waits until the owner has finished the HIL captures (owner, 2026-10-04); not delegated.
 
 - [ ] P9-1 Capture the 14 bench profiles (owner-operated)
-- [ ] P9-2 Findings triage
+- [ ] P9-2 Findings triage — opened 2026-10-14 (owner) with 11 of 16 profiles captured (Q03UDE ×7, FX5U Ethernet ×2,
+  FX3 Ethernet ×2):
+  - [x] T-087 1E ASCII odd bit write appends one dummy '0' (F-001)
+  - [x] T-088 Per-target point caps in `FrameConfig` (F-002, F-003; option a)
+  - [x] T-089 Import the captures, `FINDINGS.md` entries, `divergences.txt` (replay green)
+  - [ ] Owner decides the open FINDINGS entries (mock fidelity, replay checker, `hil_capture` reconnect wait) → follow-ups
+  - [ ] Remaining captures: FX3 serial 1C ×3, FX5U RS-485 ×2; re-capture `fx3-eth-1e-ascii` after T-087
 - [ ] P9-3 Release 1.0
 
 **Checkpoint G:** ready to tag `v1.0.0`.

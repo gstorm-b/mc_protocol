@@ -59,7 +59,16 @@ Expected<size_t> a1eRequestData(const Request& r, MutableByteView out,
         if (!writeResult.hasValue()) {
             return writeResult;
         }
-        offset += writeResult.value();
+        size_t written = writeResult.value();
+        // 1E ASCII odd bit count: one dummy '0' (30H) after the data (1E-15). Binary already
+        // fills the last nibble, so for it `written` equals the padded size.
+        if (r.isBitOp()) {
+            size_t padded = Codec::bitsSize(r.count + r.count % 2);
+            for (; written < padded; ++written) {
+                out.data[offset + written] = uint8_t{'0'};
+            }
+        }
+        offset += written;
     }
 
     return Expected<size_t>(offset);

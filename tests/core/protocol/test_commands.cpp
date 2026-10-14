@@ -960,7 +960,8 @@ TEST_CASE("A1E-REQUEST-ERRORS: 256 points wrap to 00; BufferTooSmall, InvalidDev
 }
 
 TEST_CASE("A1E-BITS: odd counts pad the Binary write with a zero nibble; ASCII sends N "
-          "characters (1E-11, spec Q3); PackedLsbFirst goes through the same packing") {
+          "characters plus one dummy '0' (1E-11, 1E-15); PackedLsbFirst goes through the same "
+          "packing") {
     uint8_t three[3] = {1, 1, 1};
     Request r = Request::writeBits(Device{DeviceType::M, 100}, ByteView{three, 3});
 
@@ -971,7 +972,8 @@ TEST_CASE("A1E-BITS: odd counts pad the Binary write with a zero nibble; ASCII s
 
     std::vector<uint8_t> asc(a1eRequestDataSize<AsciiCodec>(r), 0xCC);
     REQUIRE(a1eRequestData<AsciiCodec>(r, MutableByteView{asc.data(), asc.size()}).hasValue());
-    CHECK(std::string(asc.begin(), asc.end()) == "4D20" "00000064" "03" "00" "111");
+    // ... and the dummy '0' that 1E-15 adds after an odd count (the last character).
+    CHECK(std::string(asc.begin(), asc.end()) == "4D20" "00000064" "03" "00" "111" "0");
 
     // 9 points packed LSB first (0xFF, 0x01): all nine ON.
     uint8_t packed[2] = {0xFF, 0x01};

@@ -144,6 +144,12 @@ struct FrameConfig {
                                ///< bit devices, as an A-series target would require.
     bool splitWrites{false};   ///< Allow chunk() to split a write across several commands (v1.1);
                                ///< unused by validate() in v1.
+    uint16_t maxReadWords{0};  ///< Cap on points per batch word read (word devices, and bit
+                               ///< devices read in words); 0 = the spec §4.4 table only. A cap
+                               ///< above the table value has no effect; see maxPoints().
+    uint16_t maxWriteWords{0}; ///< Same for batch word writes.
+    uint16_t maxReadBits{0};   ///< Same for batch bit reads.
+    uint16_t maxWriteBits{0};  ///< Same for batch bit writes.
     uint32_t timeoutMs{0}; ///< 0 = derived: see effectiveTimeoutMs().
     uint8_t readRetries{0}; ///< Serial links only: an Ethernet timeout faults the link (spec
                             ///< §6.1); unused by validate() in v1.

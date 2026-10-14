@@ -92,6 +92,11 @@ contradict `agent-team/core/`, this file wins.
   T-086 HIL confirmation by one Confirm button, no typed id (supersedes decision C). The leader writes the spec
   amendments (`SPEC-qt-device.md`, `SPEC-gui-tool.md`). Phase 8 terms: fresh developer per task, one batch tester and
   reviewer, one commit. `tools/hil_capture` CLI confirmation unchanged. Phase 9 still waits for the captures.
+- **P9-2 opened, owner 2026-10-14:** "Duyệt T-087, T-088 đi theo hướng (a), mở P9-2, cho phép chép capture." T-087 (1E ASCII
+  odd bit write dummy), T-088 (per-target caps, option a) and T-089 (import the 11 captures, FINDINGS, divergences) run
+  on Phase 8 terms (fresh developer per task, one batch tester and reviewer, one commit); the leader amends the specs
+  per the decisions. Each **open** FINDINGS entry is decided by the owner before its follow-up task is planned (plan
+  P9-2). P9-3 (release 1.0) still waits.
 - Work on `main` unless the owner says otherwise.
 
 ## Phase-batched verification (owner decision 2026-09-27)

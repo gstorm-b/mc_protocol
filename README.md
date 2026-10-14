@@ -25,6 +25,21 @@ include($$PWD/third_party/mc_protocol/mc_protocol.pri)   # core + device
 
 **No build system:** copy the folder over the old one; both include paths above still work.
 
+## Per-target point caps
+
+Some PLCs accept fewer points per command than the limit of their frame family. Four optional
+`FrameConfig` fields (JSON keys `frame.maxReadWords`, `frame.maxWriteWords`, `frame.maxReadBits`,
+`frame.maxWriteBits`; GUI grid fields of the same names) lower the limit of one operation each; 0,
+the default, keeps the table value. Reads, the polling plan and ad-hoc requests split at the cap,
+and a write above it needs `splitWrites`. Suggested values (not built in):
+
+| Target | Words read | Words write | Bits read | Bits write |
+|---|---|---|---|---|
+| FX5U over 3E ASCII | 480 | 480 | 1792 | 1792 |
+| FX3U-ENET-ADP over 1E | 32 | 10 | 256 | 160 |
+
+The FX3 word caps are the ones for bit devices, the safe minimum for word devices too (64).
+
 ## Version policy
 
 `include/mc/version.h` is the single source of truth (`MC_VERSION_*` macros, `mc::version()`).

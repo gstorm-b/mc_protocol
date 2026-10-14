@@ -209,6 +209,8 @@ connection, with shared memory).
 
 3E requests are framed by the request-data-length field; 1E requests by the command's fixed layout plus the point count. Bytes that cannot start a request (wrong subheader) are answered with nothing and logged in the request record as unanswered, so a client desync shows up as a timeout, like a real module. The 3E response **echoes the request's route**; `Corruption::WrongRoute` is how route checking is tested.
 
+1E ASCII batch bit write (02H) with an odd point count carries N + 1 data characters: the N points and one dummy `'0'` (amended 2026-10-14, owner; finding F-001, FX3 ENET-ADP manual §7.5.3). The mock computes the request length that way, so a request with only N characters stays incomplete and gets no answer, as on the FX3U-ENET-ADP.
+
 ### Responses
 
 Built from the spec §5 tables for the configured frame: 3E header + response data length + end code + data or error information; 1E subheader `cmd | 80H` + end code (+ abnormal code) + data, with the trailing dummy character on odd ASCII bit reads and a zero low nibble on odd binary bit reads; 3C/1C per format with `ACK`/`NAK`, `QACK`/`QNAK`, `GG`/`NN`, SUM when enabled, `CR LF` for F4, block number for F2. `f3ShortResponseHasSum` is honoured (spec Q1).
@@ -234,6 +236,7 @@ Two doctest binaries. `mc_mock_tests` (label `mock`) checks the mock against the
 | MCK-11 | `mute`, `muteNext`, and each `Corruption` mode produce exactly the documented bytes (or none) |
 | MCK-12 | `setDeviceLimit`: a request reaching the limit gets the out-of-range error; one below it succeeds |
 | MCK-13 | Streams: two streams fed interleaved fragments (one byte each, alternating) decode both requests and answer each on its own stream, on every frame family; a stream closed mid-request leaves no trace for the next stream; stream 0 calls equal the stream-less calls; faults and the request log are shared (`stream` recorded); a closed or unknown id is ignored |
+| MCK-14 | 1E ASCII odd bit write: N = 1 and 5 with the dummy decode and change memory; the same frame without the dummy gets no response (incomplete); N = 8 unchanged (finding F-001) |
 | MCK-HYG | `src/mock/**` includes only the headers allowed by the independence rule |
 
 The vector loader is shared with `core-protocol` (see "Changes required in other specs").

@@ -215,6 +215,10 @@ bool readFrame(const QJsonObject& o, const QString& base, FrameConfig& c, Failur
            readBool(o, "highPerformanceQcpu", base, c.highPerformanceQcpu, f) &&
            readBool(o, "aSeriesTarget", base, c.aSeriesTarget, f) &&
            readBool(o, "splitWrites", base, c.splitWrites, f) &&
+           readInt(o, "maxReadWords", base, c.maxReadWords, f) &&
+           readInt(o, "maxWriteWords", base, c.maxWriteWords, f) &&
+           readInt(o, "maxReadBits", base, c.maxReadBits, f) &&
+           readInt(o, "maxWriteBits", base, c.maxWriteBits, f) &&
            readInt(o, "timeoutMs", base, c.timeoutMs, f) &&
            readInt(o, "readRetries", base, c.readRetries, f) &&
            readEnum(o, "xyNotation", base, kXyNumberings, c.xyNotation, f) &&
@@ -421,6 +425,10 @@ QJsonObject frameToJson(const FrameConfig& c) {
     o.insert(QStringLiteral("highPerformanceQcpu"), c.highPerformanceQcpu);
     o.insert(QStringLiteral("aSeriesTarget"), c.aSeriesTarget);
     o.insert(QStringLiteral("splitWrites"), c.splitWrites);
+    o.insert(QStringLiteral("maxReadWords"), c.maxReadWords);
+    o.insert(QStringLiteral("maxWriteWords"), c.maxWriteWords);
+    o.insert(QStringLiteral("maxReadBits"), c.maxReadBits);
+    o.insert(QStringLiteral("maxWriteBits"), c.maxWriteBits);
     o.insert(QStringLiteral("timeoutMs"), static_cast<qint64>(c.timeoutMs));
     o.insert(QStringLiteral("readRetries"), c.readRetries);
     o.insert(QStringLiteral("xyNotation"), enumJson(kXyNumberings, c.xyNotation));

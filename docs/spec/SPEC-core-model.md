@@ -232,6 +232,10 @@ struct FrameConfig {
     bool highPerformanceQcpu{false};   ///< ZR counts double in 0403 (v1.1).
     bool aSeriesTarget{false};         ///< Enforce the multiple-of-16 head rule for QnA word access to bit devices.
     bool splitWrites{false};           ///< Allow chunk() to split a write; off = PointCount error instead.
+    uint16_t maxReadWords{0};          ///< Cap on points per batch word read (word devices, and bit devices read in words); 0 = §4.4 table only.
+    uint16_t maxWriteWords{0};         ///< Same for batch word writes.
+    uint16_t maxReadBits{0};           ///< Same for batch bit reads.
+    uint16_t maxWriteBits{0};          ///< Same for batch bit writes. (The four caps: amended 2026-10-14, owner option a.)
     uint32_t timeoutMs{0};             ///< 0 = derived: monitoringTimer×250+1000 for Ethernet, 3000 for serial.
                                        ///< Ethernet: whole response. Serial: time to the FIRST byte only; the
                                        ///< rest is governed by SessionConfig::serialInterCharMs (core-session).
@@ -358,6 +362,8 @@ Expected<size_t> chunkCount(const Request& r, const FrameConfig& cfg) noexcept;
 Expected<size_t> chunk(const Request& r, const FrameConfig& cfg, Chunk* out, size_t capacity) noexcept;
 }
 ```
+
+**Per-target caps (amended 2026-10-14, owner decision, option a; findings F-002, F-003).** Some PLCs accept fewer points than the §4.4 column of their frame family: an FX5U answers a 3E **ASCII** batch read above 480 words with `C052` and drops a 960-word ASCII write silently (FX5 manual: ASCII 480 words / 1792 bits, Binary 960 / 3584); an FX3U-ENET-ADP rejects 1E requests above its own table with abnormal code `57H` (FX3 ENET-ADP manual: 00H 256 bits, 01H 32 words of bit devices / 64 word points, 02H 160 bits, 03H 10 words of bit devices / 64 word points). `maxPoints(cfg, op, kind)` therefore returns `min(table value, cap)` for a nonzero cap of that operation: `maxReadWords` for `ReadWords` (word devices and bit devices read in words alike), `maxWriteWords` for `WriteWords`, `maxReadBits` / `maxWriteBits` for the bit operations. A cap of 0 (default) leaves the table value; a cap above the table value has no effect; no value is rejected by `validate()`. `chunk()`, `chunkCount()` and the session planner follow `maxPoints()`, so reads split at the cap and a write above it needs `splitWrites`. A bit request with `BitLayout::PackedLsbFirst` (read or write) that must split at an effective limit which is not a multiple of 8 is refused by `chunkCount()` / `chunk()` (and so by `submit()`) with `PointCount` before any frame is sent, because chunk k's packed data would start mid-byte; the cap is never rounded (amended 2026-10-14, owner, after the T-088 review). No §4.4 table value and none of the suggested caps hits this. Suggested values (documented, not built in): FX5 over 3E ASCII 480 / 480 / 1792 / 1792; FX3U-ENET-ADP over 1E 32 / 10 / 256 / 160 (the word caps are those for bit devices, the safe minimum).
 
 **Limits table, v1 subset** (transcribed from spec §4.4; the full table including random-access rows is stored in `limits_table.cpp` so v1.1 needs no table change):
 
@@ -504,6 +510,7 @@ doctest binary `mc_core_model_tests`, registered with `ctest` under the label `c
 | DEV-13 | Bit op on word device | spec §3.5 |
 | LIM-01 | Every cell of the v1 limits table above returns the stated value | spec §4.4 |
 | LIM-02 | 1E column values match the PDF Appendix 5 numbers in the spec | spec Q7 |
+| LIM-03 | Caps: each of the four caps lowers exactly its own operation (both device kinds for the word caps) on every frame family; 0 and a value above the table change nothing; `chunk()` / `chunkCount()` split at the cap (FX5 ASCII 960 words → 2 × 480; FX3 1E 256 words of D → 4 × 64 with cap 64); a write above the cap is `PointCount` without `splitWrites` | amended 2026-10-14 |
 | CHK-01 … CHK-06 | `chunk()`: exact fit, remainder, word-op-on-bit step 16, write without `splitWrites` → PointCount, with `splitWrites` → split, `BufferTooSmall` | spec §8.5 |
 | CFG-01 … CFG-05 | Named-constructor defaults equal spec §8.3 (including `checkRoute` true for 3C/1C, false for 3E/1E); `validate()` rejects format 5 for every frame, messageWait 16, timer 0 without timeout, and forces `Ascii` for 3C/1C; `effectiveTimeoutMs` derivation | spec §8.3 |
 | CNV-01 … CNV-08 | D350/D351 → 170F56ABH; D0/D1 → 0.75f; "ABCD" → 4241H 4443H and back; FFFFH → −1; float64 round trip over four words; `wordsToBits([1234H,0002H])` ON at 2,4,5,9,12,17 (PRIM-15); pack/unpack round trip; out-of-range index returns 0/false | spec §2.3, §2.4, §8.7, §9.2 |

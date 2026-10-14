@@ -105,6 +105,10 @@ std::vector<mc::McDeviceConfig> sampleConfigs() {
     a.frame.checkRoute = true;
     a.frame.targetFamily = mc::TargetFamily::QnA;
     a.frame.aSeriesTarget = true;
+    a.frame.maxReadWords = 480;
+    a.frame.maxWriteWords = 481;
+    a.frame.maxReadBits = 1792;
+    a.frame.maxWriteBits = 1793;
     a.frame.timeoutMs = 1234;
     a.session.cycleMode = mc::CycleMode::FixedDelay;
     a.session.plan.bitsAsWords = true;

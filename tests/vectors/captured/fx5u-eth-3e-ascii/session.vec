@@ -1,0 +1,2454 @@
+# id: CAP-fx5u-eth-3e-ascii-G6-T0001
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: tx  t_ns: 5300677400  seq: 8
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 39 30 30 31 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 31
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0002
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: rx  t_ns: 5306373700  seq: 10
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0003
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: tx  t_ns: 5306407100  seq: 11
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 58 2A 30 30 30 30 30 30 30 30 30 32
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0004
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: rx  t_ns: 5308625600  seq: 12
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 30 30 30 30 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0005
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: tx  t_ns: 5308656300  seq: 13
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 35
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0006
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: rx  t_ns: 5311126500  seq: 14
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 30 30 35 35 35 30 31 32 33 34 30 30 30 32 30 30 30 30 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0007
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: tx  t_ns: 5311135300  seq: 15
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 34 30
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0008
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: rx  t_ns: 5314184700  seq: 16
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 31 30 34 30 30 30 30 30 30 30 31 30 30 30 32 30 30 30 33 30 30 30 34 30 30 30 35 30 30 30 36 30 30 30 37 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 33 46 46 38 46 46 46 45 46 46 46 46 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0009
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: tx  t_ns: 5314196300  seq: 17
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 32 30 30 30 30 30 41
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0010
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: rx  t_ns: 5316186100  seq: 18
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 32 43 30 30 30 30 36 34 36 34 36 35 36 35 36 36 36 36 36 37 36 37 36 38 36 38 36 39 36 39 36 41 36 41 36 42 36 42 36 43 36 43 36 44 36 44
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0011
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: tx  t_ns: 5316203100  seq: 19
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 57 2A 30 30 30 31 30 30 30 30 31 30
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0012
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: rx  t_ns: 5319328800  seq: 20
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 34 34 30 30 30 30 46 46 46 46 38 30 30 30 30 30 30 31 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0013
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: tx  t_ns: 5401316900  seq: 26
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 39 30 30 31 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 30
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0014
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: rx  t_ns: 5404040000  seq: 27
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0015
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: tx  t_ns: 5404063900  seq: 28
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 58 2A 30 30 30 30 30 30 30 30 30 32
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0016
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: rx  t_ns: 5406530400  seq: 29
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 30 30 30 30 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0017
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: tx  t_ns: 5406563100  seq: 30
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 35
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0018
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: rx  t_ns: 5409464500  seq: 32
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 30 30 35 35 35 30 31 32 33 34 30 30 30 32 30 30 30 30 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0019
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: tx  t_ns: 5409488200  seq: 33
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 34 30
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0020
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: rx  t_ns: 5412109000  seq: 35
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 31 30 34 30 30 30 30 30 30 30 31 30 30 30 32 30 30 30 33 30 30 30 34 30 30 30 35 30 30 30 36 30 30 30 37 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 33 46 46 38 46 46 46 45 46 46 46 46 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0021
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: tx  t_ns: 5412145400  seq: 36
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 32 30 30 30 30 30 41
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0022
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: rx  t_ns: 5414152700  seq: 37
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 32 43 30 30 30 30 36 34 36 34 36 35 36 35 36 36 36 36 36 37 36 37 36 38 36 38 36 39 36 39 36 41 36 41 36 42 36 42 36 43 36 43 36 44 36 44
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0023
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: tx  t_ns: 5414194400  seq: 38
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 57 2A 30 30 30 31 30 30 30 30 31 30
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0024
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: rx  t_ns: 5416918000  seq: 40
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 34 34 30 30 30 30 46 46 46 46 38 30 30 30 30 30 30 31 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0025
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: tx  t_ns: 5418186400  seq: 43
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 43 30 30 31 30 31 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 35 30 30 30 31 31 32 33 34
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0026
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: rx  t_ns: 5420951400  seq: 46
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0027
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: tx  t_ns: 5420975600  seq: 47
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 39 30 30 31 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 31 30 33 30 30 30 31 31
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0028
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: rx  t_ns: 5423880800  seq: 49
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0029
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: tx  t_ns: 5501255000  seq: 51
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 39 30 30 31 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 31
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0030
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: rx  t_ns: 5504263700  seq: 52
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0031
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: tx  t_ns: 5504280000  seq: 53
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 58 2A 30 30 30 30 30 30 30 30 30 32
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0032
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: rx  t_ns: 5506792900  seq: 54
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 30 30 30 30 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0033
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: tx  t_ns: 5506807800  seq: 55
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 35
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0034
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: rx  t_ns: 5509317000  seq: 57
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 30 30 35 35 44 30 31 32 33 34 30 30 30 32 30 30 30 30 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0035
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: tx  t_ns: 5509336800  seq: 58
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 34 30
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0036
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: rx  t_ns: 5512116600  seq: 61
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 31 30 34 30 30 30 30 30 30 30 31 30 30 30 32 30 30 30 33 30 30 30 34 30 30 30 35 31 32 33 34 30 30 30 37 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 33 46 46 38 46 46 46 45 46 46 46 46 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0037
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: tx  t_ns: 5512128700  seq: 62
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 32 30 30 30 30 30 41
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0038
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: rx  t_ns: 5514261100  seq: 64
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 32 43 30 30 30 30 36 34 36 34 36 35 36 35 36 36 36 36 36 37 36 37 36 38 36 38 36 39 36 39 36 41 36 41 36 42 36 42 36 43 36 43 36 44 36 44
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0039
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: tx  t_ns: 5514281600  seq: 65
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 57 2A 30 30 30 31 30 30 30 30 31 30
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0040
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: rx  t_ns: 5516759200  seq: 67
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 34 34 30 30 30 30 46 46 46 46 38 30 30 30 30 30 30 31 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0041
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: tx  t_ns: 5601175800  seq: 70
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 39 30 30 31 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 30
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0042
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: rx  t_ns: 5603327300  seq: 71
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0043
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: tx  t_ns: 5603346100  seq: 72
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 58 2A 30 30 30 30 30 30 30 30 30 32
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0044
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: rx  t_ns: 5605627900  seq: 73
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 30 30 30 30 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0045
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: tx  t_ns: 5605650800  seq: 74
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 35
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0046
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: rx  t_ns: 5608171600  seq: 76
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 30 30 35 35 44 30 31 32 33 34 30 30 30 32 30 30 30 30 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0047
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: tx  t_ns: 5608184700  seq: 77
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 34 30
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0048
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: rx  t_ns: 5611859000  seq: 79
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 31 30 34 30 30 30 30 30 30 30 31 30 30 30 32 30 30 30 33 30 30 30 34 30 30 30 35 31 32 33 34 30 30 30 37 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 33 46 46 38 46 46 46 45 46 46 46 46 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0049
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: tx  t_ns: 5611875200  seq: 80
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 32 30 30 30 30 30 41
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0050
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: rx  t_ns: 5613920600  seq: 81
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 32 43 30 30 30 30 36 34 36 34 36 35 36 35 36 36 36 36 36 37 36 37 36 38 36 38 36 39 36 39 36 41 36 41 36 42 36 42 36 43 36 43 36 44 36 44
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0051
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: tx  t_ns: 5613931300  seq: 82
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 57 2A 30 30 30 31 30 30 30 30 31 30
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0052
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: rx  t_ns: 5616988000  seq: 84
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 34 34 30 30 30 30 46 46 46 46 38 30 30 30 30 30 30 31 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0053
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: tx  t_ns: 5701610200  seq: 89
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 39 30 30 31 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 31
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0054
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: rx  t_ns: 5703735300  seq: 90
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0055
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: tx  t_ns: 5703751400  seq: 91
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 58 2A 30 30 30 30 30 30 30 30 30 32
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0056
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: rx  t_ns: 5706323600  seq: 92
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 30 30 30 30 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0057
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: tx  t_ns: 5706337800  seq: 93
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 35
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0058
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: rx  t_ns: 5708766500  seq: 95
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 30 30 35 35 44 30 31 32 33 34 30 30 30 32 30 30 30 30 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0059
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: tx  t_ns: 5708780400  seq: 96
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 42 2A 30 30 30 30 31 30 30 30 30 31
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0060
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: rx  t_ns: 5711287000  seq: 98
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 38 30 30 30 30 35 35 35 35
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0061
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: tx  t_ns: 5711298100  seq: 99
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 34 30
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0062
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: rx  t_ns: 5714043400  seq: 101
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 31 30 34 30 30 30 30 30 30 30 31 30 30 30 32 30 30 30 33 30 30 30 34 30 30 30 35 31 32 33 34 30 30 30 37 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 33 46 46 38 46 46 46 45 46 46 46 46 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0063
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: tx  t_ns: 5714054100  seq: 102
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 32 30 30 30 30 30 41
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0064
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: rx  t_ns: 5716211700  seq: 103
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 32 43 30 30 30 30 36 34 36 34 36 35 36 35 36 36 36 36 36 37 36 37 36 38 36 38 36 39 36 39 36 41 36 41 36 42 36 42 36 43 36 43 36 44 36 44
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0065
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: tx  t_ns: 5801511300  seq: 106
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 39 30 30 31 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 30
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0066
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: rx  t_ns: 5803907600  seq: 107
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0067
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: tx  t_ns: 5803923300  seq: 108
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 58 2A 30 30 30 30 30 30 30 30 30 32
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0068
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: rx  t_ns: 5806772400  seq: 109
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 30 30 30 30 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0069
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: tx  t_ns: 5806787100  seq: 110
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 35
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0070
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: rx  t_ns: 5809419300  seq: 112
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 30 30 35 35 44 30 31 32 33 34 30 30 30 32 30 30 30 30 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0071
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: tx  t_ns: 5809432000  seq: 113
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 42 2A 30 30 30 30 31 30 30 30 30 31
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0072
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: rx  t_ns: 5811782300  seq: 115
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 38 30 30 30 30 35 35 35 35
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0073
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: tx  t_ns: 5811793700  seq: 116
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 34 30
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0074
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: rx  t_ns: 5814629300  seq: 118
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 31 30 34 30 30 30 30 30 30 30 31 30 30 30 32 30 30 30 33 30 30 30 34 30 30 30 35 31 32 33 34 30 30 30 37 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 33 46 46 38 46 46 46 45 46 46 46 46 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0075
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: tx  t_ns: 5814638600  seq: 119
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 32 30 30 30 30 30 41
+
+# id: CAP-fx5u-eth-3e-ascii-G6-T0076
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: rx  t_ns: 5817390800  seq: 120
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 32 43 30 30 30 30 36 34 36 34 36 35 36 35 36 36 36 36 36 37 36 37 36 38 36 38 36 39 36 39 36 41 36 41 36 42 36 42 36 43 36 43 36 44 36 44
+
+# id: CAP-fx5u-eth-3e-ascii-G6-I0001
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: input  input: heartbeat  t_ns: 5298400600  seq: 1
+# enabled: true  device: M300
+07 01 04 2C 01 00 00
+
+# id: CAP-fx5u-eth-3e-ascii-G6-I0002
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: input  input: subscribe  t_ns: 5298405000  seq: 2
+# name: d1  device: D100  count: 64
+08 09 64 00 00 00 40 00 00 00
+
+# id: CAP-fx5u-eth-3e-ascii-G6-I0003
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: input  input: subscribe  t_ns: 5298407800  seq: 3
+# name: d2  device: D200  count: 10
+08 09 C8 00 00 00 0A 00 00 00
+
+# id: CAP-fx5u-eth-3e-ascii-G6-I0004
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: input  input: subscribe  t_ns: 5298409400  seq: 4
+# name: m  device: M100  count: 64
+08 04 64 00 00 00 40 00 00 00
+
+# id: CAP-fx5u-eth-3e-ascii-G6-I0005
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: input  input: subscribe  t_ns: 5298410200  seq: 5
+# name: x  device: X0  count: 32
+08 02 00 00 00 00 20 00 00 00
+
+# id: CAP-fx5u-eth-3e-ascii-G6-I0006
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: input  input: subscribe  t_ns: 5298411300  seq: 6
+# name: w  device: W100  count: 16
+08 0A 00 01 00 00 10 00 00 00
+
+# id: CAP-fx5u-eth-3e-ascii-G6-E0001
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: event  event: linkState  t_ns: 5299013800  seq: 7
+# state: Connecting  reason: Requested
+05 01 00
+
+# id: CAP-fx5u-eth-3e-ascii-G6-E0002
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: event  event: linkState  t_ns: 5300690900  seq: 9
+# state: Connected  reason: Requested
+05 02 00
+
+# id: CAP-fx5u-eth-3e-ascii-G6-E0003
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: event  event: snapshot  t_ns: 5319352300  seq: 21
+# type: X  round: 1  segments: X0x32  chunks: ok
+01 00 00 00 00 20 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G6-E0004
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: event  event: snapshot  t_ns: 5319367900  seq: 22
+# type: M  round: 1  segments: M100x64  chunks: ok
+01 64 00 00 00 40 00 00 00 01 00 01 00 01 00 01 00 01 00 01 00 00 00 01 00 01 01 00 00 00 01 00 00 01 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G6-E0005
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: event  event: snapshot  t_ns: 5319371900  seq: 23
+# type: D  round: 1  segments: D100x64 D200x10  chunks: ok ok
+01 64 00 00 00 40 00 00 00 01 00 02 00 03 00 04 00 05 00 06 00 07 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 F8 3F FE FF FF FF 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 C8 00 00 00 0A 00 00 00 64 64 65 65 66 66 67 67 68 68 69 69 6A 6A 6B 6B 6C 6C 6D 6D 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G6-E0006
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: event  event: snapshot  t_ns: 5319376900  seq: 24
+# type: W  round: 1  segments: W100x16  chunks: ok
+01 00 01 00 00 10 00 00 00 FF FF 00 80 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G6-E0007
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: event  event: cycleDone  t_ns: 5319381600  seq: 25
+# round: 1  duration_ms: 18  requests: 6  failed_chunks: 0  heartbeat_ok: true
+03 01 00 00 00 B1 14 00 00 00 00 00 00 12 00 00 00 06 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-ascii-G6-E0008
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: event  event: snapshot  t_ns: 5406587800  seq: 31
+# type: X  round: 2  segments: X0x32  chunks: ok
+01 00 00 00 00 20 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G6-E0009
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: event  event: snapshot  t_ns: 5409507300  seq: 34
+# type: M  round: 2  segments: M100x64  chunks: ok
+01 64 00 00 00 40 00 00 00 01 00 01 00 01 00 01 00 01 00 01 00 00 00 01 00 01 01 00 00 00 01 00 00 01 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G6-E0010
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: event  event: snapshot  t_ns: 5414207400  seq: 39
+# type: D  round: 2  segments: D100x64 D200x10  chunks: ok ok
+01 64 00 00 00 40 00 00 00 01 00 02 00 03 00 04 00 05 00 06 00 07 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 F8 3F FE FF FF FF 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 C8 00 00 00 0A 00 00 00 64 64 65 65 66 66 67 67 68 68 69 69 6A 6A 6B 6B 6C 6C 6D 6D 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G6-E0011
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: event  event: snapshot  t_ns: 5416943500  seq: 41
+# type: W  round: 2  segments: W100x16  chunks: ok
+01 00 01 00 00 10 00 00 00 FF FF 00 80 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G6-E0012
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: event  event: cycleDone  t_ns: 5416954900  seq: 42
+# round: 2  duration_ms: 16  requests: 6  failed_chunks: 0  heartbeat_ok: true
+03 02 00 00 00 15 15 00 00 00 00 00 00 10 00 00 00 06 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-ascii-G6-I0007
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: input  input: write  t_ns: 5418280800  seq: 44
+# op: WriteWords  device: D105  count: 1
+0A 03 09 69 00 00 00 01 00 34 12
+
+# id: CAP-fx5u-eth-3e-ascii-G6-I0008
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: input  input: write  t_ns: 5418323300  seq: 45
+# op: WriteBits  device: M103  count: 1
+0A 02 04 67 00 00 00 01 00 01
+
+# id: CAP-fx5u-eth-3e-ascii-G6-E0013
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: event  event: requestFinished  t_ns: 5421002500  seq: 48
+# request_id: 1  outcome: ok  bytes: 0
+04
+
+# id: CAP-fx5u-eth-3e-ascii-G6-E0014
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: event  event: requestFinished  t_ns: 5423915000  seq: 50
+# request_id: 2  outcome: ok  bytes: 0
+04
+
+# id: CAP-fx5u-eth-3e-ascii-G6-E0015
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: event  event: snapshot  t_ns: 5506817700  seq: 56
+# type: X  round: 3  segments: X0x32  chunks: ok
+01 00 00 00 00 20 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G6-E0016
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: event  event: valuesChanged  t_ns: 5509348700  seq: 59
+# type: M  round: 3  changes: 1
+02 67 00 00 00 00 00 01 00
+
+# id: CAP-fx5u-eth-3e-ascii-G6-E0017
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: event  event: snapshot  t_ns: 5509356400  seq: 60
+# type: M  round: 3  segments: M100x64  chunks: ok
+01 64 00 00 00 40 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 01 01 00 00 00 01 00 00 01 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G6-E0018
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: event  event: valuesChanged  t_ns: 5512134100  seq: 63
+# type: D  round: 3  changes: 1
+02 69 00 00 00 06 00 34 12
+
+# id: CAP-fx5u-eth-3e-ascii-G6-E0019
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: event  event: snapshot  t_ns: 5514293600  seq: 66
+# type: D  round: 3  segments: D100x64 D200x10  chunks: ok ok
+01 64 00 00 00 40 00 00 00 01 00 02 00 03 00 04 00 05 00 34 12 07 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 F8 3F FE FF FF FF 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 C8 00 00 00 0A 00 00 00 64 64 65 65 66 66 67 67 68 68 69 69 6A 6A 6B 6B 6C 6C 6D 6D 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G6-E0020
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: event  event: snapshot  t_ns: 5516778900  seq: 68
+# type: W  round: 3  segments: W100x16  chunks: ok
+01 00 01 00 00 10 00 00 00 FF FF 00 80 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G6-E0021
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: event  event: cycleDone  t_ns: 5516789000  seq: 69
+# round: 3  duration_ms: 16  requests: 6  failed_chunks: 0  heartbeat_ok: true
+03 03 00 00 00 79 15 00 00 00 00 00 00 10 00 00 00 06 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-ascii-G6-E0022
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: event  event: snapshot  t_ns: 5605668800  seq: 75
+# type: X  round: 4  segments: X0x32  chunks: ok
+01 00 00 00 00 20 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G6-E0023
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: event  event: snapshot  t_ns: 5608192200  seq: 78
+# type: M  round: 4  segments: M100x64  chunks: ok
+01 64 00 00 00 40 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 01 01 00 00 00 01 00 00 01 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G6-E0024
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: event  event: snapshot  t_ns: 5613938200  seq: 83
+# type: D  round: 4  segments: D100x64 D200x10  chunks: ok ok
+01 64 00 00 00 40 00 00 00 01 00 02 00 03 00 04 00 05 00 34 12 07 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 F8 3F FE FF FF FF 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 C8 00 00 00 0A 00 00 00 64 64 65 65 66 66 67 67 68 68 69 69 6A 6A 6B 6B 6C 6C 6D 6D 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G6-E0025
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: event  event: snapshot  t_ns: 5617077200  seq: 85
+# type: W  round: 4  segments: W100x16  chunks: ok
+01 00 01 00 00 10 00 00 00 FF FF 00 80 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G6-E0026
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: event  event: cycleDone  t_ns: 5617093300  seq: 86
+# round: 4  duration_ms: 16  requests: 6  failed_chunks: 0  heartbeat_ok: true
+03 04 00 00 00 DD 15 00 00 00 00 00 00 10 00 00 00 06 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-ascii-G6-I0009
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: input  input: subscribe  t_ns: 5617189300  seq: 87
+# name: b  device: B10  count: 16
+08 08 10 00 00 00 10 00 00 00
+
+# id: CAP-fx5u-eth-3e-ascii-G6-I0010
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: input  input: unsubscribe  t_ns: 5617200500  seq: 88
+# name: w
+09 77
+
+# id: CAP-fx5u-eth-3e-ascii-G6-E0027
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: event  event: snapshot  t_ns: 5706345700  seq: 94
+# type: X  round: 5  segments: X0x32  chunks: ok
+01 00 00 00 00 20 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G6-E0028
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: event  event: snapshot  t_ns: 5708788700  seq: 97
+# type: M  round: 5  segments: M100x64  chunks: ok
+01 64 00 00 00 40 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 01 01 00 00 00 01 00 00 01 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G6-E0029
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: event  event: snapshot  t_ns: 5711303500  seq: 100
+# type: B  round: 5  segments: B10x16  chunks: ok
+01 10 00 00 00 10 00 00 00 01 00 01 00 01 00 01 00 01 00 01 00 01 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G6-E0030
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: event  event: snapshot  t_ns: 5716239300  seq: 104
+# type: D  round: 5  segments: D100x64 D200x10  chunks: ok ok
+01 64 00 00 00 40 00 00 00 01 00 02 00 03 00 04 00 05 00 34 12 07 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 F8 3F FE FF FF FF 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 C8 00 00 00 0A 00 00 00 64 64 65 65 66 66 67 67 68 68 69 69 6A 6A 6B 6B 6C 6C 6D 6D 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G6-E0031
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: event  event: cycleDone  t_ns: 5716254800  seq: 105
+# round: 5  duration_ms: 15  requests: 6  failed_chunks: 0  heartbeat_ok: true
+03 05 00 00 00 41 16 00 00 00 00 00 00 0F 00 00 00 06 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-ascii-G6-E0032
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: event  event: snapshot  t_ns: 5806793100  seq: 111
+# type: X  round: 6  segments: X0x32  chunks: ok
+01 00 00 00 00 20 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G6-E0033
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: event  event: snapshot  t_ns: 5809437900  seq: 114
+# type: M  round: 6  segments: M100x64  chunks: ok
+01 64 00 00 00 40 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 01 01 00 00 00 01 00 00 01 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G6-E0034
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: event  event: snapshot  t_ns: 5811799100  seq: 117
+# type: B  round: 6  segments: B10x16  chunks: ok
+01 10 00 00 00 10 00 00 00 01 00 01 00 01 00 01 00 01 00 01 00 01 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G6-E0035
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: event  event: snapshot  t_ns: 5817414800  seq: 121
+# type: D  round: 6  segments: D100x64 D200x10  chunks: ok ok
+01 64 00 00 00 40 00 00 00 01 00 02 00 03 00 04 00 05 00 34 12 07 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 F8 3F FE FF FF FF 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 C8 00 00 00 0A 00 00 00 64 64 65 65 66 66 67 67 68 68 69 69 6A 6A 6B 6B 6C 6C 6D 6D 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G6-E0036
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: event  event: cycleDone  t_ns: 5817426000  seq: 122
+# round: 6  duration_ms: 16  requests: 6  failed_chunks: 0  heartbeat_ok: true
+03 06 00 00 00 A5 16 00 00 00 00 00 00 10 00 00 00 06 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-ascii-G6-E0037
+# source: plc  profile: fx5u-eth-3e-ascii  step: G6
+# kind: event  event: linkState  t_ns: 5818650500  seq: 123
+# state: Disconnected  reason: Requested
+05 00 00
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0001
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 15838230100  seq: 5
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 39 30 30 31 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 31
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0002
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 15846475600  seq: 9
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 39 30 30 31 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 31
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0003
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 15850928300  seq: 11
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0004
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 15850946200  seq: 12
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0005
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 15852754100  seq: 13
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 35 35 44 30 31 32 33 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0006
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 15852774400  seq: 14
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0007
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 15855859500  seq: 15
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 34 30 30 30 30 30 30 30 31 30 30 30 32 30 30 30 33 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0008
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 15946995100  seq: 19
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 39 30 30 31 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0009
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 15950481700  seq: 20
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0010
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 15950501000  seq: 21
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0011
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 15952967600  seq: 22
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 35 35 44 30 31 32 33 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0012
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 15952989900  seq: 23
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0013
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 15955944500  seq: 25
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 34 30 30 30 30 30 30 30 31 30 30 30 32 30 30 30 33 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0014
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 16047375400  seq: 28
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 39 30 30 31 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 31
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0015
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 16050043700  seq: 29
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0016
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 16050064500  seq: 30
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0017
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 16052900100  seq: 31
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 35 35 44 30 31 32 33 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0018
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 16052917800  seq: 32
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0019
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 16055853700  seq: 34
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 34 30 30 30 30 30 30 30 31 30 30 30 32 30 30 30 33 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0020
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 16147493500  seq: 37
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 39 30 30 31 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0021
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 16149475800  seq: 38
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0022
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 16149494300  seq: 39
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0023
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 16151806400  seq: 40
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 35 35 44 30 31 32 33 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0024
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 16151826600  seq: 41
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0025
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 16154167000  seq: 43
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 34 30 30 30 30 30 30 30 31 30 30 30 32 30 30 30 33 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0026
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 16247135100  seq: 46
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 39 30 30 31 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 31
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0027
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 16249086200  seq: 47
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0028
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 16249107200  seq: 48
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0029
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 16251884600  seq: 49
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 35 35 44 30 31 32 33 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0030
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 16251899800  seq: 50
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0031
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 16254241200  seq: 52
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 34 30 30 30 30 30 30 30 31 30 30 30 32 30 30 30 33 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0032
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 16347422300  seq: 55
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 39 30 30 31 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0033
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 16349966200  seq: 56
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0034
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 16349987900  seq: 57
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0035
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 16352674200  seq: 58
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 35 35 44 30 31 32 33 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0036
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 16352697700  seq: 59
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0037
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 16355171400  seq: 61
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 34 30 30 30 30 30 30 30 31 30 30 30 32 30 30 30 33 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0038
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 16446778800  seq: 64
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 39 30 30 31 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 31
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0039
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 16448977000  seq: 65
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0040
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 16448996600  seq: 66
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0041
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 16451583500  seq: 67
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 35 35 44 30 31 32 33 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0042
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 16451598900  seq: 68
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0043
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 16454190900  seq: 70
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 34 30 30 30 30 30 30 30 31 30 30 30 32 30 30 30 33 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0044
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 16547945700  seq: 73
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 39 30 30 31 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0045
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 16549924600  seq: 74
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0046
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 16549943000  seq: 75
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0047
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 16552521500  seq: 76
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 35 35 44 30 31 32 33 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0048
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 16552546300  seq: 77
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0049
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 16555119000  seq: 79
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 34 30 30 30 30 30 30 30 31 30 30 30 32 30 30 30 33 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0050
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 16647710600  seq: 82
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 39 30 30 31 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 31
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0051
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 16649893900  seq: 83
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0052
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 16649914200  seq: 84
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0053
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 16652439000  seq: 85
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 35 35 44 30 31 32 33 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0054
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 16652460700  seq: 86
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0055
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 16655236800  seq: 88
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 34 30 30 30 30 30 30 30 31 30 30 30 32 30 30 30 33 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0056
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 16748352700  seq: 91
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 39 30 30 31 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0057
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 16750845500  seq: 92
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0058
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 16750862000  seq: 93
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0059
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 16753591700  seq: 94
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 35 35 44 30 31 32 33 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0060
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 16753608300  seq: 95
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0061
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 16756273900  seq: 97
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 34 30 30 30 30 30 30 30 31 30 30 30 32 30 30 30 33 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0062
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 16848080800  seq: 100
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 39 30 30 31 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 31
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0063
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 16850074700  seq: 101
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0064
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 16850092700  seq: 102
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0065
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 16852615600  seq: 103
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 35 35 44 30 31 32 33 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0066
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 16852633000  seq: 104
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0067
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 16855255000  seq: 106
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 34 30 30 30 30 30 30 30 31 30 30 30 32 30 30 30 33 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0068
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 16948015400  seq: 109
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 39 30 30 31 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0069
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 16950985500  seq: 110
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0070
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 16951003700  seq: 111
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0071
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 16953569600  seq: 112
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 35 35 44 30 31 32 33 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0072
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 16953588500  seq: 113
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0073
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 16956122600  seq: 115
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 34 30 30 30 30 30 30 30 31 30 30 30 32 30 30 30 33 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0074
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 17048633200  seq: 118
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 39 30 30 31 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 31
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0075
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 17050628500  seq: 119
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0076
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 17050652100  seq: 120
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0077
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 17053167100  seq: 121
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 35 35 44 30 31 32 33 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0078
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 17053186300  seq: 122
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0079
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 17055460700  seq: 124
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 34 30 30 30 30 30 30 30 31 30 30 30 32 30 30 30 33 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0080
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 17148730500  seq: 127
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 39 30 30 31 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0081
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 17153422000  seq: 128
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0082
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 17153440700  seq: 129
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0083
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 17155896800  seq: 130
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 35 35 44 30 31 32 33 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0084
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 17155923200  seq: 131
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0085
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 17158741000  seq: 133
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 34 30 30 30 30 30 30 30 31 30 30 30 32 30 30 30 33 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0086
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 17249244500  seq: 136
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 39 30 30 31 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 31
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0087
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 17251287100  seq: 137
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0088
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 17251305300  seq: 138
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0089
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 17253600200  seq: 139
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 35 35 44 30 31 32 33 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0090
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 17253624900  seq: 140
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0091
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 17256144200  seq: 142
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 34 30 30 30 30 30 30 30 31 30 30 30 32 30 30 30 33 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0092
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 17349062000  seq: 145
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 39 30 30 31 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0093
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 17352197400  seq: 146
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0094
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 17352220500  seq: 147
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0095
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 17354507000  seq: 148
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 35 35 44 30 31 32 33 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0096
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 17354525800  seq: 149
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0097
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 17357131000  seq: 151
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 34 30 30 30 30 30 30 30 31 30 30 30 32 30 30 30 33 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0098
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 17448822800  seq: 154
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 39 30 30 31 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 31
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0099
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 17450969600  seq: 155
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0100
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 17450990000  seq: 156
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0101
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 17453656700  seq: 157
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 35 35 44 30 31 32 33 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0102
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 17453679900  seq: 158
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0103
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 17456176000  seq: 160
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 34 30 30 30 30 30 30 30 31 30 30 30 32 30 30 30 33 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0104
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 17549728700  seq: 163
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 39 30 30 31 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0105
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 17552091700  seq: 164
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0106
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 17552113700  seq: 165
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0107
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 17554521100  seq: 166
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 35 35 44 30 31 32 33 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0108
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 17554550400  seq: 167
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0109
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 17556872000  seq: 169
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 34 30 30 30 30 30 30 30 31 30 30 30 32 30 30 30 33 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0110
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 17649700500  seq: 172
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 39 30 30 31 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 31
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0111
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 17653302800  seq: 173
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0112
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 17653324100  seq: 174
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0113
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 17655166900  seq: 175
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 35 35 44 30 31 32 33 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0114
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 17655179500  seq: 176
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0115
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 17657704100  seq: 178
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 34 30 30 30 30 30 30 30 31 30 30 30 32 30 30 30 33 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0116
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 17749839600  seq: 181
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 39 30 30 31 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0117
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 17751929300  seq: 182
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0118
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 17751946800  seq: 183
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0119
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 17754493100  seq: 184
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 35 35 44 30 31 32 33 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0120
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 17754512300  seq: 185
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0121
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 17757098500  seq: 187
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 34 30 30 30 30 30 30 30 31 30 30 30 32 30 30 30 33 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0122
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 17849839300  seq: 190
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 39 30 30 31 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 31
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0123
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 17852841200  seq: 191
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0124
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 17852856500  seq: 192
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0125
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 17855599300  seq: 193
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 35 35 44 30 31 32 33 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0126
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 17855614600  seq: 194
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0127
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 17858229400  seq: 196
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 34 30 30 30 30 30 30 30 31 30 30 30 32 30 30 30 33 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0128
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 17950330900  seq: 199
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 39 30 30 31 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0129
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 17952340400  seq: 200
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0130
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 17952368500  seq: 201
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0131
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 17954594700  seq: 202
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 35 35 44 30 31 32 33 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0132
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 17954623000  seq: 203
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0133
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 17957221900  seq: 205
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 34 30 30 30 30 30 30 30 31 30 30 30 32 30 30 30 33 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0134
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 18050798500  seq: 208
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 39 30 30 31 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 31
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0135
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 18053337400  seq: 209
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0136
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 18053358300  seq: 210
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0137
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 18055502500  seq: 211
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 35 35 44 30 31 32 33 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0138
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 18055516300  seq: 212
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0139
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 18058129100  seq: 214
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 34 30 30 30 30 30 30 30 31 30 30 30 32 30 30 30 33 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0140
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 18151671500  seq: 217
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 39 30 30 31 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0141
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 18153647900  seq: 218
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0142
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 18153670100  seq: 219
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0143
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 18156191500  seq: 220
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 35 35 44 30 31 32 33 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0144
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 18156219800  seq: 221
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0145
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 18158581200  seq: 223
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 34 30 30 30 30 30 30 30 31 30 30 30 32 30 30 30 33 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0146
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 18252029400  seq: 226
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 39 30 30 31 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 31
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0147
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 18262795800  seq: 227
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0148
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 18262825700  seq: 228
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0149
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 18265010900  seq: 229
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 35 35 44 30 31 32 33 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0150
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 18265045800  seq: 230
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0151
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 18269639200  seq: 232
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 34 30 30 30 30 30 30 30 31 30 30 30 32 30 30 30 33 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0152
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 18352441800  seq: 235
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 39 30 30 31 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0153
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 18354414200  seq: 236
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0154
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 18354435100  seq: 237
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0155
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 18357195300  seq: 238
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 35 35 44 30 31 32 33 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0156
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 18357218500  seq: 239
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0157
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 18359573000  seq: 241
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 34 30 30 30 30 30 30 30 31 30 30 30 32 30 30 30 33 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0158
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 18452333200  seq: 244
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 39 30 30 31 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 31
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0159
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 18454495300  seq: 245
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0160
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 18454543000  seq: 246
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0161
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 18457015800  seq: 247
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 35 35 44 30 31 32 33 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0162
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 18457048000  seq: 248
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0163
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 18463940000  seq: 250
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 34 30 30 30 30 30 30 30 31 30 30 30 32 30 30 30 33 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0164
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 18551805700  seq: 253
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 39 30 30 31 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0165
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 18554018500  seq: 254
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0166
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 18554044000  seq: 255
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0167
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 18557228700  seq: 256
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 35 35 44 30 31 32 33 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0168
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 18557265400  seq: 257
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0169
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 18559322900  seq: 259
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 34 30 30 30 30 30 30 30 31 30 30 30 32 30 30 30 33 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0170
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 18653117500  seq: 262
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 39 30 30 31 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 31
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0171
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 18655635700  seq: 263
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0172
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 18655664600  seq: 264
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0173
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 18657879400  seq: 265
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 35 35 44 30 31 32 33 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0174
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 18657914500  seq: 266
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0175
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 18660991800  seq: 268
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 34 30 30 30 30 30 30 30 31 30 30 30 32 30 30 30 33 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0176
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 18754550000  seq: 271
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 39 30 30 31 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0177
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 18758046100  seq: 272
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0178
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 18758078100  seq: 273
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0179
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 18761023700  seq: 274
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 35 35 44 30 31 32 33 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0180
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 18761054700  seq: 275
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0181
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 18763733900  seq: 277
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 34 30 30 30 30 30 30 30 31 30 30 30 32 30 30 30 33 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0182
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 18854205300  seq: 280
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 39 30 30 31 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 31
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0183
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 18859093000  seq: 281
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0184
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 18859116000  seq: 282
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0185
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 18861132900  seq: 283
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 35 35 44 30 31 32 33 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0186
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 18861163100  seq: 284
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0187
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 18864959900  seq: 286
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 34 30 30 30 30 30 30 30 31 30 30 30 32 30 30 30 33 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0188
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 18954331000  seq: 289
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 39 30 30 31 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0189
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 18962050600  seq: 290
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0190
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 18962079300  seq: 291
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0191
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 18964088600  seq: 292
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 35 35 44 30 31 32 33 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0192
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 18964120200  seq: 293
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0193
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 18967542400  seq: 295
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 34 30 30 30 30 30 30 30 31 30 30 30 32 30 30 30 33 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0194
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 19054653400  seq: 298
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 39 30 30 31 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 31
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0195
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 19058966300  seq: 299
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0196
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 19058994700  seq: 300
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0197
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 19063033900  seq: 301
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 35 35 44 30 31 32 33 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0198
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 19063062100  seq: 302
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0199
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 19064932500  seq: 304
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 34 30 30 30 30 30 30 30 31 30 30 30 32 30 30 30 33 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0200
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 19155433400  seq: 307
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 39 30 30 31 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0201
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 19157618600  seq: 308
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0202
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 19157643800  seq: 309
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0203
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 19161918800  seq: 310
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 35 35 44 30 31 32 33 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0204
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 19161949900  seq: 311
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0205
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 19163905300  seq: 313
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 34 30 30 30 30 30 30 30 31 30 30 30 32 30 30 30 33 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0206
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 19254947100  seq: 316
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 39 30 30 31 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 31
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0207
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 19264327100  seq: 317
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0208
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 19264354900  seq: 318
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0209
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 19271650900  seq: 319
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 35 35 44 30 31 32 33 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0210
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 19271680200  seq: 320
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0211
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 19274660500  seq: 322
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 34 30 30 30 30 30 30 30 31 30 30 30 32 30 30 30 33 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0212
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 19354819400  seq: 325
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 39 30 30 31 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0213
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 19359963900  seq: 326
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 34 30 30 30 30
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0214
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 19359993400  seq: 327
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0215
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 19363795600  seq: 328
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 30 43 30 30 30 30 35 35 44 30 31 32 33 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0216
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 19363830700  seq: 329
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0217
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: rx  t_ns: 19366142200  seq: 331
+44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 34 30 30 30 30 30 30 30 31 30 30 30 32 30 30 30 33 30 30 30 34
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-T0218
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: tx  t_ns: 19455904400  seq: 334
+35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 39 30 30 31 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 31
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-I0001
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: input  input: heartbeat  t_ns: 15836406500  seq: 1
+# enabled: true  device: M300
+07 01 04 2C 01 00 00
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-I0002
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: input  input: subscribe  t_ns: 15836411200  seq: 2
+# name: d  device: D100  count: 4
+08 09 64 00 00 00 04 00 00 00
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-I0003
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: input  input: subscribe  t_ns: 15836413800  seq: 3
+# name: m  device: M100  count: 16
+08 04 64 00 00 00 10 00 00 00
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0001
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: linkState  t_ns: 15836956200  seq: 4
+# state: Connecting  reason: Requested
+05 01 00
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0002
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: linkState  t_ns: 15838243800  seq: 6
+# state: Connected  reason: Requested
+05 02 00
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0003
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: linkState  t_ns: 15842686500  seq: 7
+# state: Disconnected  reason: PeerClosed
+05 00 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0004
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: linkState  t_ns: 15844877300  seq: 8
+# state: Connecting  reason: Requested
+05 01 00
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0005
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: linkState  t_ns: 15846491100  seq: 10
+# state: Connected  reason: Requested
+05 02 00
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0006
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 15855904600  seq: 16
+# type: M  round: 1  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0007
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 15855920800  seq: 17
+# type: D  round: 1  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 01 00 02 00 03 00 04 00 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0008
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: cycleDone  t_ns: 15855924600  seq: 18
+# round: 1  duration_ms: 10  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 01 00 00 00 E2 3D 00 00 00 00 00 00 0A 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0009
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 15953003700  seq: 24
+# type: M  round: 2  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0010
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 15955981500  seq: 26
+# type: D  round: 2  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 01 00 02 00 03 00 04 00 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0011
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: cycleDone  t_ns: 15955998000  seq: 27
+# round: 2  duration_ms: 9  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 02 00 00 00 47 3E 00 00 00 00 00 00 09 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0012
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 16052929500  seq: 33
+# type: M  round: 3  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0013
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 16055892700  seq: 35
+# type: D  round: 3  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 01 00 02 00 03 00 04 00 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0014
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: cycleDone  t_ns: 16055908600  seq: 36
+# round: 3  duration_ms: 9  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 03 00 00 00 AB 3E 00 00 00 00 00 00 09 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0015
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 16151838100  seq: 42
+# type: M  round: 4  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0016
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 16154197200  seq: 44
+# type: D  round: 4  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 01 00 02 00 03 00 04 00 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0017
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: cycleDone  t_ns: 16154211100  seq: 45
+# round: 4  duration_ms: 7  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 04 00 00 00 0F 3F 00 00 00 00 00 00 07 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0018
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 16251909700  seq: 51
+# type: M  round: 5  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0019
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 16254259600  seq: 53
+# type: D  round: 5  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 01 00 02 00 03 00 04 00 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0020
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: cycleDone  t_ns: 16254267400  seq: 54
+# round: 5  duration_ms: 7  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 05 00 00 00 73 3F 00 00 00 00 00 00 07 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0021
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 16352713000  seq: 60
+# type: M  round: 6  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0022
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 16355208700  seq: 62
+# type: D  round: 6  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 01 00 02 00 03 00 04 00 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0023
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: cycleDone  t_ns: 16355223200  seq: 63
+# round: 6  duration_ms: 8  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 06 00 00 00 D7 3F 00 00 00 00 00 00 08 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0024
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 16451607100  seq: 69
+# type: M  round: 7  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0025
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 16454224300  seq: 71
+# type: D  round: 7  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 01 00 02 00 03 00 04 00 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0026
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: cycleDone  t_ns: 16454238500  seq: 72
+# round: 7  duration_ms: 7  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 07 00 00 00 3B 40 00 00 00 00 00 00 07 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0027
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 16552557400  seq: 78
+# type: M  round: 8  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0028
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 16555152100  seq: 80
+# type: D  round: 8  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 01 00 02 00 03 00 04 00 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0029
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: cycleDone  t_ns: 16555165000  seq: 81
+# round: 8  duration_ms: 7  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 08 00 00 00 A0 40 00 00 00 00 00 00 07 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0030
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 16652472200  seq: 87
+# type: M  round: 9  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0031
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 16655260200  seq: 89
+# type: D  round: 9  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 01 00 02 00 03 00 04 00 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0032
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: cycleDone  t_ns: 16655272200  seq: 90
+# round: 9  duration_ms: 7  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 09 00 00 00 04 41 00 00 00 00 00 00 07 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0033
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 16753615600  seq: 96
+# type: M  round: 10  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0034
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 16756312100  seq: 98
+# type: D  round: 10  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 01 00 02 00 03 00 04 00 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0035
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: cycleDone  t_ns: 16756327700  seq: 99
+# round: 10  duration_ms: 8  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 0A 00 00 00 68 41 00 00 00 00 00 00 08 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0036
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 16852646300  seq: 105
+# type: M  round: 11  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0037
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 16855296700  seq: 107
+# type: D  round: 11  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 01 00 02 00 03 00 04 00 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0038
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: cycleDone  t_ns: 16855325200  seq: 108
+# round: 11  duration_ms: 7  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 0B 00 00 00 CC 41 00 00 00 00 00 00 07 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0039
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 16953596800  seq: 114
+# type: M  round: 12  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0040
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 16956152900  seq: 116
+# type: D  round: 12  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 01 00 02 00 03 00 04 00 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0041
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: cycleDone  t_ns: 16956165400  seq: 117
+# round: 12  duration_ms: 8  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 0C 00 00 00 30 42 00 00 00 00 00 00 08 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0042
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 17053196500  seq: 123
+# type: M  round: 13  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0043
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 17055479100  seq: 125
+# type: D  round: 13  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 01 00 02 00 03 00 04 00 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0044
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: cycleDone  t_ns: 17055486300  seq: 126
+# round: 13  duration_ms: 6  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 0D 00 00 00 95 42 00 00 00 00 00 00 06 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0045
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 17155938800  seq: 132
+# type: M  round: 14  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0046
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 17158779200  seq: 134
+# type: D  round: 14  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 01 00 02 00 03 00 04 00 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0047
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: cycleDone  t_ns: 17158793800  seq: 135
+# round: 14  duration_ms: 10  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 0E 00 00 00 F9 42 00 00 00 00 00 00 0A 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0048
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 17253638200  seq: 141
+# type: M  round: 15  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0049
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 17256172800  seq: 143
+# type: D  round: 15  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 01 00 02 00 03 00 04 00 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0050
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: cycleDone  t_ns: 17256184400  seq: 144
+# round: 15  duration_ms: 7  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 0F 00 00 00 5D 43 00 00 00 00 00 00 07 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0051
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 17354534400  seq: 150
+# type: M  round: 16  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0052
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 17357171200  seq: 152
+# type: D  round: 16  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 01 00 02 00 03 00 04 00 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0053
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: cycleDone  t_ns: 17357187500  seq: 153
+# round: 16  duration_ms: 8  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 10 00 00 00 C1 43 00 00 00 00 00 00 08 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0054
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 17453693500  seq: 159
+# type: M  round: 17  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0055
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 17456197200  seq: 161
+# type: D  round: 17  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 01 00 02 00 03 00 04 00 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0056
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: cycleDone  t_ns: 17456209700  seq: 162
+# round: 17  duration_ms: 7  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 11 00 00 00 25 44 00 00 00 00 00 00 07 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0057
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 17554566700  seq: 168
+# type: M  round: 18  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0058
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 17556918600  seq: 170
+# type: D  round: 18  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 01 00 02 00 03 00 04 00 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0059
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: cycleDone  t_ns: 17556938100  seq: 171
+# round: 18  duration_ms: 7  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 12 00 00 00 8A 44 00 00 00 00 00 00 07 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0060
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 17655187500  seq: 177
+# type: M  round: 19  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0061
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 17657733900  seq: 179
+# type: D  round: 19  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 01 00 02 00 03 00 04 00 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0062
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: cycleDone  t_ns: 17657746700  seq: 180
+# round: 19  duration_ms: 8  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 13 00 00 00 EE 44 00 00 00 00 00 00 08 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0063
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 17754523300  seq: 186
+# type: M  round: 20  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0064
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 17757128000  seq: 188
+# type: D  round: 20  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 01 00 02 00 03 00 04 00 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0065
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: cycleDone  t_ns: 17757141400  seq: 189
+# round: 20  duration_ms: 7  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 14 00 00 00 52 45 00 00 00 00 00 00 07 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0066
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 17855621700  seq: 195
+# type: M  round: 21  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0067
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 17858263400  seq: 197
+# type: D  round: 21  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 01 00 02 00 03 00 04 00 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0068
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: cycleDone  t_ns: 17858277100  seq: 198
+# round: 21  duration_ms: 8  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 15 00 00 00 B6 45 00 00 00 00 00 00 08 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0069
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 17954641000  seq: 204
+# type: M  round: 22  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0070
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 17957275500  seq: 206
+# type: D  round: 22  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 01 00 02 00 03 00 04 00 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0071
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: cycleDone  t_ns: 17957294700  seq: 207
+# round: 22  duration_ms: 7  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 16 00 00 00 1A 46 00 00 00 00 00 00 07 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0072
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 18055525100  seq: 213
+# type: M  round: 23  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0073
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 18058162900  seq: 215
+# type: D  round: 23  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 01 00 02 00 03 00 04 00 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0074
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: cycleDone  t_ns: 18058179000  seq: 216
+# round: 23  duration_ms: 7  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 17 00 00 00 7F 46 00 00 00 00 00 00 07 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0075
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 18156233300  seq: 222
+# type: M  round: 24  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0076
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 18158622900  seq: 224
+# type: D  round: 24  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 01 00 02 00 03 00 04 00 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0077
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: cycleDone  t_ns: 18158639300  seq: 225
+# round: 24  duration_ms: 6  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 18 00 00 00 E4 46 00 00 00 00 00 00 06 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0078
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 18265069100  seq: 231
+# type: M  round: 25  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0079
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 18269679600  seq: 233
+# type: D  round: 25  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 01 00 02 00 03 00 04 00 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0080
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: cycleDone  t_ns: 18269699200  seq: 234
+# round: 25  duration_ms: 18  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 19 00 00 00 48 47 00 00 00 00 00 00 12 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0081
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 18357233500  seq: 240
+# type: M  round: 26  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0082
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 18359603000  seq: 242
+# type: D  round: 26  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 01 00 02 00 03 00 04 00 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0083
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: cycleDone  t_ns: 18359616600  seq: 243
+# round: 26  duration_ms: 7  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 1A 00 00 00 AC 47 00 00 00 00 00 00 07 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0084
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 18457066100  seq: 249
+# type: M  round: 27  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0085
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 18463992600  seq: 251
+# type: D  round: 27  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 01 00 02 00 03 00 04 00 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0086
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: cycleDone  t_ns: 18464008100  seq: 252
+# round: 27  duration_ms: 12  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 1B 00 00 00 10 48 00 00 00 00 00 00 0C 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0087
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 18557286500  seq: 258
+# type: M  round: 28  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0088
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 18559372900  seq: 260
+# type: D  round: 28  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 01 00 02 00 03 00 04 00 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0089
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: cycleDone  t_ns: 18559390700  seq: 261
+# round: 28  duration_ms: 7  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 1C 00 00 00 74 48 00 00 00 00 00 00 07 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0090
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 18657935600  seq: 267
+# type: M  round: 29  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0091
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 18661040500  seq: 269
+# type: D  round: 29  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 01 00 02 00 03 00 04 00 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0092
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: cycleDone  t_ns: 18661061500  seq: 270
+# round: 29  duration_ms: 8  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 1D 00 00 00 D9 48 00 00 00 00 00 00 08 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0093
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 18761072300  seq: 276
+# type: M  round: 30  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0094
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 18763784800  seq: 278
+# type: D  round: 30  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 01 00 02 00 03 00 04 00 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0095
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: cycleDone  t_ns: 18763803900  seq: 279
+# round: 30  duration_ms: 10  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 1E 00 00 00 3E 49 00 00 00 00 00 00 0A 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0096
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 18861180400  seq: 285
+# type: M  round: 31  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0097
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 18865016400  seq: 287
+# type: D  round: 31  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 01 00 02 00 03 00 04 00 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0098
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: cycleDone  t_ns: 18865035300  seq: 288
+# round: 31  duration_ms: 11  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 1F 00 00 00 A2 49 00 00 00 00 00 00 0B 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0099
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 18964139200  seq: 294
+# type: M  round: 32  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0100
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 18967598600  seq: 296
+# type: D  round: 32  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 01 00 02 00 03 00 04 00 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0101
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: cycleDone  t_ns: 18967615800  seq: 297
+# round: 32  duration_ms: 13  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 20 00 00 00 06 4A 00 00 00 00 00 00 0D 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0102
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 19063073500  seq: 303
+# type: M  round: 33  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0103
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 19064981900  seq: 305
+# type: D  round: 33  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 01 00 02 00 03 00 04 00 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0104
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: cycleDone  t_ns: 19064998500  seq: 306
+# round: 33  duration_ms: 10  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 21 00 00 00 6B 4A 00 00 00 00 00 00 0A 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0105
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 19161968000  seq: 312
+# type: M  round: 34  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0106
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 19163952100  seq: 314
+# type: D  round: 34  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 01 00 02 00 03 00 04 00 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0107
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: cycleDone  t_ns: 19163975700  seq: 315
+# round: 34  duration_ms: 9  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 22 00 00 00 CF 4A 00 00 00 00 00 00 09 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0108
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 19271692400  seq: 321
+# type: M  round: 35  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0109
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 19274706900  seq: 323
+# type: D  round: 35  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 01 00 02 00 03 00 04 00 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0110
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: cycleDone  t_ns: 19274724700  seq: 324
+# round: 35  duration_ms: 20  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 23 00 00 00 33 4B 00 00 00 00 00 00 14 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0111
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 19363853500  seq: 330
+# type: M  round: 36  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0112
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: snapshot  t_ns: 19366199700  seq: 332
+# type: D  round: 36  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 01 00 02 00 03 00 04 00 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0113
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: cycleDone  t_ns: 19366220000  seq: 333
+# round: 36  duration_ms: 11  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 24 00 00 00 97 4B 00 00 00 00 00 00 0B 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-ascii-G7-06-E0114
+# source: plc  profile: fx5u-eth-3e-ascii  step: G7-06
+# kind: event  event: linkState  t_ns: 19845473500  seq: 335
+# state: Disconnected  reason: PeerClosed
+05 00 02
+

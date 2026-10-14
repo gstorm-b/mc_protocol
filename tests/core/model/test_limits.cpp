@@ -128,7 +128,80 @@ TEST_CASE("LIM-02 1E family (PDF Appendix 5, not md-verified per spec section 10
     CHECK(mc::maxPoints(cfg, Op::WriteWords, DeviceKind::Word) == 256); // 03H, word device.
 }
 
-TEST_CASE("LIM-03 Random-access rows (spec section 4.4, kept for v1.1): every non-blank cell") {
+TEST_CASE("LIM-03 per-target caps: each cap lowers exactly its own operation") {
+    // Literals typed from the spec row: the FX5 ASCII and FX3-ENET-ADP 1E values, plus the
+    // "0 and a value above the table change nothing" rule, on every frame family.
+    SUBCASE("FX5 over 3E ASCII: 480 / 480 / 1792 / 1792") {
+        FrameConfig cfg = FrameConfig::frame3E(DataCode::Ascii);
+        CHECK(mc::maxPoints(cfg, Op::ReadWords, DeviceKind::Word) == 960); // caps 0: table.
+        CHECK(mc::maxPoints(cfg, Op::ReadBits, DeviceKind::Bit) == 3584);
+        cfg.maxReadWords = 480;
+        cfg.maxWriteWords = 480;
+        cfg.maxReadBits = 1792;
+        cfg.maxWriteBits = 1792;
+        CHECK(mc::maxPoints(cfg, Op::ReadWords, DeviceKind::Word) == 480);
+        CHECK(mc::maxPoints(cfg, Op::ReadWords, DeviceKind::Bit) == 480);
+        CHECK(mc::maxPoints(cfg, Op::WriteWords, DeviceKind::Word) == 480);
+        CHECK(mc::maxPoints(cfg, Op::WriteWords, DeviceKind::Bit) == 480);
+        CHECK(mc::maxPoints(cfg, Op::ReadBits, DeviceKind::Bit) == 1792);
+        CHECK(mc::maxPoints(cfg, Op::WriteBits, DeviceKind::Bit) == 1792);
+    }
+    SUBCASE("FX3-ENET-ADP over 1E: 32 / 10 / 256 / 160") {
+        FrameConfig cfg = FrameConfig::frame1E();
+        cfg.maxReadWords = 32;
+        cfg.maxWriteWords = 10;
+        cfg.maxReadBits = 256;
+        cfg.maxWriteBits = 160;
+        CHECK(mc::maxPoints(cfg, Op::ReadWords, DeviceKind::Word) == 32);  // table 256.
+        CHECK(mc::maxPoints(cfg, Op::ReadWords, DeviceKind::Bit) == 32);   // table 128.
+        CHECK(mc::maxPoints(cfg, Op::WriteWords, DeviceKind::Word) == 10); // table 256.
+        CHECK(mc::maxPoints(cfg, Op::WriteWords, DeviceKind::Bit) == 10);  // table 40.
+        CHECK(mc::maxPoints(cfg, Op::ReadBits, DeviceKind::Bit) == 256);   // table 256.
+        CHECK(mc::maxPoints(cfg, Op::WriteBits, DeviceKind::Bit) == 160);  // table 256.
+    }
+    SUBCASE("one cap changes only its own operation") {
+        FrameConfig cfg = FrameConfig::frame3E(DataCode::Binary); // IqR_Q_L: 960 / 7168.
+        cfg.maxWriteBits = 100;
+        CHECK(mc::maxPoints(cfg, Op::WriteBits, DeviceKind::Bit) == 100);
+        CHECK(mc::maxPoints(cfg, Op::ReadBits, DeviceKind::Bit) == 7168);
+        CHECK(mc::maxPoints(cfg, Op::ReadWords, DeviceKind::Word) == 960);
+        CHECK(mc::maxPoints(cfg, Op::WriteWords, DeviceKind::Word) == 960);
+
+        cfg = FrameConfig::frame3E(DataCode::Binary);
+        cfg.maxReadWords = 100;
+        CHECK(mc::maxPoints(cfg, Op::ReadWords, DeviceKind::Word) == 100);
+        CHECK(mc::maxPoints(cfg, Op::WriteWords, DeviceKind::Word) == 960);
+        CHECK(mc::maxPoints(cfg, Op::ReadBits, DeviceKind::Bit) == 7168);
+    }
+    SUBCASE("a cap above the table value changes nothing, on every frame family") {
+        FrameConfig f3e = FrameConfig::frame3E(DataCode::Binary);
+        FrameConfig f1e = FrameConfig::frame1E();
+        FrameConfig f3c = FrameConfig::frame3C();
+        FrameConfig f1c = FrameConfig::frame1C();
+        FrameConfig* all[] = {&f3e, &f1e, &f3c, &f1c};
+        for (FrameConfig* cfg : all) {
+            const uint16_t rw = mc::maxPoints(*cfg, Op::ReadWords, DeviceKind::Word);
+            const uint16_t ww = mc::maxPoints(*cfg, Op::WriteWords, DeviceKind::Bit);
+            const uint16_t rb = mc::maxPoints(*cfg, Op::ReadBits, DeviceKind::Bit);
+            const uint16_t wb = mc::maxPoints(*cfg, Op::WriteBits, DeviceKind::Bit);
+            cfg->maxReadWords = 65535;
+            cfg->maxWriteWords = 65535;
+            cfg->maxReadBits = 65535;
+            cfg->maxWriteBits = 65535;
+            CHECK(mc::maxPoints(*cfg, Op::ReadWords, DeviceKind::Word) == rw);
+            CHECK(mc::maxPoints(*cfg, Op::WriteWords, DeviceKind::Bit) == ww);
+            CHECK(mc::maxPoints(*cfg, Op::ReadBits, DeviceKind::Bit) == rb);
+            CHECK(mc::maxPoints(*cfg, Op::WriteBits, DeviceKind::Bit) == wb);
+        }
+    }
+    SUBCASE("a cap does not invent a cell the table lacks") {
+        FrameConfig cfg = FrameConfig::frame3E();
+        cfg.maxReadBits = 8;
+        CHECK(mc::maxPoints(cfg, Op::ReadBits, DeviceKind::Word) == 0);
+    }
+}
+
+TEST_CASE("LIM-01 Random-access rows (spec section 4.4, kept for v1.1): every non-blank cell") {
     using mc::detail::RandomAccessCommand;
     using mc::detail::RandomAccessLimitRow;
 
@@ -187,6 +260,61 @@ TEST_CASE("LIM-03 Random-access rows (spec section 4.4, kept for v1.1): every no
                 }
             }
             CHECK(found);
+        }
+    }
+}
+
+TEST_CASE("LIM-03 tester probe: each cap lowers exactly its own operation on every frame family") {
+    // A cap of 1 on one operation: that operation (both device kinds for the word caps) drops to 1,
+    // every other cell of the same frame keeps its table value.
+    struct Cell {
+        Op op;
+        DeviceKind kind;
+    };
+    const Cell cells[] = {{Op::ReadWords, DeviceKind::Word},  {Op::ReadWords, DeviceKind::Bit},
+                          {Op::WriteWords, DeviceKind::Word}, {Op::WriteWords, DeviceKind::Bit},
+                          {Op::ReadBits, DeviceKind::Bit},    {Op::WriteBits, DeviceKind::Bit}};
+    const FrameConfig frames[] = {FrameConfig::frame3E(DataCode::Binary),
+                                  FrameConfig::frame3E(DataCode::Ascii),
+                                  FrameConfig::frame1E(),
+                                  FrameConfig::frame1E(DataCode::Binary),
+                                  FrameConfig::frame3C(),
+                                  FrameConfig::frame1C()};
+    for (const FrameConfig& base : frames) {
+        for (int capIdx = 0; capIdx < 4; ++capIdx) {
+            FrameConfig cfg = base;
+            Op capped = Op::ReadWords;
+            switch (capIdx) {
+            case 0:
+                cfg.maxReadWords = 1;
+                capped = Op::ReadWords;
+                break;
+            case 1:
+                cfg.maxWriteWords = 1;
+                capped = Op::WriteWords;
+                break;
+            case 2:
+                cfg.maxReadBits = 1;
+                capped = Op::ReadBits;
+                break;
+            default:
+                cfg.maxWriteBits = 1;
+                capped = Op::WriteBits;
+                break;
+            }
+            for (const Cell& c : cells) {
+                const uint16_t table = mc::maxPoints(base, c.op, c.kind);
+                const uint16_t got = mc::maxPoints(cfg, c.op, c.kind);
+                INFO("frame ", static_cast<int>(base.frame), " cap ", capIdx, " op ",
+                     static_cast<int>(c.op), " kind ", static_cast<int>(c.kind));
+                if (table == 0) {
+                    CHECK(got == 0); // no invented cell.
+                } else if (c.op == capped) {
+                    CHECK(got == 1);
+                } else {
+                    CHECK(got == table);
+                }
+            }
         }
     }
 }

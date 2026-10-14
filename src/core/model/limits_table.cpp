@@ -96,9 +96,7 @@ uint16_t columnFor(const LimitRow& row, TargetFamily family) noexcept {
     return 0;
 }
 
-} // namespace
-
-uint16_t maxPoints(const FrameConfig& cfg, Op op, DeviceKind kind) noexcept {
+uint16_t tablePoints(const FrameConfig& cfg, Op op, DeviceKind kind) noexcept {
     if (cfg.frame == FrameType::F1E) {
         LimitCondition condition;
         switch (op) {
@@ -194,6 +192,29 @@ uint16_t maxPoints(const FrameConfig& cfg, Op op, DeviceKind kind) noexcept {
         return 0;
     }
     return columnFor(*row, cfg.targetFamily);
+}
+
+uint16_t capFor(const FrameConfig& cfg, Op op) noexcept {
+    switch (op) {
+    case Op::ReadWords:
+        return cfg.maxReadWords;
+    case Op::WriteWords:
+        return cfg.maxWriteWords;
+    case Op::ReadBits:
+        return cfg.maxReadBits;
+    case Op::WriteBits:
+        return cfg.maxWriteBits;
+    default:
+        return 0;
+    }
+}
+
+} // namespace
+
+uint16_t maxPoints(const FrameConfig& cfg, Op op, DeviceKind kind) noexcept {
+    uint16_t table = tablePoints(cfg, op, kind);
+    uint16_t cap = capFor(cfg, op);
+    return (cap != 0 && cap < table) ? cap : table;
 }
 
 } // namespace mc

@@ -287,7 +287,9 @@ TEST_CASE("VEC-RT: every enabled vector record of every v1 family (Appendix A ro
         size_t roundTripped = 0;
         for (const Vector& v : vectors) {
             INFO("vector ", v.id, " (", v.file, ":", v.line, ")");
-            if (v.hasTag("v1.1") || v.hasTag("v2")) {
+            // A row tagged `superseded` (1E-11a, replaced by 1E-15a; finding F-001) is counted with
+            // the skipped ones: the encoder no longer emits it.
+            if (v.hasTag("v1.1") || v.hasTag("v2") || v.hasTag("superseded")) {
                 ++tagged;
                 continue;
             }

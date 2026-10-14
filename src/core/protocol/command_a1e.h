@@ -45,14 +45,15 @@ inline uint8_t a1eCommandCode(const Request& r) noexcept {
 /**
  * @brief Wire size of `r`'s 00H-03H request data (spec §4.2): head device + points (`u8`) + fixed
  * `00` (`u8`) + write data (writes only; Binary bits are nibble-packed with a zero last nibble on
- * an odd count, ASCII bits are exactly `count` characters).
+ * an odd count, ASCII bits are `count` characters plus one dummy `'0'` (30H) on an odd count,
+ * 1E-15).
  * @par Complexity
  * O(1); no allocation.
  */
 template <class Codec> size_t a1eRequestDataSize(const Request& r) noexcept {
     size_t size = e1DeviceSize(Codec::kDataCode) + Codec::u8Size() * 2;
     if (r.isWrite()) {
-        size += r.isBitOp() ? Codec::bitsSize(r.count) : Codec::wordsSize(r.count);
+        size += r.isBitOp() ? Codec::bitsSize(r.count + r.count % 2) : Codec::wordsSize(r.count);
     }
     return size;
 }

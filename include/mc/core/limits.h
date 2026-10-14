@@ -29,8 +29,12 @@ namespace mc {
  * For a word operation on a bit device, the returned maximum is in **words**, matching
  * `Request::count`'s own unit for that combination (spec §2.4: each word covers 16 bit points).
  *
- * @param[in] cfg Frame this command would be encoded for; reads `frame`, `code`, `series` and
- * `targetFamily`.
+ * A nonzero per-target cap of the operation (`FrameConfig::maxReadWords`, `maxWriteWords`,
+ * `maxReadBits`, `maxWriteBits`) lowers the table value to `min(table, cap)`; a cap of 0, or one
+ * above the table value, changes nothing.
+ *
+ * @param[in] cfg Frame this command would be encoded for; reads `frame`, `code`, `series`,
+ * `targetFamily` and the four per-target caps.
  * @param[in] op Operation the command performs.
  * @param[in] kind Device kind (`DeviceKind::Bit` or `DeviceKind::Word`) the command targets.
  * @return The maximum, or 0 when spec §4.4 has no cell for this combination.
@@ -68,8 +72,10 @@ struct Chunk {
  * @retval ErrorCode::DataSizeMismatch @p r is a write whose payload size does not match its
  * count.
  * @retval ErrorCode::PointCount @p r has no points, no spec §4.4 cell applies to this
- * operation/device kind combination, or @p r is a write that needs more than one chunk and
- * `cfg.splitWrites` is false.
+ * operation/device kind combination, @p r is a write that needs more than one chunk and
+ * `cfg.splitWrites` is false, or @p r is a bit operation with `BitLayout::PackedLsbFirst` that
+ * needs more than one chunk while maxPoints() is not a multiple of 8 (a per-target cap; a chunk
+ * could not start on a byte boundary).
  * @par Complexity
  * O(1); no allocation.
  * @see chunk
@@ -97,8 +103,10 @@ Expected<size_t> chunkCount(const Request& r, const FrameConfig& cfg) noexcept;
  * @retval ErrorCode::DataSizeMismatch @p r is a write whose payload size does not match its
  * count.
  * @retval ErrorCode::PointCount @p r has no points, no spec §4.4 cell applies to this
- * operation/device kind combination, or @p r is a write that needs more than one chunk and
- * `cfg.splitWrites` is false.
+ * operation/device kind combination, @p r is a write that needs more than one chunk and
+ * `cfg.splitWrites` is false, or @p r is a bit operation with `BitLayout::PackedLsbFirst` that
+ * needs more than one chunk while maxPoints() is not a multiple of 8 (a per-target cap; a chunk
+ * could not start on a byte boundary).
  * @retval ErrorCode::BufferTooSmall `capacity` is smaller than the number of chunks needed.
  * @par Complexity
  * O(C) in the number of chunks produced; no allocation.

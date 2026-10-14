@@ -163,7 +163,7 @@ Nguồn: `part2:465-478`, `part2:588-593`.
 |---|---|---|
 | QnA ASCII (3E/4E ASCII, 4C/3C F1–F4), 1C | 1 ký tự / điểm: `'1'` (31H) = ON, `'0'` (30H) = OFF | như bên ghi |
 | QnA Binary (3E/4E binary, 4C F5), 1E Binary | 4 bit / điểm; điểm đầu tiên ở **nibble cao**; số điểm lẻ → nibble thấp của byte cuối = 0 | như bên ghi |
-| 1E ASCII | 1 ký tự / điểm | 1 ký tự / điểm; **số điểm lẻ → PLC thêm 1 ký tự dummy `'0'`** ở cuối |
+| 1E ASCII | 1 ký tự / điểm; **số điểm lẻ → thêm 1 ký tự dummy `'0'`** ở cuối (sửa 2026-10-14: manual FX3 ENET-ADP §7.5.3, finding F-001) | 1 ký tự / điểm; **số điểm lẻ → PLC thêm 1 ký tự dummy `'0'`** ở cuối |
 
 Ví dụ M10..M14 = ON, OFF, ON, OFF, ON: ASCII `"10101"` = `31 30 31 30 31`; Binary (E71) `10 10 10` (`part3:506-510`).
 Ví dụ M100..M107 = 0,0,0,1,0,0,1,1: Binary `00 01 00 11` (`part3:1089`).
@@ -1347,7 +1347,7 @@ Với mỗi tổ hợp chạy:
 |---|---|---|
 | Q1 | Format 3: response không dữ liệu (`STX P QACK ETX`) và response lỗi (`STX P QNAK err ETX`) được PDF in **không có** sum check (đã đối chiếu ảnh trang PDF 33, trang in 31), trong khi response có dữ liệu thì có. | Implement đúng như PDF. Thêm cấu hình `f3_short_response_has_sum` (mặc định `false`) để đổi nhanh nếu phần cứng khác. |
 | Q2 | Format 2: manual không nói rõ Block No. trong response có luôn bằng Block No. của request. | Kiểm tra khớp (SHOULD) nhưng cho phép tắt. |
-| Q3 | 1E ASCII ghi bit (02H) với số điểm lẻ: manual chỉ nói dummy cho **đọc** (`part5:2565`), không nói cho ghi. | Gửi đúng N ký tự, không đệm. |
+| Q3 | 1E ASCII ghi bit (02H) với số điểm lẻ: manual chỉ nói dummy cho **đọc** (`part5:2565`), không nói cho ghi. | ~~Gửi đúng N ký tự, không đệm.~~ **Đã trả lời trên phần cứng (2026-10-14, owner):** thêm 1 ký tự dummy `'0'` (30H); FX3U-ENET-ADP chờ ký tự này và timeout nếu thiếu (manual §7.5.3; finding F-001). |
 | Q4 | Ghi bit Binary với số điểm lẻ (QnA, 1E): nibble thấp của byte cuối. | Đặt 0 theo quy tắc `part3:504`. |
 | Q5 | 3E/4E: manual không cam kết access route trong response bình thường luôn giống request. | `check_route = false` mặc định. |
 | Q6 | Ý nghĩa mã lỗi không có trong 3 file md. | Trả mã số thô; bảng tra bổ sung sau. |

@@ -1,0 +1,81 @@
+format: hil-capture-1
+tool: hil_capture
+tool_version: 0.1.2
+library_version: 0.1.2
+git_commit: unknown
+date: 2026-10-13T01:50:15Z
+operator_note: 
+plc_state: RUN
+profile: q03ude-eth-3e-bin
+plc: Q03UDECPU
+module: built-in Ethernet
+firmware: FILL: Q03UDECPU serial number / function version (GX Works2 system monitor)
+adapter: FILL: direct Ethernet, no adapter; set device.transport.tcp host and port (placeholder 192.0.2.10:5000) to the MC protocol port of the CPU's open settings
+plc_state_note: FILL: RUN, online change enabled; confirm Y10-Y17 drive no load (Y10-Y17 is scratch, owner Q4); deviceEnd is the default Q03UDE device allocation: change it if the parameters differ
+transport: tcp
+scratch: D100-D2099 W100-W1FF M100-M2099 B100-B1FF Y10-Y17
+device_end: X=1FFF Y=1FFF M=8191 L=8191 F=2047 V=2047 B=1FFF D=12287 W=1FFF TS=2047 TC=2047 TN=2047 CS=1023 CC=1023 CN=1023 SB=7FF SW=7FF
+supports: D W M L F B X Y TS TC TN CS CC CN SM SD
+special_bit: SM0
+special_word: SD0
+frame.aSeriesTarget: false
+frame.blockNo: 0
+frame.checkBlockNo: true
+frame.checkRoute: false
+frame.code: Binary
+frame.commandSet: ACPU
+frame.e1AliasLS: false
+frame.f3ShortResponseHasSum: false
+frame.format: Format1
+frame.frame: 3E
+frame.highPerformanceQcpu: false
+frame.io: 1023
+frame.messageWait: 0
+frame.monitoringTimer: 16
+frame.network: 0
+frame.pc: 255
+frame.readRetries: 0
+frame.selfStation: 0
+frame.sendEotOnError: true
+frame.serialStart: 0
+frame.series: QL
+frame.splitWrites: false
+frame.station: 0
+frame.stationNo: 0
+frame.sumCheck: true
+frame.targetFamily: IqR_Q_L
+frame.timeoutMs: 0
+frame.xyAsciiDigits: Hex
+frame.xyNotation: Hex
+session.adHocArenaBytes: 65536
+session.adHocCapacity: 64
+session.bitsAsWords: true
+session.cycleIntervalMs: 100
+session.cycleMode: FixedRate
+session.firstResponseTimeoutMs: 0
+session.heartbeat.device: M2000
+session.heartbeat.enabled: false
+session.maxAdHocBurst: 4
+session.maxConsecutiveLinkErrors: 3
+session.maxGap: auto
+session.serialFlushMs: 50
+session.serialInterCharMs: 100
+skipped.G1-06: skipped: requires supports:R
+skipped.G1-07: skipped: requires supports:ZR
+skipped.G2-04: skipped: scratch too small
+skipped.G2-07-L: skipped: requires scratch:L
+skipped.G2-07-F: skipped: requires scratch:F
+skipped.G2-07-S: skipped: requires supports:S
+skipped.G3-05: skipped: scratch too small
+skipped.G5-05: skipped: requires endNotMultiple16:M
+skipped.G5-06: skipped: requires profile:*-noonline
+skipped.G7-02-A: skipped: requires code:Ascii
+skipped.G8-Q6: skipped: requires profile:*-q6-nothing-to-run
+skipped.G9-01-A: skipped: requires code:Ascii
+skipped.GB-06: skipped: scratch too small
+scan_time_raw: 0
+recovery.1: after G7-01: Requested (Disconnected); reconnected in 6 ms
+recovery.2: after G7-02-B: Requested (Disconnected); reconnected in 10 ms
+recovery.3: after G9-01-B: Requested (Disconnected); reconnected in 2 ms
+recovery.4: after G9-07: Requested (Disconnected); reconnected in 3 ms
+polls: G6 G7-06

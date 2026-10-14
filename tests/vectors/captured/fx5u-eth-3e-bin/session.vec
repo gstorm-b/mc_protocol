@@ -1,0 +1,1734 @@
+# id: CAP-fx5u-eth-3e-bin-G6-T0001
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: tx  t_ns: 321438400  seq: 8
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0002
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: rx  t_ns: 327906600  seq: 10
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0003
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: tx  t_ns: 327921700  seq: 11
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 00 00 00 9C 02 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0004
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: rx  t_ns: 330169200  seq: 12
+D0 00 00 FF FF 03 00 06 00 00 00 00 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0005
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: tx  t_ns: 330186700  seq: 13
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 05 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0006
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: rx  t_ns: 332950900  seq: 14
+D0 00 00 FF FF 03 00 0C 00 00 00 50 55 34 12 02 00 00 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0007
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: tx  t_ns: 333020300  seq: 15
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 40 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0008
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: rx  t_ns: 335690500  seq: 16
+D0 00 00 FF FF 03 00 82 00 00 00 00 00 01 01 02 02 03 03 04 04 05 05 06 06 07 07 08 08 09 09 0A 0A 0B 0B 0C 0C 0D 0D 0E 0E 0F 0F 10 10 11 11 12 12 13 13 00 00 00 00 00 00 F8 3F FE FF FF FF 1A 1A 1B 1B 1C 1C 1D 1D 1E 1E 1F 1F 20 20 21 21 22 22 23 23 24 24 25 25 26 26 27 27 28 28 29 29 2A 2A 2B 2B 2C 2C 2D 2D 2E 2E 2F 2F 30 30 31 31 32 32 33 33 34 34 35 35 36 36 37 37 38 38 39 39 3A 3A 3B 3B 3C 3C 3D 3D 3E 3E 3F 3F
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0009
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: tx  t_ns: 335706200  seq: 17
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 C8 00 00 A8 0A 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0010
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: rx  t_ns: 337963200  seq: 18
+D0 00 00 FF FF 03 00 16 00 00 00 64 64 65 65 66 66 67 67 68 68 69 69 6A 6A 6B 6B 6C 6C 6D 6D
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0011
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: tx  t_ns: 337973000  seq: 19
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 00 01 00 B4 10 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0012
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: rx  t_ns: 340508100  seq: 20
+D0 00 00 FF FF 03 00 22 00 00 00 FF FF 00 80 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0013
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: tx  t_ns: 421928000  seq: 26
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0014
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: rx  t_ns: 424096100  seq: 27
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0015
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: tx  t_ns: 424128100  seq: 28
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 00 00 00 9C 02 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0016
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: rx  t_ns: 426320700  seq: 29
+D0 00 00 FF FF 03 00 06 00 00 00 00 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0017
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: tx  t_ns: 426367100  seq: 30
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 05 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0018
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: rx  t_ns: 429541700  seq: 32
+D0 00 00 FF FF 03 00 0C 00 00 00 50 55 34 12 02 00 00 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0019
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: tx  t_ns: 429564000  seq: 33
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 40 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0020
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: rx  t_ns: 433198000  seq: 35
+D0 00 00 FF FF 03 00 82 00 00 00 00 00 01 01 02 02 03 03 04 04 05 05 06 06 07 07 08 08 09 09 0A 0A 0B 0B 0C 0C 0D 0D 0E 0E 0F 0F 10 10 11 11 12 12 13 13 00 00 00 00 00 00 F8 3F FE FF FF FF 1A 1A 1B 1B 1C 1C 1D 1D 1E 1E 1F 1F 20 20 21 21 22 22 23 23 24 24 25 25 26 26 27 27 28 28 29 29 2A 2A 2B 2B 2C 2C 2D 2D 2E 2E 2F 2F 30 30 31 31 32 32 33 33 34 34 35 35 36 36 37 37 38 38 39 39 3A 3A 3B 3B 3C 3C 3D 3D 3E 3E 3F 3F
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0021
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: tx  t_ns: 433205800  seq: 36
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 C8 00 00 A8 0A 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0022
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: rx  t_ns: 435373900  seq: 37
+D0 00 00 FF FF 03 00 16 00 00 00 64 64 65 65 66 66 67 67 68 68 69 69 6A 6A 6B 6B 6C 6C 6D 6D
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0023
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: tx  t_ns: 435414100  seq: 38
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 00 01 00 B4 10 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0024
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: rx  t_ns: 438235700  seq: 40
+D0 00 00 FF FF 03 00 22 00 00 00 FF FF 00 80 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0025
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: tx  t_ns: 438863400  seq: 43
+50 00 00 FF FF 03 00 0E 00 10 00 01 14 00 00 69 00 00 A8 01 00 34 12
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0026
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: rx  t_ns: 442162500  seq: 46
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0027
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: tx  t_ns: 442183400  seq: 47
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 67 00 00 90 01 00 10
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0028
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: rx  t_ns: 444355700  seq: 49
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0029
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: tx  t_ns: 521577500  seq: 51
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0030
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: rx  t_ns: 523465800  seq: 52
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0031
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: tx  t_ns: 523481500  seq: 53
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 00 00 00 9C 02 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0032
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: rx  t_ns: 526417900  seq: 54
+D0 00 00 FF FF 03 00 06 00 00 00 00 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0033
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: tx  t_ns: 526437100  seq: 55
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 05 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0034
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: rx  t_ns: 529048100  seq: 57
+D0 00 00 FF FF 03 00 0C 00 00 00 D0 55 34 12 02 00 00 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0035
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: tx  t_ns: 529074600  seq: 58
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 40 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0036
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: rx  t_ns: 531557600  seq: 61
+D0 00 00 FF FF 03 00 82 00 00 00 00 00 01 01 02 02 03 03 04 04 34 12 06 06 07 07 08 08 09 09 0A 0A 0B 0B 0C 0C 0D 0D 0E 0E 0F 0F 10 10 11 11 12 12 13 13 00 00 00 00 00 00 F8 3F FE FF FF FF 1A 1A 1B 1B 1C 1C 1D 1D 1E 1E 1F 1F 20 20 21 21 22 22 23 23 24 24 25 25 26 26 27 27 28 28 29 29 2A 2A 2B 2B 2C 2C 2D 2D 2E 2E 2F 2F 30 30 31 31 32 32 33 33 34 34 35 35 36 36 37 37 38 38 39 39 3A 3A 3B 3B 3C 3C 3D 3D 3E 3E 3F 3F
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0037
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: tx  t_ns: 531578300  seq: 62
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 C8 00 00 A8 0A 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0038
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: rx  t_ns: 533951500  seq: 64
+D0 00 00 FF FF 03 00 16 00 00 00 64 64 65 65 66 66 67 67 68 68 69 69 6A 6A 6B 6B 6C 6C 6D 6D
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0039
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: tx  t_ns: 533974300  seq: 65
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 00 01 00 B4 10 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0040
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: rx  t_ns: 536549900  seq: 67
+D0 00 00 FF FF 03 00 22 00 00 00 FF FF 00 80 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0041
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: tx  t_ns: 622415300  seq: 70
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0042
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: rx  t_ns: 624827600  seq: 71
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0043
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: tx  t_ns: 624853500  seq: 72
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 00 00 00 9C 02 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0044
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: rx  t_ns: 627592500  seq: 73
+D0 00 00 FF FF 03 00 06 00 00 00 00 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0045
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: tx  t_ns: 627612600  seq: 74
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 05 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0046
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: rx  t_ns: 630070100  seq: 76
+D0 00 00 FF FF 03 00 0C 00 00 00 D0 55 34 12 02 00 00 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0047
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: tx  t_ns: 630090800  seq: 77
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 40 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0048
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: rx  t_ns: 632780800  seq: 79
+D0 00 00 FF FF 03 00 82 00 00 00 00 00 01 01 02 02 03 03 04 04 34 12 06 06 07 07 08 08 09 09 0A 0A 0B 0B 0C 0C 0D 0D 0E 0E 0F 0F 10 10 11 11 12 12 13 13 00 00 00 00 00 00 F8 3F FE FF FF FF 1A 1A 1B 1B 1C 1C 1D 1D 1E 1E 1F 1F 20 20 21 21 22 22 23 23 24 24 25 25 26 26 27 27 28 28 29 29 2A 2A 2B 2B 2C 2C 2D 2D 2E 2E 2F 2F 30 30 31 31 32 32 33 33 34 34 35 35 36 36 37 37 38 38 39 39 3A 3A 3B 3B 3C 3C 3D 3D 3E 3E 3F 3F
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0049
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: tx  t_ns: 632791900  seq: 80
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 C8 00 00 A8 0A 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0050
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: rx  t_ns: 635066300  seq: 81
+D0 00 00 FF FF 03 00 16 00 00 00 64 64 65 65 66 66 67 67 68 68 69 69 6A 6A 6B 6B 6C 6C 6D 6D
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0051
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: tx  t_ns: 635078100  seq: 82
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 00 01 00 B4 10 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0052
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: rx  t_ns: 637634400  seq: 84
+D0 00 00 FF FF 03 00 22 00 00 00 FF FF 00 80 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0053
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: tx  t_ns: 723155000  seq: 89
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0054
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: rx  t_ns: 725765900  seq: 90
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0055
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: tx  t_ns: 725782600  seq: 91
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 00 00 00 9C 02 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0056
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: rx  t_ns: 727399200  seq: 92
+D0 00 00 FF FF 03 00 06 00 00 00 00 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0057
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: tx  t_ns: 727418000  seq: 93
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 05 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0058
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: rx  t_ns: 730292400  seq: 95
+D0 00 00 FF FF 03 00 0C 00 00 00 D0 55 34 12 02 00 00 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0059
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: tx  t_ns: 730306200  seq: 96
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 10 00 00 A0 01 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0060
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: rx  t_ns: 733008100  seq: 98
+D0 00 00 FF FF 03 00 04 00 00 00 55 55
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0061
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: tx  t_ns: 733031100  seq: 99
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 40 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0062
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: rx  t_ns: 735869300  seq: 101
+D0 00 00 FF FF 03 00 82 00 00 00 00 00 01 01 02 02 03 03 04 04 34 12 06 06 07 07 08 08 09 09 0A 0A 0B 0B 0C 0C 0D 0D 0E 0E 0F 0F 10 10 11 11 12 12 13 13 00 00 00 00 00 00 F8 3F FE FF FF FF 1A 1A 1B 1B 1C 1C 1D 1D 1E 1E 1F 1F 20 20 21 21 22 22 23 23 24 24 25 25 26 26 27 27 28 28 29 29 2A 2A 2B 2B 2C 2C 2D 2D 2E 2E 2F 2F 30 30 31 31 32 32 33 33 34 34 35 35 36 36 37 37 38 38 39 39 3A 3A 3B 3B 3C 3C 3D 3D 3E 3E 3F 3F
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0063
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: tx  t_ns: 735889900  seq: 102
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 C8 00 00 A8 0A 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0064
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: rx  t_ns: 738021300  seq: 103
+D0 00 00 FF FF 03 00 16 00 00 00 64 64 65 65 66 66 67 67 68 68 69 69 6A 6A 6B 6B 6C 6C 6D 6D
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0065
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: tx  t_ns: 824619500  seq: 106
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0066
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: rx  t_ns: 826930900  seq: 107
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0067
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: tx  t_ns: 826947000  seq: 108
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 00 00 00 9C 02 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0068
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: rx  t_ns: 829547300  seq: 109
+D0 00 00 FF FF 03 00 06 00 00 00 00 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0069
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: tx  t_ns: 829566200  seq: 110
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 05 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0070
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: rx  t_ns: 832129200  seq: 112
+D0 00 00 FF FF 03 00 0C 00 00 00 D0 55 34 12 02 00 00 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0071
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: tx  t_ns: 832143500  seq: 113
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 10 00 00 A0 01 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0072
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: rx  t_ns: 834476200  seq: 115
+D0 00 00 FF FF 03 00 04 00 00 00 55 55
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0073
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: tx  t_ns: 834492900  seq: 116
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 40 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0074
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: rx  t_ns: 837303600  seq: 118
+D0 00 00 FF FF 03 00 82 00 00 00 00 00 01 01 02 02 03 03 04 04 34 12 06 06 07 07 08 08 09 09 0A 0A 0B 0B 0C 0C 0D 0D 0E 0E 0F 0F 10 10 11 11 12 12 13 13 00 00 00 00 00 00 F8 3F FE FF FF FF 1A 1A 1B 1B 1C 1C 1D 1D 1E 1E 1F 1F 20 20 21 21 22 22 23 23 24 24 25 25 26 26 27 27 28 28 29 29 2A 2A 2B 2B 2C 2C 2D 2D 2E 2E 2F 2F 30 30 31 31 32 32 33 33 34 34 35 35 36 36 37 37 38 38 39 39 3A 3A 3B 3B 3C 3C 3D 3D 3E 3E 3F 3F
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0075
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: tx  t_ns: 837318100  seq: 119
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 C8 00 00 A8 0A 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-T0076
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: rx  t_ns: 841136700  seq: 120
+D0 00 00 FF FF 03 00 16 00 00 00 64 64 65 65 66 66 67 67 68 68 69 69 6A 6A 6B 6B 6C 6C 6D 6D
+
+# id: CAP-fx5u-eth-3e-bin-G6-I0001
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: input  input: heartbeat  t_ns: 320003100  seq: 1
+# enabled: true  device: M300
+07 01 04 2C 01 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-I0002
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: input  input: subscribe  t_ns: 320006500  seq: 2
+# name: d1  device: D100  count: 64
+08 09 64 00 00 00 40 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-I0003
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: input  input: subscribe  t_ns: 320009300  seq: 3
+# name: d2  device: D200  count: 10
+08 09 C8 00 00 00 0A 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-I0004
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: input  input: subscribe  t_ns: 320010900  seq: 4
+# name: m  device: M100  count: 64
+08 04 64 00 00 00 40 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-I0005
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: input  input: subscribe  t_ns: 320011700  seq: 5
+# name: x  device: X0  count: 32
+08 02 00 00 00 00 20 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-I0006
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: input  input: subscribe  t_ns: 320012800  seq: 6
+# name: w  device: W100  count: 16
+08 0A 00 01 00 00 10 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-E0001
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: event  event: linkState  t_ns: 320677600  seq: 7
+# state: Connecting  reason: Requested
+05 01 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-E0002
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: event  event: linkState  t_ns: 321445300  seq: 9
+# state: Connected  reason: Requested
+05 02 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-E0003
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 340533400  seq: 21
+# type: X  round: 1  segments: X0x32  chunks: ok
+01 00 00 00 00 20 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G6-E0004
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 340548500  seq: 22
+# type: M  round: 1  segments: M100x64  chunks: ok
+01 64 00 00 00 40 00 00 00 01 00 01 00 01 00 01 00 01 00 01 00 00 00 01 00 01 01 00 00 00 01 00 00 01 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G6-E0005
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 340553100  seq: 23
+# type: D  round: 1  segments: D100x64 D200x10  chunks: ok ok
+01 64 00 00 00 40 00 00 00 00 00 01 01 02 02 03 03 04 04 05 05 06 06 07 07 08 08 09 09 0A 0A 0B 0B 0C 0C 0D 0D 0E 0E 0F 0F 10 10 11 11 12 12 13 13 00 00 00 00 00 00 F8 3F FE FF FF FF 1A 1A 1B 1B 1C 1C 1D 1D 1E 1E 1F 1F 20 20 21 21 22 22 23 23 24 24 25 25 26 26 27 27 28 28 29 29 2A 2A 2B 2B 2C 2C 2D 2D 2E 2E 2F 2F 30 30 31 31 32 32 33 33 34 34 35 35 36 36 37 37 38 38 39 39 3A 3A 3B 3B 3C 3C 3D 3D 3E 3E 3F 3F 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 C8 00 00 00 0A 00 00 00 64 64 65 65 66 66 67 67 68 68 69 69 6A 6A 6B 6B 6C 6C 6D 6D 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G6-E0006
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 340558400  seq: 24
+# type: W  round: 1  segments: W100x16  chunks: ok
+01 00 01 00 00 10 00 00 00 FF FF 00 80 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G6-E0007
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: event  event: cycleDone  t_ns: 340563500  seq: 25
+# round: 1  duration_ms: 19  requests: 6  failed_chunks: 0  heartbeat_ok: true
+03 01 00 00 00 3E 01 00 00 00 00 00 00 13 00 00 00 06 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-bin-G6-E0008
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 426390500  seq: 31
+# type: X  round: 2  segments: X0x32  chunks: ok
+01 00 00 00 00 20 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G6-E0009
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 429575600  seq: 34
+# type: M  round: 2  segments: M100x64  chunks: ok
+01 64 00 00 00 40 00 00 00 01 00 01 00 01 00 01 00 01 00 01 00 00 00 01 00 01 01 00 00 00 01 00 00 01 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G6-E0010
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 435452600  seq: 39
+# type: D  round: 2  segments: D100x64 D200x10  chunks: ok ok
+01 64 00 00 00 40 00 00 00 00 00 01 01 02 02 03 03 04 04 05 05 06 06 07 07 08 08 09 09 0A 0A 0B 0B 0C 0C 0D 0D 0E 0E 0F 0F 10 10 11 11 12 12 13 13 00 00 00 00 00 00 F8 3F FE FF FF FF 1A 1A 1B 1B 1C 1C 1D 1D 1E 1E 1F 1F 20 20 21 21 22 22 23 23 24 24 25 25 26 26 27 27 28 28 29 29 2A 2A 2B 2B 2C 2C 2D 2D 2E 2E 2F 2F 30 30 31 31 32 32 33 33 34 34 35 35 36 36 37 37 38 38 39 39 3A 3A 3B 3B 3C 3C 3D 3D 3E 3E 3F 3F 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 C8 00 00 00 0A 00 00 00 64 64 65 65 66 66 67 67 68 68 69 69 6A 6A 6B 6B 6C 6C 6D 6D 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G6-E0011
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 438277900  seq: 41
+# type: W  round: 2  segments: W100x16  chunks: ok
+01 00 01 00 00 10 00 00 00 FF FF 00 80 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G6-E0012
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: event  event: cycleDone  t_ns: 438295200  seq: 42
+# round: 2  duration_ms: 17  requests: 6  failed_chunks: 0  heartbeat_ok: true
+03 02 00 00 00 A2 01 00 00 00 00 00 00 11 00 00 00 06 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-bin-G6-I0007
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: input  input: write  t_ns: 438895900  seq: 44
+# op: WriteWords  device: D105  count: 1
+0A 03 09 69 00 00 00 01 00 34 12
+
+# id: CAP-fx5u-eth-3e-bin-G6-I0008
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: input  input: write  t_ns: 438912000  seq: 45
+# op: WriteBits  device: M103  count: 1
+0A 02 04 67 00 00 00 01 00 01
+
+# id: CAP-fx5u-eth-3e-bin-G6-E0013
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: event  event: requestFinished  t_ns: 442205700  seq: 48
+# request_id: 1  outcome: ok  bytes: 0
+04
+
+# id: CAP-fx5u-eth-3e-bin-G6-E0014
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: event  event: requestFinished  t_ns: 444378400  seq: 50
+# request_id: 2  outcome: ok  bytes: 0
+04
+
+# id: CAP-fx5u-eth-3e-bin-G6-E0015
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 526451100  seq: 56
+# type: X  round: 3  segments: X0x32  chunks: ok
+01 00 00 00 00 20 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G6-E0016
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: event  event: valuesChanged  t_ns: 529091500  seq: 59
+# type: M  round: 3  changes: 1
+02 67 00 00 00 00 00 01 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-E0017
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 529105700  seq: 60
+# type: M  round: 3  segments: M100x64  chunks: ok
+01 64 00 00 00 40 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 01 01 00 00 00 01 00 00 01 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G6-E0018
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: event  event: valuesChanged  t_ns: 531587900  seq: 63
+# type: D  round: 3  changes: 1
+02 69 00 00 00 05 05 34 12
+
+# id: CAP-fx5u-eth-3e-bin-G6-E0019
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 533993500  seq: 66
+# type: D  round: 3  segments: D100x64 D200x10  chunks: ok ok
+01 64 00 00 00 40 00 00 00 00 00 01 01 02 02 03 03 04 04 34 12 06 06 07 07 08 08 09 09 0A 0A 0B 0B 0C 0C 0D 0D 0E 0E 0F 0F 10 10 11 11 12 12 13 13 00 00 00 00 00 00 F8 3F FE FF FF FF 1A 1A 1B 1B 1C 1C 1D 1D 1E 1E 1F 1F 20 20 21 21 22 22 23 23 24 24 25 25 26 26 27 27 28 28 29 29 2A 2A 2B 2B 2C 2C 2D 2D 2E 2E 2F 2F 30 30 31 31 32 32 33 33 34 34 35 35 36 36 37 37 38 38 39 39 3A 3A 3B 3B 3C 3C 3D 3D 3E 3E 3F 3F 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 C8 00 00 00 0A 00 00 00 64 64 65 65 66 66 67 67 68 68 69 69 6A 6A 6B 6B 6C 6C 6D 6D 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G6-E0020
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 536562800  seq: 68
+# type: W  round: 3  segments: W100x16  chunks: ok
+01 00 01 00 00 10 00 00 00 FF FF 00 80 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G6-E0021
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: event  event: cycleDone  t_ns: 536572000  seq: 69
+# round: 3  duration_ms: 15  requests: 6  failed_chunks: 0  heartbeat_ok: true
+03 03 00 00 00 06 02 00 00 00 00 00 00 0F 00 00 00 06 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-bin-G6-E0022
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 627629800  seq: 75
+# type: X  round: 4  segments: X0x32  chunks: ok
+01 00 00 00 00 20 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G6-E0023
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 630110800  seq: 78
+# type: M  round: 4  segments: M100x64  chunks: ok
+01 64 00 00 00 40 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 01 01 00 00 00 01 00 00 01 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G6-E0024
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 635085500  seq: 83
+# type: D  round: 4  segments: D100x64 D200x10  chunks: ok ok
+01 64 00 00 00 40 00 00 00 00 00 01 01 02 02 03 03 04 04 34 12 06 06 07 07 08 08 09 09 0A 0A 0B 0B 0C 0C 0D 0D 0E 0E 0F 0F 10 10 11 11 12 12 13 13 00 00 00 00 00 00 F8 3F FE FF FF FF 1A 1A 1B 1B 1C 1C 1D 1D 1E 1E 1F 1F 20 20 21 21 22 22 23 23 24 24 25 25 26 26 27 27 28 28 29 29 2A 2A 2B 2B 2C 2C 2D 2D 2E 2E 2F 2F 30 30 31 31 32 32 33 33 34 34 35 35 36 36 37 37 38 38 39 39 3A 3A 3B 3B 3C 3C 3D 3D 3E 3E 3F 3F 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 C8 00 00 00 0A 00 00 00 64 64 65 65 66 66 67 67 68 68 69 69 6A 6A 6B 6B 6C 6C 6D 6D 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G6-E0025
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 637654500  seq: 85
+# type: W  round: 4  segments: W100x16  chunks: ok
+01 00 01 00 00 10 00 00 00 FF FF 00 80 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G6-E0026
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: event  event: cycleDone  t_ns: 637666000  seq: 86
+# round: 4  duration_ms: 15  requests: 6  failed_chunks: 0  heartbeat_ok: true
+03 04 00 00 00 6B 02 00 00 00 00 00 00 0F 00 00 00 06 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-bin-G6-I0009
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: input  input: subscribe  t_ns: 639787800  seq: 87
+# name: b  device: B10  count: 16
+08 08 10 00 00 00 10 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G6-I0010
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: input  input: unsubscribe  t_ns: 639795400  seq: 88
+# name: w
+09 77
+
+# id: CAP-fx5u-eth-3e-bin-G6-E0027
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 727426700  seq: 94
+# type: X  round: 5  segments: X0x32  chunks: ok
+01 00 00 00 00 20 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G6-E0028
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 730317300  seq: 97
+# type: M  round: 5  segments: M100x64  chunks: ok
+01 64 00 00 00 40 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 01 01 00 00 00 01 00 00 01 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G6-E0029
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 733039500  seq: 100
+# type: B  round: 5  segments: B10x16  chunks: ok
+01 10 00 00 00 10 00 00 00 01 00 01 00 01 00 01 00 01 00 01 00 01 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G6-E0030
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 738033700  seq: 104
+# type: D  round: 5  segments: D100x64 D200x10  chunks: ok ok
+01 64 00 00 00 40 00 00 00 00 00 01 01 02 02 03 03 04 04 34 12 06 06 07 07 08 08 09 09 0A 0A 0B 0B 0C 0C 0D 0D 0E 0E 0F 0F 10 10 11 11 12 12 13 13 00 00 00 00 00 00 F8 3F FE FF FF FF 1A 1A 1B 1B 1C 1C 1D 1D 1E 1E 1F 1F 20 20 21 21 22 22 23 23 24 24 25 25 26 26 27 27 28 28 29 29 2A 2A 2B 2B 2C 2C 2D 2D 2E 2E 2F 2F 30 30 31 31 32 32 33 33 34 34 35 35 36 36 37 37 38 38 39 39 3A 3A 3B 3B 3C 3C 3D 3D 3E 3E 3F 3F 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 C8 00 00 00 0A 00 00 00 64 64 65 65 66 66 67 67 68 68 69 69 6A 6A 6B 6B 6C 6C 6D 6D 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G6-E0031
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: event  event: cycleDone  t_ns: 738044400  seq: 105
+# round: 5  duration_ms: 14  requests: 6  failed_chunks: 0  heartbeat_ok: true
+03 05 00 00 00 D0 02 00 00 00 00 00 00 0E 00 00 00 06 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-bin-G6-E0032
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 829579800  seq: 111
+# type: X  round: 6  segments: X0x32  chunks: ok
+01 00 00 00 00 20 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G6-E0033
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 832157600  seq: 114
+# type: M  round: 6  segments: M100x64  chunks: ok
+01 64 00 00 00 40 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 01 01 00 00 00 01 00 00 01 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G6-E0034
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 834508900  seq: 117
+# type: B  round: 6  segments: B10x16  chunks: ok
+01 10 00 00 00 10 00 00 00 01 00 01 00 01 00 01 00 01 00 01 00 01 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G6-E0035
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 841170400  seq: 121
+# type: D  round: 6  segments: D100x64 D200x10  chunks: ok ok
+01 64 00 00 00 40 00 00 00 00 00 01 01 02 02 03 03 04 04 34 12 06 06 07 07 08 08 09 09 0A 0A 0B 0B 0C 0C 0D 0D 0E 0E 0F 0F 10 10 11 11 12 12 13 13 00 00 00 00 00 00 F8 3F FE FF FF FF 1A 1A 1B 1B 1C 1C 1D 1D 1E 1E 1F 1F 20 20 21 21 22 22 23 23 24 24 25 25 26 26 27 27 28 28 29 29 2A 2A 2B 2B 2C 2C 2D 2D 2E 2E 2F 2F 30 30 31 31 32 32 33 33 34 34 35 35 36 36 37 37 38 38 39 39 3A 3A 3B 3B 3C 3C 3D 3D 3E 3E 3F 3F 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 C8 00 00 00 0A 00 00 00 64 64 65 65 66 66 67 67 68 68 69 69 6A 6A 6B 6B 6C 6C 6D 6D 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G6-E0036
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: event  event: cycleDone  t_ns: 841192900  seq: 122
+# round: 6  duration_ms: 17  requests: 6  failed_chunks: 0  heartbeat_ok: true
+03 06 00 00 00 35 03 00 00 00 00 00 00 11 00 00 00 06 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-bin-G6-E0037
+# source: plc  profile: fx5u-eth-3e-bin  step: G6
+# kind: event  event: linkState  t_ns: 842177600  seq: 123
+# state: Disconnected  reason: Requested
+05 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0001
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 10860371800  seq: 5
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0002
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 10867226600  seq: 9
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0003
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 10871001700  seq: 11
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0004
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 10871014400  seq: 12
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0005
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 10873617400  seq: 13
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0006
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 10873627700  seq: 14
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0007
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 10876512100  seq: 15
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0008
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 10967790300  seq: 19
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0009
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 10970126100  seq: 20
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0010
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 10970144000  seq: 21
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0011
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 10972625500  seq: 22
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0012
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 10972653700  seq: 23
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0013
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 10975656200  seq: 25
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0014
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11068107100  seq: 28
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0015
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11070660500  seq: 29
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0016
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11070749600  seq: 30
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0017
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11073672800  seq: 31
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0018
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11073705200  seq: 32
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0019
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11076556700  seq: 34
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0020
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11169292900  seq: 37
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0021
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11171291000  seq: 38
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0022
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11171318200  seq: 39
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0023
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11174056800  seq: 40
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0024
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11174093700  seq: 41
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0025
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11176425800  seq: 43
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0026
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11269399200  seq: 46
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0027
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11271381300  seq: 47
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0028
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11271411200  seq: 48
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0029
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11273823400  seq: 49
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0030
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11273843300  seq: 50
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0031
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11276438500  seq: 52
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0032
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11369648500  seq: 55
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0033
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11371816300  seq: 56
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0034
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11371841500  seq: 57
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0035
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11374407700  seq: 58
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0036
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11374443400  seq: 59
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0037
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11376908800  seq: 61
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0038
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11470520900  seq: 64
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0039
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11473023500  seq: 65
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0040
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11473039800  seq: 66
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0041
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11475218000  seq: 67
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0042
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11475232900  seq: 68
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0043
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11477814500  seq: 70
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0044
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11571599000  seq: 73
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0045
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11573614300  seq: 74
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0046
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11573640800  seq: 75
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0047
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11576443600  seq: 76
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0048
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11576477200  seq: 77
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0049
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11578945300  seq: 79
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0050
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11671925200  seq: 82
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0051
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11674018500  seq: 83
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0052
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11674048700  seq: 84
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0053
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11676251500  seq: 85
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0054
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11676272700  seq: 86
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0055
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11678920900  seq: 88
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0056
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11771236300  seq: 91
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0057
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11773443600  seq: 92
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0058
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11773467000  seq: 93
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0059
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11775831100  seq: 94
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0060
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11775863200  seq: 95
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0061
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11778489300  seq: 97
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0062
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11873377900  seq: 100
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0063
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11875437500  seq: 101
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0064
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11875456800  seq: 102
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0065
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11877879900  seq: 103
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0066
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11877894300  seq: 104
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0067
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11880413800  seq: 106
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0068
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11973601700  seq: 109
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0069
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11975474800  seq: 110
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0070
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11975490100  seq: 111
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0071
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11978079400  seq: 112
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0072
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11978087900  seq: 113
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0073
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11980919300  seq: 115
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0074
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12074240800  seq: 118
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0075
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12076930400  seq: 119
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0076
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12076953700  seq: 120
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0077
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12079696100  seq: 121
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0078
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12079705200  seq: 122
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0079
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12082322400  seq: 124
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0080
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12174991000  seq: 127
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0081
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12177152200  seq: 128
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0082
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12177167300  seq: 129
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0083
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12179246400  seq: 130
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0084
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12179262100  seq: 131
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0085
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12181977900  seq: 133
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0086
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12275692300  seq: 136
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0087
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12279348200  seq: 137
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0088
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12279363200  seq: 138
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0089
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12281348200  seq: 139
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0090
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12281358400  seq: 140
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0091
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12283966400  seq: 142
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0092
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12376313000  seq: 145
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0093
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12378699700  seq: 146
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0094
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12378713500  seq: 147
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0095
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12381180900  seq: 148
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0096
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12381197600  seq: 149
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0097
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12385226300  seq: 151
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0098
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12476915800  seq: 154
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0099
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12479060800  seq: 155
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0100
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12479085600  seq: 156
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0101
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12481467100  seq: 157
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0102
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12481486800  seq: 158
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0103
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12484592900  seq: 160
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0104
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12576442200  seq: 163
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0105
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12581014700  seq: 164
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0106
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12581028600  seq: 165
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0107
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12583375200  seq: 166
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0108
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12583382900  seq: 167
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0109
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12586124400  seq: 169
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0110
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12676801000  seq: 172
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0111
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12679091300  seq: 173
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0112
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12679120400  seq: 174
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0113
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12681593000  seq: 175
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0114
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12681621400  seq: 176
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0115
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12684562200  seq: 178
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0116
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12776677600  seq: 181
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0117
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12778729900  seq: 182
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0118
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12778746900  seq: 183
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0119
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12781232200  seq: 184
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0120
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12781255400  seq: 185
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0121
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12784084300  seq: 187
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0122
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12876795700  seq: 190
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0123
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12879990500  seq: 191
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0124
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12880020100  seq: 192
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0125
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12882596200  seq: 193
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0126
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12882661500  seq: 194
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0127
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12884839600  seq: 196
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-T0128
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12977089900  seq: 199
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-I0001
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: input  input: heartbeat  t_ns: 10858694400  seq: 1
+# enabled: true  device: M300
+07 01 04 2C 01 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-I0002
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: input  input: subscribe  t_ns: 10858698900  seq: 2
+# name: d  device: D100  count: 4
+08 09 64 00 00 00 04 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-I0003
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: input  input: subscribe  t_ns: 10858701700  seq: 3
+# name: m  device: M100  count: 16
+08 04 64 00 00 00 10 00 00 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0001
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: linkState  t_ns: 10859468600  seq: 4
+# state: Connecting  reason: Requested
+05 01 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0002
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: linkState  t_ns: 10860383500  seq: 6
+# state: Connected  reason: Requested
+05 02 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0003
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: linkState  t_ns: 10863278800  seq: 7
+# state: Disconnected  reason: PeerClosed
+05 00 02
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0004
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: linkState  t_ns: 10866317700  seq: 8
+# state: Connecting  reason: Requested
+05 01 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0005
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: linkState  t_ns: 10867237000  seq: 10
+# state: Connected  reason: Requested
+05 02 00
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0006
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 10876542400  seq: 16
+# type: M  round: 1  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0007
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 10876558400  seq: 17
+# type: D  round: 1  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0008
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 10876562100  seq: 18
+# round: 1  duration_ms: 9  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 01 00 00 00 70 2A 00 00 00 00 00 00 09 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0009
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 10972665100  seq: 24
+# type: M  round: 2  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0010
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 10975683600  seq: 26
+# type: D  round: 2  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0011
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 10975700000  seq: 27
+# round: 2  duration_ms: 8  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 02 00 00 00 D4 2A 00 00 00 00 00 00 08 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0012
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 11073727600  seq: 33
+# type: M  round: 3  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0013
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 11076585900  seq: 35
+# type: D  round: 3  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0014
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 11076596300  seq: 36
+# round: 3  duration_ms: 8  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 03 00 00 00 39 2B 00 00 00 00 00 00 08 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0015
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 11174115000  seq: 42
+# type: M  round: 4  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0016
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 11176450600  seq: 44
+# type: D  round: 4  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0017
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 11176466200  seq: 45
+# round: 4  duration_ms: 7  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 04 00 00 00 9E 2B 00 00 00 00 00 00 07 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0018
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 11273854500  seq: 51
+# type: M  round: 5  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0019
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 11276494800  seq: 53
+# type: D  round: 5  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0020
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 11276519700  seq: 54
+# round: 5  duration_ms: 7  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 05 00 00 00 02 2C 00 00 00 00 00 00 07 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0021
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 11374468600  seq: 60
+# type: M  round: 6  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0022
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 11376952600  seq: 62
+# type: D  round: 6  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0023
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 11376977300  seq: 63
+# round: 6  duration_ms: 7  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 06 00 00 00 66 2C 00 00 00 00 00 00 07 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0024
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 11475239400  seq: 69
+# type: M  round: 7  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0025
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 11477827800  seq: 71
+# type: D  round: 7  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0026
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 11477834500  seq: 72
+# round: 7  duration_ms: 7  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 07 00 00 00 CB 2C 00 00 00 00 00 00 07 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0027
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 11576504600  seq: 78
+# type: M  round: 8  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0028
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 11578988700  seq: 80
+# type: D  round: 8  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0029
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 11579018500  seq: 81
+# round: 8  duration_ms: 7  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 08 00 00 00 30 2D 00 00 00 00 00 00 07 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0030
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 11676286000  seq: 87
+# type: M  round: 9  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0031
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 11678938700  seq: 89
+# type: D  round: 9  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0032
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 11678946900  seq: 90
+# round: 9  duration_ms: 7  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 09 00 00 00 94 2D 00 00 00 00 00 00 07 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0033
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 11775882400  seq: 96
+# type: M  round: 10  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0034
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 11778555100  seq: 98
+# type: D  round: 10  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0035
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 11778587600  seq: 99
+# round: 10  duration_ms: 7  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 0A 00 00 00 F8 2D 00 00 00 00 00 00 07 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0036
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 11877902100  seq: 105
+# type: M  round: 11  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0037
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 11880439100  seq: 107
+# type: D  round: 11  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0038
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 11880454700  seq: 108
+# round: 11  duration_ms: 7  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 0B 00 00 00 5E 2E 00 00 00 00 00 00 07 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0039
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 11978092300  seq: 114
+# type: M  round: 12  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0040
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 11980936300  seq: 116
+# type: D  round: 12  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0041
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 11980944600  seq: 117
+# round: 12  duration_ms: 7  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 0C 00 00 00 C2 2E 00 00 00 00 00 00 07 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0042
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 12079714300  seq: 123
+# type: M  round: 13  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0043
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 12082338600  seq: 125
+# type: D  round: 13  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0044
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 12082346700  seq: 126
+# round: 13  duration_ms: 8  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 0D 00 00 00 27 2F 00 00 00 00 00 00 08 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0045
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 12179273300  seq: 132
+# type: M  round: 14  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0046
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 12181997300  seq: 134
+# type: D  round: 14  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0047
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 12182005700  seq: 135
+# round: 14  duration_ms: 7  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 0E 00 00 00 8B 2F 00 00 00 00 00 00 07 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0048
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 12281365400  seq: 141
+# type: M  round: 15  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0049
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 12283989900  seq: 143
+# type: D  round: 15  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0050
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 12283998700  seq: 144
+# round: 15  duration_ms: 8  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 0F 00 00 00 F0 2F 00 00 00 00 00 00 08 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0051
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 12381218900  seq: 150
+# type: M  round: 16  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0052
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 12385258400  seq: 152
+# type: D  round: 16  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0053
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 12385273100  seq: 153
+# round: 16  duration_ms: 9  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 10 00 00 00 55 30 00 00 00 00 00 00 09 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0054
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 12481499000  seq: 159
+# type: M  round: 17  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0055
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 12484649400  seq: 161
+# type: D  round: 17  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0056
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 12484682100  seq: 162
+# round: 17  duration_ms: 8  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 11 00 00 00 B9 30 00 00 00 00 00 00 08 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0057
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 12583387200  seq: 168
+# type: M  round: 18  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0058
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 12586140700  seq: 170
+# type: D  round: 18  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0059
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 12586150200  seq: 171
+# round: 18  duration_ms: 10  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 12 00 00 00 1D 31 00 00 00 00 00 00 0A 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0060
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 12681642700  seq: 177
+# type: M  round: 19  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0061
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 12684608200  seq: 179
+# type: D  round: 19  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0062
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 12684628600  seq: 180
+# round: 19  duration_ms: 8  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 13 00 00 00 81 31 00 00 00 00 00 00 08 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0063
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 12781272500  seq: 186
+# type: M  round: 20  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0064
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 12784114300  seq: 188
+# type: D  round: 20  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0065
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 12784134200  seq: 189
+# round: 20  duration_ms: 8  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 14 00 00 00 E5 31 00 00 00 00 00 00 08 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0066
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 12882720200  seq: 195
+# type: M  round: 21  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0067
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 12884880900  seq: 197
+# type: D  round: 21  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0068
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 12884900200  seq: 198
+# round: 21  duration_ms: 8  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 15 00 00 00 49 32 00 00 00 00 00 00 08 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-eth-3e-bin-G7-06-E0069
+# source: plc  profile: fx5u-eth-3e-bin  step: G7-06
+# kind: event  event: linkState  t_ns: 13327204000  seq: 200
+# state: Disconnected  reason: PeerClosed
+05 00 02
+

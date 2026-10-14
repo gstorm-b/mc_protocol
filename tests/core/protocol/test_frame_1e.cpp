@@ -205,6 +205,11 @@ void runFrame1eVectorFile(const char* fileName, size_t expectedRecords) {
         if (v.hasTag("v1.1")) {
             continue;
         }
+        // A row tagged `superseded` (1E-11a, replaced by 1E-15a, F-001) is no longer produced
+        // by the encoder; the "1E-15" case below still ties it to its successor.
+        if (v.hasTag("superseded")) {
+            continue;
+        }
         std::string kind = v.field("kind");
         if (kind == "request") {
             checkRequestVector(v);
@@ -234,7 +239,105 @@ TEST_CASE("1E-01, 1E-03..1E-08, 1E-10, 1E-11, 1E-13, SZ-01 (1E Binary): driven b
 
 TEST_CASE("1E-02, 1E-03..1E-08, 1E-10, 1E-11, 1E-13, SZ-01 (1E ASCII): driven by 1e_ascii.vec; "
           "1E-12 (v1.1) skipped") {
-    runFrame1eVectorFile("1e_ascii.vec", 18);
+    runFrame1eVectorFile("1e_ascii.vec", 19);
+}
+
+TEST_CASE("1E-15: ASCII batch bit write (02H) appends one dummy '0' after an odd count; Binary "
+          "and even counts are unchanged (F-001)") {
+    // Frame head for M100 at PC FF, timer 000A: "02" "FF" "000A" "4D2000000064", then the points
+    // (2 hex characters) and "00". Literals worked out by hand, not taken from the encoder.
+    const std::string head = "02FF000A4D2000000064";
+
+    auto encodeAscii = [](const std::vector<uint8_t>& bits, size_t& sizeOut) {
+        McProtocol proto(FrameConfig::frame1E(mc::DataCode::Ascii));
+        Request r =
+            Request::writeBits(Device{DeviceType::M, 100}, ByteView{bits.data(), bits.size()});
+        auto size = proto.encodedSize(r);
+        REQUIRE(size.hasValue());
+        sizeOut = size.value();
+        std::vector<uint8_t> out(size.value() + 8, 0xCC); // sentinel after the frame
+        auto encoded = proto.encode(r, MutableByteView{out.data(), out.size()});
+        REQUIRE(encoded.hasValue());
+        CHECK(encoded.value() == size.value()); // encodedSize() == encode() (acceptance 2).
+        for (size_t i = size.value(); i < out.size(); ++i) {
+            CHECK(out[i] == 0xCC); // nothing written past the reported size
+        }
+        return std::string(out.begin(), out.begin() + static_cast<std::ptrdiff_t>(size.value()));
+    };
+
+    size_t size = 0;
+    SUBCASE("N = 1: data \"1\" + dummy \"0\"") {
+        CHECK(encodeAscii({1}, size) == head + "0100" + "10");
+        CHECK(size == 26);
+    }
+    SUBCASE("N = 5: data \"10101\" + dummy \"0\"") {
+        CHECK(encodeAscii({1, 0, 1, 0, 1}, size) == head + "0500" + "101010");
+        CHECK(size == 30);
+    }
+    SUBCASE("N = 3 (rows 1E-11a and 1E-15a): data \"111\" + dummy \"0\"") {
+        const std::string frame = head + "0300" + "1110";
+        const std::string encoded = encodeAscii({1, 1, 1}, size);
+        CHECK(encoded == frame);
+        std::vector<Vector> vectors = loadVectors(vectorsRoot() / "1e_ascii.vec");
+        const Vector* old = nullptr;
+        const Vector* successor = nullptr;
+        for (const auto& v : vectors) {
+            if (v.id == "1E-11a") {
+                old = &v;
+            } else if (v.id == "1E-15a") {
+                successor = &v;
+            }
+        }
+        REQUIRE(old != nullptr);
+        REQUIRE(successor != nullptr);
+        CHECK(old->hasTag("superseded"));
+        CHECK_FALSE(successor->hasTag("superseded"));
+        // encode() equals the successor row; the superseded row plus the dummy is the same frame.
+        CHECK(std::string(successor->bytes.begin(), successor->bytes.end()) == encoded);
+        CHECK(std::string(old->bytes.begin(), old->bytes.end()) + "0" == frame);
+    }
+    SUBCASE("N = 8: no dummy") {
+        CHECK(encodeAscii({1, 1, 0, 0, 1, 1, 0, 0}, size) == head + "0800" + "11001100");
+        CHECK(size == 32);
+    }
+    SUBCASE("N = 256: no dummy, points field 00") {
+        std::string expected = head + "0000";
+        std::vector<uint8_t> bits(256, 0);
+        bits[0] = 1;
+        expected += "1" + std::string(255, '0');
+        CHECK(encodeAscii(bits, size) == expected);
+        CHECK(size == 20 + 4 + 256);
+    }
+    SUBCASE("N = 255: 255 characters + dummy") {
+        std::vector<uint8_t> bits(255, 1);
+        CHECK(encodeAscii(bits, size) == head + "FF00" + std::string(255, '1') + "0");
+        CHECK(size == 20 + 4 + 256);
+    }
+    SUBCASE("Binary odd count keeps its zero last nibble (1E-11) and PackedLsbFirst agrees") {
+        McProtocol proto(FrameConfig::frame1E(mc::DataCode::Binary));
+        const std::vector<uint8_t> bits = {1, 1, 1};
+        Request r =
+            Request::writeBits(Device{DeviceType::M, 100}, ByteView{bits.data(), bits.size()});
+        auto encoded = proto.encode(r);
+        REQUIRE(encoded.hasValue());
+        const std::vector<uint8_t> expected = {0x02, 0xFF, 0x0A, 0x00, 0x64, 0x00, 0x00,
+                                               0x00, 0x20, 0x4D, 0x03, 0x00, 0x11, 0x10};
+        CHECK(std::vector<uint8_t>(encoded.value().begin(), encoded.value().end()) == expected);
+        CHECK(proto.encodedSize(r).value() == expected.size());
+    }
+    SUBCASE("PackedLsbFirst ASCII odd count gets the dummy too") {
+        McProtocol proto(FrameConfig::frame1E(mc::DataCode::Ascii));
+        const std::vector<uint8_t> packed = {0x15}; // points 0, 2, 4 ON
+        Request r =
+            Request::writeBits(Device{DeviceType::M, 100}, ByteView{packed.data(), packed.size()});
+        r.bitLayout = BitLayout::PackedLsbFirst;
+        r.count = 5;
+        auto encoded = proto.encode(r);
+        REQUIRE(encoded.hasValue());
+        CHECK(std::string(encoded.value().begin(), encoded.value().end()) ==
+              head + "0500" + "101010");
+        CHECK(proto.encodedSize(r).value() == 30);
+    }
 }
 
 TEST_CASE("1E-12 (v1.1): the 04H/05H frames are the 1E header plus CMD-22/23/24/37, and skipped") {

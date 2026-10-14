@@ -135,6 +135,15 @@ FrameConfig frameFromMeta(const std::map<std::string, std::string>& m, const fs:
     f.highPerformanceQcpu = needBool(m, "frame.highPerformanceQcpu", file);
     f.aSeriesTarget = needBool(m, "frame.aSeriesTarget", file);
     f.splitWrites = needBool(m, "frame.splitWrites", file);
+    // Per-target caps: a capture written before the keys existed has none (0).
+    const auto cap = [&](const char* key) {
+        return m.find(key) == m.end() ? uint16_t{0}
+                                      : static_cast<uint16_t>(needNumber(m, key, file));
+    };
+    f.maxReadWords = cap("frame.maxReadWords");
+    f.maxWriteWords = cap("frame.maxWriteWords");
+    f.maxReadBits = cap("frame.maxReadBits");
+    f.maxWriteBits = cap("frame.maxWriteBits");
     f.timeoutMs = needNumber(m, "frame.timeoutMs", file);
     f.readRetries = static_cast<uint8_t>(needNumber(m, "frame.readRetries", file));
     // X/Y numbering: a capture written before the keys existed is hex.

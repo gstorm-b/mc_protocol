@@ -1,0 +1,86 @@
+format: hil-capture-1
+tool: hil_capture
+tool_version: 0.1.2
+library_version: 0.1.2
+git_commit: unknown
+date: 2026-10-13T06:06:43Z
+operator_note: 
+plc_state: RUN
+profile: fx5u-eth-3e-ascii
+plc: FX5U-32M
+module: built-in Ethernet
+firmware: FILL: FX5U CPU model and firmware version (GX Works3 module diagnostics)
+adapter: FILL: direct Ethernet, no adapter; set device.transport.tcp host and port (placeholder 192.0.2.10<redacted>) to the SLMP port of the CPU's external device settings
+plc_state_note: FILL: RUN, online change enabled; confirm Y0-Y7 drive no load (owner Q4); low confidence, check against the GX Works3 parameters: scratch W100-W1FF and B10-B7F, deviceEnd (W=1FF B=FF SB/SW=1FF X/Y=1777 L=7679 F=127), scanTimeDevice SD520; parameter Communication Data Code: ASCII (X,Y HEX)
+transport: tcp
+scratch: D100-D2099 W100-W1FF R0-R99 M100-M2099 B10-B7F Y0-Y7
+device_end: X=1777 Y=1777 M=7679 L=7679 F=127 B=FF D=7999 W=1FF TS=511 TC=511 TN=511 CS=255 CC=255 CN=255 SB=1FF SW=1FF R=32767
+supports: D W R M L F B X Y TS TC TN CS CC CN SM SD
+special_bit: SM0
+special_word: SD0
+frame.aSeriesTarget: false
+frame.blockNo: 0
+frame.checkBlockNo: true
+frame.checkRoute: false
+frame.code: Ascii
+frame.commandSet: ACPU
+frame.e1AliasLS: false
+frame.f3ShortResponseHasSum: false
+frame.format: Format1
+frame.frame: 3E
+frame.highPerformanceQcpu: false
+frame.io: 1023
+frame.messageWait: 0
+frame.monitoringTimer: 16
+frame.network: 0
+frame.pc: 255
+frame.readRetries: 0
+frame.selfStation: 0
+frame.sendEotOnError: true
+frame.serialStart: 0
+frame.series: QL
+frame.splitWrites: false
+frame.station: 0
+frame.stationNo: 0
+frame.sumCheck: true
+frame.targetFamily: IqR_Q_L
+frame.timeoutMs: 0
+frame.xyAsciiDigits: Hex
+frame.xyNotation: Octal
+session.adHocArenaBytes: 65536
+session.adHocCapacity: 64
+session.bitsAsWords: true
+session.cycleIntervalMs: 100
+session.cycleMode: FixedRate
+session.firstResponseTimeoutMs: 0
+session.heartbeat.device: M2000
+session.heartbeat.enabled: false
+session.maxAdHocBurst: 4
+session.maxConsecutiveLinkErrors: 3
+session.maxGap: auto
+session.serialFlushMs: 50
+session.serialInterCharMs: 100
+skipped.G1-07: skipped: requires supports:ZR
+skipped.G2-04: skipped: scratch too small
+skipped.G2-07-L: skipped: requires scratch:L
+skipped.G2-07-F: skipped: requires scratch:F
+skipped.G2-07-S: skipped: requires supports:S
+skipped.G3-05: skipped: scratch too small
+skipped.G5-05: skipped: requires endNotMultiple16:M
+skipped.G5-06: skipped: requires profile:*-noonline
+skipped.G7-02-B: skipped: requires code:Binary
+skipped.G8-Q4: skipped: requires code:Binary
+skipped.G8-Q6: skipped: requires profile:*-q6-nothing-to-run
+skipped.G9-01-B: skipped: requires code:Binary
+skipped.G9-07: skipped: requires code:Binary
+skipped.GB-06: skipped: scratch too small
+scan_time_raw: 0
+recovery.1: after G7-01: Requested (Disconnected); reconnected in 2 ms
+recovery.2: after G7-02-A: Requested (Disconnected); reconnected in 2 ms
+recovery.3: after G7-06: PeerClosed (Disconnected); reconnected in 4 ms
+recovery.4: after G8-Q5: PeerClosed (Disconnected); reconnected in 3 ms
+recovery.5: after G9-01-A: PeerClosed (Disconnected); reconnected in 2 ms
+recovery.6: after G9-05: PeerClosed (Disconnected); reconnected in 2 ms
+recovery.7: after G9-05-M: PeerClosed (Disconnected); reconnected in 2 ms
+recovery.8: after G9-06: PeerClosed (Disconnected); reconnected in 408 ms
+polls: G6 G7-06

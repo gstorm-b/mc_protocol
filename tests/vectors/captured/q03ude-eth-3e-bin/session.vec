@@ -1,0 +1,4351 @@
+# id: CAP-q03ude-eth-3e-bin-G6-T0001
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: tx  t_ns: 522119800  seq: 8
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0002
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: rx  t_ns: 525140700  seq: 10
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0003
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: tx  t_ns: 525166900  seq: 11
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 00 00 00 9C 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0004
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: rx  t_ns: 529270800  seq: 12
+D0 00 00 FF FF 03 00 06 00 00 00 00 80 08 40
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0005
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: tx  t_ns: 529304100  seq: 13
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 05 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0006
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: rx  t_ns: 531914800  seq: 14
+D0 00 00 FF FF 03 00 0C 00 00 00 50 55 34 12 02 00 00 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0007
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: tx  t_ns: 531942600  seq: 15
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 40 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0008
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: rx  t_ns: 536872200  seq: 16
+D0 00 00 FF FF 03 00 82 00 00 00 00 00 01 01 02 02 03 03 04 04 05 05 06 06 07 07 08 08 09 09 0A 0A 0B 0B 0C 0C 0D 0D 0E 0E 0F 0F 10 10 11 11 12 12 13 13 00 00 00 00 00 00 F8 3F FE FF FF FF 1A 1A 1B 1B 1C 1C 1D 1D 1E 1E 1F 1F 20 20 21 21 22 22 23 23 24 24 25 25 26 26 27 27 28 28 29 29 2A 2A 2B 2B 2C 2C 2D 2D 2E 2E 2F 2F 30 30 31 31 32 32 33 33 34 34 35 35 36 36 37 37 38 38 39 39 3A 3A 3B 3B 3C 3C 3D 3D 3E 3E 3F 3F
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0009
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: tx  t_ns: 536904600  seq: 17
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 C8 00 00 A8 0A 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0010
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: rx  t_ns: 539889100  seq: 18
+D0 00 00 FF FF 03 00 16 00 00 00 64 64 65 65 66 66 67 67 68 68 69 69 6A 6A 6B 6B 6C 6C 6D 6D
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0011
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: tx  t_ns: 539921800  seq: 19
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 00 01 00 B4 10 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0012
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: rx  t_ns: 543770000  seq: 20
+D0 00 00 FF FF 03 00 22 00 00 00 FF FF 00 80 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0013
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: tx  t_ns: 621780900  seq: 26
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0014
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: rx  t_ns: 627103900  seq: 27
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0015
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: tx  t_ns: 627134200  seq: 28
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 00 00 00 9C 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0016
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: rx  t_ns: 631423200  seq: 29
+D0 00 00 FF FF 03 00 06 00 00 00 00 80 08 40
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0017
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: tx  t_ns: 631457500  seq: 30
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 05 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0018
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: rx  t_ns: 635220200  seq: 32
+D0 00 00 FF FF 03 00 0C 00 00 00 50 55 34 12 02 00 00 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0019
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: tx  t_ns: 635257800  seq: 33
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 40 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0020
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: rx  t_ns: 638638200  seq: 35
+D0 00 00 FF FF 03 00 82 00 00 00 00 00 01 01 02 02 03 03 04 04 05 05 06 06 07 07 08 08 09 09 0A 0A 0B 0B 0C 0C 0D 0D 0E 0E 0F 0F 10 10 11 11 12 12 13 13 00 00 00 00 00 00 F8 3F FE FF FF FF 1A 1A 1B 1B 1C 1C 1D 1D 1E 1E 1F 1F 20 20 21 21 22 22 23 23 24 24 25 25 26 26 27 27 28 28 29 29 2A 2A 2B 2B 2C 2C 2D 2D 2E 2E 2F 2F 30 30 31 31 32 32 33 33 34 34 35 35 36 36 37 37 38 38 39 39 3A 3A 3B 3B 3C 3C 3D 3D 3E 3E 3F 3F
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0021
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: tx  t_ns: 638671800  seq: 36
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 C8 00 00 A8 0A 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0022
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: rx  t_ns: 641360800  seq: 37
+D0 00 00 FF FF 03 00 16 00 00 00 64 64 65 65 66 66 67 67 68 68 69 69 6A 6A 6B 6B 6C 6C 6D 6D
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0023
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: tx  t_ns: 641395500  seq: 38
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 00 01 00 B4 10 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0024
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: rx  t_ns: 645508100  seq: 40
+D0 00 00 FF FF 03 00 22 00 00 00 FF FF 00 80 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0025
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: tx  t_ns: 645733100  seq: 43
+50 00 00 FF FF 03 00 0E 00 10 00 01 14 00 00 69 00 00 A8 01 00 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0026
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: rx  t_ns: 648311400  seq: 46
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0027
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: tx  t_ns: 648341700  seq: 47
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 67 00 00 90 01 00 10
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0028
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: rx  t_ns: 654277200  seq: 49
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0029
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: tx  t_ns: 722541300  seq: 51
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0030
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: rx  t_ns: 725932900  seq: 52
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0031
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: tx  t_ns: 725962800  seq: 53
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 00 00 00 9C 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0032
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: rx  t_ns: 728816800  seq: 54
+D0 00 00 FF FF 03 00 06 00 00 00 00 80 08 40
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0033
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: tx  t_ns: 728853000  seq: 55
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 05 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0034
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: rx  t_ns: 731481700  seq: 57
+D0 00 00 FF FF 03 00 0C 00 00 00 D0 55 34 12 02 00 00 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0035
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: tx  t_ns: 731517700  seq: 58
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 40 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0036
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: rx  t_ns: 738497200  seq: 61
+D0 00 00 FF FF 03 00 82 00 00 00 00 00 01 01 02 02 03 03 04 04 34 12 06 06 07 07 08 08 09 09 0A 0A 0B 0B 0C 0C 0D 0D 0E 0E 0F 0F 10 10 11 11 12 12 13 13 00 00 00 00 00 00 F8 3F FE FF FF FF 1A 1A 1B 1B 1C 1C 1D 1D 1E 1E 1F 1F 20 20 21 21 22 22 23 23 24 24 25 25 26 26 27 27 28 28 29 29 2A 2A 2B 2B 2C 2C 2D 2D 2E 2E 2F 2F 30 30 31 31 32 32 33 33 34 34 35 35 36 36 37 37 38 38 39 39 3A 3A 3B 3B 3C 3C 3D 3D 3E 3E 3F 3F
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0037
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: tx  t_ns: 738532200  seq: 62
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 C8 00 00 A8 0A 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0038
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: rx  t_ns: 741548300  seq: 64
+D0 00 00 FF FF 03 00 16 00 00 00 64 64 65 65 66 66 67 67 68 68 69 69 6A 6A 6B 6B 6C 6C 6D 6D
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0039
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: tx  t_ns: 741585500  seq: 65
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 00 01 00 B4 10 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0040
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: rx  t_ns: 744920900  seq: 67
+D0 00 00 FF FF 03 00 22 00 00 00 FF FF 00 80 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0041
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: tx  t_ns: 823001600  seq: 70
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0042
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: rx  t_ns: 826364800  seq: 71
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0043
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: tx  t_ns: 826394300  seq: 72
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 00 00 00 9C 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0044
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: rx  t_ns: 829323100  seq: 73
+D0 00 00 FF FF 03 00 06 00 00 00 00 80 08 40
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0045
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: tx  t_ns: 829358500  seq: 74
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 05 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0046
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: rx  t_ns: 833765400  seq: 76
+D0 00 00 FF FF 03 00 0C 00 00 00 D0 55 34 12 02 00 00 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0047
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: tx  t_ns: 833805300  seq: 77
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 40 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0048
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: rx  t_ns: 837889100  seq: 79
+D0 00 00 FF FF 03 00 82 00 00 00 00 00 01 01 02 02 03 03 04 04 34 12 06 06 07 07 08 08 09 09 0A 0A 0B 0B 0C 0C 0D 0D 0E 0E 0F 0F 10 10 11 11 12 12 13 13 00 00 00 00 00 00 F8 3F FE FF FF FF 1A 1A 1B 1B 1C 1C 1D 1D 1E 1E 1F 1F 20 20 21 21 22 22 23 23 24 24 25 25 26 26 27 27 28 28 29 29 2A 2A 2B 2B 2C 2C 2D 2D 2E 2E 2F 2F 30 30 31 31 32 32 33 33 34 34 35 35 36 36 37 37 38 38 39 39 3A 3A 3B 3B 3C 3C 3D 3D 3E 3E 3F 3F
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0049
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: tx  t_ns: 837926100  seq: 80
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 C8 00 00 A8 0A 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0050
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: rx  t_ns: 841365000  seq: 81
+D0 00 00 FF FF 03 00 16 00 00 00 64 64 65 65 66 66 67 67 68 68 69 69 6A 6A 6B 6B 6C 6C 6D 6D
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0051
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: tx  t_ns: 841404000  seq: 82
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 00 01 00 B4 10 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0052
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: rx  t_ns: 843639300  seq: 84
+D0 00 00 FF FF 03 00 22 00 00 00 FF FF 00 80 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0053
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: tx  t_ns: 924046400  seq: 89
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0054
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: rx  t_ns: 927675900  seq: 90
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0055
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: tx  t_ns: 927709700  seq: 91
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 00 00 00 9C 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0056
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: rx  t_ns: 933309300  seq: 92
+D0 00 00 FF FF 03 00 06 00 00 00 00 80 08 40
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0057
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: tx  t_ns: 933350000  seq: 93
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 05 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0058
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: rx  t_ns: 937729500  seq: 95
+D0 00 00 FF FF 03 00 0C 00 00 00 D0 55 34 12 02 00 00 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0059
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: tx  t_ns: 937768300  seq: 96
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 00 01 00 A0 01 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0060
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: rx  t_ns: 940711500  seq: 98
+D0 00 00 FF FF 03 00 04 00 00 00 55 55
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0061
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: tx  t_ns: 940747700  seq: 99
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 40 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0062
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: rx  t_ns: 944987100  seq: 101
+D0 00 00 FF FF 03 00 82 00 00 00 00 00 01 01 02 02 03 03 04 04 34 12 06 06 07 07 08 08 09 09 0A 0A 0B 0B 0C 0C 0D 0D 0E 0E 0F 0F 10 10 11 11 12 12 13 13 00 00 00 00 00 00 F8 3F FE FF FF FF 1A 1A 1B 1B 1C 1C 1D 1D 1E 1E 1F 1F 20 20 21 21 22 22 23 23 24 24 25 25 26 26 27 27 28 28 29 29 2A 2A 2B 2B 2C 2C 2D 2D 2E 2E 2F 2F 30 30 31 31 32 32 33 33 34 34 35 35 36 36 37 37 38 38 39 39 3A 3A 3B 3B 3C 3C 3D 3D 3E 3E 3F 3F
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0063
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: tx  t_ns: 945021900  seq: 102
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 C8 00 00 A8 0A 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0064
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: rx  t_ns: 949985700  seq: 103
+D0 00 00 FF FF 03 00 16 00 00 00 64 64 65 65 66 66 67 67 68 68 69 69 6A 6A 6B 6B 6C 6C 6D 6D
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0065
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: tx  t_ns: 1024786300  seq: 106
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0066
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: rx  t_ns: 1027217100  seq: 107
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0067
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: tx  t_ns: 1027255600  seq: 108
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 00 00 00 9C 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0068
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: rx  t_ns: 1037681600  seq: 109
+D0 00 00 FF FF 03 00 06 00 00 00 00 80 08 40
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0069
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: tx  t_ns: 1037714900  seq: 110
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 05 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0070
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: rx  t_ns: 1042441000  seq: 112
+D0 00 00 FF FF 03 00 0C 00 00 00 D0 55 34 12 02 00 00 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0071
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: tx  t_ns: 1042479100  seq: 113
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 00 01 00 A0 01 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0072
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: rx  t_ns: 1045770500  seq: 115
+D0 00 00 FF FF 03 00 04 00 00 00 55 55
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0073
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: tx  t_ns: 1045810800  seq: 116
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 40 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0074
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: rx  t_ns: 1049222400  seq: 118
+D0 00 00 FF FF 03 00 82 00 00 00 00 00 01 01 02 02 03 03 04 04 34 12 06 06 07 07 08 08 09 09 0A 0A 0B 0B 0C 0C 0D 0D 0E 0E 0F 0F 10 10 11 11 12 12 13 13 00 00 00 00 00 00 F8 3F FE FF FF FF 1A 1A 1B 1B 1C 1C 1D 1D 1E 1E 1F 1F 20 20 21 21 22 22 23 23 24 24 25 25 26 26 27 27 28 28 29 29 2A 2A 2B 2B 2C 2C 2D 2D 2E 2E 2F 2F 30 30 31 31 32 32 33 33 34 34 35 35 36 36 37 37 38 38 39 39 3A 3A 3B 3B 3C 3C 3D 3D 3E 3E 3F 3F
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0075
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: tx  t_ns: 1049256400  seq: 119
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 C8 00 00 A8 0A 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-T0076
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: rx  t_ns: 1051731400  seq: 120
+D0 00 00 FF FF 03 00 16 00 00 00 64 64 65 65 66 66 67 67 68 68 69 69 6A 6A 6B 6B 6C 6C 6D 6D
+
+# id: CAP-q03ude-eth-3e-bin-G6-I0001
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: input  input: heartbeat  t_ns: 514124800  seq: 1
+# enabled: true  device: M300
+07 01 04 2C 01 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-I0002
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: input  input: subscribe  t_ns: 514133900  seq: 2
+# name: d1  device: D100  count: 64
+08 09 64 00 00 00 40 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-I0003
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: input  input: subscribe  t_ns: 514140600  seq: 3
+# name: d2  device: D200  count: 10
+08 09 C8 00 00 00 0A 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-I0004
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: input  input: subscribe  t_ns: 514144800  seq: 4
+# name: m  device: M100  count: 64
+08 04 64 00 00 00 40 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-I0005
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: input  input: subscribe  t_ns: 514147600  seq: 5
+# name: x  device: X0  count: 32
+08 02 00 00 00 00 20 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-I0006
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: input  input: subscribe  t_ns: 514150900  seq: 6
+# name: w  device: W100  count: 16
+08 0A 00 01 00 00 10 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-E0001
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: event  event: linkState  t_ns: 515378600  seq: 7
+# state: Connecting  reason: Requested
+05 01 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-E0002
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: event  event: linkState  t_ns: 522141300  seq: 9
+# state: Connected  reason: Requested
+05 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-E0003
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 543837600  seq: 21
+# type: X  round: 1  segments: X0x32  chunks: ok
+01 00 00 00 00 20 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00 00 00 01 00 00 00 00 00 00 00 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G6-E0004
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 543867700  seq: 22
+# type: M  round: 1  segments: M100x64  chunks: ok
+01 64 00 00 00 40 00 00 00 01 00 01 00 01 00 01 00 01 00 01 00 00 00 01 00 01 01 00 00 00 01 00 00 01 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G6-E0005
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 543874400  seq: 23
+# type: D  round: 1  segments: D100x64 D200x10  chunks: ok ok
+01 64 00 00 00 40 00 00 00 00 00 01 01 02 02 03 03 04 04 05 05 06 06 07 07 08 08 09 09 0A 0A 0B 0B 0C 0C 0D 0D 0E 0E 0F 0F 10 10 11 11 12 12 13 13 00 00 00 00 00 00 F8 3F FE FF FF FF 1A 1A 1B 1B 1C 1C 1D 1D 1E 1E 1F 1F 20 20 21 21 22 22 23 23 24 24 25 25 26 26 27 27 28 28 29 29 2A 2A 2B 2B 2C 2C 2D 2D 2E 2E 2F 2F 30 30 31 31 32 32 33 33 34 34 35 35 36 36 37 37 38 38 39 39 3A 3A 3B 3B 3C 3C 3D 3D 3E 3E 3F 3F 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 C8 00 00 00 0A 00 00 00 64 64 65 65 66 66 67 67 68 68 69 69 6A 6A 6B 6B 6C 6C 6D 6D 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G6-E0006
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 543883600  seq: 24
+# type: W  round: 1  segments: W100x16  chunks: ok
+01 00 01 00 00 10 00 00 00 FF FF 00 80 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G6-E0007
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: event  event: cycleDone  t_ns: 543892100  seq: 25
+# round: 1  duration_ms: 22  requests: 6  failed_chunks: 0  heartbeat_ok: true
+03 01 00 00 00 F1 01 00 00 00 00 00 00 16 00 00 00 06 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G6-E0008
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 631476700  seq: 31
+# type: X  round: 2  segments: X0x32  chunks: ok
+01 00 00 00 00 20 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00 00 00 01 00 00 00 00 00 00 00 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G6-E0009
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 635275200  seq: 34
+# type: M  round: 2  segments: M100x64  chunks: ok
+01 64 00 00 00 40 00 00 00 01 00 01 00 01 00 01 00 01 00 01 00 00 00 01 00 01 01 00 00 00 01 00 00 01 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G6-E0010
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 641421300  seq: 39
+# type: D  round: 2  segments: D100x64 D200x10  chunks: ok ok
+01 64 00 00 00 40 00 00 00 00 00 01 01 02 02 03 03 04 04 05 05 06 06 07 07 08 08 09 09 0A 0A 0B 0B 0C 0C 0D 0D 0E 0E 0F 0F 10 10 11 11 12 12 13 13 00 00 00 00 00 00 F8 3F FE FF FF FF 1A 1A 1B 1B 1C 1C 1D 1D 1E 1E 1F 1F 20 20 21 21 22 22 23 23 24 24 25 25 26 26 27 27 28 28 29 29 2A 2A 2B 2B 2C 2C 2D 2D 2E 2E 2F 2F 30 30 31 31 32 32 33 33 34 34 35 35 36 36 37 37 38 38 39 39 3A 3A 3B 3B 3C 3C 3D 3D 3E 3E 3F 3F 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 C8 00 00 00 0A 00 00 00 64 64 65 65 66 66 67 67 68 68 69 69 6A 6A 6B 6B 6C 6C 6D 6D 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G6-E0011
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 645567200  seq: 41
+# type: W  round: 2  segments: W100x16  chunks: ok
+01 00 01 00 00 10 00 00 00 FF FF 00 80 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G6-E0012
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: event  event: cycleDone  t_ns: 645591800  seq: 42
+# round: 2  duration_ms: 23  requests: 6  failed_chunks: 0  heartbeat_ok: true
+03 02 00 00 00 55 02 00 00 00 00 00 00 17 00 00 00 06 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G6-I0007
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: input  input: write  t_ns: 645799900  seq: 44
+# op: WriteWords  device: D105  count: 1
+0A 03 09 69 00 00 00 01 00 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G6-I0008
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: input  input: write  t_ns: 645840200  seq: 45
+# op: WriteBits  device: M103  count: 1
+0A 02 04 67 00 00 00 01 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G6-E0013
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: event  event: requestFinished  t_ns: 648364800  seq: 48
+# request_id: 1  outcome: ok  bytes: 0
+04
+
+# id: CAP-q03ude-eth-3e-bin-G6-E0014
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: event  event: requestFinished  t_ns: 654323000  seq: 50
+# request_id: 2  outcome: ok  bytes: 0
+04
+
+# id: CAP-q03ude-eth-3e-bin-G6-E0015
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 728876500  seq: 56
+# type: X  round: 3  segments: X0x32  chunks: ok
+01 00 00 00 00 20 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00 00 00 01 00 00 00 00 00 00 00 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G6-E0016
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: event  event: valuesChanged  t_ns: 731535300  seq: 59
+# type: M  round: 3  changes: 1
+02 67 00 00 00 00 00 01 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-E0017
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 731547900  seq: 60
+# type: M  round: 3  segments: M100x64  chunks: ok
+01 64 00 00 00 40 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 01 01 00 00 00 01 00 00 01 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G6-E0018
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: event  event: valuesChanged  t_ns: 738561700  seq: 63
+# type: D  round: 3  changes: 1
+02 69 00 00 00 05 05 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G6-E0019
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 741606300  seq: 66
+# type: D  round: 3  segments: D100x64 D200x10  chunks: ok ok
+01 64 00 00 00 40 00 00 00 00 00 01 01 02 02 03 03 04 04 34 12 06 06 07 07 08 08 09 09 0A 0A 0B 0B 0C 0C 0D 0D 0E 0E 0F 0F 10 10 11 11 12 12 13 13 00 00 00 00 00 00 F8 3F FE FF FF FF 1A 1A 1B 1B 1C 1C 1D 1D 1E 1E 1F 1F 20 20 21 21 22 22 23 23 24 24 25 25 26 26 27 27 28 28 29 29 2A 2A 2B 2B 2C 2C 2D 2D 2E 2E 2F 2F 30 30 31 31 32 32 33 33 34 34 35 35 36 36 37 37 38 38 39 39 3A 3A 3B 3B 3C 3C 3D 3D 3E 3E 3F 3F 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 C8 00 00 00 0A 00 00 00 64 64 65 65 66 66 67 67 68 68 69 69 6A 6A 6B 6B 6C 6C 6D 6D 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G6-E0020
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 744975200  seq: 68
+# type: W  round: 3  segments: W100x16  chunks: ok
+01 00 01 00 00 10 00 00 00 FF FF 00 80 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G6-E0021
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: event  event: cycleDone  t_ns: 744998200  seq: 69
+# round: 3  duration_ms: 23  requests: 6  failed_chunks: 0  heartbeat_ok: true
+03 03 00 00 00 B9 02 00 00 00 00 00 00 17 00 00 00 06 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G6-E0022
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 829386000  seq: 75
+# type: X  round: 4  segments: X0x32  chunks: ok
+01 00 00 00 00 20 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00 00 00 01 00 00 00 00 00 00 00 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G6-E0023
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 833826100  seq: 78
+# type: M  round: 4  segments: M100x64  chunks: ok
+01 64 00 00 00 40 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 01 01 00 00 00 01 00 00 01 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G6-E0024
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 841429600  seq: 83
+# type: D  round: 4  segments: D100x64 D200x10  chunks: ok ok
+01 64 00 00 00 40 00 00 00 00 00 01 01 02 02 03 03 04 04 34 12 06 06 07 07 08 08 09 09 0A 0A 0B 0B 0C 0C 0D 0D 0E 0E 0F 0F 10 10 11 11 12 12 13 13 00 00 00 00 00 00 F8 3F FE FF FF FF 1A 1A 1B 1B 1C 1C 1D 1D 1E 1E 1F 1F 20 20 21 21 22 22 23 23 24 24 25 25 26 26 27 27 28 28 29 29 2A 2A 2B 2B 2C 2C 2D 2D 2E 2E 2F 2F 30 30 31 31 32 32 33 33 34 34 35 35 36 36 37 37 38 38 39 39 3A 3A 3B 3B 3C 3C 3D 3D 3E 3E 3F 3F 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 C8 00 00 00 0A 00 00 00 64 64 65 65 66 66 67 67 68 68 69 69 6A 6A 6B 6B 6C 6C 6D 6D 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G6-E0025
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 843697400  seq: 85
+# type: W  round: 4  segments: W100x16  chunks: ok
+01 00 01 00 00 10 00 00 00 FF FF 00 80 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G6-E0026
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: event  event: cycleDone  t_ns: 843718800  seq: 86
+# round: 4  duration_ms: 20  requests: 6  failed_chunks: 0  heartbeat_ok: true
+03 04 00 00 00 1E 03 00 00 00 00 00 00 14 00 00 00 06 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G6-I0009
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: input  input: subscribe  t_ns: 845480200  seq: 87
+# name: b  device: B100  count: 16
+08 08 00 01 00 00 10 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G6-I0010
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: input  input: unsubscribe  t_ns: 845493600  seq: 88
+# name: w
+09 77
+
+# id: CAP-q03ude-eth-3e-bin-G6-E0027
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 933374800  seq: 94
+# type: X  round: 5  segments: X0x32  chunks: ok
+01 00 00 00 00 20 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00 00 00 01 00 00 00 00 00 00 00 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G6-E0028
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 937792200  seq: 97
+# type: M  round: 5  segments: M100x64  chunks: ok
+01 64 00 00 00 40 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 01 01 00 00 00 01 00 00 01 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G6-E0029
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 940763900  seq: 100
+# type: B  round: 5  segments: B100x16  chunks: ok
+01 00 01 00 00 10 00 00 00 01 00 01 00 01 00 01 00 01 00 01 00 01 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G6-E0030
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 950033200  seq: 104
+# type: D  round: 5  segments: D100x64 D200x10  chunks: ok ok
+01 64 00 00 00 40 00 00 00 00 00 01 01 02 02 03 03 04 04 34 12 06 06 07 07 08 08 09 09 0A 0A 0B 0B 0C 0C 0D 0D 0E 0E 0F 0F 10 10 11 11 12 12 13 13 00 00 00 00 00 00 F8 3F FE FF FF FF 1A 1A 1B 1B 1C 1C 1D 1D 1E 1E 1F 1F 20 20 21 21 22 22 23 23 24 24 25 25 26 26 27 27 28 28 29 29 2A 2A 2B 2B 2C 2C 2D 2D 2E 2E 2F 2F 30 30 31 31 32 32 33 33 34 34 35 35 36 36 37 37 38 38 39 39 3A 3A 3B 3B 3C 3C 3D 3D 3E 3E 3F 3F 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 C8 00 00 00 0A 00 00 00 64 64 65 65 66 66 67 67 68 68 69 69 6A 6A 6B 6B 6C 6C 6D 6D 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G6-E0031
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: event  event: cycleDone  t_ns: 950056100  seq: 105
+# round: 5  duration_ms: 26  requests: 6  failed_chunks: 0  heartbeat_ok: true
+03 05 00 00 00 83 03 00 00 00 00 00 00 1A 00 00 00 06 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G6-E0032
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 1037741600  seq: 111
+# type: X  round: 6  segments: X0x32  chunks: ok
+01 00 00 00 00 20 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00 00 00 01 00 00 00 00 00 00 00 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G6-E0033
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 1042508100  seq: 114
+# type: M  round: 6  segments: M100x64  chunks: ok
+01 64 00 00 00 40 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 01 01 00 00 00 01 00 00 01 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G6-E0034
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 1045828900  seq: 117
+# type: B  round: 6  segments: B100x16  chunks: ok
+01 00 01 00 00 10 00 00 00 01 00 01 00 01 00 01 00 01 00 01 00 01 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G6-E0035
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: event  event: snapshot  t_ns: 1051796600  seq: 121
+# type: D  round: 6  segments: D100x64 D200x10  chunks: ok ok
+01 64 00 00 00 40 00 00 00 00 00 01 01 02 02 03 03 04 04 34 12 06 06 07 07 08 08 09 09 0A 0A 0B 0B 0C 0C 0D 0D 0E 0E 0F 0F 10 10 11 11 12 12 13 13 00 00 00 00 00 00 F8 3F FE FF FF FF 1A 1A 1B 1B 1C 1C 1D 1D 1E 1E 1F 1F 20 20 21 21 22 22 23 23 24 24 25 25 26 26 27 27 28 28 29 29 2A 2A 2B 2B 2C 2C 2D 2D 2E 2E 2F 2F 30 30 31 31 32 32 33 33 34 34 35 35 36 36 37 37 38 38 39 39 3A 3A 3B 3B 3C 3C 3D 3D 3E 3E 3F 3F 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 C8 00 00 00 0A 00 00 00 64 64 65 65 66 66 67 67 68 68 69 69 6A 6A 6B 6B 6C 6C 6D 6D 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G6-E0036
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: event  event: cycleDone  t_ns: 1051823500  seq: 122
+# round: 6  duration_ms: 27  requests: 6  failed_chunks: 0  heartbeat_ok: true
+03 06 00 00 00 E8 03 00 00 00 00 00 00 1B 00 00 00 06 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G6-E0037
+# source: plc  profile: q03ude-eth-3e-bin  step: G6
+# kind: event  event: linkState  t_ns: 1052450300  seq: 123
+# state: Disconnected  reason: Requested
+05 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0001
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11083070700  seq: 5
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0002
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11086861000  seq: 7
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0003
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11086885300  seq: 8
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0004
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11090147200  seq: 9
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0005
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11090177300  seq: 10
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0006
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11093730400  seq: 11
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0007
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11183288100  seq: 15
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0008
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11186441200  seq: 16
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0009
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11186469500  seq: 17
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0010
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11189648900  seq: 18
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0011
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11189690100  seq: 19
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0012
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11192789600  seq: 21
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0013
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11282923700  seq: 24
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0014
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11285816800  seq: 25
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0015
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11285893600  seq: 26
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0016
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11288654700  seq: 27
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0017
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11288692200  seq: 28
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0018
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11293807700  seq: 30
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0019
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11383652000  seq: 33
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0020
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11389446500  seq: 34
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0021
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11389478300  seq: 35
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0022
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11392823100  seq: 36
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0023
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11392861200  seq: 37
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0024
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11396168400  seq: 39
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0025
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11483839200  seq: 42
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0026
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11488626500  seq: 43
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0027
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11488657000  seq: 44
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0028
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11493486500  seq: 45
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0029
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11493531700  seq: 46
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0030
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11497281300  seq: 48
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0031
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11585033700  seq: 51
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0032
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11587673300  seq: 52
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0033
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11587708800  seq: 53
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0034
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11591359900  seq: 54
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0035
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11591397300  seq: 55
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0036
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11594381900  seq: 57
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0037
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11686238400  seq: 60
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0038
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11690564300  seq: 61
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0039
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11690597700  seq: 62
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0040
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11693729900  seq: 63
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0041
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11693772900  seq: 64
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0042
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11704452400  seq: 66
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0043
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11785823600  seq: 69
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0044
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11791384800  seq: 70
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0045
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11791417200  seq: 71
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0046
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11795001100  seq: 72
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0047
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11795039800  seq: 73
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0048
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11798207700  seq: 75
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0049
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11886217800  seq: 78
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0050
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11889108700  seq: 79
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0051
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11889141100  seq: 80
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0052
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11893692500  seq: 81
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0053
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11893731300  seq: 82
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0054
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11897632000  seq: 84
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0055
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11986986500  seq: 87
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0056
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11993179700  seq: 88
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0057
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11993212200  seq: 89
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0058
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 11995629600  seq: 90
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0059
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 11995678900  seq: 91
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0060
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12001106100  seq: 93
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0061
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12087949100  seq: 96
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0062
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12090622400  seq: 97
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0063
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12090649000  seq: 98
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0064
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12094681700  seq: 99
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0065
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12094718000  seq: 100
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0066
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12100072500  seq: 102
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0067
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12188865700  seq: 105
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0068
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12193442600  seq: 106
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0069
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12193474400  seq: 107
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0070
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12198361800  seq: 108
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0071
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12198394000  seq: 109
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0072
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12203338500  seq: 111
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0073
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12289287600  seq: 114
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0074
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12292596000  seq: 115
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0075
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12292624500  seq: 116
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0076
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12296021300  seq: 117
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0077
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12296056900  seq: 118
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0078
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12300971500  seq: 120
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0079
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12389750600  seq: 123
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0080
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12392998100  seq: 124
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0081
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12393030300  seq: 125
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0082
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12396280100  seq: 126
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0083
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12396316400  seq: 127
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0084
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12399998300  seq: 129
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0085
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12490357900  seq: 132
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0086
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12494228900  seq: 133
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0087
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12494263500  seq: 134
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0088
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12497237900  seq: 135
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0089
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12497270900  seq: 136
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0090
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12501284000  seq: 138
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0091
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12591055200  seq: 141
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0092
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12594495900  seq: 142
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0093
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12594529200  seq: 143
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0094
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12597370100  seq: 144
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0095
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12597421300  seq: 145
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0096
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12601616300  seq: 147
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0097
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12691753800  seq: 150
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0098
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12694218800  seq: 151
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0099
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12694246700  seq: 152
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0100
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12700400200  seq: 153
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0101
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12700436600  seq: 154
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0102
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12702909000  seq: 156
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0103
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12792948000  seq: 159
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0104
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12796981400  seq: 160
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0105
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12797008000  seq: 161
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0106
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12802061600  seq: 162
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0107
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12802094900  seq: 163
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0108
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12806012200  seq: 165
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0109
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12893662800  seq: 168
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0110
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12896748900  seq: 169
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0111
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12896776400  seq: 170
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0112
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12899882900  seq: 171
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0113
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12899913900  seq: 172
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0114
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12902885600  seq: 174
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0115
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12992994300  seq: 177
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0116
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 12996489600  seq: 178
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0117
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 12996522300  seq: 179
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0118
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 13001459800  seq: 180
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0119
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 13001493800  seq: 181
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0120
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 13005381700  seq: 183
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0121
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 13093762700  seq: 186
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0122
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 13098086200  seq: 187
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0123
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 13098134300  seq: 188
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0124
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 13102545900  seq: 189
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0125
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 13102580700  seq: 190
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0126
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 13105242200  seq: 192
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0127
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 13194770600  seq: 195
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0128
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 13197897000  seq: 196
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0129
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 13197929900  seq: 197
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0130
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 13200850200  seq: 198
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0131
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 13200885900  seq: 199
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0132
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 13204829100  seq: 201
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0133
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 13295765400  seq: 204
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0134
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 13298204200  seq: 205
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0135
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 13298232900  seq: 206
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0136
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 13302704400  seq: 207
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0137
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 13302740900  seq: 208
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0138
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 13306080400  seq: 210
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0139
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 13396194400  seq: 213
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0140
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 13399506500  seq: 214
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0141
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 13399537700  seq: 215
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0142
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 13402569200  seq: 216
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0143
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 13402609200  seq: 217
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0144
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 13405718100  seq: 219
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0145
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 13496301800  seq: 222
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0146
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 13499367800  seq: 223
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0147
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 13499398200  seq: 224
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0148
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 13503385100  seq: 225
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0149
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 13503417300  seq: 226
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0150
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 13506625000  seq: 228
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0151
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 13597225200  seq: 231
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0152
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 13599805300  seq: 232
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0153
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 13599835400  seq: 233
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0154
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 13604061300  seq: 234
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0155
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 13604096900  seq: 235
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0156
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 13606603300  seq: 237
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0157
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 13696965800  seq: 240
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0158
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 13700121500  seq: 241
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0159
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 13700155300  seq: 242
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0160
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 13703982700  seq: 243
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0161
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 13704018200  seq: 244
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0162
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 13708077500  seq: 246
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0163
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 13799329900  seq: 249
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0164
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 13802571800  seq: 250
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0165
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 13802599300  seq: 251
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0166
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 13806567300  seq: 252
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0167
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 13806602900  seq: 253
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0168
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 13809366200  seq: 255
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0169
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 13900216700  seq: 258
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0170
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 13903744700  seq: 259
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0171
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 13903772100  seq: 260
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0172
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 13906765900  seq: 261
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0173
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 13906799000  seq: 262
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0174
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 13910288800  seq: 264
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0175
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 14000898800  seq: 267
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0176
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 14004814000  seq: 268
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0177
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 14004841100  seq: 269
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0178
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 14008058000  seq: 270
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0179
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 14008093800  seq: 271
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0180
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 14022537000  seq: 273
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0181
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 14101062200  seq: 276
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0182
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 14104361800  seq: 277
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0183
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 14104390000  seq: 278
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0184
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 14107357100  seq: 279
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0185
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 14107395600  seq: 280
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0186
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 14110963100  seq: 282
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0187
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 14201525500  seq: 285
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0188
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 14205007900  seq: 286
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0189
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 14205038000  seq: 287
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0190
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 14208558500  seq: 288
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0191
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 14208596600  seq: 289
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0192
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 14213253800  seq: 291
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0193
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 14301946100  seq: 294
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0194
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 14305426000  seq: 295
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0195
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 14305454200  seq: 296
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0196
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 14308756400  seq: 297
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0197
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 14308789800  seq: 298
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0198
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 14313732800  seq: 300
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0199
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 14402541400  seq: 303
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0200
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 14407091700  seq: 304
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0201
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 14407120600  seq: 305
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0202
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 14409783100  seq: 306
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0203
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 14409818100  seq: 307
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0204
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 14416997300  seq: 309
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0205
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 14501906400  seq: 312
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0206
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 14505037600  seq: 313
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0207
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 14505069400  seq: 314
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0208
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 14510003800  seq: 315
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0209
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 14510045600  seq: 316
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0210
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 14514199600  seq: 318
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0211
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 14601855200  seq: 321
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0212
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 14604608600  seq: 322
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0213
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 14604638100  seq: 323
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0214
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 14607952500  seq: 324
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0215
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 14607988000  seq: 325
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0216
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 14615800700  seq: 327
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0217
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 14703793600  seq: 330
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0218
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 14706151700  seq: 331
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0219
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 14706184200  seq: 332
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0220
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 14710740500  seq: 333
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0221
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 14710781200  seq: 334
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0222
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 14715031500  seq: 336
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0223
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 14804444700  seq: 339
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0224
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 14808010800  seq: 340
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0225
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 14808040000  seq: 341
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0226
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 14810510800  seq: 342
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0227
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 14810552300  seq: 343
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0228
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 14816558500  seq: 345
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0229
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 14905238900  seq: 348
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0230
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 14910254200  seq: 349
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0231
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 14910291400  seq: 350
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0232
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 14912779100  seq: 351
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0233
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 14912813300  seq: 352
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0234
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 14915936200  seq: 354
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0235
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 15005924400  seq: 357
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0236
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 15008325300  seq: 358
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0237
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 15008354500  seq: 359
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0238
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 15011730000  seq: 360
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0239
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 15011762900  seq: 361
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0240
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 15016992200  seq: 363
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0241
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 15106963800  seq: 366
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0242
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 15110622900  seq: 367
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0243
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 15110655600  seq: 368
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0244
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 15113761500  seq: 369
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0245
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 15113804700  seq: 370
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0246
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 15117991200  seq: 372
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0247
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 15207399700  seq: 375
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0248
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 15210456200  seq: 376
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0249
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 15210487700  seq: 377
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0250
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 15213843100  seq: 378
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0251
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 15213875000  seq: 379
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0252
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 15221957400  seq: 381
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0253
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 15307193600  seq: 384
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0254
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 15310486800  seq: 385
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0255
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 15310517300  seq: 386
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0256
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 15314542400  seq: 387
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0257
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 15314576100  seq: 388
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0258
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 15317930500  seq: 390
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0259
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 15407430500  seq: 393
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0260
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 15411613200  seq: 394
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0261
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 15411641500  seq: 395
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0262
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 15416490400  seq: 396
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0263
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 15416527000  seq: 397
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0264
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 15419496400  seq: 399
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0265
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 15507573400  seq: 402
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0266
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 15509984000  seq: 403
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0267
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 15510013800  seq: 404
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0268
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 15513093900  seq: 405
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0269
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 15513128400  seq: 406
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0270
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 15519054100  seq: 408
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0271
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 15607068100  seq: 411
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0272
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 15609584900  seq: 412
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0273
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 15609621200  seq: 413
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0274
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 15612802600  seq: 414
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0275
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 15612838800  seq: 415
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0276
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 15616088900  seq: 417
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0277
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 15707059200  seq: 420
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0278
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 15710902700  seq: 421
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0279
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 15710934900  seq: 422
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0280
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 15715724400  seq: 423
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0281
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 15715760200  seq: 424
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0282
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 15720201200  seq: 426
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0283
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 15808058600  seq: 429
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0284
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 15811345700  seq: 430
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0285
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 15811376800  seq: 431
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0286
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 15814177500  seq: 432
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0287
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 15814217700  seq: 433
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0288
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 15818389300  seq: 435
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0289
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 15909416100  seq: 438
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0290
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 15912531700  seq: 439
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0291
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 15912560300  seq: 440
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0292
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 15916226500  seq: 441
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0293
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 15916261800  seq: 442
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0294
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 15922216600  seq: 444
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0295
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 16009596100  seq: 447
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0296
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 16012296400  seq: 448
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0297
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 16012329800  seq: 449
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0298
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 16016819300  seq: 450
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0299
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 16016849800  seq: 451
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0300
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 16021038500  seq: 453
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0301
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 16109057400  seq: 456
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0302
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 16111742100  seq: 457
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0303
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 16111778000  seq: 458
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0304
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 16124699000  seq: 459
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0305
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 16124739800  seq: 460
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0306
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 16128074100  seq: 462
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0307
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 16209185000  seq: 465
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0308
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 16212017300  seq: 466
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0309
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 16212048900  seq: 467
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0310
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 16215161100  seq: 468
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0311
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 16215200700  seq: 469
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0312
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 16218308800  seq: 471
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0313
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 16309637900  seq: 474
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0314
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 16312421200  seq: 475
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0315
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 16312451000  seq: 476
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0316
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 16316010100  seq: 477
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0317
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 16316053500  seq: 478
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0318
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 16320591600  seq: 480
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0319
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 16410251100  seq: 483
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0320
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 16413045000  seq: 484
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0321
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 16413075500  seq: 485
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0322
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 16416372600  seq: 486
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0323
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 16416407900  seq: 487
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0324
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 16419038200  seq: 489
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0325
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 16509788200  seq: 492
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0326
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 16517420300  seq: 493
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0327
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 16517454700  seq: 494
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0328
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 16521005000  seq: 495
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0329
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 16521040600  seq: 496
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0330
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 16526763700  seq: 498
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0331
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 16609921500  seq: 501
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0332
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 16615332500  seq: 502
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0333
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 16615363900  seq: 503
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0334
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 16621555700  seq: 504
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0335
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 16621593600  seq: 505
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0336
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 16624725200  seq: 507
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0337
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 16710221100  seq: 510
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0338
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 16715423000  seq: 511
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0339
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 16715453500  seq: 512
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0340
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 16724891400  seq: 513
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0341
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 16724928800  seq: 514
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0342
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 16728791200  seq: 516
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0343
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 16810325400  seq: 519
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0344
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 16813055500  seq: 520
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0345
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 16813092200  seq: 521
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0346
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 16816276000  seq: 522
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0347
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 16816311800  seq: 523
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0348
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 16818984700  seq: 525
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0349
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 16910508200  seq: 528
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0350
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 16913315800  seq: 529
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0351
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 16913353300  seq: 530
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0352
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 16916505100  seq: 531
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0353
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 16916539500  seq: 532
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0354
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 16924677500  seq: 534
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0355
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 17010251800  seq: 537
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0356
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 17013549200  seq: 538
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0357
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 17013578800  seq: 539
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0358
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 17020512000  seq: 540
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0359
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 17020548300  seq: 541
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0360
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 17025368100  seq: 543
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0361
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 17110618600  seq: 546
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0362
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 17115981700  seq: 547
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0363
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 17116009200  seq: 548
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0364
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 17118633400  seq: 549
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0365
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 17118672600  seq: 550
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0366
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 17124273800  seq: 552
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0367
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 17210496000  seq: 555
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0368
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 17214497200  seq: 556
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0369
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 17214528600  seq: 557
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0370
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 17217013400  seq: 558
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0371
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 17217048700  seq: 559
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0372
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 17220530700  seq: 561
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0373
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 17310733800  seq: 564
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0374
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 17314150600  seq: 565
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0375
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 17314180800  seq: 566
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0376
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 17316846900  seq: 567
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0377
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 17316881800  seq: 568
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0378
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 17320380100  seq: 570
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0379
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 17412259600  seq: 573
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0380
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 17414843500  seq: 574
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0381
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 17414869800  seq: 575
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0382
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 17418245000  seq: 576
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0383
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 17418289600  seq: 577
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0384
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 17423568800  seq: 579
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0385
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 17512626500  seq: 582
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0386
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 17516795200  seq: 583
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0387
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 17516826500  seq: 584
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0388
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 17522124700  seq: 585
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0389
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 17522159800  seq: 586
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0390
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 17526775400  seq: 588
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0391
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 17612349300  seq: 591
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0392
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 17616525300  seq: 592
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0393
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 17616552400  seq: 593
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0394
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 17619728900  seq: 594
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0395
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 17619766100  seq: 595
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0396
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 17622660500  seq: 597
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0397
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 17713216600  seq: 600
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0398
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 17717955100  seq: 601
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0399
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 17717987500  seq: 602
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0400
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 17721444000  seq: 603
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0401
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 17721484600  seq: 604
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0402
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 17724715800  seq: 606
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0403
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 17812991200  seq: 609
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0404
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 17816187700  seq: 610
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0405
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 17816218100  seq: 611
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0406
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 17819369500  seq: 612
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0407
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 17819402700  seq: 613
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0408
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 17824258000  seq: 615
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0409
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 17913085600  seq: 618
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0410
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 17916155700  seq: 619
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0411
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 17916183000  seq: 620
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0412
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 17918529000  seq: 621
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0413
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 17918556700  seq: 622
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0414
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 17921663600  seq: 624
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0415
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 18013196600  seq: 627
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0416
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 18015647900  seq: 628
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0417
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 18015671400  seq: 629
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0418
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 18018762700  seq: 630
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0419
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 18018791100  seq: 631
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0420
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 18024691300  seq: 633
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0421
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 18113115400  seq: 636
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0422
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 18116012100  seq: 637
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0423
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 18116041700  seq: 638
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0424
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 18121697200  seq: 639
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0425
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 18121735300  seq: 640
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0426
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 18124688300  seq: 642
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0427
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 18213573200  seq: 645
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0428
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 18216681100  seq: 646
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0429
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 18216709000  seq: 647
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0430
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 18221000300  seq: 648
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0431
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 18221037600  seq: 649
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0432
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 18224074500  seq: 651
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0433
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 18313860800  seq: 654
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0434
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 18317167800  seq: 655
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0435
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 18317196900  seq: 656
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0436
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 18320714400  seq: 657
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0437
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 18320748500  seq: 658
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0438
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 18324167600  seq: 660
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0439
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 18413754100  seq: 663
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0440
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 18416856900  seq: 664
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0441
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 18416890700  seq: 665
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0442
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 18420009400  seq: 666
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0443
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 18420047400  seq: 667
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0444
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 18423389800  seq: 669
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0445
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 18514683200  seq: 672
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0446
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 18518001600  seq: 673
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0447
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 18518032100  seq: 674
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0448
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 18522330200  seq: 675
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0449
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 18522365000  seq: 676
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0450
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 18526024200  seq: 678
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0451
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 18613970800  seq: 681
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0452
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 18617725200  seq: 682
+D0 00 00 FF FF 03 00 02 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0453
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 18617757100  seq: 683
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 60 00 00 90 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0454
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 18622208600  seq: 684
+D0 00 00 FF FF 03 00 06 00 00 00 D0 55 34 12
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0455
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 18622246600  seq: 685
+50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 64 00 00 A8 04 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0456
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: rx  t_ns: 18626047900  seq: 687
+D0 00 00 FF FF 03 00 0A 00 00 00 00 00 01 01 02 02 03 03
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-T0457
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: tx  t_ns: 18714064400  seq: 690
+50 00 00 FF FF 03 00 0D 00 10 00 01 14 01 00 2C 01 00 90 01 00 10
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-I0001
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: input  input: heartbeat  t_ns: 11080112900  seq: 1
+# enabled: true  device: M300
+07 01 04 2C 01 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-I0002
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: input  input: subscribe  t_ns: 11080121700  seq: 2
+# name: d  device: D100  count: 4
+08 09 64 00 00 00 04 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-I0003
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: input  input: subscribe  t_ns: 11080127800  seq: 3
+# name: m  device: M100  count: 16
+08 04 64 00 00 00 10 00 00 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0001
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: linkState  t_ns: 11081323100  seq: 4
+# state: Connecting  reason: Requested
+05 01 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0002
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: linkState  t_ns: 11083098900  seq: 6
+# state: Connected  reason: Requested
+05 02 00
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0003
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 11093785200  seq: 12
+# type: M  round: 1  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0004
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 11093815700  seq: 13
+# type: D  round: 1  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0005
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 11093822500  seq: 14
+# round: 1  duration_ms: 11  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 01 00 00 00 32 2B 00 00 00 00 00 00 0B 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0006
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 11189720100  seq: 20
+# type: M  round: 2  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0007
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 11192848600  seq: 22
+# type: D  round: 2  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0008
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 11192871800  seq: 23
+# round: 2  duration_ms: 10  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 02 00 00 00 96 2B 00 00 00 00 00 00 0A 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0009
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 11288712500  seq: 29
+# type: M  round: 3  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0010
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 11293875400  seq: 31
+# type: D  round: 3  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0011
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 11293906400  seq: 32
+# round: 3  duration_ms: 11  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 03 00 00 00 FA 2B 00 00 00 00 00 00 0B 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0012
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 11392889100  seq: 38
+# type: M  round: 4  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0013
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 11396223700  seq: 40
+# type: D  round: 4  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0014
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 11396247400  seq: 41
+# round: 4  duration_ms: 13  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 04 00 00 00 5E 2C 00 00 00 00 00 00 0D 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0015
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 11493551100  seq: 47
+# type: M  round: 5  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0016
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 11497336600  seq: 49
+# type: D  round: 5  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0017
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 11497359800  seq: 50
+# round: 5  duration_ms: 13  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 05 00 00 00 C3 2C 00 00 00 00 00 00 0D 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0018
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 11591420700  seq: 56
+# type: M  round: 6  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0019
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 11594436200  seq: 58
+# type: D  round: 6  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0020
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 11594463300  seq: 59
+# round: 6  duration_ms: 9  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 06 00 00 00 28 2D 00 00 00 00 00 00 09 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0021
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 11693805800  seq: 65
+# type: M  round: 7  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0022
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 11704521300  seq: 67
+# type: D  round: 7  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0023
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 11704546100  seq: 68
+# round: 7  duration_ms: 18  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 07 00 00 00 8D 2D 00 00 00 00 00 00 12 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0024
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 11795058000  seq: 74
+# type: M  round: 8  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0025
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 11798271500  seq: 76
+# type: D  round: 8  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0026
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 11798293300  seq: 77
+# round: 8  duration_ms: 12  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 08 00 00 00 F1 2D 00 00 00 00 00 00 0C 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0027
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 11893752600  seq: 83
+# type: M  round: 9  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0028
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 11897691900  seq: 85
+# type: D  round: 9  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0029
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 11897714400  seq: 86
+# round: 9  duration_ms: 11  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 09 00 00 00 55 2E 00 00 00 00 00 00 0B 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0030
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 11995711700  seq: 92
+# type: M  round: 10  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0031
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 12001159700  seq: 94
+# type: D  round: 10  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0032
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 12001184600  seq: 95
+# round: 10  duration_ms: 14  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 0A 00 00 00 BA 2E 00 00 00 00 00 00 0E 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0033
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 12094740600  seq: 101
+# type: M  round: 11  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0034
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 12100124700  seq: 103
+# type: D  round: 11  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0035
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 12100145200  seq: 104
+# round: 11  duration_ms: 12  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 0B 00 00 00 1F 2F 00 00 00 00 00 00 0C 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0036
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 12198411000  seq: 110
+# type: M  round: 12  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0037
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 12203390300  seq: 112
+# type: D  round: 12  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0038
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 12203411900  seq: 113
+# round: 12  duration_ms: 14  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 0C 00 00 00 84 2F 00 00 00 00 00 00 0E 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0039
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 12296081900  seq: 119
+# type: M  round: 13  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0040
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 12301027700  seq: 121
+# type: D  round: 13  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0041
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 12301048800  seq: 122
+# round: 13  duration_ms: 12  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 0D 00 00 00 E8 2F 00 00 00 00 00 00 0C 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0042
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 12396334000  seq: 128
+# type: M  round: 14  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0043
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 12400046100  seq: 130
+# type: D  round: 14  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0044
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 12400065700  seq: 131
+# round: 14  duration_ms: 10  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 0E 00 00 00 4D 30 00 00 00 00 00 00 0A 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0045
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 12497291600  seq: 137
+# type: M  round: 15  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0046
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 12501328900  seq: 139
+# type: D  round: 15  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0047
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 12501349500  seq: 140
+# round: 15  duration_ms: 11  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 0F 00 00 00 B1 30 00 00 00 00 00 00 0B 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0048
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 12597458900  seq: 146
+# type: M  round: 16  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0049
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 12601662200  seq: 148
+# type: D  round: 16  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0050
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 12601704900  seq: 149
+# round: 16  duration_ms: 10  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 10 00 00 00 16 31 00 00 00 00 00 00 0A 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0051
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 12700459000  seq: 155
+# type: M  round: 17  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0052
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 12702960300  seq: 157
+# type: D  round: 17  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0053
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 12702980700  seq: 158
+# round: 17  duration_ms: 11  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 11 00 00 00 7B 31 00 00 00 00 00 00 0B 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0054
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 12802114400  seq: 164
+# type: M  round: 18  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0055
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 12806061300  seq: 166
+# type: D  round: 18  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0056
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 12806081500  seq: 167
+# round: 18  duration_ms: 13  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 12 00 00 00 E0 31 00 00 00 00 00 00 0D 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0057
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 12899927800  seq: 173
+# type: M  round: 19  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0058
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 12902942300  seq: 175
+# type: D  round: 19  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0059
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 12902968300  seq: 176
+# round: 19  duration_ms: 10  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 13 00 00 00 44 32 00 00 00 00 00 00 0A 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0060
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 13001516200  seq: 182
+# type: M  round: 20  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0061
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 13005428900  seq: 184
+# type: D  round: 20  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0062
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 13005449000  seq: 185
+# round: 20  duration_ms: 12  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 14 00 00 00 A8 32 00 00 00 00 00 00 0C 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0063
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 13102597300  seq: 191
+# type: M  round: 21  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0064
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 13105296400  seq: 193
+# type: D  round: 21  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0065
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 13105317900  seq: 194
+# round: 21  duration_ms: 11  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 15 00 00 00 0D 33 00 00 00 00 00 00 0B 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0066
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 13200910100  seq: 200
+# type: M  round: 22  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0067
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 13204884600  seq: 202
+# type: D  round: 22  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0068
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 13204905900  seq: 203
+# round: 22  duration_ms: 10  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 16 00 00 00 72 33 00 00 00 00 00 00 0A 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0069
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 13302766600  seq: 209
+# type: M  round: 23  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0070
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 13306139900  seq: 211
+# type: D  round: 23  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0071
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 13306163100  seq: 212
+# round: 23  duration_ms: 10  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 17 00 00 00 D7 33 00 00 00 00 00 00 0A 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0072
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 13402627700  seq: 218
+# type: M  round: 24  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0073
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 13405773600  seq: 220
+# type: D  round: 24  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0074
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 13405797500  seq: 221
+# round: 24  duration_ms: 10  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 18 00 00 00 3B 34 00 00 00 00 00 00 0A 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0075
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 13503432700  seq: 227
+# type: M  round: 25  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0076
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 13506670700  seq: 229
+# type: D  round: 25  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0077
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 13506690500  seq: 230
+# round: 25  duration_ms: 10  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 19 00 00 00 9F 34 00 00 00 00 00 00 0A 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0078
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 13604113100  seq: 236
+# type: M  round: 26  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0079
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 13606656700  seq: 238
+# type: D  round: 26  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0080
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 13606678400  seq: 239
+# round: 26  duration_ms: 9  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 1A 00 00 00 04 35 00 00 00 00 00 00 09 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0081
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 13704041300  seq: 245
+# type: M  round: 27  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0082
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 13708134900  seq: 247
+# type: D  round: 27  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0083
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 13708154900  seq: 248
+# round: 27  duration_ms: 11  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 1B 00 00 00 68 35 00 00 00 00 00 00 0B 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0084
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 13806626500  seq: 254
+# type: M  round: 28  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0085
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 13809421100  seq: 256
+# type: D  round: 28  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0086
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 13809442700  seq: 257
+# round: 28  duration_ms: 10  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 1C 00 00 00 CE 35 00 00 00 00 00 00 0A 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0087
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 13906822000  seq: 263
+# type: M  round: 29  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0088
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 13910345800  seq: 265
+# type: D  round: 29  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0089
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 13910368200  seq: 266
+# round: 29  duration_ms: 10  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 1D 00 00 00 33 36 00 00 00 00 00 00 0A 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0090
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 14008119000  seq: 272
+# type: M  round: 30  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0091
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 14022595900  seq: 274
+# type: D  round: 30  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0092
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 14022617500  seq: 275
+# round: 30  duration_ms: 21  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 1E 00 00 00 98 36 00 00 00 00 00 00 15 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0093
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 14107421600  seq: 281
+# type: M  round: 31  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0094
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 14111009300  seq: 283
+# type: D  round: 31  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0095
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 14111030700  seq: 284
+# round: 31  duration_ms: 10  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 1F 00 00 00 FC 36 00 00 00 00 00 00 0A 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0096
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 14208622300  seq: 290
+# type: M  round: 32  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0097
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 14213313300  seq: 292
+# type: D  round: 32  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0098
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 14213335800  seq: 293
+# round: 32  duration_ms: 12  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 20 00 00 00 60 37 00 00 00 00 00 00 0C 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0099
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 14308811000  seq: 299
+# type: M  round: 33  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0100
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 14313776700  seq: 301
+# type: D  round: 33  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0101
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 14313797100  seq: 302
+# round: 33  duration_ms: 12  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 21 00 00 00 C5 37 00 00 00 00 00 00 0C 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0102
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 14409839300  seq: 308
+# type: M  round: 34  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0103
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 14417058100  seq: 310
+# type: D  round: 34  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0104
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 14417079300  seq: 311
+# round: 34  duration_ms: 15  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 22 00 00 00 29 38 00 00 00 00 00 00 0F 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0105
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 14510075000  seq: 317
+# type: M  round: 35  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0106
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 14514256400  seq: 319
+# type: D  round: 35  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0107
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 14514280600  seq: 320
+# round: 35  duration_ms: 12  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 23 00 00 00 8D 38 00 00 00 00 00 00 0C 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0108
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 14608012400  seq: 326
+# type: M  round: 36  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0109
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 14615853000  seq: 328
+# type: D  round: 36  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0110
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 14615875200  seq: 329
+# round: 36  duration_ms: 14  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 24 00 00 00 F1 38 00 00 00 00 00 00 0E 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0111
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 14710802400  seq: 335
+# type: M  round: 37  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0112
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 14715082400  seq: 337
+# type: D  round: 37  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0113
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 14715103100  seq: 338
+# round: 37  duration_ms: 11  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 25 00 00 00 57 39 00 00 00 00 00 00 0B 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0114
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 14810582100  seq: 344
+# type: M  round: 38  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0115
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 14816611300  seq: 346
+# type: D  round: 38  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0116
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 14816632700  seq: 347
+# round: 38  duration_ms: 12  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 26 00 00 00 BB 39 00 00 00 00 00 00 0C 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0117
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 14912835700  seq: 353
+# type: M  round: 39  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0118
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 14915994400  seq: 355
+# type: D  round: 39  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0119
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 14916017800  seq: 356
+# round: 39  duration_ms: 11  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 27 00 00 00 20 3A 00 00 00 00 00 00 0B 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0120
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 15011783500  seq: 362
+# type: M  round: 40  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0121
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 15017046300  seq: 364
+# type: D  round: 40  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0122
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 15017067000  seq: 365
+# round: 40  duration_ms: 11  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 28 00 00 00 85 3A 00 00 00 00 00 00 0B 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0123
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 15113828300  seq: 371
+# type: M  round: 41  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0124
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 15118049200  seq: 373
+# type: D  round: 41  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0125
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 15118070800  seq: 374
+# round: 41  duration_ms: 11  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 29 00 00 00 EA 3A 00 00 00 00 00 00 0B 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0126
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 15213892600  seq: 380
+# type: M  round: 42  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0127
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 15222012900  seq: 382
+# type: D  round: 42  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0128
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 15222034200  seq: 383
+# round: 42  duration_ms: 15  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 2A 00 00 00 4E 3B 00 00 00 00 00 00 0F 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0129
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 15314597900  seq: 389
+# type: M  round: 43  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0130
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 15318007200  seq: 391
+# type: D  round: 43  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0131
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 15318057900  seq: 392
+# round: 43  duration_ms: 11  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 2B 00 00 00 B2 3B 00 00 00 00 00 00 0B 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0132
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 15416549200  seq: 398
+# type: M  round: 44  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0133
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 15419554500  seq: 400
+# type: D  round: 44  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0134
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 15419575300  seq: 401
+# round: 44  duration_ms: 12  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 2C 00 00 00 16 3C 00 00 00 00 00 00 0C 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0135
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 15513148600  seq: 407
+# type: M  round: 45  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0136
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 15519107500  seq: 409
+# type: D  round: 45  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0137
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 15519128300  seq: 410
+# round: 45  duration_ms: 12  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 2D 00 00 00 7A 3C 00 00 00 00 00 00 0C 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0138
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 15612863000  seq: 416
+# type: M  round: 46  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0139
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 15616140200  seq: 418
+# type: D  round: 46  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0140
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 15616161400  seq: 419
+# round: 46  duration_ms: 9  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 2E 00 00 00 DE 3C 00 00 00 00 00 00 09 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0141
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 15715786500  seq: 425
+# type: M  round: 47  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0142
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 15720264900  seq: 427
+# type: D  round: 47  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0143
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 15720286800  seq: 428
+# round: 47  duration_ms: 13  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 2F 00 00 00 42 3D 00 00 00 00 00 00 0D 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0144
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 15814243100  seq: 434
+# type: M  round: 48  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0145
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 15818456300  seq: 436
+# type: D  round: 48  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0146
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 15818479300  seq: 437
+# round: 48  duration_ms: 10  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 30 00 00 00 A7 3D 00 00 00 00 00 00 0A 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0147
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 15916282200  seq: 443
+# type: M  round: 49  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0148
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 15922267300  seq: 445
+# type: D  round: 49  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0149
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 15922287300  seq: 446
+# round: 49  duration_ms: 13  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 31 00 00 00 0C 3E 00 00 00 00 00 00 0D 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0150
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 16016866300  seq: 452
+# type: M  round: 50  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0151
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 16021090100  seq: 454
+# type: D  round: 50  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0152
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 16021111200  seq: 455
+# round: 50  duration_ms: 12  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 32 00 00 00 70 3E 00 00 00 00 00 00 0C 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0153
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 16124764500  seq: 461
+# type: M  round: 51  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0154
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 16128132500  seq: 463
+# type: D  round: 51  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0155
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 16128164000  seq: 464
+# round: 51  duration_ms: 19  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 33 00 00 00 D4 3E 00 00 00 00 00 00 13 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0156
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 16215230300  seq: 470
+# type: M  round: 52  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0157
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 16218361000  seq: 472
+# type: D  round: 52  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0158
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 16218382500  seq: 473
+# round: 52  duration_ms: 9  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 34 00 00 00 38 3F 00 00 00 00 00 00 09 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0159
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 16316078700  seq: 479
+# type: M  round: 53  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0160
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 16320637600  seq: 481
+# type: D  round: 53  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0161
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 16320657400  seq: 482
+# round: 53  duration_ms: 11  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 35 00 00 00 9C 3F 00 00 00 00 00 00 0B 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0162
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 16416431000  seq: 488
+# type: M  round: 54  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0163
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 16419095700  seq: 490
+# type: D  round: 54  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0164
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 16419117200  seq: 491
+# round: 54  duration_ms: 9  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 36 00 00 00 01 40 00 00 00 00 00 00 09 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0165
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 16521057200  seq: 497
+# type: M  round: 55  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0166
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 16526831200  seq: 499
+# type: D  round: 55  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0167
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 16526858100  seq: 500
+# round: 55  duration_ms: 17  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 37 00 00 00 65 40 00 00 00 00 00 00 11 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0168
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 16621616100  seq: 506
+# type: M  round: 56  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0169
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 16624782000  seq: 508
+# type: D  round: 56  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0170
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 16624803000  seq: 509
+# round: 56  duration_ms: 15  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 38 00 00 00 C9 40 00 00 00 00 00 00 0F 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0171
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 16724949900  seq: 515
+# type: M  round: 57  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0172
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 16728852900  seq: 517
+# type: D  round: 57  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0173
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 16728875800  seq: 518
+# round: 57  duration_ms: 19  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 39 00 00 00 2D 41 00 00 00 00 00 00 13 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0174
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 16816334100  seq: 524
+# type: M  round: 58  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0175
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 16819036900  seq: 526
+# type: D  round: 58  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0176
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 16819058500  seq: 527
+# round: 58  duration_ms: 9  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 3A 00 00 00 91 41 00 00 00 00 00 00 09 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0177
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 16916565200  seq: 533
+# type: M  round: 59  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0178
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 16924730400  seq: 535
+# type: D  round: 59  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0179
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 16924752200  seq: 536
+# round: 59  duration_ms: 14  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 3B 00 00 00 F5 41 00 00 00 00 00 00 0E 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0180
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 17020572500  seq: 542
+# type: M  round: 60  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0181
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 17025427000  seq: 544
+# type: D  round: 60  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0182
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 17025449800  seq: 545
+# round: 60  duration_ms: 15  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 3C 00 00 00 59 42 00 00 00 00 00 00 0F 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0183
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 17118697300  seq: 551
+# type: M  round: 61  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0184
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 17124320700  seq: 553
+# type: D  round: 61  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0185
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 17124352600  seq: 554
+# round: 61  duration_ms: 14  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 3D 00 00 00 BD 42 00 00 00 00 00 00 0E 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0186
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 17217073500  seq: 560
+# type: M  round: 62  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0187
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 17220589200  seq: 562
+# type: D  round: 62  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0188
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 17220611200  seq: 563
+# round: 62  duration_ms: 10  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 3E 00 00 00 21 43 00 00 00 00 00 00 0A 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0189
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 17316903600  seq: 569
+# type: M  round: 63  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0190
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 17320436500  seq: 571
+# type: D  round: 63  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0191
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 17320457500  seq: 572
+# round: 63  duration_ms: 9  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 3F 00 00 00 86 43 00 00 00 00 00 00 09 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0192
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 17418315900  seq: 578
+# type: M  round: 64  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0193
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 17423624100  seq: 580
+# type: D  round: 64  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0194
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 17423645700  seq: 581
+# round: 64  duration_ms: 11  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 40 00 00 00 EB 43 00 00 00 00 00 00 0B 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0195
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 17522176000  seq: 587
+# type: M  round: 65  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0196
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 17526839600  seq: 589
+# type: D  round: 65  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0197
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 17526864600  seq: 590
+# round: 65  duration_ms: 15  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 41 00 00 00 4F 44 00 00 00 00 00 00 0F 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0198
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 17619790300  seq: 596
+# type: M  round: 66  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0199
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 17622711700  seq: 598
+# type: D  round: 66  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0200
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 17622732400  seq: 599
+# round: 66  duration_ms: 10  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 42 00 00 00 B3 44 00 00 00 00 00 00 0A 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0201
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 17721504900  seq: 605
+# type: M  round: 67  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0202
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 17724779600  seq: 607
+# type: D  round: 67  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0203
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 17724802700  seq: 608
+# round: 67  duration_ms: 12  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 43 00 00 00 18 45 00 00 00 00 00 00 0C 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0204
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 17819422500  seq: 614
+# type: M  round: 68  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0205
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 17824315100  seq: 616
+# type: D  round: 68  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0206
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 17824337100  seq: 617
+# round: 68  duration_ms: 11  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 44 00 00 00 7C 45 00 00 00 00 00 00 0B 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0207
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 17918573800  seq: 623
+# type: M  round: 69  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0208
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 17921746000  seq: 625
+# type: D  round: 69  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0209
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 17921762400  seq: 626
+# round: 69  duration_ms: 8  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 45 00 00 00 E0 45 00 00 00 00 00 00 08 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0210
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 18018807900  seq: 632
+# type: M  round: 70  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0211
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 18024735100  seq: 634
+# type: D  round: 70  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0212
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 18024753900  seq: 635
+# round: 70  duration_ms: 12  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 46 00 00 00 44 46 00 00 00 00 00 00 0C 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0213
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 18121759300  seq: 641
+# type: M  round: 71  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0214
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 18124742200  seq: 643
+# type: D  round: 71  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0215
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 18124764200  seq: 644
+# round: 71  duration_ms: 12  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 47 00 00 00 A8 46 00 00 00 00 00 00 0C 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0216
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 18221053700  seq: 650
+# type: M  round: 72  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0217
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 18224127900  seq: 652
+# type: D  round: 72  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0218
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 18224148700  seq: 653
+# round: 72  duration_ms: 11  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 48 00 00 00 0C 47 00 00 00 00 00 00 0B 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0219
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 18320768500  seq: 659
+# type: M  round: 73  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0220
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 18324220300  seq: 661
+# type: D  round: 73  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0221
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 18324242400  seq: 662
+# round: 73  duration_ms: 10  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 49 00 00 00 71 47 00 00 00 00 00 00 0A 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0222
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 18420072000  seq: 668
+# type: M  round: 74  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0223
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 18423434500  seq: 670
+# type: D  round: 74  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0224
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 18423455200  seq: 671
+# round: 74  duration_ms: 9  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 4A 00 00 00 D5 47 00 00 00 00 00 00 09 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0225
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 18522388800  seq: 677
+# type: M  round: 75  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0226
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 18526081200  seq: 679
+# type: D  round: 75  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0227
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 18526103100  seq: 680
+# round: 75  duration_ms: 12  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 4B 00 00 00 39 48 00 00 00 00 00 00 0C 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0228
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 18622270400  seq: 686
+# type: M  round: 76  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0229
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: snapshot  t_ns: 18626105700  seq: 688
+# type: D  round: 76  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0230
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: cycleDone  t_ns: 18626126600  seq: 689
+# round: 76  duration_ms: 12  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 4C 00 00 00 9D 48 00 00 00 00 00 00 0C 00 00 00 03 00 00 00 01
+
+# id: CAP-q03ude-eth-3e-bin-G7-06-E0231
+# source: plc  profile: q03ude-eth-3e-bin  step: G7-06
+# kind: event  event: linkState  t_ns: 18797518500  seq: 691
+# state: Disconnected  reason: PeerClosed
+05 00 02
+

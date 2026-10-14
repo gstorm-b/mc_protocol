@@ -69,6 +69,40 @@ QJsonObject readJson(const QString& path) {
     return f.open(QIODevice::ReadOnly) ? QJsonDocument::fromJson(f.readAll()).object() : QJsonObject();
 }
 
+// True when tests/vectors/captured holds no capture of a mock or virtual_plc: the folder is
+// absent, or every entry is a folder with a run.meta not marked "capture_source: mock" or
+// "capture_source: virtual_plc" (the GUI tool writes that mark; `hil_capture` against a PLC
+// writes none). Hardware captures are committed there (T-089), so "absent" is no longer the rule.
+QStringList capturedFolderNames() {
+    return QDir(testsDir() + QStringLiteral("/vectors/captured"))
+        .entryList(QDir::AllEntries | QDir::NoDotAndDotDot, QDir::Name);
+}
+
+// Folder names present when the probe class started; a capture written during the probes adds one.
+QStringList g_capturedAtStart;
+
+bool sourceCapturedHoldsNoMockCapture() {
+    if (capturedFolderNames() != g_capturedAtStart) {
+        return false;
+    }
+    const QDir captured(testsDir() + QStringLiteral("/vectors/captured"));
+    if (!captured.exists()) {
+        return true;
+    }
+    const QFileInfoList entries = captured.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot);
+    for (const QFileInfo& entry : entries) {
+        QFile meta(entry.absoluteFilePath() + QStringLiteral("/run.meta"));
+        if (!entry.isDir() || !meta.open(QIODevice::ReadOnly)) {
+            return false;
+        }
+        const QByteArray text = meta.readAll();
+        if (text.contains("capture_source: mock") || text.contains("capture_source: virtual_plc")) {
+            return false;
+        }
+    }
+    return true;
+}
+
 void writeBytes(const QString& path, const QByteArray& bytes) {
     QFile f(path);
     if (f.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
@@ -207,7 +241,10 @@ class TesterProbesTest : public QObject {
     Q_OBJECT
 
 private slots:
-    void initTestCase() { registerRunnerMetaTypes(); }
+    void initTestCase() {
+        registerRunnerMetaTypes();
+        g_capturedAtStart = capturedFolderNames();
+    }
 
     // ---- the gate and the confirmation: nothing reaches the listener -------------------
 
@@ -941,7 +978,7 @@ private slots:
         // T-074 re-test finding F-1b (MEDIUM): trailing-dot ids / roots and junctions defeat the rule.
         // Expected-fail until fixed; once fixed this XPASSes: delete the line.
         QVERIFY2(leaks.isEmpty(), qPrintable(QStringLiteral("a mock capture reached tests/vectors/captured: ") + leaks.join(QStringLiteral("; "))));
-        QVERIFY(!QFileInfo::exists(QStringLiteral(MC_TESTS_SOURCE_DIR) + QStringLiteral("/vectors/captured")));
+        QVERIFY(sourceCapturedHoldsNoMockCapture());
     }
 
     // ---- Re-test 2: junction in the middle, mixed slashes, UNC loopback, 8.3, long paths ---------
@@ -1072,7 +1109,7 @@ private slots:
             qInfo("LEAK %s", qPrintable(leak));
         }
         QVERIFY2(leaks.isEmpty(), qPrintable(leaks.join(QStringLiteral("; "))));
-        QVERIFY(!QFileInfo::exists(QStringLiteral(MC_TESTS_SOURCE_DIR) + QStringLiteral("/vectors/captured")));
+        QVERIFY(sourceCapturedHoldsNoMockCapture());
     }
 
     // ---- T-078/T-079 tester probes: the Qt 5 / Qt 6 compat helpers ---------------------------

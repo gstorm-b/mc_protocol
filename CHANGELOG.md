@@ -6,6 +6,27 @@ All notable changes to this project are documented in this file. The format foll
 
 ## [Unreleased]
 
+Bench findings triage (P9-2, owner 2026-10-14) after 11 captures on a Q03UDE, an FX5U and an FX3U with
+FX3U-ENET-ADP.
+
+### Added
+
+- `FrameConfig::maxReadWords`, `maxWriteWords`, `maxReadBits`, `maxWriteBits` (JSON `frame.maxReadWords` …,
+  `mc_workbench` grid fields; default 0 = the frame family's table value): per-target point caps. `maxPoints()`
+  returns `min(table, cap)`, so ad-hoc requests and the polling plan split at the cap. Suggested values: FX5 over
+  3E ASCII 480 / 480 / 1792 / 1792; FX3U-ENET-ADP over 1E 32 / 10 / 256 / 160 (README "Per-target caps").
+  `sizeof(FrameConfig)` grows from 40 to 48 bytes on 64-bit.
+- `tests/vectors/captured/`: the 11 bench captures, with `divergences.txt`; `docs/hil/FINDINGS.md` (F-001 …
+  F-021) and `docs/hil/BENCH.md`.
+
+### Changed
+
+- **Behaviour change (wire):** a 1E ASCII batch bit write (02H) with an odd point count now appends one dummy
+  `'0'` (30H) after the data, as the FX3 ENET-ADP manual §7.5.3 requires; an FX3U-ENET-ADP timed out without it
+  (finding F-001). 1E Binary, 1C, 3E/4E and reads are unchanged. `MockPlc` expects the dummy too.
+- A packed (`BitLayout::PackedLsbFirst`) bit read or write that would have to split at a limit that is not a
+  multiple of 8 is refused with `PointCount` before anything is sent (only possible with a user-set cap).
+
 ## [0.1.2] - 2026-10-12
 
 Third pre-release (owner, 2026-10-12). Follows the first bench captures on a Q03UDE (3E Binary and ASCII over

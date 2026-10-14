@@ -1,0 +1,100 @@
+format: hil-capture-1
+tool: hil_capture
+tool_version: 0.1.2
+library_version: 0.1.2
+git_commit: unknown
+date: 2026-10-14T03:48:59Z
+operator_note: 
+plc_state: RUN
+profile: fx3-eth-1e-ascii
+plc: FX3U-32M
+module: FX3U-ENET-ADP
+firmware: FILL: FX3U CPU and FX3U-ENET-ADP versions
+adapter: FILL: direct Ethernet, no adapter; set device.transport.tcp host and port (placeholder 192.0.2.10:5000) to the MC protocol port of the ENET-ADP settings
+plc_state_note: FILL: RUN; confirm the CPU is an FX3U (FX3G/FX3S have smaller device ranges), that Y0-Y7 drive no load (owner Q4), and scanTimeDevice D8010 (low confidence)
+transport: tcp
+scratch: D100-D2099 M100-M2099 Y0-Y7
+device_end: X=377 Y=377 M=7679 D=7999 TS=511 TN=511 CS=255 CN=255 S=4095 R=32767
+supports: D R M S X Y TS TN CS CN
+special_bit: M8000
+special_word: D8000
+frame.aSeriesTarget: false
+frame.blockNo: 0
+frame.checkBlockNo: true
+frame.checkRoute: false
+frame.code: Ascii
+frame.commandSet: ACPU
+frame.e1AliasLS: false
+frame.f3ShortResponseHasSum: false
+frame.format: Format1
+frame.frame: 1E
+frame.highPerformanceQcpu: false
+frame.io: 1023
+frame.messageWait: 0
+frame.monitoringTimer: 10
+frame.network: 0
+frame.pc: 255
+frame.readRetries: 0
+frame.selfStation: 0
+frame.sendEotOnError: true
+frame.serialStart: 0
+frame.series: QL
+frame.splitWrites: false
+frame.station: 0
+frame.stationNo: 0
+frame.sumCheck: true
+frame.targetFamily: A
+frame.timeoutMs: 0
+frame.xyAsciiDigits: Hex
+frame.xyNotation: Octal
+session.adHocArenaBytes: 65536
+session.adHocCapacity: 64
+session.bitsAsWords: true
+session.cycleIntervalMs: 100
+session.cycleMode: FixedRate
+session.firstResponseTimeoutMs: 0
+session.heartbeat.device: M2000
+session.heartbeat.enabled: false
+session.maxAdHocBurst: 4
+session.maxConsecutiveLinkErrors: 3
+session.maxGap: auto
+session.serialFlushMs: 50
+session.serialInterCharMs: 100
+skipped.G1-05: skipped: requires supports:W
+skipped.G1-06: skipped: requires scratch:R
+skipped.G2-05: skipped: requires supports:B
+skipped.G2-07-L: skipped: requires supports:L
+skipped.G2-07-F: skipped: requires supports:F
+skipped.G2-07-S: skipped: requires scratch:S
+skipped.G2-09: skipped: requires supports:TC
+skipped.G3-05: skipped: scratch too small
+skipped.G5-03: skipped: D7999-D8000 spans the general and the special range (specialFrom D8000); the PLC forbids reading both in one request
+skipped.G5-05: skipped: requires endNotMultiple16:M
+skipped.G5-06: skipped: requires profile:*-noonline
+skipped.G7-02-B: skipped: requires code:Binary
+skipped.G8-Q4: skipped: requires code:Binary
+skipped.G8-Q7: skipped: requires code:Binary
+skipped.G8-Q7-R: skipped: requires code:Binary
+skipped.G8-Q7-W: skipped: requires code:Binary
+skipped.G8-Q8: skipped: requires profile:*-m9000
+skipped.G8-Q8-M: skipped: requires profile:*-m9000
+skipped.G8-Q6: skipped: requires profile:*-q6-nothing-to-run
+notsent.G3-03: notSent InvalidDevice
+notsent.G4-01-S: notSent InvalidDevice
+notsent.G4-02-L: notSent InvalidDevice
+scan_time_raw: 4
+recovery.1: after G2-03: PeerClosed (Disconnected); reconnected in 2 ms
+recovery.2: after G5-01: PeerClosed (Disconnected); reconnected in 4 ms
+recovery.3: after G6: PeerClosed (Disconnected); reconnected in 3 ms
+recovery.4: after G6: Requested (Disconnected); reconnected in 2 ms
+recovery.5: after G6: PeerClosed (Disconnected); reconnected in 2 ms
+recovery.6: after G7-01: PeerClosed (Disconnected); reconnected in 2 ms
+recovery.7: after G7-02-A: Requested (Disconnected); reconnected in 2 ms
+recovery.8: after G7-06: Requested (Disconnected); reconnected in 2 ms
+recovery.9: after G7-06: PeerClosed (Disconnected); reconnected in 3 ms
+recovery.10: after G7-06: Requested (Disconnected); reconnected in 3 ms
+recovery.11: after G8-Q3: PeerClosed (Disconnected); reconnected in 2 ms
+recovery.12: after GB-10: Requested (Disconnected); reconnected in 3 ms
+recovery.13: after GB-10: Requested (Disconnected); reconnected in 5 ms
+recovery.14: after GB-10: PeerClosed (Disconnected); reconnected in 3 ms
+polls: G6 G7-06

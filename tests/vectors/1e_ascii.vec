@@ -84,9 +84,17 @@
 
 # id: 1E-11a
 # frame: 1E  code: Ascii  op: WriteBits  device: M100  count: 3
-# kind: request  write: 1,1,1  bytes: 27
+# source: superseded by 1E-15 and 1E-15a (bench finding F-001, 2026-10-14): the encoder no longer emits this frame
+# kind: request  write: 1,1,1  tags: superseded  bytes: 27
 30 32 46 46 30 30 30 41 34 44 32 30 30 30 30 30 30 30 36 34 30 33 30 30 31 31 31
 02FF000A4D20000000640300111
+
+# id: 1E-15a
+# frame: 1E  code: Ascii  op: WriteBits  device: M100  count: 3
+# source: 1E-11a plus the dummy 30H after an odd count (1E-15, bench finding F-001)
+# kind: request  write: 1,1,1  bytes: 28
+30 32 46 46 30 30 30 41 34 44 32 30 30 30 30 30 30 30 36 34 30 33 30 30 31 31 31 30
+02FF000A4D200000006403001110
 
 # id: 1E-13a
 # frame: 1E  code: Ascii  op: ReadWords  device: D100  count: 3

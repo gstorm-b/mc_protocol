@@ -181,7 +181,7 @@ The `*` in QnA ASCII codes is emitted as `*`, never space; leading zeros are `0`
 
 **QnA (3E, 3C)** — spec §4.1.1, §4.1.2. Subcommand from `cfg.series`: Q/L `0000`/`0001`, iQ-R `0002`/`0003`. Request data = command, subcommand, head device, points u16, [write data]. Response data: words 2N bytes / 4N chars; bits ⌈N/2⌉ bytes (nibble-packed, first point in the **high** nibble, odd count → low nibble of the last byte is 0, spec §2.2, Q4) / N chars. A nibble other than 0 or 1 on decode → `Protocol/InvalidCharacter` (PRIM-13, CMDD-18).
 
-**1E** — spec §4.2. Command code goes into the frame subheader, not the request data. Request data = head device, points u8 (256 → `00`, spec E8), fixed `00`, [write data]. Response size is computed from the request because 1E has no length field: bits ASCII N + (N mod 2) chars with a trailing dummy on odd N (1E-10), bits Binary ⌈N/2⌉, words 2N / 4N. Writes with odd N in Binary pad the last nibble with 0 (1E-11); ASCII writes send exactly N characters (spec Q3).
+**1E** — spec §4.2. Command code goes into the frame subheader, not the request data. Request data = head device, points u8 (256 → `00`, spec E8), fixed `00`, [write data]. Response size is computed from the request because 1E has no length field: bits ASCII N + (N mod 2) chars with a trailing dummy on odd N (1E-10), bits Binary ⌈N/2⌉, words 2N / 4N. Writes with odd N in Binary pad the last nibble with 0 (1E-11); ASCII writes with odd N append one dummy `'0'` (30H) after the N characters (1E-15; amended 2026-10-14, owner: the bench answered spec Q3, finding F-001 — an FX3U-ENET-ADP waits for the dummy and times out without it). 1C has no such rule (FX3 computer link manual §7.4 BW).
 
 **1C** — spec §4.3. Request data = command(2) + message wait(1 hex char, spec E7) + character area. Command pair from `cfg.commandSet`: ACPU `BR/WR/BW/WW`, AnA `JR/QR/JW/QW`. Points 2 chars, 256 → `"00"`. Bit data `'0'`/`'1'`; words 4 hex chars. Always ASCII.
 
@@ -305,7 +305,7 @@ doctest binary `mc_core_protocol_tests`, label `core_protocol`. Vector-driven te
 | CMD-25 … 30, 33 | 1C BR/JR, WR/QR, BW, WW request data; manual sum check | CMD-31, 32 (WT/BT) → v1.1 |
 | CMDD-01 … 06, 09 … 18 | response data decoding incl. odd bit counts, 1E dummy char, wrong length, invalid nibble | CMDD-07, 08 → v1.1 |
 | 3E-01 … 13 | full 3E encode/parse, both codes, length fields, error with and without info, wrong subheader, short length, wrong payload size, other station, multiple CPU | 3E-14 → v1.1 |
-| 1E-01 … 11, 13, 14 | full 1E encode/parse, 5BH + abnormal, error without abnormal stops after 2 bytes, 256 points, 257 points, odd bit read dummy, odd bit write padding, other PC No., alignment | 1E-12 → v1.1 |
+| 1E-01 … 11, 13, 14, 15 | full 1E encode/parse, 1E-15 ASCII odd bit write appends one dummy `'0'` (N = 1, 5; N = 8 unchanged), 5BH + abnormal, error without abnormal stops after 2 bytes, 256 points, 257 points, odd bit read dummy, odd bit write padding, other PC No., alignment | 1E-12 → v1.1 |
 | 3C-01 … 03 | F1–F4 encode/parse, NAK/QNAK, format 5 rejected | plus 4C-09, 4C-10, 4C-13, 4C-14, 4C-15 re-applied to 3C vectors |
 | 1C-01 … 08 | F1–F4, 2-char NAK, NN, AnA command set, message wait, 256 points, WR on bit device, manual sum check | 1C-09 → v1.1 |
 | STR-01 | Every response vector fed one byte at a time reaches Done with the same payload (TRN-01 generalized) | |

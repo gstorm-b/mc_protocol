@@ -72,8 +72,9 @@ uint64_t byteOffsetFor(Op op, BitLayout bitLayout, uint32_t pointOffset) noexcep
         return static_cast<uint64_t>(pointOffset) * 2;
     }
     // *Bits: BytePerPoint is one byte per point; PackedLsbFirst is eight points per byte. Every
-    // v1 bit limit chunk.cpp's own comment cites is a multiple of 8, so `pointOffset` (always 0
-    // or a multiple of maxPoints()) is always byte-aligned here too.
+    // packed bit request that splits has a limit that is a multiple of 8 (chunkCount() refuses
+    // the rest, and submit() calls it first), so `pointOffset` (always 0 or a multiple of
+    // maxPoints()) is byte-aligned here.
     return (bitLayout == BitLayout::PackedLsbFirst) ? pointOffset / 8 : pointOffset;
 }
 

@@ -265,6 +265,71 @@ TEST_CASE("PLN-06 ReadPlan::build(): D0x2000 on 3E Binary splits 960/960/80") {
     CHECK(plan.chunk(range.first + 2).request.count == 80);
 }
 
+TEST_CASE("PLN-06 ReadPlan::build(): a per-target cap splits the plan (FX5 3E ASCII 960 words -> "
+          "2 x 480; 1E bit devices in words at the cap)") {
+    SUBCASE("D0x960 with maxReadWords 480") {
+        RangeSet subs;
+        REQUIRE(subs.add(Device{DeviceType::D, 0}, 960).hasValue());
+        FrameConfig cfg = FrameConfig::frame3E(DataCode::Ascii);
+        cfg.maxReadWords = 480;
+
+        auto planResult = ReadPlan::build(subs, cfg, PlanOptions{});
+        REQUIRE(planResult.hasValue());
+        ReadPlan& plan = planResult.value();
+        auto range = plan.chunksOf(DeviceType::D);
+        REQUIRE(range.second - range.first == 2);
+        CHECK(plan.chunk(range.first + 0).request.head == Device{DeviceType::D, 0});
+        CHECK(plan.chunk(range.first + 0).request.count == 480);
+        CHECK(plan.chunk(range.first + 1).request.head == Device{DeviceType::D, 480});
+        CHECK(plan.chunk(range.first + 1).request.count == 480);
+    }
+
+    SUBCASE("D0x960 with no cap stays one chunk") {
+        RangeSet subs;
+        REQUIRE(subs.add(Device{DeviceType::D, 0}, 960).hasValue());
+        auto planResult =
+            ReadPlan::build(subs, FrameConfig::frame3E(DataCode::Ascii), PlanOptions{});
+        REQUIRE(planResult.hasValue());
+        auto range = planResult.value().chunksOf(DeviceType::D);
+        CHECK(range.second - range.first == 1);
+    }
+
+    SUBCASE("bits read directly split at maxReadBits") {
+        RangeSet subs;
+        REQUIRE(subs.add(Device{DeviceType::M, 0}, 3584).hasValue());
+        FrameConfig cfg = FrameConfig::frame3E(DataCode::Ascii);
+        cfg.maxReadBits = 1792;
+        PlanOptions opt;
+        opt.bitsAsWords = false;
+
+        auto planResult = ReadPlan::build(subs, cfg, opt);
+        REQUIRE(planResult.hasValue());
+        ReadPlan& plan = planResult.value();
+        auto range = plan.chunksOf(DeviceType::M);
+        REQUIRE(range.second - range.first == 2);
+        CHECK(plan.chunk(range.first + 0).request.op == Op::ReadBits);
+        CHECK(plan.chunk(range.first + 0).request.count == 1792);
+        CHECK(plan.chunk(range.first + 1).request.head == Device{DeviceType::M, 1792});
+        CHECK(plan.chunk(range.first + 1).request.count == 1792);
+    }
+
+    SUBCASE("1E bit device in words splits at maxReadWords 32") {
+        RangeSet subs;
+        REQUIRE(subs.add(Device{DeviceType::M, 0}, 64 * 16).hasValue()); // 64 words of M.
+        FrameConfig cfg = FrameConfig::frame1E();
+        cfg.maxReadWords = 32;
+
+        auto planResult = ReadPlan::build(subs, cfg, PlanOptions{}); // bitsAsWords: true.
+        REQUIRE(planResult.hasValue());
+        ReadPlan& plan = planResult.value();
+        auto range = plan.chunksOf(DeviceType::M);
+        REQUIRE(range.second - range.first == 2);
+        CHECK(plan.chunk(range.first + 0).request.count == 32);
+        CHECK(plan.chunk(range.first + 1).request.head == Device{DeviceType::M, 32 * 16});
+        CHECK(plan.chunk(range.first + 1).request.count == 32);
+    }
+}
+
 TEST_CASE("PLN-06 ReadPlan::build(): M0x8000 bitsAsWords is one 500-word chunk, vs two as bits") {
     RangeSet subs;
     REQUIRE(subs.add(Device{DeviceType::M, 0}, 8000).hasValue());

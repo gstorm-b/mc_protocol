@@ -3,6 +3,17 @@
 Curated by the team leader. One entry, one decision, newest first.
 Format: `- [T-xxx or date] Decision — why. (supersedes: entry, if any)`
 
+- [2026-10-14] Owner, P9-2 Gate 2 answers: (1) the 11 capture folders (5 files each, incl. `divergences.txt`) and
+  `docs/hil/BENCH.md` approved for commit, about 35 MB, `FILL:` notes may stay; (2) F-006 / Q4 stays `decided — keep`,
+  noting that FX5U and FX3U-ENET-ADP close the connection on a non-zero padding nibble (the library always sends 0);
+  (3) the packed-split refusal (packed bit read or write splitting at a limit not a multiple of 8 → `PointCount`, cap
+  never rounded) goes into SPEC-core-model "Per-target caps"; (4) F-014 adapter codes 2556/2557/2558/1015: no log,
+  not recorded (the id is withdrawn, not reused); (5) commit the current `fx3-eth-1e-ascii` capture, replaced after a
+  re-capture with the T-087 codec.
+- [2026-10-14] Owner: bench findings decided — F-001 1E ASCII odd bit write appends one dummy '0' (FX3 ENET-ADP manual
+  §7.5.3; reverses spec Q3 "exactly N"), T-087; F-002/F-003 per-target caps as four optional `FrameConfig` fields
+  (option a; FX5 3E ASCII 480 words / 1792 bits, FX3U-ENET-ADP 1E table), T-088; P9-2 opened; the 11 captures of
+  2026-10-13/14 imported into `tests/vectors/captured` (T-089).
 - [2026-10-12] Owner: "hãy commit và push. Tạo bản pre-release 0.1.2" — `main`, tag `v0.1.2` pushed to gstorm-b/mc_protocol,
   GitHub pre-release with `mc_protocol-v0.1.2.bundle` (gh back to dev39-hash).
 - [2026-10-12] Owner: QJ71C24N I/O starts at Y0 on the bench (Y0–Y7 were never a safe scratch; Q03UDE captures to be

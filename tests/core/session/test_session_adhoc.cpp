@@ -158,6 +158,134 @@ TEST_CASE("SES-11 Session::submit(): an ad-hoc read splits (D0x2000 -> 3 frames)
     }
 }
 
+TEST_CASE("SES-11 Session::submit(): a per-target cap splits an ad-hoc read (FX5 3E ASCII, "
+          "960 words with maxReadWords 480 -> 2 frames) and bounds a write") {
+    FrameConfig frame = FrameConfig::frame3E(mc::DataCode::Ascii);
+    frame.maxReadWords = 480;
+    frame.maxWriteWords = 480;
+
+    SUBCASE("read of 960 words is 2 x 480, one RequestDone with the whole payload") {
+        Session s = makeSession(frame);
+        FakeClock clock;
+        OutputRecorder rec;
+        s.linkUp(clock.now());
+        rec.drain(s);
+        rec.clear();
+
+        auto submitted = s.submit(Request::readWords(Device{DeviceType::D, 0}, 960), clock.now());
+        REQUIRE(submitted.hasValue());
+
+        ScriptedPeer peer(frame);
+        for (int chunkIndex = 0; chunkIndex < 2; ++chunkIndex) {
+            rec.drain(s);
+            REQUIRE(rec.size() == 1);
+            CHECK(rec[0].kind == OutputKind::Send);
+            rec.clear();
+
+            PeerScript p;
+            p.kind = PeerScript::Kind::Ok;
+            p.words.assign(480, 0);
+            p.words[0] = static_cast<uint16_t>(chunkIndex + 1); // Marks which chunk this is.
+            auto bytes = peer.respond(Request::readWords(Device{DeviceType::D, 0}, 480), p);
+            s.bytesIn(ByteView{bytes.data(), bytes.size()}, clock.advance(1));
+        }
+
+        rec.drain(s);
+        REQUIRE(rec.size() == 1);
+        CHECK(rec[0].kind == OutputKind::RequestDone);
+        REQUIRE(rec[0].payload.size() == 960 * 2);
+        ByteView payload{rec[0].payload.data(), rec[0].payload.size()};
+        CHECK(mc::convert::wordAt(payload, 0) == 1);
+        CHECK(mc::convert::wordAt(payload, 480) == 2);
+    }
+
+    SUBCASE("a packed bit read: cap 100 (not a multiple of 8) is refused, nothing sent") {
+        FrameConfig bitFrame = frame;
+        bitFrame.maxReadBits = 100;
+        Session s = makeSession(bitFrame);
+        FakeClock clock;
+        OutputRecorder rec;
+        s.linkUp(clock.now());
+        rec.drain(s);
+        rec.clear();
+
+        Request r = Request::readBits(Device{DeviceType::M, 0}, 250);
+        r.bitLayout = BitLayout::PackedLsbFirst;
+        auto submitted = s.submit(r, clock.now());
+        CHECK_FALSE(submitted.hasValue());
+        CHECK(submitted.error().code == ErrorCode::PointCount);
+        rec.drain(s);
+        CHECK(rec.empty());
+    }
+
+    SUBCASE("a packed bit read: cap 96 gives 3 chunks and the packed payload is intact") {
+        FrameConfig bitFrame = frame;
+        bitFrame.maxReadBits = 96;
+        Session s = makeSession(bitFrame);
+        FakeClock clock;
+        OutputRecorder rec;
+        s.linkUp(clock.now());
+        rec.drain(s);
+        rec.clear();
+
+        Request r = Request::readBits(Device{DeviceType::M, 0}, 250);
+        r.bitLayout = BitLayout::PackedLsbFirst;
+        REQUIRE(s.submit(r, clock.now()).hasValue());
+
+        std::vector<uint8_t> expected((250 + 7) / 8, 0);
+        ScriptedPeer peer(bitFrame);
+        size_t done = 0;
+        for (size_t chunkPoints : {size_t{96}, size_t{96}, size_t{58}}) {
+            rec.drain(s);
+            REQUIRE(rec.size() == 1);
+            CHECK(rec[0].kind == OutputKind::Send);
+            rec.clear();
+
+            PeerScript p;
+            p.kind = PeerScript::Kind::Ok;
+            for (size_t i = 0; i < chunkPoints; ++i) {
+                const bool bit = ((done + i) % 3) == 0;
+                p.bits.push_back(bit ? 1 : 0);
+                if (bit) {
+                    expected[(done + i) / 8] |= static_cast<uint8_t>(1u << ((done + i) % 8));
+                }
+            }
+            auto bytes = peer.respond(
+                Request::readBits(Device{DeviceType::M, 0}, static_cast<uint16_t>(chunkPoints)), p);
+            s.bytesIn(ByteView{bytes.data(), bytes.size()}, clock.advance(1));
+            done += chunkPoints;
+        }
+
+        rec.drain(s);
+        REQUIRE(rec.size() == 1);
+        CHECK(rec[0].kind == OutputKind::RequestDone);
+        CHECK(rec[0].payload == expected);
+    }
+
+    SUBCASE("a write of 481 words without splitWrites is PointCount; 480 is accepted") {
+        Session s = makeSession(frame);
+        FakeClock clock;
+        OutputRecorder rec;
+        s.linkUp(clock.now());
+        rec.drain(s);
+        rec.clear();
+
+        std::vector<uint8_t> data(481 * 2, 0);
+        auto over =
+            s.submit(Request::writeWords(Device{DeviceType::D, 0}, ByteView{data.data(), 481 * 2}),
+                     clock.now());
+        CHECK_FALSE(over.hasValue());
+        CHECK(over.error().code == ErrorCode::PointCount);
+        rec.drain(s);
+        CHECK(rec.empty());
+
+        auto fits =
+            s.submit(Request::writeWords(Device{DeviceType::D, 0}, ByteView{data.data(), 480 * 2}),
+                     clock.now());
+        CHECK(fits.hasValue());
+    }
+}
+
 TEST_CASE("SES-12 Session::submit(): a write over the limit without splitWrites is PointCount, "
           "nothing queued, no RequestDone") {
     FrameConfig frame = FrameConfig::frame3E(); // splitWrites defaults to false.

@@ -1018,6 +1018,14 @@ Known issues, noted only (owner 2026-10-04: no task):
   has no automated test (`qt_console_poller` cannot set the session config); QDV-19's stuck-peer case is
   verified on Windows only; `gui.mc_workbench_tests` runs 67–91 s against the 120 s ctest timeout and timed
   out once under five parallel builds (passed alone).
+- T-087..T-089 batch (LOW, documented): the old random-access limits case is now labelled LIM-01 (collides with the
+  spec's LIM-01) and the tester's probe also carries LIM-03 (labels only); a `divergences.txt` tag covers a whole base
+  step, so the F-012 tag on `fx3-eth-1e-ascii` G4-03 also hides `RPL-03 G4-03.2` (F-020 mechanism) and the F-001 tag
+  hides `G2-01.4` (same) until the re-capture; F-019 (RPL-04 41 vs 38 ms) cause not established; a doc comment in
+  `tst_gui_tester_probes.cpp` sits above `capturedFolderNames()` instead of the helper; under parallel load
+  `gui.mc_workbench_tests` hit the 120 s ctest timeout in all four trees (alone 68–103 s; 138.8 s under load with the
+  limit lifted), `device` SER_FLUSH_01, `hil_tool` HIL_04 and GUI-05/GUI-08 gaps failed under load and passed alone;
+  `check.ps1` passed on the third try.
 - T-084..T-086 batch (LOW, documented): QDV-20 cannot prove DTR-true is needed (com0com: Qt's open already asserts
   DTR) and the HardwareControl RTS guard is invisible (mutant survives) — proof needs the real adapter + C24; RTS false is
   left untouched (a driver opening with RTS asserted keeps it); a refused control line is not logged (no transport log
@@ -1117,6 +1125,15 @@ lines", QDV-20) and `SPEC-gui-tool.md` (HIL runner row, GUI-06, GUI-07).
 **Scope:** owner-operated, spread over bench sessions
 
 ### P9-2: Findings triage
+
+**Opened 2026-10-14 (owner).** Tasks in `tasks/active/T-087.md`, `T-088.md`, `T-089.md`:
+
+- [x] T-087 1E ASCII odd bit write: one dummy '0' (F-001; spec Q3 reversed)
+- [x] T-088 `FrameConfig` caps `maxReadWords` / `maxWriteWords` / `maxReadBits` / `maxWriteBits` (F-002, F-003)
+- [x] T-089 Import 11 captures, `FINDINGS.md`, `divergences.txt`; replay green
+- [x] Batch tester and reviewer; one commit (owner confirms the capture file list); `CHANGELOG.md` `Unreleased`
+- [ ] Owner: decide the open FINDINGS entries; capture FX3 serial 1C ×3, FX5U RS-485 ×2; re-capture `fx3-eth-1e-ascii`
+
 
 **Description:** Walk through every FINDINGS entry with the owner; each decided change (codec, `FrameConfig` default, documentation) becomes its own follow-up task.
 

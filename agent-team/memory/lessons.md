@@ -4,6 +4,12 @@ Curated by the team leader after task close: things that cost time once and
 should not cost time twice. Newest first.
 Format: `- [T-xxx] What happened → what to do instead.`
 
+- [T-089] A tester's PowerShell mutation used relative paths from the wrong folder and changed `command_a1e.cpp` in the
+  main tree instead of the `.wt/wt1` slot (reverted at once, hash-checked). Mutations go only into a slot, with absolute
+  paths, and the main tree's `git diff` is saved before and compared after.
+- [T-089] The same tester force-killed "leftover" test processes without checking their path, while the reviewer was
+  running tests in `.wt/wt4`. Before stopping a process, check its PID was recorded at launch (or its executable path is
+  inside your own slot); never stop by image name or by guess.
 - [T-086] Three subagents (developer, tester, rework developer) handed back while their own background work still ran; the harness then re-woke them and one resent its report three times. When a hand-back notification says "background work still running", stop that agent with TaskStop once its report is in (resume later with SendMessage if rework needs it), and ask every agent to leave no background process when it reports.
 - [T-083] A developer's mis-launched qmake x86 run left stray `jom`/`cl` processes and they were killed **by name** — the owner's Qt Creator builds run the same programs, so an IDE build could have been killed too. Stop only processes you started, by the PID you recorded at launch (`Start-Process -PassThru`), never by image name.
 - [T-078] Widening the BLD-02 trace pattern for Qt 5 added a `[\s)]` suffix that silently stopped catching `find_package(Qt6Core …)`; build, ctest and every check script stayed green and the reviewer missed it — only the tester's mutation of the guarded build found it. When a guard's pattern is rewritten, re-run the guard against every input the old pattern caught (old catches first, then the new ones).

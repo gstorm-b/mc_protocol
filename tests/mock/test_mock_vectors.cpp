@@ -67,7 +67,11 @@ const Vector& byId(const std::vector<Vector>& vectors, const std::string& id) {
     return vectors.front();
 }
 
-bool isTaggedLater(const Vector& v) { return v.hasTag("v1.1") || v.hasTag("v2"); }
+// A row tagged `superseded` (1E-11a, replaced by 1E-15a; finding F-001) is skipped; MCK-14 checks
+// the mock against the same frame with and without the dummy.
+bool isTaggedLater(const Vector& v) {
+    return v.hasTag("v1.1") || v.hasTag("v2") || v.hasTag("superseded");
+}
 
 uint32_t parseHexOr(const std::string& s, uint32_t fallback) {
     return s.empty() ? fallback : static_cast<uint32_t>(std::stoul(s, nullptr, 16));
@@ -1083,6 +1087,63 @@ TEST_CASE("MCK-10 1E odd bit read: binary pads the low nibble with zero, ASCII e
     }
 }
 
+TEST_CASE("MCK-14 1E ASCII odd bit write: the dummy '0' completes the frame, without it the mock "
+          "waits and does not answer; N = 8 is unchanged (F-001)") {
+    const char* const m100 = "4D2000000064"; // M100: code 4D20, number 00000064
+
+    SUBCASE("N = 1: data \"1\" + dummy \"0\" decodes and sets M100; the next point is untouched") {
+        MockPlc plc(FrameConfig::frame1E(DataCode::Ascii));
+        plc.setBits(Device{DeviceType::M, 101}, {true});
+        feed(plc, asc1e(0x02, m100, 1, "10"));
+        REQUIRE(plc.requests().size() == 1);
+        CHECK(plc.requests().back().count == 1);
+        CHECK(plc.requests().back().answeredWith.ok());
+        CHECK(asText(drain(plc)) == "8200");
+        CHECK(plc.bit(Device{DeviceType::M, 100}));
+        CHECK(plc.bit(Device{DeviceType::M, 101}));
+    }
+    SUBCASE("N = 5: data \"10101\" + dummy \"0\" decodes and sets M100..M104; M105 is untouched") {
+        MockPlc plc(FrameConfig::frame1E(DataCode::Ascii));
+        plc.setBits(Device{DeviceType::M, 105}, {true});
+        feed(plc, asc1e(0x02, m100, 5, "101010"));
+        REQUIRE(plc.requests().size() == 1);
+        CHECK(plc.requests().back().count == 5);
+        CHECK(asText(drain(plc)) == "8200");
+        const bool expected[] = {true, false, true, false, true, true};
+        for (uint32_t i = 0; i < 6; ++i) {
+            CHECK_MESSAGE(plc.bit(Device{DeviceType::M, 100 + i}) == expected[i], "point ", i);
+        }
+    }
+    SUBCASE(
+        "the same frames without the dummy are incomplete: no request, no response, no change") {
+        for (const auto& c :
+             {std::make_pair(uint8_t{1}, "1"), std::make_pair(uint8_t{5}, "10101")}) {
+            INFO("N = ", int{c.first});
+            MockPlc plc(FrameConfig::frame1E(DataCode::Ascii));
+            feed(plc, asc1e(0x02, m100, c.first, c.second));
+            CHECK(plc.requests().empty());
+            CHECK(drain(plc).empty());
+            CHECK_FALSE(plc.bit(Device{DeviceType::M, 100}));
+
+            // The dummy arriving later completes the frame.
+            feed(plc, Bytes{'0'});
+            REQUIRE(plc.requests().size() == 1);
+            CHECK(asText(drain(plc)) == "8200");
+            CHECK(plc.bit(Device{DeviceType::M, 100}));
+        }
+    }
+    SUBCASE("N = 8: exactly 8 characters, no dummy, completes the frame") {
+        MockPlc plc(FrameConfig::frame1E(DataCode::Ascii));
+        feed(plc, asc1e(0x02, m100, 8, "11001100"));
+        REQUIRE(plc.requests().size() == 1);
+        CHECK(asText(drain(plc)) == "8200");
+        CHECK(plc.bit(Device{DeviceType::M, 100}));
+        CHECK(plc.bit(Device{DeviceType::M, 101}));
+        CHECK_FALSE(plc.bit(Device{DeviceType::M, 102}));
+        CHECK(plc.bit(Device{DeviceType::M, 104}));
+    }
+}
+
 TEST_CASE("MCK-01 1E: devices are decoded from the 1E codes and 8-digit hex numbers of spec 3.3") {
     struct Case {
         const char* name;
@@ -1172,7 +1233,7 @@ TEST_CASE("MCK-01 1E: request data the mock cannot execute is answered with unsu
         {"bit read of a word device", 0x00, bin1e(0x00, kD100Bin1e, 1),
          asc1e(0x00, "442000000064", 1)},
         {"bit write to a word device", 0x02, bin1e(0x02, kD100Bin1e, 1, {0x10}),
-         asc1e(0x02, "442000000064", 1, "1")},
+         asc1e(0x02, "442000000064", 1, "10")}, // "1" + the dummy '0' of an odd ASCII count
         {"unknown device code", 0x01, bin1e(0x01, {0x64, 0x00, 0x00, 0x00, 0x01, 0x00}, 1),
          asc1e(0x01, "000100000064", 1)},
         {"fixed field not 00", 0x01, fixedNotZeroBin, fixedNotZeroAscii},

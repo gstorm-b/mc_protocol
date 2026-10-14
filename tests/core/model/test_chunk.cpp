@@ -263,3 +263,147 @@ TEST_CASE("CHK-09 chunkCount(): the other validate() rules still apply to a requ
         CHECK(mc::validate(Request::readWords(Device{DeviceType::D, 0}, 256), frame).hasValue());
     }
 }
+
+TEST_CASE("CHK-10 chunkCount()/chunk(): a per-target cap sets the split size (LIM-03)") {
+    SUBCASE("FX5 3E ASCII: 960 words read -> 2 x 480") {
+        FrameConfig cfg = FrameConfig::frame3E(mc::DataCode::Ascii);
+        cfg.maxReadWords = 480;
+        Request r = Request::readWords(Device{DeviceType::D, 0}, 960);
+        auto count = mc::chunkCount(r, cfg);
+        REQUIRE(count.hasValue());
+        CHECK(count.value() == 2);
+        Chunk chunks[2];
+        REQUIRE(mc::chunk(r, cfg, chunks, 2).hasValue());
+        CHECK(chunks[0].headNumber == 0);
+        CHECK(chunks[0].count == 480);
+        CHECK(chunks[1].headNumber == 480);
+        CHECK(chunks[1].count == 480);
+    }
+
+    SUBCASE("FX3 1E: 256 words of D with cap 64 -> 4 x 64") {
+        FrameConfig cfg = FrameConfig::frame1E();
+        cfg.maxReadWords = 64;
+        Request r = Request::readWords(Device{DeviceType::D, 0}, 256);
+        auto count = mc::chunkCount(r, cfg);
+        REQUIRE(count.hasValue());
+        CHECK(count.value() == 4);
+        Chunk chunks[4];
+        REQUIRE(mc::chunk(r, cfg, chunks, 4).hasValue());
+        for (size_t i = 0; i < 4; ++i) {
+            CHECK(chunks[i].headNumber == i * 64);
+            CHECK(chunks[i].count == 64);
+        }
+    }
+
+    SUBCASE("a bit device read in words steps 16 per word at the cap") {
+        FrameConfig cfg = FrameConfig::frame1E();
+        cfg.maxReadWords = 32;
+        Request r = Request::readWords(Device{DeviceType::M, 0}, 100); // 32 + 32 + 32 + 4.
+        auto count = mc::chunkCount(r, cfg);
+        REQUIRE(count.hasValue());
+        CHECK(count.value() == 4);
+        Chunk chunks[4];
+        REQUIRE(mc::chunk(r, cfg, chunks, 4).hasValue());
+        CHECK(chunks[1].headNumber == 32 * 16);
+        CHECK(chunks[3].headNumber == 96 * 16);
+        CHECK(chunks[3].count == 4);
+    }
+
+    SUBCASE("a bit read splits at maxReadBits") {
+        FrameConfig cfg = FrameConfig::frame3E(mc::DataCode::Ascii);
+        cfg.maxReadBits = 1792;
+        Request r = Request::readBits(Device{DeviceType::M, 0}, 3584);
+        auto count = mc::chunkCount(r, cfg);
+        REQUIRE(count.hasValue());
+        CHECK(count.value() == 2);
+    }
+
+    SUBCASE("a write at the cap is one command; above it needs splitWrites") {
+        FrameConfig cfg = FrameConfig::frame3E(mc::DataCode::Ascii);
+        cfg.maxWriteWords = 480;
+        std::vector<uint8_t> payload(481 * 2, 0);
+        Request atCap =
+            Request::writeWords(Device{DeviceType::D, 0}, ByteView{payload.data(), 480 * 2});
+        auto one = mc::chunkCount(atCap, cfg);
+        REQUIRE(one.hasValue());
+        CHECK(one.value() == 1);
+
+        Request above =
+            Request::writeWords(Device{DeviceType::D, 0}, ByteView{payload.data(), 481 * 2});
+        auto refused = mc::chunkCount(above, cfg);
+        CHECK_FALSE(refused.hasValue());
+        CHECK(refused.error().code == ErrorCode::PointCount);
+
+        cfg.splitWrites = true;
+        auto two = mc::chunkCount(above, cfg);
+        REQUIRE(two.hasValue());
+        CHECK(two.value() == 2);
+        Chunk chunks[2];
+        REQUIRE(mc::chunk(above, cfg, chunks, 2).hasValue());
+        CHECK(chunks[0].count == 480);
+        CHECK(chunks[1].count == 1);
+        CHECK(chunks[1].dataOffset == 480 * 2);
+    }
+
+    SUBCASE("a packed bit write cannot split at a cap that is not a multiple of 8") {
+        FrameConfig cfg = FrameConfig::frame3E(mc::DataCode::Ascii);
+        cfg.splitWrites = true;
+        cfg.maxWriteBits = 100;
+        std::vector<uint8_t> packed((200 + 7) / 8, 0);
+        Request r{};
+        r.op = mc::Op::WriteBits;
+        r.head = Device{DeviceType::M, 0};
+        r.count = 200;
+        r.bitLayout = BitLayout::PackedLsbFirst;
+        r.data = ByteView{packed.data(), packed.size()};
+        auto refused = mc::chunkCount(r, cfg);
+        CHECK_FALSE(refused.hasValue());
+        CHECK(refused.error().code == ErrorCode::PointCount);
+
+        cfg.maxWriteBits = 96; // a multiple of 8 splits.
+        auto count = mc::chunkCount(r, cfg);
+        REQUIRE(count.hasValue());
+        CHECK(count.value() == 3);
+        Chunk chunks[3];
+        REQUIRE(mc::chunk(r, cfg, chunks, 3).hasValue());
+        CHECK(chunks[1].dataOffset == 12);
+    }
+
+    SUBCASE("a packed bit read cannot split at a cap that is not a multiple of 8") {
+        FrameConfig cfg = FrameConfig::frame3E(mc::DataCode::Ascii);
+        cfg.maxReadBits = 100;
+        Request r = Request::readBits(Device{DeviceType::M, 0}, 250);
+        r.bitLayout = BitLayout::PackedLsbFirst;
+        auto refused = mc::chunkCount(r, cfg);
+        CHECK_FALSE(refused.hasValue());
+        CHECK(refused.error().code == ErrorCode::PointCount);
+        Chunk chunks[3];
+        CHECK_FALSE(mc::chunk(r, cfg, chunks, 3).hasValue());
+
+        // One chunk needs no split, and a byte-per-point read splits at any cap.
+        r.count = 100;
+        CHECK(mc::chunkCount(r, cfg).hasValue());
+        r.count = 250;
+        r.bitLayout = BitLayout::BytePerPoint;
+        auto bytePerPoint = mc::chunkCount(r, cfg);
+        REQUIRE(bytePerPoint.hasValue());
+        CHECK(bytePerPoint.value() == 3);
+
+        cfg.maxReadBits = 96; // a multiple of 8 splits.
+        r.bitLayout = BitLayout::PackedLsbFirst;
+        auto count = mc::chunkCount(r, cfg);
+        REQUIRE(count.hasValue());
+        CHECK(count.value() == 3);
+    }
+}
+
+TEST_CASE("CHK-11 validate(): the field maximum is independent of the per-target caps") {
+    FrameConfig cfg = FrameConfig::frame1E();
+    cfg.maxReadWords = 32;
+    // Above the cap but within the 1E field maximum: validate() does not refuse it.
+    CHECK(mc::validate(Request::readWords(Device{DeviceType::D, 0}, 100), cfg).hasValue());
+    // Above the field maximum: still PointCount, as 1E-14.
+    auto over = mc::validate(Request::readWords(Device{DeviceType::D, 0}, 257), cfg);
+    CHECK_FALSE(over.hasValue());
+    CHECK(over.error().code == ErrorCode::PointCount);
+}

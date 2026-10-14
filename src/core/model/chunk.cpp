@@ -48,6 +48,13 @@ Expected<size_t> chunkCount(const Request& r, const FrameConfig& cfg) noexcept {
             "write exceeds the single-command point limit and splitWrites is disabled"));
     }
 
+    // Packed bit data (read or write) splits on byte boundaries only; a per-target cap that is
+    // not a multiple of 8 would put the second chunk's data mid-byte.
+    if (r.isBitOp() && r.bitLayout == BitLayout::PackedLsbFirst && r.count > max && max % 8 != 0) {
+        return Expected<size_t>(pointCountError(
+            "packed bit data cannot split at a point limit that is not a multiple of 8"));
+    }
+
     size_t n = (static_cast<size_t>(r.count) + max - 1) / max; // ceiling division.
     return Expected<size_t>(n);
 }
@@ -85,8 +92,9 @@ Expected<size_t> chunk(const Request& r, const FrameConfig& cfg, Chunk* out,
                 c.dataOffset = static_cast<uint32_t>(off * 2); // two bytes per word.
             } else {
                 // WriteBits: BytePerPoint is one byte per point; PackedLsbFirst is eight points
-                // per byte. Every v1 WriteBits limit (7904, 3584, 7168, 256, 160) is a multiple
-                // of 8, so `off` (always 0 or a multiple of `max`) is always byte-aligned here.
+                // per byte. A packed write that splits has a limit that is a multiple of 8 (the
+                // guard in chunkCount() refuses the rest), so `off` (always 0 or a multiple of
+                // `max`) is byte-aligned here.
                 c.dataOffset =
                     static_cast<uint32_t>(r.bitLayout == BitLayout::PackedLsbFirst ? off / 8 : off);
             }

@@ -1,0 +1,280 @@
+# id: CAP-fx3-eth-1e-ascii-G6-T0001
+# source: plc  profile: fx3-eth-1e-ascii  step: G6
+# kind: tx  t_ns: 18622299800  seq: 7
+30 32 46 46 30 30 30 41 34 44 32 30 30 30 30 30 30 31 32 43 30 31 30 30 31
+
+# id: CAP-fx3-eth-1e-ascii-G6-T0002
+# source: plc  profile: fx3-eth-1e-ascii  step: G6
+# kind: tx  t_ns: 18630510700  seq: 11
+30 32 46 46 30 30 30 41 34 44 32 30 30 30 30 30 30 31 32 43 30 31 30 30 31
+
+# id: CAP-fx3-eth-1e-ascii-G6-T0003
+# source: plc  profile: fx3-eth-1e-ascii  step: G6
+# kind: tx  t_ns: 22132702600  seq: 17
+30 32 46 46 30 30 30 41 34 44 32 30 30 30 30 30 30 31 32 43 30 31 30 30 31
+
+# id: CAP-fx3-eth-1e-ascii-G6-T0004
+# source: plc  profile: fx3-eth-1e-ascii  step: G6
+# kind: tx  t_ns: 22143025100  seq: 21
+30 32 46 46 30 30 30 41 34 44 32 30 30 30 30 30 30 31 32 43 30 31 30 30 31
+
+# id: CAP-fx3-eth-1e-ascii-G6-I0001
+# source: plc  profile: fx3-eth-1e-ascii  step: G6
+# kind: input  input: heartbeat  t_ns: 18620076500  seq: 1
+# enabled: true  device: M300
+07 01 04 2C 01 00 00
+
+# id: CAP-fx3-eth-1e-ascii-G6-I0002
+# source: plc  profile: fx3-eth-1e-ascii  step: G6
+# kind: input  input: subscribe  t_ns: 18620081400  seq: 2
+# name: d1  device: D100  count: 64
+08 09 64 00 00 00 40 00 00 00
+
+# id: CAP-fx3-eth-1e-ascii-G6-I0003
+# source: plc  profile: fx3-eth-1e-ascii  step: G6
+# kind: input  input: subscribe  t_ns: 18620120600  seq: 3
+# name: d2  device: D200  count: 10
+08 09 C8 00 00 00 0A 00 00 00
+
+# id: CAP-fx3-eth-1e-ascii-G6-I0004
+# source: plc  profile: fx3-eth-1e-ascii  step: G6
+# kind: input  input: subscribe  t_ns: 18620123700  seq: 4
+# name: m  device: M100  count: 64
+08 04 64 00 00 00 40 00 00 00
+
+# id: CAP-fx3-eth-1e-ascii-G6-I0005
+# source: plc  profile: fx3-eth-1e-ascii  step: G6
+# kind: input  input: subscribe  t_ns: 18620124700  seq: 5
+# name: x  device: X0  count: 32
+08 02 00 00 00 00 20 00 00 00
+
+# id: CAP-fx3-eth-1e-ascii-G6-E0001
+# source: plc  profile: fx3-eth-1e-ascii  step: G6
+# kind: event  event: linkState  t_ns: 18620925200  seq: 6
+# state: Connecting  reason: Requested
+05 01 00
+
+# id: CAP-fx3-eth-1e-ascii-G6-E0002
+# source: plc  profile: fx3-eth-1e-ascii  step: G6
+# kind: event  event: linkState  t_ns: 18622316100  seq: 8
+# state: Connected  reason: Requested
+05 02 00
+
+# id: CAP-fx3-eth-1e-ascii-G6-E0003
+# source: plc  profile: fx3-eth-1e-ascii  step: G6
+# kind: event  event: linkState  t_ns: 18627867600  seq: 9
+# state: Disconnected  reason: PeerClosed
+05 00 02
+
+# id: CAP-fx3-eth-1e-ascii-G6-E0004
+# source: plc  profile: fx3-eth-1e-ascii  step: G6
+# kind: event  event: linkState  t_ns: 18629105500  seq: 10
+# state: Connecting  reason: Requested
+05 01 00
+
+# id: CAP-fx3-eth-1e-ascii-G6-E0005
+# source: plc  profile: fx3-eth-1e-ascii  step: G6
+# kind: event  event: linkState  t_ns: 18630521300  seq: 12
+# state: Connected  reason: Requested
+05 02 00
+
+# id: CAP-fx3-eth-1e-ascii-G6-E0006
+# source: plc  profile: fx3-eth-1e-ascii  step: G6
+# kind: event  event: linkFault  t_ns: 22130398900  seq: 13
+# fault: Timeout  error: Timeout  reopen: true
+06 00 08 00 00 00 01
+
+# id: CAP-fx3-eth-1e-ascii-G6-E0007
+# source: plc  profile: fx3-eth-1e-ascii  step: G6
+# kind: event  event: linkState  t_ns: 22130404400  seq: 14
+# state: Faulted  reason: Fault
+05 03 04
+
+# id: CAP-fx3-eth-1e-ascii-G6-E0008
+# source: plc  profile: fx3-eth-1e-ascii  step: G6
+# kind: event  event: linkState  t_ns: 22130521400  seq: 15
+# state: Disconnected  reason: Requested
+05 00 00
+
+# id: CAP-fx3-eth-1e-ascii-G6-E0009
+# source: plc  profile: fx3-eth-1e-ascii  step: G6
+# kind: event  event: linkState  t_ns: 22131578600  seq: 16
+# state: Connecting  reason: Requested
+05 01 00
+
+# id: CAP-fx3-eth-1e-ascii-G6-E0010
+# source: plc  profile: fx3-eth-1e-ascii  step: G6
+# kind: event  event: linkState  t_ns: 22132880400  seq: 18
+# state: Connected  reason: Requested
+05 02 00
+
+# id: CAP-fx3-eth-1e-ascii-G6-E0011
+# source: plc  profile: fx3-eth-1e-ascii  step: G6
+# kind: event  event: linkState  t_ns: 22140989600  seq: 19
+# state: Disconnected  reason: PeerClosed
+05 00 02
+
+# id: CAP-fx3-eth-1e-ascii-G6-E0012
+# source: plc  profile: fx3-eth-1e-ascii  step: G6
+# kind: event  event: linkState  t_ns: 22142281400  seq: 20
+# state: Connecting  reason: Requested
+05 01 00
+
+# id: CAP-fx3-eth-1e-ascii-G6-E0013
+# source: plc  profile: fx3-eth-1e-ascii  step: G6
+# kind: event  event: linkState  t_ns: 22143031200  seq: 22
+# state: Connected  reason: Requested
+05 02 00
+
+# id: CAP-fx3-eth-1e-ascii-G6-E0014
+# source: plc  profile: fx3-eth-1e-ascii  step: G6
+# kind: event  event: linkFault  t_ns: 25643752000  seq: 23
+# fault: Timeout  error: Timeout  reopen: true
+06 00 08 00 00 00 01
+
+# id: CAP-fx3-eth-1e-ascii-G6-E0015
+# source: plc  profile: fx3-eth-1e-ascii  step: G6
+# kind: event  event: linkState  t_ns: 25643759400  seq: 24
+# state: Faulted  reason: Fault
+05 03 04
+
+# id: CAP-fx3-eth-1e-ascii-G6-E0016
+# source: plc  profile: fx3-eth-1e-ascii  step: G6
+# kind: event  event: linkState  t_ns: 25643907100  seq: 25
+# state: Disconnected  reason: Requested
+05 00 00
+
+# id: CAP-fx3-eth-1e-ascii-G7-06-T0001
+# source: plc  profile: fx3-eth-1e-ascii  step: G7-06
+# kind: tx  t_ns: 26189008600  seq: 5
+30 32 46 46 30 30 30 41 34 44 32 30 30 30 30 30 30 31 32 43 30 31 30 30 31
+
+# id: CAP-fx3-eth-1e-ascii-G7-06-T0002
+# source: plc  profile: fx3-eth-1e-ascii  step: G7-06
+# kind: tx  t_ns: 29692784200  seq: 11
+30 32 46 46 30 30 30 41 34 44 32 30 30 30 30 30 30 31 32 43 30 31 30 30 31
+
+# id: CAP-fx3-eth-1e-ascii-G7-06-T0003
+# source: plc  profile: fx3-eth-1e-ascii  step: G7-06
+# kind: tx  t_ns: 29703096200  seq: 15
+30 32 46 46 30 30 30 41 34 44 32 30 30 30 30 30 30 31 32 43 30 31 30 30 31
+
+# id: CAP-fx3-eth-1e-ascii-G7-06-T0004
+# source: plc  profile: fx3-eth-1e-ascii  step: G7-06
+# kind: tx  t_ns: 33206472000  seq: 21
+30 32 46 46 30 30 30 41 34 44 32 30 30 30 30 30 30 31 32 43 30 31 30 30 31
+
+# id: CAP-fx3-eth-1e-ascii-G7-06-I0001
+# source: plc  profile: fx3-eth-1e-ascii  step: G7-06
+# kind: input  input: heartbeat  t_ns: 25685524400  seq: 1
+# enabled: true  device: M300
+07 01 04 2C 01 00 00
+
+# id: CAP-fx3-eth-1e-ascii-G7-06-I0002
+# source: plc  profile: fx3-eth-1e-ascii  step: G7-06
+# kind: input  input: subscribe  t_ns: 25685528900  seq: 2
+# name: d  device: D100  count: 4
+08 09 64 00 00 00 04 00 00 00
+
+# id: CAP-fx3-eth-1e-ascii-G7-06-I0003
+# source: plc  profile: fx3-eth-1e-ascii  step: G7-06
+# kind: input  input: subscribe  t_ns: 25685531700  seq: 3
+# name: m  device: M100  count: 16
+08 04 64 00 00 00 10 00 00 00
+
+# id: CAP-fx3-eth-1e-ascii-G7-06-E0001
+# source: plc  profile: fx3-eth-1e-ascii  step: G7-06
+# kind: event  event: linkState  t_ns: 25685973700  seq: 4
+# state: Connecting  reason: Requested
+05 01 00
+
+# id: CAP-fx3-eth-1e-ascii-G7-06-E0002
+# source: plc  profile: fx3-eth-1e-ascii  step: G7-06
+# kind: event  event: linkState  t_ns: 26189021600  seq: 6
+# state: Connected  reason: Requested
+05 02 00
+
+# id: CAP-fx3-eth-1e-ascii-G7-06-E0003
+# source: plc  profile: fx3-eth-1e-ascii  step: G7-06
+# kind: event  event: linkFault  t_ns: 29690230500  seq: 7
+# fault: Timeout  error: Timeout  reopen: true
+06 00 08 00 00 00 01
+
+# id: CAP-fx3-eth-1e-ascii-G7-06-E0004
+# source: plc  profile: fx3-eth-1e-ascii  step: G7-06
+# kind: event  event: linkState  t_ns: 29690238200  seq: 8
+# state: Faulted  reason: Fault
+05 03 04
+
+# id: CAP-fx3-eth-1e-ascii-G7-06-E0005
+# source: plc  profile: fx3-eth-1e-ascii  step: G7-06
+# kind: event  event: linkState  t_ns: 29691238000  seq: 9
+# state: Disconnected  reason: Requested
+05 00 00
+
+# id: CAP-fx3-eth-1e-ascii-G7-06-E0006
+# source: plc  profile: fx3-eth-1e-ascii  step: G7-06
+# kind: event  event: linkState  t_ns: 29692003300  seq: 10
+# state: Connecting  reason: Requested
+05 01 00
+
+# id: CAP-fx3-eth-1e-ascii-G7-06-E0007
+# source: plc  profile: fx3-eth-1e-ascii  step: G7-06
+# kind: event  event: linkState  t_ns: 29692794200  seq: 12
+# state: Connected  reason: Requested
+05 02 00
+
+# id: CAP-fx3-eth-1e-ascii-G7-06-E0008
+# source: plc  profile: fx3-eth-1e-ascii  step: G7-06
+# kind: event  event: linkState  t_ns: 29699165100  seq: 13
+# state: Disconnected  reason: PeerClosed
+05 00 02
+
+# id: CAP-fx3-eth-1e-ascii-G7-06-E0009
+# source: plc  profile: fx3-eth-1e-ascii  step: G7-06
+# kind: event  event: linkState  t_ns: 29701753100  seq: 14
+# state: Connecting  reason: Requested
+05 01 00
+
+# id: CAP-fx3-eth-1e-ascii-G7-06-E0010
+# source: plc  profile: fx3-eth-1e-ascii  step: G7-06
+# kind: event  event: linkState  t_ns: 29703107100  seq: 16
+# state: Connected  reason: Requested
+05 02 00
+
+# id: CAP-fx3-eth-1e-ascii-G7-06-E0011
+# source: plc  profile: fx3-eth-1e-ascii  step: G7-06
+# kind: event  event: linkFault  t_ns: 33203362500  seq: 17
+# fault: Timeout  error: Timeout  reopen: true
+06 00 08 00 00 00 01
+
+# id: CAP-fx3-eth-1e-ascii-G7-06-E0012
+# source: plc  profile: fx3-eth-1e-ascii  step: G7-06
+# kind: event  event: linkState  t_ns: 33203368900  seq: 18
+# state: Faulted  reason: Fault
+05 03 04
+
+# id: CAP-fx3-eth-1e-ascii-G7-06-E0013
+# source: plc  profile: fx3-eth-1e-ascii  step: G7-06
+# kind: event  event: linkState  t_ns: 33204467300  seq: 19
+# state: Disconnected  reason: Requested
+05 00 00
+
+# id: CAP-fx3-eth-1e-ascii-G7-06-E0014
+# source: plc  profile: fx3-eth-1e-ascii  step: G7-06
+# kind: event  event: linkState  t_ns: 33205459800  seq: 20
+# state: Connecting  reason: Requested
+05 01 00
+
+# id: CAP-fx3-eth-1e-ascii-G7-06-E0015
+# source: plc  profile: fx3-eth-1e-ascii  step: G7-06
+# kind: event  event: linkState  t_ns: 33206486700  seq: 22
+# state: Connected  reason: Requested
+05 02 00
+
+# id: CAP-fx3-eth-1e-ascii-G7-06-E0016
+# source: plc  profile: fx3-eth-1e-ascii  step: G7-06
+# kind: event  event: linkState  t_ns: 33212250500  seq: 23
+# state: Disconnected  reason: PeerClosed
+05 00 02
+

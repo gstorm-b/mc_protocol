@@ -51,6 +51,10 @@ const QStringList kFrameKeys = {"frame",
                                 "highPerformanceQcpu",
                                 "aSeriesTarget",
                                 "splitWrites",
+                                "maxReadWords",
+                                "maxWriteWords",
+                                "maxReadBits",
+                                "maxWriteBits",
                                 "timeoutMs",
                                 "readRetries",
                                 "xyNotation",
@@ -119,6 +123,10 @@ mc::McDeviceConfig nonDefaultConfig() {
     c.frame.highPerformanceQcpu = true;
     c.frame.aSeriesTarget = true;
     c.frame.splitWrites = true;
+    c.frame.maxReadWords = 480;
+    c.frame.maxWriteWords = 481;
+    c.frame.maxReadBits = 1792;
+    c.frame.maxWriteBits = 65535;
     c.frame.timeoutMs = 4321;
     c.frame.readRetries = 2;
     c.frame.xyNotation = mc::XyNumbering::Octal;
@@ -186,6 +194,10 @@ void expectSameFrame(const mc::FrameConfig& a, const mc::FrameConfig& b) {
     QCOMPARE(a.highPerformanceQcpu, b.highPerformanceQcpu);
     QCOMPARE(a.aSeriesTarget, b.aSeriesTarget);
     QCOMPARE(a.splitWrites, b.splitWrites);
+    QCOMPARE(a.maxReadWords, b.maxReadWords);
+    QCOMPARE(a.maxWriteWords, b.maxWriteWords);
+    QCOMPARE(a.maxReadBits, b.maxReadBits);
+    QCOMPARE(a.maxWriteBits, b.maxWriteBits);
     QCOMPARE(a.timeoutMs, b.timeoutMs);
     QCOMPARE(a.readRetries, b.readRetries);
     QCOMPARE(a.xyNotation, b.xyNotation);
@@ -389,6 +401,51 @@ class TstConfigJson : public QObject {
                      .value("firstResponseTimeoutMs")
                      .toInt(),
                  40000);
+    }
+
+    void QDV_10_frameCapsDefaultToZeroRoundTripAndAreRangeChecked() {
+        const char* const keys[] = {"maxReadWords", "maxWriteWords", "maxReadBits", "maxWriteBits"};
+
+        // Missing keys are 0, and the defaults write them as 0.
+        const auto missing = mc::McDeviceConfig::fromJson(parseJson(R"({"frame": {}})"));
+        QVERIFY(missing.hasValue());
+        QCOMPARE(missing.value().frame.maxReadWords, uint16_t{0});
+        QCOMPARE(missing.value().frame.maxWriteWords, uint16_t{0});
+        QCOMPARE(missing.value().frame.maxReadBits, uint16_t{0});
+        QCOMPARE(missing.value().frame.maxWriteBits, uint16_t{0});
+        const QJsonObject defaultFrame = mc::McDeviceConfig{}.toJson().value("frame").toObject();
+        for (const char* key : keys) {
+            QVERIFY(defaultFrame.contains(QLatin1String(key)));
+            QCOMPARE(defaultFrame.value(QLatin1String(key)).toInt(-1), 0);
+        }
+
+        // Each key lands in its own field and survives a write and read.
+        const auto set = mc::McDeviceConfig::fromJson(parseJson(
+            R"({"frame": {"maxReadWords": 480, "maxWriteWords": 481, "maxReadBits": 1792,
+                          "maxWriteBits": 65535}})"));
+        QVERIFY(set.hasValue());
+        QCOMPARE(set.value().frame.maxReadWords, uint16_t{480});
+        QCOMPARE(set.value().frame.maxWriteWords, uint16_t{481});
+        QCOMPARE(set.value().frame.maxReadBits, uint16_t{1792});
+        QCOMPARE(set.value().frame.maxWriteBits, uint16_t{65535});
+        const auto again = mc::McDeviceConfig::fromJson(set.value().toJson());
+        QVERIFY(again.hasValue());
+        expectSame(again.value(), set.value());
+
+        // Wrong type, a fraction, a negative number and 65536 name the key's path.
+        for (const char* key : keys) {
+            const QJsonValue bad[] = {QJsonValue(QStringLiteral("480")), QJsonValue(true),
+                                      QJsonValue(1.5), QJsonValue(-1), QJsonValue(65536)};
+            for (const QJsonValue& value : bad) {
+                QJsonObject patch;
+                patch.insert(QLatin1String(key), value);
+                QString where;
+                const auto r = mc::McDeviceConfig::fromJson(withPatch("frame", patch), &where);
+                QVERIFY2(!r.hasValue(), key);
+                QCOMPARE(r.error().code, mc::ErrorCode::InvalidConfig);
+                QCOMPARE(where, QStringLiteral("frame.") + QLatin1String(key));
+            }
+        }
     }
 
     void QDV_10_missingSubscriptionKeysTakeDefaults() {
@@ -597,10 +654,10 @@ class TstConfigJson : public QObject {
 
         // A struct that grew without this file being updated changes size (best effort; see the
         // comment above the lists).
-        QCOMPARE(kFrameKeys.size(), 29);
+        QCOMPARE(kFrameKeys.size(), 33);
 #if defined(_WIN64) || defined(__x86_64__)
         // 64-bit MSVC and MinGW GCC 13 agree on these sizes (checked on both).
-        QCOMPARE(sizeof(mc::FrameConfig), size_t{40});
+        QCOMPARE(sizeof(mc::FrameConfig), size_t{48});
         QCOMPARE(sizeof(mc::SessionConfig), size_t{56});
 #endif
     }

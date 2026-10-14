@@ -163,7 +163,7 @@ Sources: `part2:465-478`, `part2:588-593`.
 |---|---|---|
 | QnA ASCII (3E/4E ASCII, 4C/3C F1–F4), 1C | 1 character per point: `'1'` (31H) = ON, `'0'` (30H) = OFF | same as write |
 | QnA Binary (3E/4E binary, 4C F5), 1E Binary | 4 bits per point; the first point is in the **high nibble**; odd count → low nibble of the last byte = 0 | same as write |
-| 1E ASCII | 1 character per point | 1 character per point; **odd count → the PLC appends one dummy `'0'`** |
+| 1E ASCII | 1 character per point; **odd count → append one dummy `'0'`** (amended 2026-10-14: FX3 ENET-ADP manual §7.5.3, bench finding F-001; was Q3 "exactly N") | 1 character per point; **odd count → the PLC appends one dummy `'0'`** |
 
 Example M10..M14 = ON, OFF, ON, OFF, ON: ASCII `"10101"` = `31 30 31 30 31`; Binary (E71) `10 10 10` (`part3:506-510`).
 Example M100..M107 = 0,0,0,1,0,0,1,1: Binary `00 01 00 11` (`part3:1089`).
@@ -1347,7 +1347,7 @@ For each combination run:
 |---|---|---|
 | Q1 | Format 3: the response without data (`STX P QACK ETX`) and the error response (`STX P QNAK err ETX`) are printed **without** a sum check in the PDF (checked against the image of PDF page 33, printed page 31), while the response with data has one. | Implement as printed. Add the setting `f3_short_response_has_sum` (default `false`) so it can be changed quickly if the hardware behaves differently. |
 | Q2 | Format 2: the manual does not state that the Block No. in the response always equals the request's Block No. | Check that they match (SHOULD), with an option to disable. |
-| Q3 | 1E ASCII bit write (02H) with an odd count: the manual mentions the dummy only for **reads** (`part5:2565`), not for writes. | Send exactly N characters, no padding. |
+| Q3 | 1E ASCII bit write (02H) with an odd count: the manual mentions the dummy only for **reads** (`part5:2565`), not for writes. | ~~Send exactly N characters, no padding.~~ **Answered on hardware (2026-10-14, owner):** append one dummy `'0'` (30H); an FX3U-ENET-ADP waits for it and times out otherwise (FX3 ENET-ADP manual §7.5.3; finding F-001). |
 | Q4 | Binary bit write with an odd count (QnA, 1E): low nibble of the last byte. | Set to 0 per `part3:504`. |
 | Q5 | 3E/4E: the manual does not promise that the access route in a normal response always equals the request's. | `check_route = false` by default. |
 | Q6 | Error code meanings are not in the three md files. | Return the raw code; add a lookup table later. |

@@ -447,8 +447,10 @@ template <class Codec> DecodeResult1e decodeFrame1e(XyNumbering xy, ByteView rx)
     const uint16_t count = points == 0 ? uint16_t{256} : uint16_t{points};
     const bool bitUnit = command == kE1BitRead || command == kE1BitWrite;
     const bool write = command == kE1BitWrite || command == kE1WordWrite;
+    // A bit write carries the count rounded up to even: one dummy '0' on an odd ASCII count
+    // (spec 1E-15, MCK-14), which Binary already holds in its last nibble. Not inspected.
     const size_t dataSize =
-        !write ? 0 : (bitUnit ? Codec::bitsSize(count) : Codec::wordsSize(count));
+        !write ? 0 : (bitUnit ? Codec::bitsSize(count + count % 2) : Codec::wordsSize(count));
     const size_t total = bodyHead + dataSize;
     if (rx.size < total) {
         return result;
