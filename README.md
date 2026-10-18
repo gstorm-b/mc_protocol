@@ -73,4 +73,4 @@ meets a newer `cl`.
 
 `scripts/check.ps1 -QtDir <kit>` (PowerShell) or `scripts/check.sh <kit>` (Git Bash, MinGW
 only) builds and tests everything: full CMake+Qt, CMake core-only (no Qt), qmake, and both
-consumer smoke projects. See `agent-team/project/build-env.md` for the individual commands.
+consumer smoke projects. The individual commands are in `scripts/check.ps1` and `scripts/check.sh`.

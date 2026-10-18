@@ -3,6 +3,19 @@
 Curated by the team leader. One entry, one decision, newest first.
 Format: `- [T-xxx or date] Decision — why. (supersedes: entry, if any)`
 
+- [2026-10-18] Owner, after the workflow-kit dry-run: "3, untrack và gỡ khỏi repo. 4, ... chuyển luôn tasks vào
+  [...] (untrack khỏi repo). 5, duyệt sửa. 6, có." — the task folder (plan, todo, task files), `agent-team/core/`
+  and the root agent file leave the repository and are kept locally outside it; `.gitignore` no longer lists the
+  local tool folder (ignored through the clone's own exclude file instead); the workflow kit's configuration is
+  updated to match; a follow-up removes the retired `COM50,COM51` example and the "no Python" notes (T-091).
+  Owner, review follow-up: "Untrack cả agent-team/project" — `agent-team/project/` leaves the repository too;
+  only `agent-team/memory/` stays tracked. Spec amendment approved: `SPEC-build-packaging.md` Open Questions 2
+  no longer lists the local tool folder in `.gitignore`. History is not rewritten.
+- [2026-10-18] Owner: hook "ask" decisions stay "ask" in auto mode ("Giữ ask"): the permission dialog was shown and
+  answered by the owner in the dry-run, so the dialog is the gate; the leader still asks in chat before a push, a
+  vector edit or a kit-config edit. Killing a build tool by image name is denied by a project hook ("(b) Wrapper
+  riêng project"). gh stays on gstorm-b for now ("Giữ gstorm-b"). (withdraws the same day's earlier answer "deny khi ở auto mode", not recorded
+  separately)
 - [2026-10-15] Owner: "hãy xuất một bundle và publish" — pre-release v0.1.3: `main`, tag `v0.1.3` pushed to
   gstorm-b/mc_protocol, GitHub pre-release with `mc_protocol-v0.1.3.bundle` (gh back to dev39-hash).
 - [2026-10-14] Owner, P9-2 Gate 2 answers: (1) the 11 capture folders (5 files each, incl. `divergences.txt`) and

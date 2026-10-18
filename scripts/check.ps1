@@ -35,7 +35,7 @@
 
 .PARAMETER MinGWDir
     MinGW bin directory, used only when -QtDir names a mingw kit. Defaults to this machine's
-    known MinGW GCC 13.1 install (agent-team/project/build-env.md).
+    known MinGW GCC 13.1 install.
 
 .PARAMETER Jobs
     Parallel job count for every build and test step. Defaults to the logical processor count

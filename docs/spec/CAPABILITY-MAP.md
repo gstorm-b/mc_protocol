@@ -74,7 +74,7 @@ Answer inline; a blank line means "as assumed".
    *Decision:* as assumed.
 8. **Host endianness.** Code is written byte-wise and endian-independent; no `reinterpret_cast` of multi-byte integers on the wire buffer.
    *Decision:* as assumed.
-9. **Spec file locations.** This map and every module spec live in `docs/spec/`. Plans and task lists live in `tasks/` per the `planning-and-task-breakdown` convention.
+9. **Spec file locations.** This map and every module spec live in `docs/spec/`.
    *Decision:* as assumed.
 10. **Golden vectors.** Taken from `docs/mc_reference/mc-protocol-frame-spec.md` Appendix A and the CMD-xx tables, stored as JSON under `tests/vectors/`, and treated as the source of truth for `core-protocol`. Where the reference implementation in `reference_source/` and the spec disagree, the spec wins and the disagreement is logged in the module spec.
     *Decision:* as assumed. **Amended 2026-09-26:** stored as plain-text `.vec` files (Appendix A notation with `# key: value` metadata), not JSON; see `SPEC-core-protocol.md` open question 1.

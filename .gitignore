@@ -2,8 +2,7 @@
 reference_source/
 temp-docs/
 
-# Claude Code: skills, commands, agents, memory copy and local settings (owner decision 2026-09-26)
-.claude/
+# Local tool configuration
 .mcp.json
 
 # Build output: build/ at the root only (SPEC-build-packaging)
