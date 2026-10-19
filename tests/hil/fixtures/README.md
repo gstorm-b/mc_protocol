@@ -12,7 +12,7 @@ their negative tests run on every build, with no PLC.
 | `vplc-3e-bin-fault/` | 3E Binary | loopback TCP through a proxy that drops the answers of the poll's connection (a timeout fault, then a reconnect and a restart) | `plans/fixture_3e_fault.json` | `profiles/vplc-3e-bin-fault.json` |
 | `vplc-3e-bin-drop/` | 3E Binary | loopback TCP through a proxy that closes the poll's connection while an ad-hoc write is outstanding (peer closed, then a reconnect and a restart) | `plans/fixture_3e_drop.json` | `profiles/vplc-3e-bin-drop.json` |
 | `e2e-3e-bin-20ms/` | 3E Binary | loopback TCP, cycle interval 20 ms, timeout 400 ms | `tests/hil/e2e/plan_3e.json` (with the E-10 reconnect) | the e2e test profile |
-| `vplc-3c-f4/` | 3C format 4 | virtual COM pair `COM54` / `COM55`, 9600 baud 7E1 | `plans/fixture_3c.json` | `profiles/vplc-3c-f4.json` |
+| `vplc-3c-f4/` | 3C format 4 | virtual COM pair `COM50` / `COM51`, 9600 baud 7E1 | `plans/fixture_3c.json` | `profiles/vplc-3c-f4.json` |
 | `vplc-fx-3e-ascii-oct/` | 3E ASCII, X/Y octal (`frame.xyNotation` and `frame.xyAsciiDigits` `Octal`) | loopback TCP | `plans/fixture_fx_3e_oct.json` | `profiles/vplc-fx-3e-ascii-oct.json` |
 
 The plans derive from the end-to-end plans of `tests/hil/e2e/`: `fixture_3e` adds the Appendix A
@@ -50,8 +50,8 @@ examples/virtual_plc --frame 3E --code ASCII --xy octal --xy-ascii octal --port 
     --plan tests/hil/fixtures/plans/fixture_fx_3e_oct.json --output-root build/_scratch-fixtures `
     --note "virtual_plc fixture, not hardware"
 
-# 3C format 4 over the virtual COM pair (virtual_plc answers on COM55, the tool opens COM54)
-examples/virtual_plc --frame 3C --format 4 --serial COM55 --set D100=1234
+# 3C format 4 over the virtual COM pair (virtual_plc answers on COM51, the tool opens COM50)
+examples/virtual_plc --frame 3C --format 4 --serial COM51 --set D100=1234
 "vplc-3c-f4" | tools/hil_capture --profile tests/hil/fixtures/profiles/vplc-3c-f4.json `
     --plan tests/hil/fixtures/plans/fixture_3c.json --output-root build/_scratch-fixtures `
     --note "virtual_plc fixture, not hardware (virtual COM pair)"

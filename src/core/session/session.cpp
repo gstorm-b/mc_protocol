@@ -6,7 +6,7 @@
 // S2) since it is scheduling bookkeeping as much as it is publishing.
 //
 // dispatch()'s re-plan-deferral guard (T-024, m_pendingPlanRefs) fixes a real dangling-pointer
-// bug T-023's own Dev notes flagged: a round ending with a re-plan pending, immediately followed
+// bug: a round ending with a re-plan pending, immediately followed
 // by the next round starting in the *same* input call (back-to-back scheduling), used to apply
 // the re-plan -- replacing m_plan/m_changeBuf -- after that same call had already queued a
 // Snapshot/ValuesChanged pointing into them. Regression test: test_session_poll.cpp, "T-024 2a

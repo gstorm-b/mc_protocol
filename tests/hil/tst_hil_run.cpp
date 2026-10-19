@@ -1513,7 +1513,7 @@ class HilSerialRunTests : public QObject {
         const QStringList pair =
             qEnvironmentVariable("MC_TEST_SERIAL_PAIR").split(QLatin1Char(','));
         if (pair.size() != 2) {
-            QSKIP("MC_TEST_SERIAL_PAIR is not set (e.g. COM54,COM55)");
+            QSKIP("MC_TEST_SERIAL_PAIR is not set (e.g. COM50,COM51)");
         }
         const Watchdog dog(90, "the 3C catalogue run");
         VirtualPlc plc;
@@ -1543,7 +1543,7 @@ class HilSerialRunTests : public QObject {
         const QStringList pair =
             qEnvironmentVariable("MC_TEST_SERIAL_PAIR").split(QLatin1Char(','));
         if (pair.size() != 2) {
-            QSKIP("MC_TEST_SERIAL_PAIR is not set (e.g. COM54,COM55)");
+            QSKIP("MC_TEST_SERIAL_PAIR is not set (e.g. COM50,COM51)");
         }
         const Watchdog dog(60, "the busy COM port run");
         // Somebody else holds the first port of the pair: the tool's open is refused ("Access is
@@ -1585,7 +1585,7 @@ class HilSerialRunTests : public QObject {
         const QStringList pair =
             qEnvironmentVariable("MC_TEST_SERIAL_PAIR").split(QLatin1Char(','));
         if (pair.size() != 2) {
-            QSKIP("MC_TEST_SERIAL_PAIR is not set (e.g. COM54,COM55)");
+            QSKIP("MC_TEST_SERIAL_PAIR is not set (e.g. COM50,COM51)");
         }
         const Watchdog dog(90, "the 3C end-to-end run");
         VirtualPlc plc;

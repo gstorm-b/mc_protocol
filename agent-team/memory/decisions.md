@@ -3,6 +3,11 @@
 Curated by the team leader. One entry, one decision, newest first.
 Format: `- [T-xxx or date] Decision — why. (supersedes: entry, if any)`
 
+- [2026-10-19] Owner: the virtual COM pairs COM50/COM51 and COM52/COM53 are enabled again; "hãy đổi mặc định sang
+  cặp 50-51, cặp com 52-53 là dự phòng" — the default `MC_TEST_SERIAL_PAIR` is `COM50,COM51` (device port first,
+  bridge port second), `COM52,COM53` the backup; examples, test skip texts and the 3C fixture follow (T-092). Also
+  "Hãy dọn 9 con trỏ cũ Dev notes, T-0xx trong source và header" (T-093, includes comment-only edits in
+  `include/mc/`). (supersedes: 2026-10-02 "COM50/COM51 retired for good")
 - [2026-10-18] Owner, after the workflow-kit dry-run: "3, untrack và gỡ khỏi repo. 4, ... chuyển luôn tasks vào
   [...] (untrack khỏi repo). 5, duyệt sửa. 6, có." — the task folder (plan, todo, task files), `agent-team/core/`
   and the root agent file leave the repository and are kept locally outside it; `.gitignore` no longer lists the

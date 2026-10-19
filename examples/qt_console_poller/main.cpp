@@ -2,7 +2,7 @@
 // line and prints what the device reports.
 //
 //   qt_console_poller --host 127.0.0.1 --port 5000 --frame 3E --sub D100:64 --sub M0:32
-//   qt_console_poller --frame 3C --format 4 --serial COM54 --sub D100:64     (a COM port, 9600 7E1)
+//   qt_console_poller --frame 3C --format 4 --serial COM50 --sub D100:64     (a COM port, 9600 7E1)
 //
 // What it shows:
 //   * McDevice never blocks: connectToPlc() returns at once and everything else arrives as a

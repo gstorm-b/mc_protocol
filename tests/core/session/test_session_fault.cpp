@@ -350,8 +350,8 @@ TEST_CASE("Rework (phase review blocker, T-026): a drain violation must release 
           "round-start guard hangs forever") {
     // Prove-It: this test is written to fail on the pre-fix code (checkDrained()'s own raw
     // m_outputRing->pop() loop, which never touches m_pendingPlanRefs) and pass once
-    // checkDrained() releases a discarded output the same way nextOutput() does. See Dev notes
-    // for the exact pre-fix failure this reproduced.
+    // checkDrained() releases a discarded output the same way nextOutput() does. The exact
+    // pre-fix failure is described above the polling loop below.
     FrameConfig frame = FrameConfig::frame3E();
     Session s = makeSession(frame);
     FakeClock clock;
@@ -400,7 +400,8 @@ TEST_CASE("Rework (phase review blocker, T-026): a drain violation must release 
           "own arena/job-ring slot (AdHocQueue::confirmDrained()) for a discarded RequestDone, "
           "or adHocCapacity is permanently, cumulatively lost") {
     // Prove-It: same reasoning as the Snapshot/ValuesChanged test above, for the RequestDone/
-    // AdHocQueue side of the identical bug. See Dev notes for the exact pre-fix failure.
+    // AdHocQueue side of the identical bug. The exact pre-fix failure is described above the
+    // submit/complete loop below.
     FrameConfig frame = FrameConfig::frame3E();
     SessionConfig cfg;
     cfg.adHocCapacity = 4;

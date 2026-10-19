@@ -223,9 +223,8 @@ TEST_CASE("Heartbeat: a fault while the heartbeat write itself is in flight (Che
 }
 
 TEST_CASE("Heartbeat: enabled with zero subscriptions completes an empty round via dispatch()'s "
-          "own heartbeat-only-round branch (Checkpoint C coverage gap, T-028: flagged in this "
-          "task's own T-026 Dev notes as an untested corner -- every other heartbeat test "
-          "subscribes at least one device)") {
+          "own heartbeat-only-round branch (an otherwise untested corner: every other heartbeat "
+          "test subscribes at least one device)") {
     FrameConfig frame = FrameConfig::frame3E();
     SessionConfig cfg;
     cfg.heartbeat.enabled = true;

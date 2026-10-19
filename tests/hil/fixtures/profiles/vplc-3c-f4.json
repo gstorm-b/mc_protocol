@@ -106,7 +106,7 @@
         "connectTimeoutMs": 2000
       },
       "serial": {
-        "portName": "COM54",
+        "portName": "COM50",
         "baudRate": 9600,
         "dataBits": 7,
         "parity": "Even",

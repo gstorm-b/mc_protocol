@@ -400,7 +400,7 @@ private:
     /// -- or does nothing (stays `Idle` until `nextDeadline()`). Never recurses — a round with no
     /// chunks and no heartbeat emits its own `CycleDone` and returns; the next round (even at
     /// `cycleIntervalMs == 0`) starts on the next input call, keeping every call's own output
-    /// count bounded (see Dev notes, T-022). When a re-plan is pending, starting a round is
+    /// count bounded. When a re-plan is pending, starting a round is
     /// additionally deferred while `m_pendingPlanRefs > 0` (T-024: a `Snapshot`/`ValuesChanged`
     /// queued earlier in this same call still points into the plan/buffers a re-plan would
     /// replace; the caller draining it first, on this same or the very next call, is what
@@ -594,7 +594,7 @@ private:
     /// Scratch storage `completeCurrentChunk()` decodes into, resized to the current plan's own
     /// `maxPayloadSize()`/`maxChunkPoints()` whenever the plan changes (`Session`'s own "change
     /// arena": `output_ring.h`'s identically-named part of the module spec's Project Structure is
-    /// not used for this, see T-022/T-023 Dev notes). `Output::payload`/`Output::changes` point
+    /// not used for this). `Output::payload`/`Output::changes` point
     /// directly into these, valid until the next input call, per `Output`'s own contract.
     std::vector<uint8_t> m_payloadBuf;
     std::vector<Change> m_changeBuf;

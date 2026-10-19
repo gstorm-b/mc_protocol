@@ -1,7 +1,7 @@
 // serial_bridge.h -- the QSerialPort end of a virtual COM pair that hosts a mc::MockPlc: the PLC
 // side of QDV-14. Bytes read from the port go into the mock; whatever the mock answers is written
 // back to the port. Test infrastructure, not library code: it links mc::mock, which mc_device
-// itself never does. The pair itself (two ports wired to each other, e.g. COM54 and COM55) is
+// itself never does. The pair itself (two ports wired to each other, e.g. COM50 and COM51) is
 // installed on the machine; the tests learn its names from MC_TEST_SERIAL_PAIR.
 #pragma once
 
@@ -15,7 +15,7 @@
 
 #include <optional>
 
-// "COM54,COM55" -> {device port, bridge port}; nullopt when the variable is unset or malformed.
+// "COM50,COM51" -> {device port, bridge port}; nullopt when the variable is unset or malformed.
 struct SerialPairNames {
     QString devicePort; // the end McDevice opens
     QString bridgePort; // the end SerialBridge opens

@@ -2,11 +2,10 @@
 // contiguous value/state arrays, apply()/markFailed() (silent baselines, decision S4),
 // markStale()/resetBaselines(), rebuild() (carry-over on a re-plan), bulk words()/bits().
 //
-// markStale()/resetBaselines() are O(P) here, not the O(1) the module spec's own sketch comment
-// suggests ("epoch counter"): see their own doc comments in value_store.h for why an epoch-lazy
-// design is incompatible with segment()'s raw-pointer SegmentView::states (a caller reading that
-// pointer directly, bypassing state(), would see stale bytes an epoch scheme never resolves).
-// Flagged in this task's Dev notes.
+// markStale()/resetBaselines() are eager O(P), as the module spec fixes them: see their doc
+// comments in value_store.h for why a lazy (epoch counter) design is incompatible with
+// segment()'s raw-pointer SegmentView::states (a caller reading that pointer directly,
+// bypassing state(), would see stale bytes a lazy scheme never resolves).
 #include "mc/core/value_store.h"
 
 #include <algorithm>

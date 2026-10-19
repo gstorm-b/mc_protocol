@@ -4,7 +4,7 @@
 //
 // Every mock is a MockHost: the MockPlc, its QTcpServer and its QSerialPort live on a runner thread;
 // the test (the GUI thread) only sends commands and receives value copies. Device sides are
-// DeviceHosts. The COM case needs the virtual pair (MC_TEST_SERIAL_PAIR, e.g. "COM54,COM55") and
+// DeviceHosts. The COM case needs the virtual pair (MC_TEST_SERIAL_PAIR, e.g. "COM50,COM51") and
 // QSKIPs without it; it runs under the mc_serial_pair resource lock like the rest of the binary.
 #include "gui_suites.h"
 
@@ -866,7 +866,7 @@ private slots:
     // is released again by stopListening. QSKIP without MC_TEST_SERIAL_PAIR.
     void GUI_02_comPairMockServesADeviceOverSerial() {
         if (qEnvironmentVariableIsEmpty("MC_TEST_SERIAL_PAIR")) {
-            QSKIP("MC_TEST_SERIAL_PAIR is not set (e.g. \"COM54,COM55\"): no virtual COM pair");
+            QSKIP("MC_TEST_SERIAL_PAIR is not set (e.g. \"COM50,COM51\"): no virtual COM pair");
         }
         const QString mockPort = comPortOne();
         const QString devicePort = comPortTwo();

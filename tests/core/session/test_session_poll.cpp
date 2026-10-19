@@ -288,7 +288,7 @@ TEST_CASE("SES-06 Session: a value changed while Failed reports ValuesChanged fr
 }
 
 TEST_CASE("T-024 2a regression: a queued Snapshot stays valid across a same-call re-plan "
-          "(dangling-pointer finding from T-023 Dev notes)") {
+          "(dangling-pointer hazard of back-to-back round scheduling)") {
     // cycleIntervalMs = 0 reproduces T-023's own back-to-back-within-one-call path (SES-07's
     // interval-0 SUBCASE): a round's own last chunk completing immediately starts the next
     // round in the *same* bytesIn() call, because nextRoundAt == end == now. The hazard T-023

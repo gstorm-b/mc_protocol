@@ -421,11 +421,11 @@ private slots:
     }
 
     // GUI-03: a COM port that another process holds open is reported as OpenFailed. Needs the
-    // virtual COM pair (MC_TEST_SERIAL_PAIR, e.g. "COM54,COM55"); the port is held by this test.
+    // virtual COM pair (MC_TEST_SERIAL_PAIR, e.g. "COM50,COM51"); the port is held by this test.
     void GUI_03_aBusyComPortReportsOpenFailed() {
         const QString pair = qEnvironmentVariable("MC_TEST_SERIAL_PAIR");
         if (pair.isEmpty()) {
-            QSKIP("MC_TEST_SERIAL_PAIR is not set (e.g. \"COM54,COM55\"): no virtual COM pair");
+            QSKIP("MC_TEST_SERIAL_PAIR is not set (e.g. \"COM50,COM51\"): no virtual COM pair");
         }
         const QString portName = pair.split(QLatin1Char(',')).first().trimmed();
 

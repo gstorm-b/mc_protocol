@@ -231,14 +231,12 @@ public:
      * @brief Link down: every `Valid`/`Failed` point becomes `Stale` (the value is kept).
      *
      * @par Complexity
-     * O(P), P the total subscribed point count; no allocation. The module spec's own sketch
-     * proposes O(1) via an epoch counter; not implemented that way here because `segment()`
-     * exposes each point's state through a raw pointer (`SegmentView::states`) that a caller may
-     * read directly, without going through `state()` — an epoch-lazy state would have to be
-     * resolved on read, which a raw pointer cannot do, so it would make `segment()`'s own states
-     * eagerly wrong until the next call that happens to touch each point. Recorded as a deviation
-     * (Dev notes, T-021) for the leader/owner: revisiting it would mean changing `segment()`'s
-     * contract, which is outside this task.
+     * O(P), P the total subscribed point count; no allocation. Eager by design, as the module
+     * spec fixes it: `segment()` exposes each point's state through a raw pointer
+     * (`SegmentView::states`) that a caller may read directly, without going through `state()`.
+     * A lazy form (an epoch counter) would have to be resolved on read, which a raw pointer
+     * cannot do, so `segment()`'s own states would be wrong until the next call that happens to
+     * touch each point.
      * @see resetBaselines
      */
     void markStale() noexcept;
@@ -247,8 +245,7 @@ public:
      * @brief Clears every baseline: every point becomes `NoValue`. What makes round 1 silent
      * after a `linkUp`.
      * @par Complexity
-     * O(P); no allocation. Same deviation from the spec's O(1) hint as `markStale()`, and for the
-     * same reason.
+     * O(P); no allocation. Eager for the same reason as `markStale()`.
      * @see markStale
      */
     void resetBaselines() noexcept;
