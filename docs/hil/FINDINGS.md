@@ -198,7 +198,7 @@ One entry per observed difference or confirmed behaviour. Ids are never reused.
 ### F-021 - Bench note: Y0-Y7 of the Q03UDE are the QJ71C24N's own I/O
 - **Profile / step:** all `q03ude-*` profiles (scratch in `run.meta`).
 - **Spec says:** the first Q03UDE profile draft listed `Y0-Y7` as scratch.
-- **PLC does:** the module's own I/O occupies Y0-Y7 on this bench (owner, `agent-team/memory/decisions.md`, 2026-10-12), so the captures of 2026-10-13/14 declare `scratch: ... Y10-Y17`. Earlier captures were not imported. No step is tagged.
+- **PLC does:** the module's own I/O occupies Y0-Y7 on this bench (decided 2026-10-12), so the captures of 2026-10-13/14 declare `scratch: ... Y10-Y17`. Earlier captures were not imported. No step is tagged.
 - **Status:** open (information only; the owner may close it)
 - **Decision (owner, date):** open.
 
