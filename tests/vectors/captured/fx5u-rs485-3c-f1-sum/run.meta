@@ -1,0 +1,89 @@
+format: hil-capture-1
+tool: hil_capture
+tool_version: 0.1.3
+library_version: 0.1.3
+git_commit: unknown
+date: 2026-10-15T02:06:51Z
+operator_note: 
+plc_state: RUN
+profile: fx5u-rs485-3c-f1-sum
+plc: FX5U-32M
+module: built-in RS-485 (MC protocol)
+firmware: FILL: FX5U CPU model and firmware version (GX Works3 module diagnostics)
+adapter: FILL: USB-RS485 adapter model and its latency timer; set device.transport.serial portName (placeholder COM1) and the line (9600 7E1, as the 485 serial port parameters)
+plc_state_note: FILL: RUN, online change enabled; confirm Y10-Y17 drive no load (owner Q4); low confidence, check against the GX Works3 parameters: scratch W100-W1FF and B10-B7F, deviceEnd (W=1FF B=FF SB/SW=1FF X/Y=1777 L=7679 F=127), scanTimeDevice SD520; 485 serial port: MC protocol, station 0, Communication Data Code ASCII (X,Y HEX)
+transport: serial
+serial.baudRate: 115200
+serial.dataBits: 8
+serial.parity: None
+serial.stopBits: 1
+serial.flowControl: Hardware
+scratch: D100-D2099 W100-W1FF R0-R99 M100-M2099 B10-B7F Y10-Y17
+device_end: X=1777 Y=1777 M=7679 L=7679 F=127 B=FF D=7999 W=1FF TS=511 TC=511 TN=511 CS=255 CC=255 CN=255 SB=1FF SW=1FF R=32767
+supports: D W R M L F B X Y TS TC TN CS CC CN SM SD
+special_bit: SM0
+special_word: SD0
+frame.aSeriesTarget: false
+frame.blockNo: 0
+frame.checkBlockNo: true
+frame.checkRoute: true
+frame.code: Ascii
+frame.commandSet: ACPU
+frame.e1AliasLS: false
+frame.f3ShortResponseHasSum: false
+frame.format: Format1
+frame.frame: 3C
+frame.highPerformanceQcpu: false
+frame.io: 1023
+frame.maxReadBits: 0
+frame.maxReadWords: 0
+frame.maxWriteBits: 0
+frame.maxWriteWords: 0
+frame.messageWait: 0
+frame.monitoringTimer: 16
+frame.network: 0
+frame.pc: 255
+frame.readRetries: 0
+frame.selfStation: 0
+frame.sendEotOnError: true
+frame.serialStart: 0
+frame.series: QL
+frame.splitWrites: false
+frame.station: 0
+frame.stationNo: 0
+frame.sumCheck: true
+frame.targetFamily: IqR_Q_L
+frame.timeoutMs: 0
+frame.xyAsciiDigits: Hex
+frame.xyNotation: Octal
+session.adHocArenaBytes: 65536
+session.adHocCapacity: 64
+session.bitsAsWords: true
+session.cycleIntervalMs: 100
+session.cycleMode: FixedRate
+session.firstResponseTimeoutMs: 0
+session.heartbeat.device: M2000
+session.heartbeat.enabled: false
+session.maxAdHocBurst: 4
+session.maxConsecutiveLinkErrors: 3
+session.maxGap: auto
+session.serialFlushMs: 50
+session.serialInterCharMs: 100
+skipped.G1-07: skipped: requires supports:ZR
+skipped.G2-04: skipped: scratch too small
+skipped.G2-07-L: skipped: requires scratch:L
+skipped.G2-07-F: skipped: requires scratch:F
+skipped.G2-07-S: skipped: requires supports:S
+skipped.G3-05: skipped: scratch too small
+skipped.G5-05: skipped: requires endNotMultiple16:M
+skipped.G5-06: skipped: requires profile:*-noonline
+skipped.G8-Q1: skipped: requires format:3
+skipped.G8-Q2: skipped: requires format:2
+skipped.G8-Q2-M: skipped: requires format:2
+skipped.G8-Q6: skipped: requires profile:*-q6-nothing-to-run
+skipped.G9-01-F2: skipped: requires format:2
+skipped.G9-01-F3: skipped: requires format:3
+skipped.G9-01-F4: skipped: requires format:4
+skipped.GB-06: skipped: scratch too small
+scan_time_raw: 0
+polls: G6 G7-06

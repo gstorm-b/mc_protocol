@@ -1,0 +1,1822 @@
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0001
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: tx  t_ns: 2546039500  seq: 8
+05 46 39 30 30 30 30 46 46 30 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 31 33 45
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0002
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: rx  t_ns: 2559977400  seq: 10
+06 46 39 30 30 30 30 46 46 30 30
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0003
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: tx  t_ns: 2559998300  seq: 11
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 58 2A 30 30 30 30 30 30 30 30 30 32 31 34
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0004
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: rx  t_ns: 2577506200  seq: 12
+02 46 39 30 30 30 30 46 46 30 30 30 30 30 30 30 30 30 30 03 41 45
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0005
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: tx  t_ns: 2577529100  seq: 13
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 35 31 42
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0006
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: rx  t_ns: 2592024400  seq: 14
+02 46 39 30 30 30 30 46 46 30 30 35 35 35 30 31 32 33 34 30 30 30 32 30 30 30 30 30 30 30 30 03 30 39
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0007
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: tx  t_ns: 2592054800  seq: 15
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 34 30 30 33
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0008
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: rx  t_ns: 2633171900  seq: 16
+02 46 39 30 30 30 30 46 46 30 30 30 30 30 30 30 31 30 31 30 32 30 32 30 33 30 33 30 34 30 34 30 35 30 35 30 36 30 36 30 37 30 37 30 38 30 38 30 39 30 39 30 41 30 41 30 42 30 42 30 43 30 43 30 44 30 44 30 45 30 45 30 46 30 46 31 30 31 30 31 31 31 31 31 32 31 32 31 33 31 33 30 30 30 30 30 30 30 30 30 30 30 30 33 46 46 38 46 46 46 45 46 46 46 46 31 41 31 41 31 42 31 42 31 43 31 43 31 44 31 44 31 45 31 45 31 46 31 46 32 30 32 30 32 31 32 31 32 32 32 32 32 33 32 33 32 34 32 34 32 35 32 35 32 36 32 36 32 37 32 37 32 38 32 38 32 39 32 39 32 41 32 41 32 42 32 42 32 43 32 43 32 44 32 44 32 45 32 45 32 46 32 46 33 30 33 30 33 31 33 31 33 32 33 32 33 33 33 33 33 34 33 34 33 35 33 35 33 36 33 36 33 37 33 37 33 38 33 38 33 39 33 39 33 41 33 41 33 42 33 42 33 43 33 43 33 44 33 44 33 45 33 45 33 46 33 46 03 38 41
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0009
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: tx  t_ns: 2633210600  seq: 17
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 32 30 30 30 30 30 41 31 31
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0010
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: rx  t_ns: 2649081000  seq: 18
+02 46 39 30 30 30 30 46 46 30 30 36 34 36 34 36 35 36 35 36 36 36 36 36 37 36 37 36 38 36 38 36 39 36 39 36 41 36 41 36 42 36 42 36 43 36 43 36 44 36 44 03 30 38
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0011
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: tx  t_ns: 2649105000  seq: 19
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 57 2A 30 30 30 31 30 30 30 30 31 30 31 33
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0012
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: rx  t_ns: 2673996800  seq: 20
+02 46 39 30 30 30 30 46 46 30 30 46 46 46 46 38 30 30 30 30 30 30 31 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 03 38 46
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0013
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: tx  t_ns: 2674028300  seq: 21
+05 46 39 30 30 30 30 46 46 30 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 30 33 44
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0014
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: rx  t_ns: 2690038300  seq: 27
+06 46 39 30 30 30 30 46 46 30 30
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0015
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: tx  t_ns: 2690055100  seq: 28
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 58 2A 30 30 30 30 30 30 30 30 30 32 31 34
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0016
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: rx  t_ns: 2706012100  seq: 29
+02 46 39 30 30 30 30 46 46 30 30 30 30 30 30 30 30 30 30 03 41 45
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0017
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: tx  t_ns: 2706024200  seq: 30
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 35 31 42
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0018
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: rx  t_ns: 2722223900  seq: 32
+02 46 39 30 30 30 30 46 46 30 30 35 35 35 30 31 32 33 34 30 30 30 32 30 30 30 30 30 30 30 30 03 30 39
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0019
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: tx  t_ns: 2722255000  seq: 33
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 34 30 30 33
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0020
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: rx  t_ns: 2763296000  seq: 35
+02 46 39 30 30 30 30 46 46 30 30 30 30 30 30 30 31 30 31 30 32 30 32 30 33 30 33 30 34 30 34 30 35 30 35 30 36 30 36 30 37 30 37 30 38 30 38 30 39 30 39 30 41 30 41 30 42 30 42 30 43 30 43 30 44 30 44 30 45 30 45 30 46 30 46 31 30 31 30 31 31 31 31 31 32 31 32 31 33 31 33 30 30 30 30 30 30 30 30 30 30 30 30 33 46 46 38 46 46 46 45 46 46 46 46 31 41 31 41 31 42 31 42 31 43 31 43 31 44 31 44 31 45 31 45 31 46 31 46 32 30 32 30 32 31 32 31 32 32 32 32 32 33 32 33 32 34 32 34 32 35 32 35 32 36 32 36 32 37 32 37 32 38 32 38 32 39 32 39 32 41 32 41 32 42 32 42 32 43 32 43 32 44 32 44 32 45 32 45 32 46 32 46 33 30 33 30 33 31 33 31 33 32 33 32 33 33 33 33 33 34 33 34 33 35 33 35 33 36 33 36 33 37 33 37 33 38 33 38 33 39 33 39 33 41 33 41 33 42 33 42 33 43 33 43 33 44 33 44 33 45 33 45 33 46 33 46 03 38 41
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0021
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: tx  t_ns: 2763355700  seq: 36
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 32 30 30 30 30 30 41 31 31
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0022
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: rx  t_ns: 2779203500  seq: 37
+02 46 39 30 30 30 30 46 46 30 30 36 34 36 34 36 35 36 35 36 36 36 36 36 37 36 37 36 38 36 38 36 39 36 39 36 41 36 41 36 42 36 42 36 43 36 43 36 44 36 44 03 30 38
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0023
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: tx  t_ns: 2779252700  seq: 38
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 57 2A 30 30 30 31 30 30 30 30 31 30 31 33
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0024
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: rx  t_ns: 2803920100  seq: 40
+02 46 39 30 30 30 30 46 46 30 30 46 46 46 46 38 30 30 30 30 30 30 31 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 03 38 46
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0025
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: tx  t_ns: 2803982200  seq: 41
+05 46 39 30 30 30 30 46 46 30 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 31 33 45
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0026
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: rx  t_ns: 2819991400  seq: 46
+06 46 39 30 30 30 30 46 46 30 30
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0027
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: tx  t_ns: 2820042600  seq: 47
+05 46 39 30 30 30 30 46 46 30 30 31 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 35 30 30 30 31 31 32 33 34 44 30
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0028
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: rx  t_ns: 2835739500  seq: 48
+06 46 39 30 30 30 30 46 46 30 30
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0029
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: tx  t_ns: 2835762800  seq: 49
+05 46 39 30 30 30 30 46 46 30 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 31 30 33 30 30 30 31 31 33 46
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0030
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: rx  t_ns: 2851903800  seq: 51
+06 46 39 30 30 30 30 46 46 30 30
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0031
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: tx  t_ns: 2851960500  seq: 52
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 58 2A 30 30 30 30 30 30 30 30 30 32 31 34
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0032
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: rx  t_ns: 2867742100  seq: 54
+02 46 39 30 30 30 30 46 46 30 30 30 30 30 30 30 30 30 30 03 41 45
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0033
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: tx  t_ns: 2867780200  seq: 55
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 35 31 42
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0034
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: rx  t_ns: 2883632900  seq: 57
+02 46 39 30 30 30 30 46 46 30 30 35 35 44 30 31 32 33 34 30 30 30 32 30 30 30 30 30 30 30 30 03 31 38
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0035
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: tx  t_ns: 2883661000  seq: 58
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 34 30 30 33
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0036
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: rx  t_ns: 2924829000  seq: 61
+02 46 39 30 30 30 30 46 46 30 30 30 30 30 30 30 31 30 31 30 32 30 32 30 33 30 33 30 34 30 34 31 32 33 34 30 36 30 36 30 37 30 37 30 38 30 38 30 39 30 39 30 41 30 41 30 42 30 42 30 43 30 43 30 44 30 44 30 45 30 45 30 46 30 46 31 30 31 30 31 31 31 31 31 32 31 32 31 33 31 33 30 30 30 30 30 30 30 30 30 30 30 30 33 46 46 38 46 46 46 45 46 46 46 46 31 41 31 41 31 42 31 42 31 43 31 43 31 44 31 44 31 45 31 45 31 46 31 46 32 30 32 30 32 31 32 31 32 32 32 32 32 33 32 33 32 34 32 34 32 35 32 35 32 36 32 36 32 37 32 37 32 38 32 38 32 39 32 39 32 41 32 41 32 42 32 42 32 43 32 43 32 44 32 44 32 45 32 45 32 46 32 46 33 30 33 30 33 31 33 31 33 32 33 32 33 33 33 33 33 34 33 34 33 35 33 35 33 36 33 36 33 37 33 37 33 38 33 38 33 39 33 39 33 41 33 41 33 42 33 42 33 43 33 43 33 44 33 44 33 45 33 45 33 46 33 46 03 38 41
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0037
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: tx  t_ns: 2924853100  seq: 62
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 32 30 30 30 30 30 41 31 31
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0038
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: rx  t_ns: 2941036600  seq: 64
+02 46 39 30 30 30 30 46 46 30 30 36 34 36 34 36 35 36 35 36 36 36 36 36 37 36 37 36 38 36 38 36 39 36 39 36 41 36 41 36 42 36 42 36 43 36 43 36 44 36 44 03 30 38
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0039
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: tx  t_ns: 2941065400  seq: 65
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 57 2A 30 30 30 31 30 30 30 30 31 30 31 33
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0040
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: rx  t_ns: 2965983200  seq: 67
+02 46 39 30 30 30 30 46 46 30 30 46 46 46 46 38 30 30 30 30 30 30 31 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 03 38 46
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0041
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: tx  t_ns: 2966016500  seq: 68
+05 46 39 30 30 30 30 46 46 30 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 30 33 44
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0042
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: rx  t_ns: 2981879800  seq: 71
+06 46 39 30 30 30 30 46 46 30 30
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0043
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: tx  t_ns: 2981895800  seq: 72
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 58 2A 30 30 30 30 30 30 30 30 30 32 31 34
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0044
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: rx  t_ns: 2997622400  seq: 73
+02 46 39 30 30 30 30 46 46 30 30 30 30 30 30 30 30 30 30 03 41 45
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0045
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: tx  t_ns: 2997637900  seq: 74
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 35 31 42
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0046
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: rx  t_ns: 3013859600  seq: 76
+02 46 39 30 30 30 30 46 46 30 30 35 35 44 30 31 32 33 34 30 30 30 32 30 30 30 30 30 30 30 30 03 31 38
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0047
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: tx  t_ns: 3013913600  seq: 77
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 34 30 30 33
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0048
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: rx  t_ns: 3055164200  seq: 79
+02 46 39 30 30 30 30 46 46 30 30 30 30 30 30 30 31 30 31 30 32 30 32 30 33 30 33 30 34 30 34 31 32 33 34 30 36 30 36 30 37 30 37 30 38 30 38 30 39 30 39 30 41 30 41 30 42 30 42 30 43 30 43 30 44 30 44 30 45 30 45 30 46 30 46 31 30 31 30 31 31 31 31 31 32 31 32 31 33 31 33 30 30 30 30 30 30 30 30 30 30 30 30 33 46 46 38 46 46 46 45 46 46 46 46 31 41 31 41 31 42 31 42 31 43 31 43 31 44 31 44 31 45 31 45 31 46 31 46 32 30 32 30 32 31 32 31 32 32 32 32 32 33 32 33 32 34 32 34 32 35 32 35 32 36 32 36 32 37 32 37 32 38 32 38 32 39 32 39 32 41 32 41 32 42 32 42 32 43 32 43 32 44 32 44 32 45 32 45 32 46 32 46 33 30 33 30 33 31 33 31 33 32 33 32 33 33 33 33 33 34 33 34 33 35 33 35 33 36 33 36 33 37 33 37 33 38 33 38 33 39 33 39 33 41 33 41 33 42 33 42 33 43 33 43 33 44 33 44 33 45 33 45 33 46 33 46 03 38 41
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0049
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: tx  t_ns: 3055240300  seq: 80
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 32 30 30 30 30 30 41 31 31
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0050
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: rx  t_ns: 3070757600  seq: 81
+02 46 39 30 30 30 30 46 46 30 30 36 34 36 34 36 35 36 35 36 36 36 36 36 37 36 37 36 38 36 38 36 39 36 39 36 41 36 41 36 42 36 42 36 43 36 43 36 44 36 44 03 30 38
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0051
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: tx  t_ns: 3070810900  seq: 82
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 57 2A 30 30 30 31 30 30 30 30 31 30 31 33
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0052
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: rx  t_ns: 3095646800  seq: 84
+02 46 39 30 30 30 30 46 46 30 30 46 46 46 46 38 30 30 30 30 30 30 31 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 03 38 46
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0053
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: tx  t_ns: 3095696400  seq: 85
+05 46 39 30 30 30 30 46 46 30 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 31 33 45
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0054
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: rx  t_ns: 3111701000  seq: 90
+06 46 39 30 30 30 30 46 46 30 30
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0055
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: tx  t_ns: 3111735000  seq: 91
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 58 2A 30 30 30 30 30 30 30 30 30 32 31 34
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0056
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: rx  t_ns: 3127689000  seq: 92
+02 46 39 30 30 30 30 46 46 30 30 30 30 30 30 30 30 30 30 03 41 45
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0057
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: tx  t_ns: 3127722600  seq: 93
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 35 31 42
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0058
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: rx  t_ns: 3143642900  seq: 95
+02 46 39 30 30 30 30 46 46 30 30 35 35 44 30 31 32 33 34 30 30 30 32 30 30 30 30 30 30 30 30 03 31 38
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0059
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: tx  t_ns: 3143671800  seq: 96
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 34 30 30 33
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0060
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: rx  t_ns: 3184401000  seq: 98
+02 46 39 30 30 30 30 46 46 30 30 30 30 30 30 30 31 30 31 30 32 30 32 30 33 30 33 30 34 30 34 31 32 33 34 30 36 30 36 30 37 30 37 30 38 30 38 30 39 30 39 30 41 30 41 30 42 30 42 30 43 30 43 30 44 30 44 30 45 30 45 30 46 30 46 31 30 31 30 31 31 31 31 31 32 31 32 31 33 31 33 30 30 30 30 30 30 30 30 30 30 30 30 33 46 46 38 46 46 46 45 46 46 46 46 31 41 31 41 31 42 31 42 31 43 31 43 31 44 31 44 31 45 31 45 31 46 31 46 32 30 32 30 32 31 32 31 32 32 32 32 32 33 32 33 32 34 32 34 32 35 32 35 32 36 32 36 32 37 32 37 32 38 32 38 32 39 32 39 32 41 32 41 32 42 32 42 32 43 32 43 32 44 32 44 32 45 32 45 32 46 32 46 33 30 33 30 33 31 33 31 33 32 33 32 33 33 33 33 33 34 33 34 33 35 33 35 33 36 33 36 33 37 33 37 33 38 33 38 33 39 33 39 33 41 33 41 33 42 33 42 33 43 33 43 33 44 33 44 33 45 33 45 33 46 33 46 03 38 41
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0061
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: tx  t_ns: 3184423800  seq: 99
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 32 30 30 30 30 30 41 31 31
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0062
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: rx  t_ns: 3200478200  seq: 100
+02 46 39 30 30 30 30 46 46 30 30 36 34 36 34 36 35 36 35 36 36 36 36 36 37 36 37 36 38 36 38 36 39 36 39 36 41 36 41 36 42 36 42 36 43 36 43 36 44 36 44 03 30 38
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0063
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: tx  t_ns: 3200511500  seq: 101
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 57 2A 30 30 30 31 30 30 30 30 31 30 31 33
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0064
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: rx  t_ns: 3225620800  seq: 103
+02 46 39 30 30 30 30 46 46 30 30 46 46 46 46 38 30 30 30 30 30 30 31 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 03 38 46
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0065
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: tx  t_ns: 3225760300  seq: 106
+05 46 39 30 30 30 30 46 46 30 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 30 33 44
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0066
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: rx  t_ns: 3241348000  seq: 107
+06 46 39 30 30 30 30 46 46 30 30
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0067
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: tx  t_ns: 3241371300  seq: 108
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 58 2A 30 30 30 30 30 30 30 30 30 32 31 34
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0068
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: rx  t_ns: 3257484400  seq: 109
+02 46 39 30 30 30 30 46 46 30 30 30 30 30 30 30 30 30 30 03 41 45
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0069
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: tx  t_ns: 3257510800  seq: 110
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 35 31 42
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0070
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: rx  t_ns: 3273308600  seq: 112
+02 46 39 30 30 30 30 46 46 30 30 35 35 44 30 31 32 33 34 30 30 30 32 30 30 30 30 30 30 30 30 03 31 38
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0071
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: tx  t_ns: 3273327400  seq: 113
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 42 2A 30 30 30 30 31 30 30 30 30 31 46 45
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0072
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: rx  t_ns: 3289538000  seq: 115
+02 46 39 30 30 30 30 46 46 30 30 35 35 35 35 03 30 32
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0073
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: tx  t_ns: 3289571200  seq: 116
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 34 30 30 33
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0074
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: rx  t_ns: 3330451700  seq: 118
+02 46 39 30 30 30 30 46 46 30 30 30 30 30 30 30 31 30 31 30 32 30 32 30 33 30 33 30 34 30 34 31 32 33 34 30 36 30 36 30 37 30 37 30 38 30 38 30 39 30 39 30 41 30 41 30 42 30 42 30 43 30 43 30 44 30 44 30 45 30 45 30 46 30 46 31 30 31 30 31 31 31 31 31 32 31 32 31 33 31 33 30 30 30 30 30 30 30 30 30 30 30 30 33 46 46 38 46 46 46 45 46 46 46 46 31 41 31 41 31 42 31 42 31 43 31 43 31 44 31 44 31 45 31 45 31 46 31 46 32 30 32 30 32 31 32 31 32 32 32 32 32 33 32 33 32 34 32 34 32 35 32 35 32 36 32 36 32 37 32 37 32 38 32 38 32 39 32 39 32 41 32 41 32 42 32 42 32 43 32 43 32 44 32 44 32 45 32 45 32 46 32 46 33 30 33 30 33 31 33 31 33 32 33 32 33 33 33 33 33 34 33 34 33 35 33 35 33 36 33 36 33 37 33 37 33 38 33 38 33 39 33 39 33 41 33 41 33 42 33 42 33 43 33 43 33 44 33 44 33 45 33 45 33 46 33 46 03 38 41
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0075
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: tx  t_ns: 3330485400  seq: 119
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 32 30 30 30 30 30 41 31 31
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0076
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: rx  t_ns: 3346579600  seq: 120
+02 46 39 30 30 30 30 46 46 30 30 36 34 36 34 36 35 36 35 36 36 36 36 36 37 36 37 36 38 36 38 36 39 36 39 36 41 36 41 36 42 36 42 36 43 36 43 36 44 36 44 03 30 38
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-T0077
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: tx  t_ns: 3346620000  seq: 121
+05 46 39 30 30 30 30 46 46 30 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 31 33 45
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-I0001
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: input  input: heartbeat  t_ns: 2533072000  seq: 1
+# enabled: true  device: M300
+07 01 04 2C 01 00 00
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-I0002
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: input  input: subscribe  t_ns: 2533079300  seq: 2
+# name: d1  device: D100  count: 64
+08 09 64 00 00 00 40 00 00 00
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-I0003
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: input  input: subscribe  t_ns: 2533084300  seq: 3
+# name: d2  device: D200  count: 10
+08 09 C8 00 00 00 0A 00 00 00
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-I0004
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: input  input: subscribe  t_ns: 2533087400  seq: 4
+# name: m  device: M100  count: 64
+08 04 64 00 00 00 40 00 00 00
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-I0005
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: input  input: subscribe  t_ns: 2533089100  seq: 5
+# name: x  device: X0  count: 32
+08 02 00 00 00 00 20 00 00 00
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-I0006
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: input  input: subscribe  t_ns: 2533091300  seq: 6
+# name: w  device: W100  count: 16
+08 0A 00 01 00 00 10 00 00 00
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-E0001
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: event  event: linkState  t_ns: 2533105700  seq: 7
+# state: Connecting  reason: Requested
+05 01 00
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-E0002
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: event  event: linkState  t_ns: 2546064800  seq: 9
+# state: Connected  reason: Requested
+05 02 00
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-E0003
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: event  event: snapshot  t_ns: 2674036200  seq: 22
+# type: X  round: 1  segments: X0x32  chunks: ok
+01 00 00 00 00 20 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-E0004
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: event  event: snapshot  t_ns: 2674065100  seq: 23
+# type: M  round: 1  segments: M100x64  chunks: ok
+01 64 00 00 00 40 00 00 00 01 00 01 00 01 00 01 00 01 00 01 00 00 00 01 00 01 01 00 00 00 01 00 00 01 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-E0005
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: event  event: snapshot  t_ns: 2674067400  seq: 24
+# type: D  round: 1  segments: D100x64 D200x10  chunks: ok ok
+01 64 00 00 00 40 00 00 00 00 00 01 01 02 02 03 03 04 04 05 05 06 06 07 07 08 08 09 09 0A 0A 0B 0B 0C 0C 0D 0D 0E 0E 0F 0F 10 10 11 11 12 12 13 13 00 00 00 00 00 00 F8 3F FE FF FF FF 1A 1A 1B 1B 1C 1C 1D 1D 1E 1E 1F 1F 20 20 21 21 22 22 23 23 24 24 25 25 26 26 27 27 28 28 29 29 2A 2A 2B 2B 2C 2C 2D 2D 2E 2E 2F 2F 30 30 31 31 32 32 33 33 34 34 35 35 36 36 37 37 38 38 39 39 3A 3A 3B 3B 3C 3C 3D 3D 3E 3E 3F 3F 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 C8 00 00 00 0A 00 00 00 64 64 65 65 66 66 67 67 68 68 69 69 6A 6A 6B 6B 6C 6C 6D 6D 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-E0006
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: event  event: snapshot  t_ns: 2674070600  seq: 25
+# type: W  round: 1  segments: W100x16  chunks: ok
+01 00 01 00 00 10 00 00 00 FF FF 00 80 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-E0007
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: event  event: cycleDone  t_ns: 2674073800  seq: 26
+# round: 1  duration_ms: 128  requests: 6  failed_chunks: 0  heartbeat_ok: true
+03 01 00 00 00 EF 09 00 00 00 00 00 00 80 00 00 00 06 00 00 00 01
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-E0008
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: event  event: snapshot  t_ns: 2706032600  seq: 31
+# type: X  round: 2  segments: X0x32  chunks: ok
+01 00 00 00 00 20 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-E0009
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: event  event: snapshot  t_ns: 2722265500  seq: 34
+# type: M  round: 2  segments: M100x64  chunks: ok
+01 64 00 00 00 40 00 00 00 01 00 01 00 01 00 01 00 01 00 01 00 00 00 01 00 01 01 00 00 00 01 00 00 01 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-E0010
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: event  event: snapshot  t_ns: 2779286100  seq: 39
+# type: D  round: 2  segments: D100x64 D200x10  chunks: ok ok
+01 64 00 00 00 40 00 00 00 00 00 01 01 02 02 03 03 04 04 05 05 06 06 07 07 08 08 09 09 0A 0A 0B 0B 0C 0C 0D 0D 0E 0E 0F 0F 10 10 11 11 12 12 13 13 00 00 00 00 00 00 F8 3F FE FF FF FF 1A 1A 1B 1B 1C 1C 1D 1D 1E 1E 1F 1F 20 20 21 21 22 22 23 23 24 24 25 25 26 26 27 27 28 28 29 29 2A 2A 2B 2B 2C 2C 2D 2D 2E 2E 2F 2F 30 30 31 31 32 32 33 33 34 34 35 35 36 36 37 37 38 38 39 39 3A 3A 3B 3B 3C 3C 3D 3D 3E 3E 3F 3F 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 C8 00 00 00 0A 00 00 00 64 64 65 65 66 66 67 67 68 68 69 69 6A 6A 6B 6B 6C 6C 6D 6D 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-E0011
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: event  event: snapshot  t_ns: 2804157200  seq: 42
+# type: W  round: 2  segments: W100x16  chunks: ok
+01 00 01 00 00 10 00 00 00 FF FF 00 80 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-E0012
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: event  event: cycleDone  t_ns: 2804202100  seq: 43
+# round: 2  duration_ms: 129  requests: 6  failed_chunks: 0  heartbeat_ok: true
+03 02 00 00 00 6F 0A 00 00 00 00 00 00 81 00 00 00 06 00 00 00 01
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-I0007
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: input  input: write  t_ns: 2805679200  seq: 44
+# op: WriteWords  device: D105  count: 1
+0A 03 09 69 00 00 00 01 00 34 12
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-I0008
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: input  input: write  t_ns: 2805754800  seq: 45
+# op: WriteBits  device: M103  count: 1
+0A 02 04 67 00 00 00 01 00 01
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-E0013
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: event  event: requestFinished  t_ns: 2835818500  seq: 50
+# request_id: 1  outcome: ok  bytes: 0
+04
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-E0014
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: event  event: requestFinished  t_ns: 2852000400  seq: 53
+# request_id: 2  outcome: ok  bytes: 0
+04
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-E0015
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: event  event: snapshot  t_ns: 2867850100  seq: 56
+# type: X  round: 3  segments: X0x32  chunks: ok
+01 00 00 00 00 20 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-E0016
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: event  event: valuesChanged  t_ns: 2883669900  seq: 59
+# type: M  round: 3  changes: 1
+02 67 00 00 00 00 00 01 00
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-E0017
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: event  event: snapshot  t_ns: 2883677800  seq: 60
+# type: M  round: 3  segments: M100x64  chunks: ok
+01 64 00 00 00 40 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 01 01 00 00 00 01 00 00 01 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-E0018
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: event  event: valuesChanged  t_ns: 2924862300  seq: 63
+# type: D  round: 3  changes: 1
+02 69 00 00 00 05 05 34 12
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-E0019
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: event  event: snapshot  t_ns: 2941077000  seq: 66
+# type: D  round: 3  segments: D100x64 D200x10  chunks: ok ok
+01 64 00 00 00 40 00 00 00 00 00 01 01 02 02 03 03 04 04 34 12 06 06 07 07 08 08 09 09 0A 0A 0B 0B 0C 0C 0D 0D 0E 0E 0F 0F 10 10 11 11 12 12 13 13 00 00 00 00 00 00 F8 3F FE FF FF FF 1A 1A 1B 1B 1C 1C 1D 1D 1E 1E 1F 1F 20 20 21 21 22 22 23 23 24 24 25 25 26 26 27 27 28 28 29 29 2A 2A 2B 2B 2C 2C 2D 2D 2E 2E 2F 2F 30 30 31 31 32 32 33 33 34 34 35 35 36 36 37 37 38 38 39 39 3A 3A 3B 3B 3C 3C 3D 3D 3E 3E 3F 3F 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 C8 00 00 00 0A 00 00 00 64 64 65 65 66 66 67 67 68 68 69 69 6A 6A 6B 6B 6C 6C 6D 6D 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-E0020
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: event  event: snapshot  t_ns: 2966036400  seq: 69
+# type: W  round: 3  segments: W100x16  chunks: ok
+01 00 01 00 00 10 00 00 00 FF FF 00 80 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-E0021
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: event  event: cycleDone  t_ns: 2966055400  seq: 70
+# round: 3  duration_ms: 163  requests: 8  failed_chunks: 0  heartbeat_ok: true
+03 03 00 00 00 F0 0A 00 00 00 00 00 00 A3 00 00 00 08 00 00 00 01
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-E0022
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: event  event: snapshot  t_ns: 2997645500  seq: 75
+# type: X  round: 4  segments: X0x32  chunks: ok
+01 00 00 00 00 20 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-E0023
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: event  event: snapshot  t_ns: 3013954400  seq: 78
+# type: M  round: 4  segments: M100x64  chunks: ok
+01 64 00 00 00 40 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 01 01 00 00 00 01 00 00 01 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-E0024
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: event  event: snapshot  t_ns: 3070835500  seq: 83
+# type: D  round: 4  segments: D100x64 D200x10  chunks: ok ok
+01 64 00 00 00 40 00 00 00 00 00 01 01 02 02 03 03 04 04 34 12 06 06 07 07 08 08 09 09 0A 0A 0B 0B 0C 0C 0D 0D 0E 0E 0F 0F 10 10 11 11 12 12 13 13 00 00 00 00 00 00 F8 3F FE FF FF FF 1A 1A 1B 1B 1C 1C 1D 1D 1E 1E 1F 1F 20 20 21 21 22 22 23 23 24 24 25 25 26 26 27 27 28 28 29 29 2A 2A 2B 2B 2C 2C 2D 2D 2E 2E 2F 2F 30 30 31 31 32 32 33 33 34 34 35 35 36 36 37 37 38 38 39 39 3A 3A 3B 3B 3C 3C 3D 3D 3E 3E 3F 3F 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 C8 00 00 00 0A 00 00 00 64 64 65 65 66 66 67 67 68 68 69 69 6A 6A 6B 6B 6C 6C 6D 6D 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-E0025
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: event  event: snapshot  t_ns: 3095713600  seq: 86
+# type: W  round: 4  segments: W100x16  chunks: ok
+01 00 01 00 00 10 00 00 00 FF FF 00 80 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-E0026
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: event  event: cycleDone  t_ns: 3095744800  seq: 87
+# round: 4  duration_ms: 129  requests: 6  failed_chunks: 0  heartbeat_ok: true
+03 04 00 00 00 93 0B 00 00 00 00 00 00 81 00 00 00 06 00 00 00 01
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-I0009
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: input  input: subscribe  t_ns: 3096354900  seq: 88
+# name: b  device: B10  count: 16
+08 08 10 00 00 00 10 00 00 00
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-I0010
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: input  input: unsubscribe  t_ns: 3096371900  seq: 89
+# name: w
+09 77
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-E0027
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: event  event: snapshot  t_ns: 3127731600  seq: 94
+# type: X  round: 5  segments: X0x32  chunks: ok
+01 00 00 00 00 20 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-E0028
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: event  event: snapshot  t_ns: 3143678900  seq: 97
+# type: M  round: 5  segments: M100x64  chunks: ok
+01 64 00 00 00 40 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 01 01 00 00 00 01 00 00 01 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-E0029
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: event  event: snapshot  t_ns: 3200523100  seq: 102
+# type: D  round: 5  segments: D100x64 D200x10  chunks: ok ok
+01 64 00 00 00 40 00 00 00 00 00 01 01 02 02 03 03 04 04 34 12 06 06 07 07 08 08 09 09 0A 0A 0B 0B 0C 0C 0D 0D 0E 0E 0F 0F 10 10 11 11 12 12 13 13 00 00 00 00 00 00 F8 3F FE FF FF FF 1A 1A 1B 1B 1C 1C 1D 1D 1E 1E 1F 1F 20 20 21 21 22 22 23 23 24 24 25 25 26 26 27 27 28 28 29 29 2A 2A 2B 2B 2C 2C 2D 2D 2E 2E 2F 2F 30 30 31 31 32 32 33 33 34 34 35 35 36 36 37 37 38 38 39 39 3A 3A 3B 3B 3C 3C 3D 3D 3E 3E 3F 3F 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 C8 00 00 00 0A 00 00 00 64 64 65 65 66 66 67 67 68 68 69 69 6A 6A 6B 6B 6C 6C 6D 6D 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-E0030
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: event  event: snapshot  t_ns: 3225673800  seq: 104
+# type: W  round: 5  segments: W100x16  chunks: ok
+01 00 01 00 00 10 00 00 00 FF FF 00 80 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-E0031
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: event  event: cycleDone  t_ns: 3225687700  seq: 105
+# round: 5  duration_ms: 130  requests: 6  failed_chunks: 0  heartbeat_ok: true
+03 05 00 00 00 14 0C 00 00 00 00 00 00 82 00 00 00 06 00 00 00 01
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-E0032
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: event  event: snapshot  t_ns: 3257522300  seq: 111
+# type: X  round: 6  segments: X0x32  chunks: ok
+01 00 00 00 00 20 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-E0033
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: event  event: snapshot  t_ns: 3273332900  seq: 114
+# type: M  round: 6  segments: M100x64  chunks: ok
+01 64 00 00 00 40 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 01 01 00 00 00 01 00 00 01 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-E0034
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: event  event: snapshot  t_ns: 3289587000  seq: 117
+# type: B  round: 6  segments: B10x16  chunks: ok
+01 10 00 00 00 10 00 00 00 01 00 01 00 01 00 01 00 01 00 01 00 01 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-E0035
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: event  event: snapshot  t_ns: 3346647300  seq: 122
+# type: D  round: 6  segments: D100x64 D200x10  chunks: ok ok
+01 64 00 00 00 40 00 00 00 00 00 01 01 02 02 03 03 04 04 34 12 06 06 07 07 08 08 09 09 0A 0A 0B 0B 0C 0C 0D 0D 0E 0E 0F 0F 10 10 11 11 12 12 13 13 00 00 00 00 00 00 F8 3F FE FF FF FF 1A 1A 1B 1B 1C 1C 1D 1D 1E 1E 1F 1F 20 20 21 21 22 22 23 23 24 24 25 25 26 26 27 27 28 28 29 29 2A 2A 2B 2B 2C 2C 2D 2D 2E 2E 2F 2F 30 30 31 31 32 32 33 33 34 34 35 35 36 36 37 37 38 38 39 39 3A 3A 3B 3B 3C 3C 3D 3D 3E 3E 3F 3F 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 C8 00 00 00 0A 00 00 00 64 64 65 65 66 66 67 67 68 68 69 69 6A 6A 6B 6B 6C 6C 6D 6D 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-E0036
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: event  event: cycleDone  t_ns: 3346666000  seq: 123
+# round: 6  duration_ms: 121  requests: 6  failed_chunks: 0  heartbeat_ok: true
+03 06 00 00 00 96 0C 00 00 00 00 00 00 79 00 00 00 06 00 00 00 01
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G6-E0037
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G6
+# kind: event  event: linkState  t_ns: 3463867200  seq: 124
+# state: Disconnected  reason: Requested
+05 00 00
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0001
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 10176207700  seq: 5
+05 46 39 30 30 30 30 46 46 30 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 31 33 45
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0002
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 10189921200  seq: 7
+06 46 39 30 30 30 30 46 46 30 30
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0003
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 10189942300  seq: 8
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32 31 38
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0004
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 10205786300  seq: 9
+02 46 39 30 30 30 30 46 46 30 30 35 35 44 30 31 32 33 34 03 44 36
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0005
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 10205820100  seq: 10
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34 30 33
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0006
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 10221872700  seq: 11
+02 46 39 30 30 30 30 46 46 30 30 30 30 30 30 30 31 30 31 30 32 30 32 30 33 30 33 03 33 41
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0007
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 10277224800  seq: 15
+05 46 39 30 30 30 30 46 46 30 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 30 33 44
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0008
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 10285900400  seq: 16
+06 46 39 30 30 30 30 46 46 30 30
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0009
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 10285943300  seq: 17
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32 31 38
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0010
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 10302034200  seq: 18
+02 46 39 30 30 30 30 46 46 30 30 35 35 44 30 31 32 33 34 03 44 36
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0011
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 10302089300  seq: 19
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34 30 33
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0012
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 10318017200  seq: 21
+02 46 39 30 30 30 30 46 46 30 30 30 30 30 30 30 31 30 31 30 32 30 32 30 33 30 33 03 33 41
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0013
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 10377252500  seq: 24
+05 46 39 30 30 30 30 46 46 30 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 31 33 45
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0014
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 10383949300  seq: 25
+06 46 39 30 30 30
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0015
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 10397800200  seq: 26
+30 46 46 30 30
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0016
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 10397829200  seq: 27
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32 31 38
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0017
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 10413890100  seq: 28
+02 46 39 30 30 30 30 46 46 30 30 35 35 44 30 31 32 33 34 03 44 36
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0018
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 10413934500  seq: 29
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34 30 33
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0019
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 10429801100  seq: 31
+02 46 39 30 30 30 30 46 46 30 30 30 30 30 30 30 31 30 31 30 32 30 32 30 33 30 33 03 33 41
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0020
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 10478562700  seq: 34
+05 46 39 30 30 30 30 46 46 30 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 30 33 44
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0021
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 10493763000  seq: 35
+06 46 39 30 30 30 30 46 46 30 30
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0022
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 10493792300  seq: 36
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32 31 38
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0023
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 10509776700  seq: 37
+02 46 39 30 30 30 30 46 46 30 30 35 35 44 30 31 32 33 34 03 44 36
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0024
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 10509819600  seq: 38
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34 30 33
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0025
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 10525670900  seq: 40
+02 46 39 30 30 30 30 46 46 30 30 30 30 30 30 30 31 30 31 30 32 30 32 30 33 30 33 03 33 41
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0026
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 10578908700  seq: 43
+05 46 39 30 30 30 30 46 46 30 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 31 33 45
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0027
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 10590177300  seq: 44
+06 46 39 30 30 30 30 46 46 30 30
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0028
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 10590233900  seq: 45
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32 31 38
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0029
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 10605744600  seq: 46
+02 46 39 30 30 30 30 46 46 30 30 35 35 44 30 31 32 33 34 03 44 36
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0030
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 10605793500  seq: 47
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34 30 33
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0031
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 10621811000  seq: 49
+02 46 39 30 30 30 30 46 46 30 30 30 30 30 30 30 31 30 31 30 32 30 32 30 33 30 33 03 33 41
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0032
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 10678712600  seq: 52
+05 46 39 30 30 30 30 46 46 30 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 30 33 44
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0033
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 10685369400  seq: 53
+06 46 39 30 30 30 30 46 46 30 30
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0034
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 10685387900  seq: 54
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32 31 38
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0035
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 10701402800  seq: 55
+02 46 39 30 30 30 30 46 46 30 30 35 35 44 30 31 32 33 34 03 44 36
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0036
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 10701432500  seq: 56
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34 30 33
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0037
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 10717398400  seq: 58
+02 46 39 30 30 30 30 46 46 30 30 30 30 30 30 30 31 30 31 30 32 30 32 30 33 30 33 03 33 41
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0038
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 10778261100  seq: 61
+05 46 39 30 30 30 30 46 46 30 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 31 33 45
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0039
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 10797288200  seq: 62
+06 46 39 30 30 30 30 46 46 30 30
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0040
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 10797307400  seq: 63
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32 31 38
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0041
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 10813458400  seq: 64
+02 46 39 30 30 30 30 46 46 30 30 35 35 44 30 31 32 33 34 03 44 36
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0042
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 10813487700  seq: 65
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34 30 33
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0043
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 10829502800  seq: 67
+02 46 39 30 30 30 30 46 46 30 30 30 30 30 30 30 31 30 31 30 32 30 32 30 33 30 33 03 33 41
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0044
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 10879192400  seq: 70
+05 46 39 30 30 30 30 46 46 30 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 30 33 44
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0045
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 10893405200  seq: 71
+06 46 39 30 30 30 30 46 46 30 30
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0046
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 10893447700  seq: 72
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32 31 38
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0047
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 10909397100  seq: 73
+02 46 39 30 30 30 30 46 46 30 30 35 35 44 30 31 32 33 34 03 44 36
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0048
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 10909447300  seq: 74
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34 30 33
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0049
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 10925539900  seq: 76
+02 46 39 30 30 30 30 46 46 30 30 30 30 30 30 30 31 30 31 30 32 30 32 30 33 30 33 03 33 41
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0050
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 10980114900  seq: 79
+05 46 39 30 30 30 30 46 46 30 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 31 33 45
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0051
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 10989178400  seq: 80
+06 46 39 30 30 30 30 46 46 30 30
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0052
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 10989204100  seq: 81
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32 31 38
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0053
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 11005175100  seq: 82
+02 46 39 30 30 30 30 46 46 30 30 35 35 44 30 31 32 33 34 03 44 36
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0054
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 11005205300  seq: 83
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34 30 33
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0055
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 11021695100  seq: 85
+02 46 39 30 30 30 30 46 46 30 30 30 30 30 30 30 31 30 31 30 32 30 32 30 33 30 33 03 33 41
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0056
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 11080477700  seq: 88
+05 46 39 30 30 30 30 46 46 30 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 30 33 44
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0057
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 11085188100  seq: 89
+06 46 39 30 30 30 30 46
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0058
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 11101125300  seq: 90
+46 30 30
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0059
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 11101164000  seq: 91
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32 31 38
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0060
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 11117585200  seq: 92
+02 46 39 30 30 30 30 46 46 30 30 35 35 44 30 31 32 33 34 03 44 36
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0061
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 11117634000  seq: 93
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34 30 33
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0062
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 11133433500  seq: 95
+02 46 39 30 30 30 30 46 46 30 30 30 30 30 30 30 31 30 31 30 32 30 32 30 33 30 33 03 33 41
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0063
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 11180650400  seq: 98
+05 46 39 30 30 30 30 46 46 30 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 31 33 45
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0064
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 11197013600  seq: 99
+06 46 39 30 30 30 30 46 46 30 30
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0065
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 11197042800  seq: 100
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32 31 38
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0066
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 11213266600  seq: 101
+02 46 39 30 30 30 30 46 46 30 30 35 35 44 30 31 32 33 34 03 44 36
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0067
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 11213307800  seq: 102
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34 30 33
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0068
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 11229052300  seq: 104
+02 46 39 30 30 30 30 46 46 30 30 30 30 30 30 30 31 30 31 30 32 30 32 30 33 30 33 03 33 41
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0069
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 11281070100  seq: 107
+05 46 39 30 30 30 30 46 46 30 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 30 33 44
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0070
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 11293043400  seq: 108
+06 46 39 30 30 30 30 46 46 30 30
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0071
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 11293081500  seq: 109
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32 31 38
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0072
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 11309051900  seq: 110
+02 46 39 30 30 30 30 46 46 30 30 35 35 44 30 31 32 33 34 03 44 36
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0073
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 11309095500  seq: 111
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34 30 33
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0074
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 11325158000  seq: 113
+02 46 39 30 30 30 30 46 46 30 30 30 30 30 30 30 31 30 31 30 32 30 32 30 33 30 33 03 33 41
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0075
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 11382016100  seq: 116
+05 46 39 30 30 30 30 46 46 30 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 31 33 45
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0076
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 11389016800  seq: 117
+06 46 39 30 30 30 30 46 46 30 30
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0077
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 11389041500  seq: 118
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32 31 38
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0078
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 11405166900  seq: 119
+02 46 39 30 30 30 30 46 46 30 30 35 35 44 30 31 32 33 34 03 44 36
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0079
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 11405204500  seq: 120
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34 30 33
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0080
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 11420963900  seq: 122
+02 46 39 30 30 30 30 46 46 30 30 30 30 30 30 30 31 30 31 30 32 30 32 30 33 30 33 03 33 41
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0081
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 11482134400  seq: 125
+05 46 39 30 30 30 30 46 46 30 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 30 33 44
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0082
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 11501195900  seq: 126
+06 46 39 30 30 30 30 46 46 30 30
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0083
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 11501234500  seq: 127
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32 31 38
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0084
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 11516955700  seq: 128
+02 46 39 30 30 30 30 46 46 30 30 35 35 44 30 31 32 33 34 03 44 36
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0085
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 11516986400  seq: 129
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34 30 33
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0086
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 11533155400  seq: 131
+02 46 39 30 30 30 30 46 46 30 30 30 30 30 30 30 31 30 31 30 32 30 32 30 33 30 33 03 33 41
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0087
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 11582611800  seq: 134
+05 46 39 30 30 30 30 46 46 30 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 31 33 45
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0088
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 11596856700  seq: 135
+06 46 39 30 30 30 30 46 46 30 30
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0089
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 11596886400  seq: 136
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32 31 38
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0090
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 11612818500  seq: 137
+02 46 39 30 30 30 30 46 46 30 30 35 35 44 30 31 32 33 34 03 44 36
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0091
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 11612852700  seq: 138
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34 30 33
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0092
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 11628700200  seq: 140
+02 46 39 30 30 30 30 46 46 30 30 30 30 30 30 30 31 30 31 30 32 30 32 30 33 30 33 03 33 41
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0093
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 11682697100  seq: 143
+05 46 39 30 30 30 30 46 46 30 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 30 33 44
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0094
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 11692738600  seq: 144
+06 46 39 30 30 30 30 46 46 30 30
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0095
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 11692779800  seq: 145
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32 31 38
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0096
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 11709173200  seq: 146
+02 46 39 30 30 30 30 46 46 30 30 35 35 44 30 31 32 33 34 03 44 36
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0097
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 11709237200  seq: 147
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34 30 33
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0098
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 11725016100  seq: 149
+02 46 39 30 30 30 30 46 46 30 30 30 30 30 30 30 31 30 31 30 32 30 32 30 33 30 33 03 33 41
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0099
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 11782662100  seq: 152
+05 46 39 30 30 30 30 46 46 30 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 31 33 45
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0100
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 11788596000  seq: 153
+06 46 39 30 30 30 30 46 46 30 30
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0101
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 11788625900  seq: 154
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32 31 38
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0102
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 11804910100  seq: 155
+02 46 39 30 30 30 30 46 46 30 30 35 35 44 30 31 32 33 34 03 44 36
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0103
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 11804983500  seq: 156
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34 30 33
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0104
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 11821114700  seq: 158
+02 46 39 30 30 30 30 46 46 30 30 30 30 30 30 30 31 30 31 30 32 30 32 30 33 30 33 03 33 41
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0105
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 11883268000  seq: 161
+05 46 39 30 30 30 30 46 46 30 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 30 33 44
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0106
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 11901473700  seq: 162
+06 46 39 30 30 30 30 46 46 30 30
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0107
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 11901540800  seq: 163
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32 31 38
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0108
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 11917772600  seq: 164
+02 46 39 30 30 30 30 46 46 30 30 35 35 44 30 31 32 33 34 03 44 36
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0109
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 11917812800  seq: 165
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34 30 33
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0110
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 11932720600  seq: 167
+02 46 39 30 30 30 30 46 46 30 30 30 30 30 30 30 31 30 31 30 32 30 32 30 33 30 33 03 33 41
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0111
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 11983456900  seq: 170
+05 46 39 30 30 30 30 46 46 30 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 31 33 45
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0112
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 11996608100  seq: 171
+06 46 39 30 30 30 30 46 46 30 30
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0113
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 11996665200  seq: 172
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32 31 38
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0114
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 12012853300  seq: 173
+02 46 39 30 30 30 30 46 46 30 30 35 35 44 30 31 32 33 34 03 44 36
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0115
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 12012926700  seq: 174
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34 30 33
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0116
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 12028571800  seq: 176
+02 46 39 30 30 30 30 46 46 30 30 30 30 30 30 30 31 30 31 30 32 30 32 30 33 30 33 03 33 41
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0117
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 12083677400  seq: 179
+05 46 39 30 30 30 30 46 46 30 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 30 33 44
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0118
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 12092552700  seq: 180
+06 46 39 30 30 30 30 46 46 30 30
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0119
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 12092588800  seq: 181
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32 31 38
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0120
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 12108469100  seq: 182
+02 46 39 30 30 30 30 46 46 30 30 35 35 44 30 31 32 33 34 03 44 36
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0121
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 12108508900  seq: 183
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34 30 33
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0122
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 12124360700  seq: 185
+02 46 39 30 30 30 30 46 46 30 30 30 30 30 30 30 31 30 31 30 32 30 32 30 33 30 33 03 33 41
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0123
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 12184052400  seq: 188
+05 46 39 30 30 30 30 46 46 30 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 31 33 45
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0124
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 12188422900  seq: 189
+06 46 39 30 30
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0125
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 12204348400  seq: 190
+30 30 46 46 30 30
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0126
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 12204391000  seq: 191
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32 31 38
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0127
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 12220483400  seq: 192
+02 46 39 30 30 30 30 46 46 30 30 35 35 44 30 31 32 33 34 03 44 36
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0128
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 12220520300  seq: 193
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34 30 33
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0129
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 12236538800  seq: 195
+02 46 39 30 30 30 30 46 46 30 30 30 30 30 30 30 31 30 31 30 32 30 32 30 33 30 33 03 33 41
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0130
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 12284346100  seq: 198
+05 46 39 30 30 30 30 46 46 30 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 30 33 44
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0131
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 12300106300  seq: 199
+06 46 39 30 30 30 30 46 46 30 30
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0132
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 12300131900  seq: 200
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32 31 38
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0133
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 12316105600  seq: 201
+02 46 39 30 30 30 30 46 46 30 30 35 35 44 30 31 32 33 34 03 44 36
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0134
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 12316127700  seq: 202
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34 30 33
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0135
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 12332127800  seq: 204
+02 46 39 30 30 30 30 46 46 30 30 30 30 30 30 30 31 30 31 30 32 30 32 30 33 30 33 03 33 41
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0136
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 12385259400  seq: 207
+05 46 39 30 30 30 30 46 46 30 30 31 34 30 31 30 30 30 31 4D 2A 30 30 30 33 30 30 30 30 30 31 31 33 45
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0137
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 12396498500  seq: 208
+06 46 39 30 30 30 30 46 46 30 30
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0138
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 12396528300  seq: 209
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 4D 2A 30 30 30 30 39 36 30 30 30 32 31 38
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0139
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 12412398200  seq: 210
+02 46 39 30 30 30 30 46 46 30 30 35 35 44 30 31 32 33 34 03 44 36
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0140
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: tx  t_ns: 12412437900  seq: 211
+05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 34 30 33
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-T0141
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: rx  t_ns: 12428546100  seq: 213
+02 46 39 30 30 30 30 46 46 30 30 30 30 30 30 30 31 30 31 30 32 30 32 30 33 30 33 03 33 41
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-I0001
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: input  input: heartbeat  t_ns: 10163073800  seq: 1
+# enabled: true  device: M300
+07 01 04 2C 01 00 00
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-I0002
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: input  input: subscribe  t_ns: 10163086200  seq: 2
+# name: d  device: D100  count: 4
+08 09 64 00 00 00 04 00 00 00
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-I0003
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: input  input: subscribe  t_ns: 10163098700  seq: 3
+# name: m  device: M100  count: 16
+08 04 64 00 00 00 10 00 00 00
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0001
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: linkState  t_ns: 10163119300  seq: 4
+# state: Connecting  reason: Requested
+05 01 00
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0002
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: linkState  t_ns: 10176238000  seq: 6
+# state: Connected  reason: Requested
+05 02 00
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0003
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: snapshot  t_ns: 10221923500  seq: 12
+# type: M  round: 1  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0004
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: snapshot  t_ns: 10221942500  seq: 13
+# type: D  round: 1  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0005
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: cycleDone  t_ns: 10221945600  seq: 14
+# round: 1  duration_ms: 45  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 01 00 00 00 BD 27 00 00 00 00 00 00 2D 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0006
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: snapshot  t_ns: 10302107400  seq: 20
+# type: M  round: 2  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0007
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: snapshot  t_ns: 10318095200  seq: 22
+# type: D  round: 2  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0008
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: cycleDone  t_ns: 10318112900  seq: 23
+# round: 2  duration_ms: 41  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 02 00 00 00 22 28 00 00 00 00 00 00 29 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0009
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: snapshot  t_ns: 10413991200  seq: 30
+# type: M  round: 3  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0010
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: snapshot  t_ns: 10429848700  seq: 32
+# type: D  round: 3  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0011
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: cycleDone  t_ns: 10429864600  seq: 33
+# round: 3  duration_ms: 52  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 03 00 00 00 86 28 00 00 00 00 00 00 34 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0012
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: snapshot  t_ns: 10509906300  seq: 39
+# type: M  round: 4  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0013
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: snapshot  t_ns: 10525697100  seq: 41
+# type: D  round: 4  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0014
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: cycleDone  t_ns: 10525708200  seq: 42
+# round: 4  duration_ms: 47  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 04 00 00 00 EB 28 00 00 00 00 00 00 2F 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0015
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: snapshot  t_ns: 10605815100  seq: 48
+# type: M  round: 5  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0016
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: snapshot  t_ns: 10621889600  seq: 50
+# type: D  round: 5  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0017
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: cycleDone  t_ns: 10621910500  seq: 51
+# round: 5  duration_ms: 43  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 05 00 00 00 4F 29 00 00 00 00 00 00 2B 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0018
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: snapshot  t_ns: 10701443700  seq: 57
+# type: M  round: 6  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0019
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: snapshot  t_ns: 10717431600  seq: 59
+# type: D  round: 6  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0020
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: cycleDone  t_ns: 10717444600  seq: 60
+# round: 6  duration_ms: 39  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 06 00 00 00 B3 29 00 00 00 00 00 00 27 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0021
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: snapshot  t_ns: 10813631100  seq: 66
+# type: M  round: 7  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0022
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: snapshot  t_ns: 10829548500  seq: 68
+# type: D  round: 7  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0023
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: cycleDone  t_ns: 10829564700  seq: 69
+# round: 7  duration_ms: 51  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 07 00 00 00 17 2A 00 00 00 00 00 00 33 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0024
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: snapshot  t_ns: 10909462800  seq: 75
+# type: M  round: 8  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0025
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: snapshot  t_ns: 10925580400  seq: 77
+# type: D  round: 8  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0026
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: cycleDone  t_ns: 10925598000  seq: 78
+# round: 8  duration_ms: 46  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 08 00 00 00 7C 2A 00 00 00 00 00 00 2E 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0027
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: snapshot  t_ns: 11005212500  seq: 84
+# type: M  round: 9  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0028
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: snapshot  t_ns: 11021740300  seq: 86
+# type: D  round: 9  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0029
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: cycleDone  t_ns: 11021756100  seq: 87
+# round: 9  duration_ms: 41  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 09 00 00 00 E1 2A 00 00 00 00 00 00 29 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0030
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: snapshot  t_ns: 11117649900  seq: 94
+# type: M  round: 10  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0031
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: snapshot  t_ns: 11133491000  seq: 96
+# type: D  round: 10  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0032
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: cycleDone  t_ns: 11133511800  seq: 97
+# round: 10  duration_ms: 53  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 0A 00 00 00 45 2B 00 00 00 00 00 00 35 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0033
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: snapshot  t_ns: 11213323400  seq: 103
+# type: M  round: 11  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0034
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: snapshot  t_ns: 11229101300  seq: 105
+# type: D  round: 11  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0035
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: cycleDone  t_ns: 11229115900  seq: 106
+# round: 11  duration_ms: 49  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 0B 00 00 00 A9 2B 00 00 00 00 00 00 31 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0036
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: snapshot  t_ns: 11309116200  seq: 112
+# type: M  round: 12  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0037
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: snapshot  t_ns: 11325217900  seq: 114
+# type: D  round: 12  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0038
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: cycleDone  t_ns: 11325245700  seq: 115
+# round: 12  duration_ms: 44  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 0C 00 00 00 0E 2C 00 00 00 00 00 00 2C 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0039
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: snapshot  t_ns: 11405224900  seq: 121
+# type: M  round: 13  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0040
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: snapshot  t_ns: 11421086800  seq: 123
+# type: D  round: 13  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0041
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: cycleDone  t_ns: 11421107700  seq: 124
+# round: 13  duration_ms: 38  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 0D 00 00 00 73 2C 00 00 00 00 00 00 26 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0042
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: snapshot  t_ns: 11517003600  seq: 130
+# type: M  round: 14  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0043
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: snapshot  t_ns: 11533210300  seq: 132
+# type: D  round: 14  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0044
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: cycleDone  t_ns: 11533228600  seq: 133
+# round: 14  duration_ms: 51  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 0E 00 00 00 D7 2C 00 00 00 00 00 00 33 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0045
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: snapshot  t_ns: 11612867100  seq: 139
+# type: M  round: 15  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0046
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: snapshot  t_ns: 11628739200  seq: 141
+# type: D  round: 15  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0047
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: cycleDone  t_ns: 11628753900  seq: 142
+# round: 15  duration_ms: 46  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 0F 00 00 00 3B 2D 00 00 00 00 00 00 2E 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0048
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: snapshot  t_ns: 11709279700  seq: 148
+# type: M  round: 16  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0049
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: snapshot  t_ns: 11725073300  seq: 150
+# type: D  round: 16  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0050
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: cycleDone  t_ns: 11725091000  seq: 151
+# round: 16  duration_ms: 43  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 10 00 00 00 9F 2D 00 00 00 00 00 00 2B 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0051
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: snapshot  t_ns: 11805123900  seq: 157
+# type: M  round: 17  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0052
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: snapshot  t_ns: 11821425900  seq: 159
+# type: D  round: 17  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0053
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: cycleDone  t_ns: 11821459100  seq: 160
+# round: 17  duration_ms: 39  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 11 00 00 00 03 2E 00 00 00 00 00 00 27 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0054
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: snapshot  t_ns: 11917831000  seq: 166
+# type: M  round: 18  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0055
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: snapshot  t_ns: 11932751400  seq: 168
+# type: D  round: 18  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0056
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: cycleDone  t_ns: 11932763100  seq: 169
+# round: 18  duration_ms: 49  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 12 00 00 00 68 2E 00 00 00 00 00 00 31 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0057
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: snapshot  t_ns: 12012956700  seq: 175
+# type: M  round: 19  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0058
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: snapshot  t_ns: 12028633300  seq: 177
+# type: D  round: 19  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0059
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: cycleDone  t_ns: 12028656100  seq: 178
+# round: 19  duration_ms: 45  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 13 00 00 00 CC 2E 00 00 00 00 00 00 2D 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0060
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: snapshot  t_ns: 12108525900  seq: 184
+# type: M  round: 20  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0061
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: snapshot  t_ns: 12124418400  seq: 186
+# type: D  round: 20  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0062
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: cycleDone  t_ns: 12124448000  seq: 187
+# round: 20  duration_ms: 41  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 14 00 00 00 30 2F 00 00 00 00 00 00 29 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0063
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: snapshot  t_ns: 12220552500  seq: 194
+# type: M  round: 21  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0064
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: snapshot  t_ns: 12236589700  seq: 196
+# type: D  round: 21  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0065
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: cycleDone  t_ns: 12236604400  seq: 197
+# round: 21  duration_ms: 52  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 15 00 00 00 95 2F 00 00 00 00 00 00 34 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0066
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: snapshot  t_ns: 12316137500  seq: 203
+# type: M  round: 22  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0067
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: snapshot  t_ns: 12332171100  seq: 205
+# type: D  round: 22  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0068
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: cycleDone  t_ns: 12332189900  seq: 206
+# round: 22  duration_ms: 48  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 16 00 00 00 F9 2F 00 00 00 00 00 00 30 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0069
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: snapshot  t_ns: 12412464300  seq: 212
+# type: M  round: 23  segments: M100x16  chunks: ok
+01 64 00 00 00 10 00 00 00 01 00 01 01 01 00 01 00 01 00 01 00 00 00 01 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0070
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: snapshot  t_ns: 12428580900  seq: 214
+# type: D  round: 23  segments: D100x4  chunks: ok
+01 64 00 00 00 04 00 00 00 00 00 01 01 02 02 03 03 02 02 02 02
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0071
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: cycleDone  t_ns: 12428590300  seq: 215
+# round: 23  duration_ms: 43  requests: 3  failed_chunks: 0  heartbeat_ok: true
+03 17 00 00 00 5E 30 00 00 00 00 00 00 2B 00 00 00 03 00 00 00 01
+
+# id: CAP-fx5u-rs485-3c-f1-sum-G7-06-E0072
+# source: plc  profile: fx5u-rs485-3c-f1-sum  step: G7-06
+# kind: event  event: linkState  t_ns: 12454377500  seq: 216
+# state: Disconnected  reason: TransportError
+05 00 03
+

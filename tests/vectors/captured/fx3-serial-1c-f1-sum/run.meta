@@ -1,0 +1,87 @@
+format: hil-capture-1
+tool: hil_capture
+tool_version: 0.1.3
+library_version: 0.1.3
+git_commit: unknown
+date: 2026-10-15T00:58:41Z
+operator_note: 
+plc_state: RUN
+profile: fx3-serial-1c-f1-sum
+plc: FX3U-32M
+module: FX3U-232-BD (computer link)
+firmware: FILL: FX3U CPU version and the serial board model (232-BD / 485-BD)
+adapter: FILL: USB-RS232 adapter model and its latency timer; set device.transport.serial portName (placeholder COM1) and the line (9600 7E1, as D8120)
+plc_state_note: FILL: RUN; confirm the CPU is an FX3U (FX3G/FX3S have smaller device ranges), that Y0-Y7 drive no load (owner Q4), and scanTimeDevice D8010 (low confidence)
+transport: serial
+serial.baudRate: 38400
+serial.dataBits: 8
+serial.parity: None
+serial.stopBits: 1
+serial.flowControl: Hardware
+scratch: D100-D2099 M100-M2099 Y0-Y7
+device_end: X=377 Y=377 M=7679 D=7999 TS=511 TN=511 CS=255 CN=255 S=4095 R=32767
+supports: D R M S X Y TS TN CS CN
+special_bit: M8000
+special_word: D8000
+frame.aSeriesTarget: false
+frame.blockNo: 0
+frame.checkBlockNo: true
+frame.checkRoute: true
+frame.code: Ascii
+frame.commandSet: ACPU
+frame.e1AliasLS: false
+frame.f3ShortResponseHasSum: false
+frame.format: Format1
+frame.frame: 1C
+frame.highPerformanceQcpu: false
+frame.io: 1023
+frame.maxReadBits: 0
+frame.maxReadWords: 0
+frame.maxWriteBits: 0
+frame.maxWriteWords: 0
+frame.messageWait: 0
+frame.monitoringTimer: 16
+frame.network: 0
+frame.pc: 255
+frame.readRetries: 0
+frame.selfStation: 0
+frame.sendEotOnError: true
+frame.serialStart: 0
+frame.series: QL
+frame.splitWrites: false
+frame.station: 0
+frame.stationNo: 0
+frame.sumCheck: true
+frame.targetFamily: A
+frame.timeoutMs: 0
+frame.xyAsciiDigits: Octal
+frame.xyNotation: Octal
+session.adHocArenaBytes: 65536
+session.adHocCapacity: 64
+session.bitsAsWords: true
+session.cycleIntervalMs: 100
+session.cycleMode: FixedRate
+session.firstResponseTimeoutMs: 0
+session.heartbeat.device: M2000
+session.heartbeat.enabled: false
+session.maxAdHocBurst: 4
+session.maxConsecutiveLinkErrors: 3
+session.maxGap: auto
+session.serialFlushMs: 50
+session.serialInterCharMs: 100
+skipped.G1-05: skipped: requires supports:W
+skipped.G1-06: skipped: requires scratch:R
+skipped.G2-05: skipped: requires supports:B
+skipped.G2-07-L: skipped: requires supports:L
+skipped.G2-07-F: skipped: requires supports:F
+skipped.G2-07-S: skipped: requires scratch:S
+skipped.G2-09: skipped: requires supports:TC
+skipped.G5-03: skipped: D7999-D8000 spans the general and the special range (specialFrom D8000); the PLC forbids reading both in one request
+skipped.G5-05: skipped: requires endNotMultiple16:M
+skipped.G5-06: skipped: requires profile:*-noonline
+skipped.G8-Q8: skipped: requires profile:*-m9000
+skipped.G8-Q8-M: skipped: requires profile:*-m9000
+skipped.G8-Q6: skipped: requires profile:*-q6-nothing-to-run
+notsent.G3-03: notSent InvalidDevice
+scan_time_raw: 5
+polls: G6 G7-06

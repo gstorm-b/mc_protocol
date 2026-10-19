@@ -1,9 +1,9 @@
 format: hil-capture-1
 tool: hil_capture
-tool_version: 0.1.2
-library_version: 0.1.2
+tool_version: 0.1.3
+library_version: 0.1.3
 git_commit: unknown
-date: 2026-10-14T03:48:59Z
+date: 2026-10-15T00:14:34Z
 operator_note: 
 plc_state: RUN
 profile: fx3-eth-1e-ascii
@@ -30,6 +30,10 @@ frame.format: Format1
 frame.frame: 1E
 frame.highPerformanceQcpu: false
 frame.io: 1023
+frame.maxReadBits: 0
+frame.maxReadWords: 0
+frame.maxWriteBits: 0
+frame.maxWriteWords: 0
 frame.messageWait: 0
 frame.monitoringTimer: 10
 frame.network: 0
@@ -82,19 +86,11 @@ skipped.G8-Q6: skipped: requires profile:*-q6-nothing-to-run
 notsent.G3-03: notSent InvalidDevice
 notsent.G4-01-S: notSent InvalidDevice
 notsent.G4-02-L: notSent InvalidDevice
-scan_time_raw: 4
-recovery.1: after G2-03: PeerClosed (Disconnected); reconnected in 2 ms
-recovery.2: after G5-01: PeerClosed (Disconnected); reconnected in 4 ms
-recovery.3: after G6: PeerClosed (Disconnected); reconnected in 3 ms
-recovery.4: after G6: Requested (Disconnected); reconnected in 2 ms
-recovery.5: after G6: PeerClosed (Disconnected); reconnected in 2 ms
-recovery.6: after G7-01: PeerClosed (Disconnected); reconnected in 2 ms
-recovery.7: after G7-02-A: Requested (Disconnected); reconnected in 2 ms
-recovery.8: after G7-06: Requested (Disconnected); reconnected in 2 ms
-recovery.9: after G7-06: PeerClosed (Disconnected); reconnected in 3 ms
-recovery.10: after G7-06: Requested (Disconnected); reconnected in 3 ms
-recovery.11: after G8-Q3: PeerClosed (Disconnected); reconnected in 2 ms
-recovery.12: after GB-10: Requested (Disconnected); reconnected in 3 ms
-recovery.13: after GB-10: Requested (Disconnected); reconnected in 5 ms
-recovery.14: after GB-10: PeerClosed (Disconnected); reconnected in 3 ms
+scan_time_raw: 5
+recovery.1: after G5-01: PeerClosed (Disconnected); reconnected in 2 ms
+recovery.2: after G6: PeerClosed (Disconnected); reconnected in 2 ms
+recovery.3: after G7-01: PeerClosed (Disconnected); reconnected in 2 ms
+recovery.4: after G7-02-A: Requested (Disconnected); reconnected in 2 ms
+recovery.5: after G8-Q3: PeerClosed (Disconnected); reconnected in 2 ms
+recovery.6: after GB-10: PeerClosed (Disconnected); reconnected in 3 ms
 polls: G6 G7-06

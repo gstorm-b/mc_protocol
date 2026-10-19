@@ -13,6 +13,9 @@ G4-02-TC F-010 # supports ignored by the mock
 G4-02-CC F-010 # supports ignored by the mock
 G5-02 F-010    # special range / supports ignored by the mock
 G5-04 F-008    # error code differs
+G4-03 F-012    # LinkDown after a peer close
+G5-01 F-012    # LinkDown after a peer close
+G7-01 F-012    # LinkDown after a peer close (G7-01.2)
 G7-02-B F-011  # unknown subheader answered FF 50
 G8-Q4 F-006    # nonzero padding nibble
 G8-Q4 F-012    # LinkDown after a peer close

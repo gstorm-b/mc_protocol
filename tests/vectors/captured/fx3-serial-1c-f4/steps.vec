@@ -1,0 +1,983 @@
+# id: CAP-fx3-serial-1c-f4-G0-01
+# source: plc  profile: fx3-serial-1c-f4  step: G0-01
+# frame: 1C  code: Ascii  format: 4  op: ReadWords  device: D100  count: 1  via: api
+# kind: request
+05 30 30 46 46 57 52 30 44 30 31 30 30 30 31 32 42 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G0-01-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G0-01
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 8.184  rx_ms: 2.763  rtt_ms: 10.947
+02 30 30 46 46 30 30 30 30 03 41 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G0-02
+# source: plc  profile: fx3-serial-1c-f4  step: G0-02
+# frame: 1C  code: Ascii  format: 4  op: ReadWords  device: D8010  count: 1  via: api
+# kind: request
+05 30 30 46 46 57 52 30 44 38 30 31 30 30 31 33 33 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G0-02-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G0-02
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 8.584  rx_ms: 3.091  rtt_ms: 11.675
+02 30 30 46 46 30 30 30 34 03 42 33 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-GV-01
+# source: plc  profile: fx3-serial-1c-f4  step: GV-01  mirrors: V-1C4-05/07
+# frame: 1C  code: Ascii  format: 4  op: WriteWords  device: D100  count: 3  via: api
+# kind: request
+05 30 30 46 46 57 57 30 44 30 31 30 30 30 33 31 39 39 35 31 32 30 32 31 31 33 30 39 34 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-GV-01-R
+# kind: response  of: CAP-fx3-serial-1c-f4-GV-01
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 10.734  rx_ms: 1.542  rtt_ms: 12.277
+06 30 30 46 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-GV-02
+# source: plc  profile: fx3-serial-1c-f4  step: GV-02  mirrors: V-1C4-01/02
+# frame: 1C  code: Ascii  format: 4  op: ReadWords  device: D100  count: 3  via: api
+# kind: request
+05 30 30 46 46 57 52 30 44 30 31 30 30 30 33 32 44 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-GV-02-R
+# kind: response  of: CAP-fx3-serial-1c-f4-GV-02
+# outcome: ok  expect: words 1995 1202 1130  verdict: passed
+# ttfb_ms: 8.466  rx_ms: 5.225  rtt_ms: 13.691
+02 30 30 46 46 31 39 39 35 31 32 30 32 31 31 33 30 03 35 31 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-GV-03
+# source: plc  profile: fx3-serial-1c-f4  step: GV-03  mirrors: V-1C4-06/07
+# frame: 1C  code: Ascii  format: 4  op: WriteBits  device: M100  count: 8  via: api
+# kind: request
+05 30 30 46 46 42 57 30 4D 30 31 30 30 30 38 31 31 30 30 31 31 30 30 41 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-GV-03-R
+# kind: response  of: CAP-fx3-serial-1c-f4-GV-03
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 10.265  rx_ms: 1.219  rtt_ms: 11.484
+06 30 30 46 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-GV-04
+# source: plc  profile: fx3-serial-1c-f4  step: GV-04  mirrors: V-1C4-03/04
+# frame: 1C  code: Ascii  format: 4  op: WriteBits  device: M100  count: 8  via: api
+# kind: request
+05 30 30 46 46 42 57 30 4D 30 31 30 30 30 38 30 30 30 31 30 30 31 31 41 45 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-GV-04-R
+# kind: response  of: CAP-fx3-serial-1c-f4-GV-04
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 10.265  rx_ms: 1.425  rtt_ms: 11.690
+06 30 30 46 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-GV-04.2
+# source: plc  profile: fx3-serial-1c-f4  step: GV-04.2  mirrors: V-1C4-03/04
+# frame: 1C  code: Ascii  format: 4  op: ReadBits  device: M100  count: 8  via: api
+# kind: request
+05 30 30 46 46 42 52 30 4D 30 31 30 30 30 38 32 36 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-GV-04.2-R
+# kind: response  of: CAP-fx3-serial-1c-f4-GV-04.2
+# outcome: ok  expect: bits 0 0 0 1 0 0 1 1  verdict: passed
+# ttfb_ms: 8.172  rx_ms: 4.350  rtt_ms: 12.523
+02 30 30 46 46 30 30 30 31 30 30 31 31 03 37 32 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-GV-05
+# source: plc  profile: fx3-serial-1c-f4  step: GV-05
+# frame: 1C  code: Ascii  format: 4  op: WriteBits  device: M100  count: 5  via: api
+# kind: request
+05 30 30 46 46 42 57 30 4D 30 31 30 30 30 35 31 30 31 30 31 31 42 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-GV-05-R
+# kind: response  of: CAP-fx3-serial-1c-f4-GV-05
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 9.212  rx_ms: 1.328  rtt_ms: 10.540
+06 30 30 46 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-GV-05.2
+# source: plc  profile: fx3-serial-1c-f4  step: GV-05.2
+# frame: 1C  code: Ascii  format: 4  op: ReadBits  device: M100  count: 5  via: api
+# kind: request
+05 30 30 46 46 42 52 30 4D 30 31 30 30 30 35 32 33 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-GV-05.2-R
+# kind: response  of: CAP-fx3-serial-1c-f4-GV-05.2
+# outcome: ok  expect: bits 1 0 1 0 1  verdict: passed
+# ttfb_ms: 7.497  rx_ms: 3.526  rtt_ms: 11.023
+02 30 30 46 46 31 30 31 30 31 03 45 32 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G1-01
+# source: plc  profile: fx3-serial-1c-f4  step: G1-01
+# frame: 1C  code: Ascii  format: 4  op: WriteWords  device: D100  count: 1  via: api
+# kind: request
+05 30 30 46 46 57 57 30 44 30 31 30 30 30 31 31 32 33 34 46 41 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G1-01-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G1-01
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 9.386  rx_ms: 1.479  rtt_ms: 10.864
+06 30 30 46 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G1-01.2
+# source: plc  profile: fx3-serial-1c-f4  step: G1-01.2
+# frame: 1C  code: Ascii  format: 4  op: ReadWords  device: D100  count: 1  via: api
+# kind: request
+05 30 30 46 46 57 52 30 44 30 31 30 30 30 31 32 42 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G1-01.2-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G1-01.2
+# outcome: ok  expect: words 1234  verdict: passed
+# ttfb_ms: 8.427  rx_ms: 3.157  rtt_ms: 11.584
+02 30 30 46 46 31 32 33 34 03 42 39 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G1-02
+# source: plc  profile: fx3-serial-1c-f4  step: G1-02
+# frame: 1C  code: Ascii  format: 4  op: WriteWords  device: D100  count: 7  via: api
+# kind: request
+05 30 30 46 46 57 57 30 44 30 31 30 30 30 37 30 30 30 31 30 30 30 32 30 30 30 33 30 30 30 34 30 30 30 35 30 30 30 36 30 30 30 37 39 32 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G1-02-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G1-02
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 15.539  rx_ms: 1.322  rtt_ms: 16.861
+06 30 30 46 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G1-02.2
+# source: plc  profile: fx3-serial-1c-f4  step: G1-02.2
+# frame: 1C  code: Ascii  format: 4  op: ReadWords  device: D100  count: 7  via: api
+# kind: request
+05 30 30 46 46 57 52 30 44 30 31 30 30 30 37 33 31 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G1-02.2-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G1-02.2
+# outcome: ok  expect: words 1 2 3 4 5 6 7  verdict: passed
+# ttfb_ms: 8.026  rx_ms: 9.406  rtt_ms: 17.432
+02 30 30 46 46 30 30 30 31 30 30 30 32 30 30 30 33 30 30 30 34 30 30 30 35 30 30 30 36 30 30 30 37 03 34 42 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G1-03
+# source: plc  profile: fx3-serial-1c-f4  step: G1-03
+# frame: 1C  code: Ascii  format: 4  op: WriteWords  device: D100  count: 64  via: api
+# kind: request
+05 30 30 46 46 57 57 30 44 30 31 30 30 34 30 30 30 30 30 30 31 30 31 30 32 30 32 30 33 30 33 30 34 30 34 30 35 30 35 30 36 30 36 30 37 30 37 30 38 30 38 30 39 30 39 30 41 30 41 30 42 30 42 30 43 30 43 30 44 30 44 30 45 30 45 30 46 30 46 31 30 31 30 31 31 31 31 31 32 31 32 31 33 31 33 31 34 31 34 31 35 31 35 31 36 31 36 31 37 31 37 31 38 31 38 31 39 31 39 31 41 31 41 31 42 31 42 31 43 31 43 31 44 31 44 31 45 31 45 31 46 31 46 32 30 32 30 32 31 32 31 32 32 32 32 32 33 32 33 32 34 32 34 32 35 32 35 32 36 32 36 32 37 32 37 32 38 32 38 32 39 32 39 32 41 32 41 32 42 32 42 32 43 32 43 32 44 32 44 32 45 32 45 32 46 32 46 33 30 33 30 33 31 33 31 33 32 33 32 33 33 33 33 33 34 33 34 33 35 33 35 33 36 33 36 33 37 33 37 33 38 33 38 33 39 33 39 33 41 33 41 33 42 33 42 33 43 33 43 33 44 33 44 33 45 33 45 33 46 33 46 30 33 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G1-03-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G1-03
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 74.836  rx_ms: 1.364  rtt_ms: 76.200
+06 30 30 46 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G1-03.2
+# source: plc  profile: fx3-serial-1c-f4  step: G1-03.2
+# frame: 1C  code: Ascii  format: 4  op: ReadWords  device: D100  count: 64  via: api
+# kind: request
+05 30 30 46 46 57 52 30 44 30 31 30 30 34 30 32 45 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G1-03.2-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G1-03.2
+# outcome: ok  expect: words 0 101 202 303 404 505 606 707 808 909 A0A B0B C0C D0D E0E F0F 1010 1111 1212 1313 1414 1515 1616 1717 1818 1919 1A1A 1B1B 1C1C 1D1D 1E1E 1F1F 2020 2121 2222 2323 2424 2525 2626 2727 2828 2929 2A2A 2B2B 2C2C 2D2D 2E2E 2F2F 3030 3131 3232 3333 3434 3535 3636 3737 3838 3939 3A3A 3B3B 3C3C 3D3D 3E3E 3F3F  verdict: passed
+# ttfb_ms: 8.009  rx_ms: 68.722  rtt_ms: 76.731
+02 30 30 46 46 30 30 30 30 30 31 30 31 30 32 30 32 30 33 30 33 30 34 30 34 30 35 30 35 30 36 30 36 30 37 30 37 30 38 30 38 30 39 30 39 30 41 30 41 30 42 30 42 30 43 30 43 30 44 30 44 30 45 30 45 30 46 30 46 31 30 31 30 31 31 31 31 31 32 31 32 31 33 31 33 31 34 31 34 31 35 31 35 31 36 31 36 31 37 31 37 31 38 31 38 31 39 31 39 31 41 31 41 31 42 31 42 31 43 31 43 31 44 31 44 31 45 31 45 31 46 31 46 32 30 32 30 32 31 32 31 32 32 32 32 32 33 32 33 32 34 32 34 32 35 32 35 32 36 32 36 32 37 32 37 32 38 32 38 32 39 32 39 32 41 32 41 32 42 32 42 32 43 32 43 32 44 32 44 32 45 32 45 32 46 32 46 33 30 33 30 33 31 33 31 33 32 33 32 33 33 33 33 33 34 33 34 33 35 33 35 33 36 33 36 33 37 33 37 33 38 33 38 33 39 33 39 33 41 33 41 33 42 33 42 33 43 33 43 33 44 33 44 33 45 33 45 33 46 33 46 03 42 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G1-04
+# source: plc  profile: fx3-serial-1c-f4  step: G1-04
+# frame: 1C  code: Ascii  format: 4  op: ReadWords  device: D100  count: 64  via: api
+# kind: request
+05 30 30 46 46 57 52 30 44 30 31 30 30 34 30 32 45 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G1-04-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G1-04
+# outcome: ok  expect: ok valuesFrom G1-03 frames 2  verdict: passed
+# ttfb_ms: 8.284  rx_ms: 68.753  rtt_ms: 77.037
+02 30 30 46 46 30 30 30 30 30 31 30 31 30 32 30 32 30 33 30 33 30 34 30 34 30 35 30 35 30 36 30 36 30 37 30 37 30 38 30 38 30 39 30 39 30 41 30 41 30 42 30 42 30 43 30 43 30 44 30 44 30 45 30 45 30 46 30 46 31 30 31 30 31 31 31 31 31 32 31 32 31 33 31 33 31 34 31 34 31 35 31 35 31 36 31 36 31 37 31 37 31 38 31 38 31 39 31 39 31 41 31 41 31 42 31 42 31 43 31 43 31 44 31 44 31 45 31 45 31 46 31 46 32 30 32 30 32 31 32 31 32 32 32 32 32 33 32 33 32 34 32 34 32 35 32 35 32 36 32 36 32 37 32 37 32 38 32 38 32 39 32 39 32 41 32 41 32 42 32 42 32 43 32 43 32 44 32 44 32 45 32 45 32 46 32 46 33 30 33 30 33 31 33 31 33 32 33 32 33 33 33 33 33 34 33 34 33 35 33 35 33 36 33 36 33 37 33 37 33 38 33 38 33 39 33 39 33 41 33 41 33 42 33 42 33 43 33 43 33 44 33 44 33 45 33 45 33 46 33 46 03 42 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G1-04+2
+# source: plc  profile: fx3-serial-1c-f4  step: G1-04+2
+# frame: 1C  code: Ascii  format: 4  op: ReadWords  device: D164  count: 40  via: api
+# kind: request
+05 30 30 46 46 57 52 30 44 30 31 36 34 32 38 33 45 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G1-04+2-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G1-04+2
+# outcome: ok  verdict: passed
+# ttfb_ms: 8.238  rx_ms: 43.771  rtt_ms: 52.008
+02 30 30 46 46 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 03 45 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G1-08
+# source: plc  profile: fx3-serial-1c-f4  step: G1-08
+# frame: 1C  code: Ascii  format: 4  op: ReadWords  device: TN0  count: 4  via: api
+# kind: request
+05 30 30 46 46 57 52 30 54 4E 30 30 30 30 34 35 42 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G1-08-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G1-08
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 8.177  rx_ms: 6.432  rtt_ms: 14.610
+02 30 30 46 46 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 03 45 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G1-08.2
+# source: plc  profile: fx3-serial-1c-f4  step: G1-08.2
+# frame: 1C  code: Ascii  format: 4  op: ReadWords  device: CN0  count: 4  via: api
+# kind: request
+05 30 30 46 46 57 52 30 43 4E 30 30 30 30 34 34 41 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G1-08.2-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G1-08.2
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 8.406  rx_ms: 6.340  rtt_ms: 14.746
+02 30 30 46 46 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 03 45 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G1-09
+# source: plc  profile: fx3-serial-1c-f4  step: G1-09
+# frame: 1C  code: Ascii  format: 4  op: ReadWords  device: D8000  count: 4  via: api
+# kind: request
+05 30 30 46 46 57 52 30 44 38 30 30 30 30 34 33 35 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G1-09-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G1-09
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 8.046  rx_ms: 6.295  rtt_ms: 14.341
+02 30 30 46 46 30 30 43 38 36 36 37 37 30 30 30 38 30 30 31 30 03 32 44 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G1-10
+# source: plc  profile: fx3-serial-1c-f4  step: G1-10
+# frame: 1C  code: Ascii  format: 4  op: WriteWords  device: D120  count: 4  via: api
+# kind: request
+05 30 30 46 46 57 57 30 44 30 31 32 30 30 34 30 30 30 30 30 30 30 30 30 30 30 30 33 46 46 38 36 43 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G1-10-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G1-10
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 12.723  rx_ms: 1.360  rtt_ms: 14.082
+06 30 30 46 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G1-10.2
+# source: plc  profile: fx3-serial-1c-f4  step: G1-10.2
+# frame: 1C  code: Ascii  format: 4  op: ReadWords  device: D120  count: 4  via: api
+# kind: request
+05 30 30 46 46 57 52 30 44 30 31 32 30 30 34 33 30 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G1-10.2-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G1-10.2
+# outcome: ok  expect: words 0 0 0 3FF8  verdict: passed
+# ttfb_ms: 8.271  rx_ms: 6.384  rtt_ms: 14.655
+02 30 30 46 46 30 30 30 30 30 30 30 30 30 30 30 30 33 46 46 38 03 32 36 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G1-10.3
+# source: plc  profile: fx3-serial-1c-f4  step: G1-10.3
+# frame: 1C  code: Ascii  format: 4  op: WriteWords  device: D124  count: 2  via: api
+# kind: request
+05 30 30 46 46 57 57 30 44 30 31 32 34 30 32 46 46 46 45 46 46 46 46 36 36 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G1-10.3-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G1-10.3
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 10.930  rx_ms: 0.922  rtt_ms: 11.852
+06 30 30 46 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G1-10.4
+# source: plc  profile: fx3-serial-1c-f4  step: G1-10.4
+# frame: 1C  code: Ascii  format: 4  op: ReadWords  device: D124  count: 2  via: api
+# kind: request
+05 30 30 46 46 57 52 30 44 30 31 32 34 30 32 33 32 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G1-10.4-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G1-10.4
+# outcome: ok  expect: words FFFE FFFF  verdict: passed
+# ttfb_ms: 8.558  rx_ms: 4.187  rtt_ms: 12.745
+02 30 30 46 46 46 46 46 45 46 46 46 46 03 31 45 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G2-01
+# source: plc  profile: fx3-serial-1c-f4  step: G2-01
+# frame: 1C  code: Ascii  format: 4  op: WriteBits  device: M100  count: 1  via: api
+# kind: request
+05 30 30 46 46 42 57 30 4D 30 31 30 30 30 31 31 35 35 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G2-01-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G2-01
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 8.702  rx_ms: 1.239  rtt_ms: 9.941
+06 30 30 46 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G2-01.2
+# source: plc  profile: fx3-serial-1c-f4  step: G2-01.2
+# frame: 1C  code: Ascii  format: 4  op: ReadBits  device: M100  count: 1  via: api
+# kind: request
+05 30 30 46 46 42 52 30 4D 30 31 30 30 30 31 31 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G2-01.2-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G2-01.2
+# outcome: ok  expect: bits 1  verdict: passed
+# ttfb_ms: 8.341  rx_ms: 1.942  rtt_ms: 10.283
+02 30 30 46 46 31 03 32 30 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G2-01.3
+# source: plc  profile: fx3-serial-1c-f4  step: G2-01.3
+# frame: 1C  code: Ascii  format: 4  op: WriteBits  device: M100  count: 1  via: api
+# kind: request
+05 30 30 46 46 42 57 30 4D 30 31 30 30 30 31 30 35 34 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G2-01.3-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G2-01.3
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 7.903  rx_ms: 1.220  rtt_ms: 9.123
+06 30 30 46 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G2-01.4
+# source: plc  profile: fx3-serial-1c-f4  step: G2-01.4
+# frame: 1C  code: Ascii  format: 4  op: ReadBits  device: M100  count: 1  via: api
+# kind: request
+05 30 30 46 46 42 52 30 4D 30 31 30 30 30 31 31 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G2-01.4-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G2-01.4
+# outcome: ok  expect: bits 0  verdict: passed
+# ttfb_ms: 7.564  rx_ms: 2.599  rtt_ms: 10.163
+02 30 30 46 46 30 03 31 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G2-02
+# source: plc  profile: fx3-serial-1c-f4  step: G2-02
+# frame: 1C  code: Ascii  format: 4  op: WriteBits  device: M100  count: 16  via: api
+# kind: request
+05 30 30 46 46 42 57 30 4D 30 31 30 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 32 43 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G2-02-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G2-02
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 12.706  rx_ms: 1.321  rtt_ms: 14.028
+06 30 30 46 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G2-02.2
+# source: plc  profile: fx3-serial-1c-f4  step: G2-02.2
+# frame: 1C  code: Ascii  format: 4  op: ReadBits  device: M100  count: 16  via: api
+# kind: request
+05 30 30 46 46 42 52 30 4D 30 31 30 30 31 30 31 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G2-02.2-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G2-02.2
+# outcome: ok  expect: bits 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0  verdict: passed
+# ttfb_ms: 8.601  rx_ms: 6.044  rtt_ms: 14.645
+02 30 30 46 46 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 03 46 37 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G2-03
+# source: plc  profile: fx3-serial-1c-f4  step: G2-03
+# frame: 1C  code: Ascii  format: 4  op: WriteBits  device: M105  count: 1  via: api
+# kind: request
+05 30 30 46 46 42 57 30 4D 30 31 30 35 30 31 30 35 39 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G2-03-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G2-03
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 8.308  rx_ms: 1.332  rtt_ms: 9.640
+06 30 30 46 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G2-03.2
+# source: plc  profile: fx3-serial-1c-f4  step: G2-03.2
+# frame: 1C  code: Ascii  format: 4  op: WriteBits  device: M100  count: 5  via: api
+# kind: request
+05 30 30 46 46 42 57 30 4D 30 31 30 30 30 35 31 30 31 30 31 31 42 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G2-03.2-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G2-03.2
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 9.584  rx_ms: 1.439  rtt_ms: 11.023
+06 30 30 46 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G2-03.3
+# source: plc  profile: fx3-serial-1c-f4  step: G2-03.3
+# frame: 1C  code: Ascii  format: 4  op: ReadBits  device: M100  count: 6  via: api
+# kind: request
+05 30 30 46 46 42 52 30 4D 30 31 30 30 30 36 32 34 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G2-03.3-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G2-03.3
+# outcome: ok  expect: bits 1 0 1 0 1 0  verdict: passed
+# ttfb_ms: 7.865  rx_ms: 3.627  rtt_ms: 11.492
+02 30 30 46 46 31 30 31 30 31 30 03 31 32 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G2-04
+# source: plc  profile: fx3-serial-1c-f4  step: G2-04
+# frame: 1C  code: Ascii  format: 4  op: WriteBits  device: M100  count: 160  via: api
+# kind: request
+05 30 30 46 46 42 57 30 4D 30 31 30 30 41 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 38 34 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G2-04-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G2-04
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 49.867  rx_ms: 0.990  rtt_ms: 50.856
+06 30 30 46 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G2-04.2
+# source: plc  profile: fx3-serial-1c-f4  step: G2-04.2
+# frame: 1C  code: Ascii  format: 4  op: ReadBits  device: M100  count: 160  via: api
+# kind: request
+05 30 30 46 46 42 52 30 4D 30 31 30 30 41 30 32 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G2-04.2-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G2-04.2
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 7.673  rx_ms: 43.779  rtt_ms: 51.451
+02 30 30 46 46 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 31 30 03 33 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G2-06
+# source: plc  profile: fx3-serial-1c-f4  step: G2-06
+# frame: 1C  code: Ascii  format: 4  op: WriteBits  device: Y0  count: 8  via: api
+# kind: request
+05 30 30 46 46 42 57 30 59 30 30 30 30 30 38 31 30 31 30 31 30 31 30 42 41 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G2-06-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G2-06
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 10.185  rx_ms: 1.331  rtt_ms: 11.516
+06 30 30 46 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G2-06.2
+# source: plc  profile: fx3-serial-1c-f4  step: G2-06.2
+# frame: 1C  code: Ascii  format: 4  op: ReadBits  device: Y0  count: 8  via: api
+# kind: request
+05 30 30 46 46 42 52 30 59 30 30 30 30 30 38 33 31 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G2-06.2-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G2-06.2
+# outcome: ok  expect: bits 1 0 1 0 1 0 1 0  verdict: passed
+# ttfb_ms: 8.354  rx_ms: 4.229  rtt_ms: 12.583
+02 30 30 46 46 31 30 31 30 31 30 31 30 03 37 33 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G2-08
+# source: plc  profile: fx3-serial-1c-f4  step: G2-08
+# frame: 1C  code: Ascii  format: 4  op: ReadBits  device: X0  count: 16  via: api
+# kind: request
+05 30 30 46 46 42 52 30 58 30 30 30 30 31 30 32 39 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G2-08-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G2-08
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 8.252  rx_ms: 6.200  rtt_ms: 14.452
+02 30 30 46 46 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 03 45 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G2-08.2
+# source: plc  profile: fx3-serial-1c-f4  step: G2-08.2
+# frame: 1C  code: Ascii  format: 4  op: ReadBits  device: X0  count: 64  via: api
+# kind: request
+05 30 30 46 46 42 52 30 58 30 30 30 30 34 30 32 43 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G2-08.2-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G2-08.2
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 7.518  rx_ms: 18.875  rtt_ms: 26.393
+02 30 30 46 46 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 03 45 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G2-10
+# source: plc  profile: fx3-serial-1c-f4  step: G2-10
+# frame: 1C  code: Ascii  format: 4  op: ReadBits  device: M8000  count: 16  via: api
+# kind: request
+05 30 30 46 46 42 52 30 4D 38 30 30 30 31 30 32 36 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G2-10-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G2-10
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 8.223  rx_ms: 6.263  rtt_ms: 14.486
+02 30 30 46 46 31 30 30 31 30 30 30 30 30 30 30 31 30 30 30 30 03 46 32 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G3-01
+# source: plc  profile: fx3-serial-1c-f4  step: G3-01
+# frame: 1C  code: Ascii  format: 4  op: WriteWords  device: M112  count: 2  via: api
+# kind: request
+05 30 30 46 46 57 57 30 4D 30 31 31 32 30 32 31 32 33 34 30 30 30 32 43 39 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G3-01-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G3-01
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 10.048  rx_ms: 1.426  rtt_ms: 11.473
+06 30 30 46 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G3-01.2
+# source: plc  profile: fx3-serial-1c-f4  step: G3-01.2
+# frame: 1C  code: Ascii  format: 4  op: ReadBits  device: M112  count: 32  via: api
+# kind: request
+05 30 30 46 46 42 52 30 4D 30 31 31 32 32 30 32 33 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G3-01.2-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G3-01.2
+# outcome: ok  expect: bitsOn 2 4 5 9 12 17  verdict: passed
+# ttfb_ms: 7.868  rx_ms: 10.358  rtt_ms: 18.226
+02 30 30 46 46 30 30 31 30 31 31 30 30 30 31 30 30 31 30 30 30 30 31 30 30 30 30 30 30 30 30 30 30 30 30 30 30 03 46 35 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G3-02
+# source: plc  profile: fx3-serial-1c-f4  step: G3-02
+# frame: 1C  code: Ascii  format: 4  op: ReadWords  device: X0  count: 4  via: api
+# kind: request
+05 30 30 46 46 57 52 30 58 30 30 30 30 30 34 34 31 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G3-02-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G3-02
+# outcome: ok  expect: record  verdict: passed
+# ttfb_ms: 7.830  rx_ms: 6.314  rtt_ms: 14.144
+02 30 30 46 46 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 03 45 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G3-04
+# source: plc  profile: fx3-serial-1c-f4  step: G3-04
+# frame: 1C  code: Ascii  format: 4  op: ReadWords  device: M8000  count: 1  via: api
+# kind: request
+05 30 30 46 46 57 52 30 4D 38 30 30 30 30 31 33 42 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G3-04-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G3-04
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 7.866  rx_ms: 3.224  rtt_ms: 11.090
+02 30 30 46 46 33 30 30 39 03 42 42 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G3-05
+# source: plc  profile: fx3-serial-1c-f4  step: G3-05
+# frame: 1C  code: Ascii  format: 4  op: ReadWords  device: M112  count: 32  via: api
+# kind: request
+05 30 30 46 46 57 52 30 4D 30 31 31 32 32 30 33 38 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G3-05-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G3-05
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 7.859  rx_ms: 35.366  rtt_ms: 43.225
+02 30 30 46 46 31 32 33 34 30 30 30 32 35 35 35 35 35 35 35 35 35 35 35 35 35 35 35 35 35 35 35 35 35 35 35 35 35 35 35 35 30 30 30 35 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 03 38 43 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G3-05.2
+# source: plc  profile: fx3-serial-1c-f4  step: G3-05.2
+# frame: 1C  code: Ascii  format: 4  op: WriteWords  device: M112  count: 10  via: api
+# kind: request
+05 30 30 46 46 57 57 30 4D 30 31 31 32 30 41 30 30 30 30 30 30 30 31 30 30 30 32 30 30 30 33 30 30 30 34 30 30 30 35 30 30 30 36 30 30 30 37 30 30 30 38 30 30 30 39 46 39 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G3-05.2-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G3-05.2
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 18.773  rx_ms: 1.418  rtt_ms: 20.191
+06 30 30 46 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-01-D
+# source: plc  profile: fx3-serial-1c-f4  step: G4-01-D
+# frame: 1C  code: Ascii  format: 4  op: ReadWords  device: D0  count: 1  via: api
+# kind: request
+05 30 30 46 46 57 52 30 44 30 30 30 30 30 31 32 41 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-01-D-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G4-01-D
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 7.492  rx_ms: 3.273  rtt_ms: 10.765
+02 30 30 46 46 30 30 30 30 03 41 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-01-R
+# source: plc  profile: fx3-serial-1c-f4  step: G4-01-R
+# frame: 1C  code: Ascii  format: 4  op: ReadWords  device: R0  count: 1  via: api
+# kind: request
+05 30 30 46 46 57 52 30 52 30 30 30 30 30 31 33 38 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-01-R-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G4-01-R
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 7.940  rx_ms: 3.079  rtt_ms: 11.019
+02 30 30 46 46 30 30 30 30 03 41 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-01-M
+# source: plc  profile: fx3-serial-1c-f4  step: G4-01-M
+# frame: 1C  code: Ascii  format: 4  op: ReadBits  device: M0  count: 1  via: api
+# kind: request
+05 30 30 46 46 42 52 30 4D 30 30 30 30 30 31 31 45 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-01-M-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G4-01-M
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 7.610  rx_ms: 2.420  rtt_ms: 10.030
+02 30 30 46 46 30 03 31 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-01-S
+# source: plc  profile: fx3-serial-1c-f4  step: G4-01-S
+# frame: 1C  code: Ascii  format: 4  op: ReadBits  device: S0  count: 1  via: api
+# kind: request
+05 30 30 46 46 42 52 30 53 30 30 30 30 30 31 32 34 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-01-S-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G4-01-S
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 8.370  rx_ms: 2.365  rtt_ms: 10.735
+02 30 30 46 46 30 03 31 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-01-X
+# source: plc  profile: fx3-serial-1c-f4  step: G4-01-X
+# frame: 1C  code: Ascii  format: 4  op: ReadBits  device: X0  count: 1  via: api
+# kind: request
+05 30 30 46 46 42 52 30 58 30 30 30 30 30 31 32 39 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-01-X-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G4-01-X
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 8.387  rx_ms: 2.247  rtt_ms: 10.634
+02 30 30 46 46 30 03 31 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-01-Y
+# source: plc  profile: fx3-serial-1c-f4  step: G4-01-Y
+# frame: 1C  code: Ascii  format: 4  op: ReadBits  device: Y0  count: 1  via: api
+# kind: request
+05 30 30 46 46 42 52 30 59 30 30 30 30 30 31 32 41 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-01-Y-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G4-01-Y
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 7.660  rx_ms: 2.305  rtt_ms: 9.965
+02 30 30 46 46 31 03 32 30 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-01-TS
+# source: plc  profile: fx3-serial-1c-f4  step: G4-01-TS
+# frame: 1C  code: Ascii  format: 4  op: ReadBits  device: TS0  count: 1  via: api
+# kind: request
+05 30 30 46 46 42 52 30 54 53 30 30 30 30 31 34 38 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-01-TS-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G4-01-TS
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 8.369  rx_ms: 2.330  rtt_ms: 10.699
+02 30 30 46 46 30 03 31 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-01-TN
+# source: plc  profile: fx3-serial-1c-f4  step: G4-01-TN
+# frame: 1C  code: Ascii  format: 4  op: ReadWords  device: TN0  count: 1  via: api
+# kind: request
+05 30 30 46 46 57 52 30 54 4E 30 30 30 30 31 35 38 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-01-TN-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G4-01-TN
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 8.341  rx_ms: 3.297  rtt_ms: 11.638
+02 30 30 46 46 30 30 30 30 03 41 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-01-CS
+# source: plc  profile: fx3-serial-1c-f4  step: G4-01-CS
+# frame: 1C  code: Ascii  format: 4  op: ReadBits  device: CS0  count: 1  via: api
+# kind: request
+05 30 30 46 46 42 52 30 43 53 30 30 30 30 31 33 37 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-01-CS-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G4-01-CS
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 7.823  rx_ms: 2.566  rtt_ms: 10.389
+02 30 30 46 46 30 03 31 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-01-CN
+# source: plc  profile: fx3-serial-1c-f4  step: G4-01-CN
+# frame: 1C  code: Ascii  format: 4  op: ReadWords  device: CN0  count: 1  via: api
+# kind: request
+05 30 30 46 46 57 52 30 43 4E 30 30 30 30 31 34 37 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-01-CN-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G4-01-CN
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 7.525  rx_ms: 3.291  rtt_ms: 10.816
+02 30 30 46 46 30 30 30 30 03 41 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-02-L
+# source: plc  profile: fx3-serial-1c-f4  step: G4-02-L
+# frame: 1C  code: Ascii  format: 4  op: ReadBits  device: L0  count: 1  via: api
+# kind: request
+05 30 30 46 46 42 52 30 4C 30 30 30 30 30 31 31 44 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-02-L-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G4-02-L
+# outcome: plcError 0006  expect: record  verdict: passed
+# ttfb_ms: 8.163  rx_ms: 1.913  rtt_ms: 10.076
+15 30 30 46 46 30 36 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-02-F
+# source: plc  profile: fx3-serial-1c-f4  step: G4-02-F
+# frame: 1C  code: Ascii  format: 4  op: ReadBits  device: F0  count: 1  via: api
+# kind: request
+05 30 30 46 46 42 52 30 46 30 30 30 30 30 31 31 37 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-02-F-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G4-02-F
+# outcome: plcError 0006  expect: record  verdict: passed
+# ttfb_ms: 7.888  rx_ms: 1.752  rtt_ms: 9.640
+15 30 30 46 46 30 36 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-02-B
+# source: plc  profile: fx3-serial-1c-f4  step: G4-02-B
+# frame: 1C  code: Ascii  format: 4  op: ReadBits  device: B0  count: 1  via: api
+# kind: request
+05 30 30 46 46 42 52 30 42 30 30 30 30 30 31 31 33 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-02-B-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G4-02-B
+# outcome: plcError 0006  expect: record  verdict: passed
+# ttfb_ms: 7.939  rx_ms: 1.946  rtt_ms: 9.885
+15 30 30 46 46 30 36 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-02-W
+# source: plc  profile: fx3-serial-1c-f4  step: G4-02-W
+# frame: 1C  code: Ascii  format: 4  op: ReadWords  device: W0  count: 1  via: api
+# kind: request
+05 30 30 46 46 57 52 30 57 30 30 30 30 30 31 33 44 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-02-W-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G4-02-W
+# outcome: plcError 0006  expect: record  verdict: passed
+# ttfb_ms: 8.018  rx_ms: 1.850  rtt_ms: 9.869
+15 30 30 46 46 30 36 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-02-TC
+# source: plc  profile: fx3-serial-1c-f4  step: G4-02-TC
+# frame: 1C  code: Ascii  format: 4  op: ReadBits  device: TC0  count: 1  via: api
+# kind: request
+05 30 30 46 46 42 52 30 54 43 30 30 30 30 31 33 38 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-02-TC-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G4-02-TC
+# outcome: plcError 0006  expect: record  verdict: passed
+# ttfb_ms: 8.160  rx_ms: 1.844  rtt_ms: 10.004
+15 30 30 46 46 30 36 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-02-CC
+# source: plc  profile: fx3-serial-1c-f4  step: G4-02-CC
+# frame: 1C  code: Ascii  format: 4  op: ReadBits  device: CC0  count: 1  via: api
+# kind: request
+05 30 30 46 46 42 52 30 43 43 30 30 30 30 31 32 37 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-02-CC-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G4-02-CC
+# outcome: plcError 0006  expect: record  verdict: passed
+# ttfb_ms: 7.517  rx_ms: 1.969  rtt_ms: 9.486
+15 30 30 46 46 30 36 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-04-D
+# source: plc  profile: fx3-serial-1c-f4  step: G4-04-D  override: commandSet=AnA
+# frame: 1C  code: Ascii  format: 4  op: ReadWords  device: D0  count: 1  via: api
+# kind: request
+05 30 30 46 46 51 52 30 44 30 30 30 30 30 30 30 31 38 34 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-04-D-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G4-04-D  override: commandSet=AnA
+# outcome: ok  expect: record  verdict: passed
+# ttfb_ms: 8.847  rx_ms: 3.026  rtt_ms: 11.872
+02 30 30 46 46 30 30 30 30 03 41 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-04-R
+# source: plc  profile: fx3-serial-1c-f4  step: G4-04-R  override: commandSet=AnA
+# frame: 1C  code: Ascii  format: 4  op: ReadWords  device: R0  count: 1  via: api
+# kind: request
+05 30 30 46 46 51 52 30 52 30 30 30 30 30 30 30 31 39 32 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-04-R-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G4-04-R  override: commandSet=AnA
+# outcome: ok  expect: record  verdict: passed
+# ttfb_ms: 8.125  rx_ms: 3.222  rtt_ms: 11.348
+02 30 30 46 46 30 30 30 30 03 41 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-04-M
+# source: plc  profile: fx3-serial-1c-f4  step: G4-04-M  override: commandSet=AnA
+# frame: 1C  code: Ascii  format: 4  op: ReadBits  device: M0  count: 1  via: api
+# kind: request
+05 30 30 46 46 4A 52 30 4D 30 30 30 30 30 30 30 31 38 36 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-04-M-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G4-04-M  override: commandSet=AnA
+# outcome: plcError 0003  expect: record  verdict: passed
+# ttfb_ms: 4.178  rx_ms: 2.054  rtt_ms: 6.232
+15 30 30 46 46 30 33 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-04-S
+# source: plc  profile: fx3-serial-1c-f4  step: G4-04-S  override: commandSet=AnA
+# frame: 1C  code: Ascii  format: 4  op: ReadBits  device: S0  count: 1  via: api
+# kind: request
+05 30 30 46 46 4A 52 30 53 30 30 30 30 30 30 30 31 38 43 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-04-S-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G4-04-S  override: commandSet=AnA
+# outcome: plcError 0003  expect: record  verdict: passed
+# ttfb_ms: 4.455  rx_ms: 1.954  rtt_ms: 6.409
+15 30 30 46 46 30 33 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-04-X
+# source: plc  profile: fx3-serial-1c-f4  step: G4-04-X  override: commandSet=AnA
+# frame: 1C  code: Ascii  format: 4  op: ReadBits  device: X0  count: 1  via: api
+# kind: request
+05 30 30 46 46 4A 52 30 58 30 30 30 30 30 30 30 31 39 31 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-04-X-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G4-04-X  override: commandSet=AnA
+# outcome: plcError 0003  expect: record  verdict: passed
+# ttfb_ms: 4.352  rx_ms: 1.975  rtt_ms: 6.327
+15 30 30 46 46 30 33 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-04-Y
+# source: plc  profile: fx3-serial-1c-f4  step: G4-04-Y  override: commandSet=AnA
+# frame: 1C  code: Ascii  format: 4  op: ReadBits  device: Y0  count: 1  via: api
+# kind: request
+05 30 30 46 46 4A 52 30 59 30 30 30 30 30 30 30 31 39 32 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-04-Y-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G4-04-Y  override: commandSet=AnA
+# outcome: plcError 0003  expect: record  verdict: passed
+# ttfb_ms: 4.482  rx_ms: 1.974  rtt_ms: 6.455
+15 30 30 46 46 30 33 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-04-TS
+# source: plc  profile: fx3-serial-1c-f4  step: G4-04-TS  override: commandSet=AnA
+# frame: 1C  code: Ascii  format: 4  op: ReadBits  device: TS0  count: 1  via: api
+# kind: request
+05 30 30 46 46 4A 52 30 54 53 30 30 30 30 30 30 31 42 30 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-04-TS-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G4-04-TS  override: commandSet=AnA
+# outcome: plcError 0003  expect: record  verdict: passed
+# ttfb_ms: 4.032  rx_ms: 2.019  rtt_ms: 6.051
+15 30 30 46 46 30 33 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-04-TN
+# source: plc  profile: fx3-serial-1c-f4  step: G4-04-TN  override: commandSet=AnA
+# frame: 1C  code: Ascii  format: 4  op: ReadWords  device: TN0  count: 1  via: api
+# kind: request
+05 30 30 46 46 51 52 30 54 4E 30 30 30 30 30 30 31 42 32 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-04-TN-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G4-04-TN  override: commandSet=AnA
+# outcome: ok  expect: record  verdict: passed
+# ttfb_ms: 8.204  rx_ms: 3.328  rtt_ms: 11.532
+02 30 30 46 46 30 30 30 30 03 41 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-04-CS
+# source: plc  profile: fx3-serial-1c-f4  step: G4-04-CS  override: commandSet=AnA
+# frame: 1C  code: Ascii  format: 4  op: ReadBits  device: CS0  count: 1  via: api
+# kind: request
+05 30 30 46 46 4A 52 30 43 53 30 30 30 30 30 30 31 39 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-04-CS-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G4-04-CS  override: commandSet=AnA
+# outcome: plcError 0003  expect: record  verdict: passed
+# ttfb_ms: 4.185  rx_ms: 1.960  rtt_ms: 6.145
+15 30 30 46 46 30 33 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-04-CN
+# source: plc  profile: fx3-serial-1c-f4  step: G4-04-CN  override: commandSet=AnA
+# frame: 1C  code: Ascii  format: 4  op: ReadWords  device: CN0  count: 1  via: api
+# kind: request
+05 30 30 46 46 51 52 30 43 4E 30 30 30 30 30 30 31 41 31 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G4-04-CN-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G4-04-CN  override: commandSet=AnA
+# outcome: ok  expect: record  verdict: passed
+# ttfb_ms: 8.190  rx_ms: 3.378  rtt_ms: 11.568
+02 30 30 46 46 30 30 30 30 03 41 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G5-01
+# source: plc  profile: fx3-serial-1c-f4  step: G5-01
+# frame: 1C  code: Ascii  format: 4  op: ReadWords  device: D7999  count: 1  via: api
+# kind: request
+05 30 30 46 46 57 52 30 44 37 39 39 39 30 31 34 43 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G5-01-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G5-01
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 8.696  rx_ms: 3.265  rtt_ms: 11.961
+02 30 30 46 46 30 30 30 30 03 41 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G5-02
+# source: plc  profile: fx3-serial-1c-f4  step: G5-02
+# frame: 1C  code: Ascii  format: 4  op: ReadWords  device: D8000  count: 1  via: api
+# kind: request
+05 30 30 46 46 57 52 30 44 38 30 30 30 30 31 33 32 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G5-02-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G5-02
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 7.883  rx_ms: 3.158  rtt_ms: 11.041
+02 30 30 46 46 30 30 43 38 03 43 41 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G5-04
+# source: plc  profile: fx3-serial-1c-f4  step: G5-04
+# frame: 1C  code: Ascii  format: 4  op: ReadBits  device: M7680  count: 1  via: api
+# kind: request
+05 30 30 46 46 42 52 30 4D 37 36 38 30 30 31 33 33 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G5-04-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G5-04
+# outcome: plcError 0006  expect: plcError  verdict: passed
+# ttfb_ms: 7.659  rx_ms: 2.010  rtt_ms: 9.669
+15 30 30 46 46 30 36 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G7-01
+# source: plc  profile: fx3-serial-1c-f4  step: G7-01
+# frame: 1C  code: Ascii  format: 4  op: ReadWords  device: D100  count: 1  via: mutate
+# kind: request
+# outcome: timeout  expect: record  waited_ms: 3001.619  verdict: passed
+05 30 30 46 46 57 52 30 44 30 31 30 30 30 31 32 42 0D
+
+# id: CAP-fx3-serial-1c-f4-G7-01+2
+# source: plc  profile: fx3-serial-1c-f4  step: G7-01+2
+# frame: 1C  code: Ascii  format: 4  op: ReadWords  device: D100  count: 1  via: mutate
+# kind: request
+# outcome: noResponse  waited_ms: 3001.619  verdict: passed
+04 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G7-01.2
+# source: plc  profile: fx3-serial-1c-f4  step: G7-01.2
+# frame: 1C  code: Ascii  format: 4  op: ReadWords  device: D100  count: 1  via: api
+# kind: request
+05 30 30 46 46 57 52 30 44 30 31 30 30 30 31 32 42 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G7-01.2-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G7-01.2
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 8.075  rx_ms: 3.051  rtt_ms: 11.127
+02 30 30 46 46 30 30 30 30 03 41 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G7-03
+# source: plc  profile: fx3-serial-1c-f4  step: G7-03
+# frame: 1C  code: Ascii  format: 4  op: ReadWords  device: D100  count: 1  via: mutate
+# kind: request
+05 30 30 46 46 57 52 30 44 30 31 30 30 30 31 32 43 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G7-03-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G7-03
+# outcome: plcError 0002  expect: record  verdict: passed
+# ttfb_ms: 6.323  rx_ms: 1.973  rtt_ms: 8.296
+15 30 30 46 46 30 32 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G7-03.2
+# source: plc  profile: fx3-serial-1c-f4  step: G7-03.2
+# frame: 1C  code: Ascii  format: 4  op: ReadWords  device: D100  count: 1  via: api
+# kind: request
+05 30 30 46 46 57 52 30 44 30 31 30 30 30 31 32 42 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G7-03.2-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G7-03.2
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 8.157  rx_ms: 3.239  rtt_ms: 11.396
+02 30 30 46 46 30 30 30 30 03 41 46 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G7-04
+# source: plc  profile: fx3-serial-1c-f4  step: G7-04  override: stationNo=+1
+# frame: 1C  code: Ascii  format: 4  op: ReadWords  device: D100  count: 1  via: api
+# kind: request
+# outcome: noResponse  expect: noResponse  waited_ms: 3052.597  verdict: passed
+05 30 31 46 46 57 52 30 44 30 31 30 30 30 31 32 43 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G7-04+2
+# source: plc  profile: fx3-serial-1c-f4  step: G7-04+2  override: stationNo=+1
+# frame: 1C  code: Ascii  format: 4  op: Raw  via: raw
+# kind: request
+# outcome: noResponse  waited_ms: 50.975  verdict: passed
+04 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G7-05
+# source: plc  profile: fx3-serial-1c-f4  step: G7-05
+# frame: 1C  code: Ascii  format: 4  op: Raw  via: raw
+# kind: request
+# outcome: noResponse  expect: record  waited_ms: 3001.139  verdict: passed
+04 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G7-05.2
+# source: plc  profile: fx3-serial-1c-f4  step: G7-05.2
+# frame: 1C  code: Ascii  format: 4  op: ReadWords  device: D100  count: 1  via: api
+# kind: request
+05 30 30 46 46 57 52 30 44 30 31 30 30 30 31 32 42 0D 0A
+
+# id: CAP-fx3-serial-1c-f4-G7-05.2-R
+# kind: response  of: CAP-fx3-serial-1c-f4-G7-05.2
+# outcome: ok  expect: ok  verdict: passed
+# ttfb_ms: 9.070  rx_ms: 2.475  rtt_ms: 11.545
+02 30 30 46 46 30 30 30 30 03 41 46 0D 0A
+
