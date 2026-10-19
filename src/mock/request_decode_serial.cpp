@@ -263,6 +263,7 @@ void decodeData1c(ByteView data, XyNumbering xy, SerialRequest& req) {
     if (!c.known || c.kind == 'T') {
         return;
     }
+    req.bitReadAna = c.ana && c.bit && c.kind == 'R';
     const size_t device = deviceSize1c(c);
     const ByteView area{data.data + 3, data.size - 3};
     if (area.size < device + 2) {

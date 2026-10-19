@@ -286,6 +286,13 @@ void MockPlc::Impl::handleSerial(const SerialRequest& request) {
     if (!request.sumValid) {
         outcome.ok = false;
         outcome.plcCode = threeC ? opt.sumErrorQna : opt.sumError1c;
+    } else if (!threeC && request.bitReadAna && cfg.targetFamily == TargetFamily::A &&
+               cfg.xyNotation == XyNumbering::Octal) {
+        // An FX3 computer link does not execute JR (the captures: 02 in format 1 with a SUM, 03 in
+        // every other case). The rule keys on the request letters, not on cfg.commandSet.
+        outcome.ok = false;
+        outcome.plcCode =
+            (cfg.format == SerialFormat::Format1 && cfg.sumCheck) ? uint16_t{0x02} : uint16_t{0x03};
     } else {
         outcome = detail::mock::executeSerial(request, cfg.frame, memory, faults, opt);
     }

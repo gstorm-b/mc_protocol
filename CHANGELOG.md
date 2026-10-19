@@ -6,6 +6,12 @@ All notable changes to this project are documented in this file. The format foll
 
 ## [Unreleased]
 
+### Changed
+
+- `MockPlc` on a 1C frame with `targetFamily A` and `xyNotation Octal` (an FX3 computer link) no longer executes the
+  AnA bit read `JR`: it answers NAK `02` in format 1 with the sum check on and `03` in every other case, as the FX3
+  does. `QR`, `JW`, `QW` and every other configuration are unchanged.
+
 ## [0.1.3] - 2026-10-15
 
 Fourth pre-release (owner, 2026-10-15). Follows the bench findings triage (P9-2, owner 2026-10-14) after 11 captures on

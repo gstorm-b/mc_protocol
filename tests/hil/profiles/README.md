@@ -107,4 +107,4 @@ JSON string such as `"377"`), and the tool's texts (dry run, gate messages, `run
 records) write X and Y the same way. Offsets and alignments stay plain decimal counts of points.
 `frame.xyAsciiDigits` is what the PLC expects inside ASCII frames: `"Hex"` for the FX3 1E adapter and
 the FX5U (Binary, or the "ASCII (X,Y HEX)" communication data code), `"Octal"` for the FX3 computer
-link (1C).
+link (1C) and for an FX5U serial port set to "ASCII (X,Y OCT)".

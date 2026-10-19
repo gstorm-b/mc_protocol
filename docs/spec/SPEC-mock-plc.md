@@ -184,7 +184,7 @@ public:
 |---|---|---|
 | 3E, 3C | 0401 / 1401 with subcommands 0000, 0001 (Q/L) and 0002, 0003 (iQ-R) | Device layout chosen from the **received** subcommand, so a client sending the wrong one is caught |
 | 1E | 00H, 01H, 02H, 03H | Points `00` = 256 (spec E8) |
-| 1C | BR, WR, BW, WW (ACPU) and JR, QR, JW, QW (AnA) | Message wait character accepted and ignored |
+| 1C | BR, WR, BW, WW (ACPU) and JR, QR, JW, QW (AnA) | Message wait character accepted and ignored. With `targetFamily A` and `xyNotation Octal` (an FX3 computer link) `JR` is not executed: answered NAK `02` in format 1 with `sumCheck` on and `03` in every other case, as the FX3 does (finding F-022); `QR`, `JW`, `QW` are executed |
 | any | anything else (0403, 1402, 04H, 05H, BT, WT, …) | Answered with the family's `unsupported*` error |
 
 ### Serial reception (server side of spec §6.3)
@@ -237,6 +237,7 @@ Two doctest binaries. `mc_mock_tests` (label `mock`) checks the mock against the
 | MCK-12 | `setDeviceLimit`: a request reaching the limit gets the out-of-range error; one below it succeeds |
 | MCK-13 | Streams: two streams fed interleaved fragments (one byte each, alternating) decode both requests and answer each on its own stream, on every frame family; a stream closed mid-request leaves no trace for the next stream; stream 0 calls equal the stream-less calls; faults and the request log are shared (`stream` recorded); a closed or unknown id is ignored |
 | MCK-14 | 1E ASCII odd bit write: N = 1 and 5 with the dummy decode and change memory; the same frame without the dummy gets no response (incomplete); N = 8 unchanged (finding F-001) |
+| MCK-15 | FX3 1C (`targetFamily A`, `xyNotation Octal`): `JR` answered NAK `02` (format 1 with sum) / `03` (format 1 without sum, format 4 with sum, format 3), format 4 with `CR LF`; a `JR` with a wrong SUM still gets `sumError1c`; `QR` on the same config executed; `JR` with another target family or hexadecimal X/Y notation executed (finding F-022) |
 | MCK-HYG | `src/mock/**` includes only the headers allowed by the independence rule |
 
 The vector loader is shared with `core-protocol` (see "Changes required in other specs").

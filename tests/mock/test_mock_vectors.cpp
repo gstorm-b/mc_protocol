@@ -1698,3 +1698,170 @@ TEST_CASE("XYN-22 mock: an 8 or 9 in an octal X/Y number is a malformed number, 
         CHECK(good.requests().back().answeredWith.ok());
     }
 }
+
+// ---- MCK-15: an FX3 computer link (1C, target family A, octal X/Y) rejects the AnA bit read JR.
+// Expected bytes are the answers of the FX3U + FX3U-232-BD in tests/vectors/captured
+// (fx3-serial-1c-f1-nosum, -f1-sum, -f4; step G4-04-M, bit read of M0 with JR, finding F-022),
+// written out by hand; the format 3 NAK is the golden vector 1C3-NAKWRITE form (STX 00FF NN code ETX).
+// The 1C frame is `ENQ 00 FF JR 0 M000000 01` (station 00, PC FF, message wait 0, 7-character
+// device, 1 point).
+
+namespace {
+
+// The FX3 computer-link configuration of the three captured profiles.
+FrameConfig fx3Config(mc::SerialFormat format, bool sum) {
+    FrameConfig cfg = FrameConfig::frame1C(format);
+    cfg.targetFamily = mc::TargetFamily::A;
+    cfg.xyNotation = mc::XyNumbering::Octal;
+    cfg.xyAsciiDigits = mc::XyNumbering::Octal;
+    cfg.sumCheck = sum;
+    cfg.stationNo = 0x00;
+    return cfg;
+}
+
+// JR M0 x1, as CAP-fx3-serial-1c-*-G4-04-M: ENQ 00FF JR0M00000001.
+Bytes jrM0() {
+    return {0x05, 0x30, 0x30, 0x46, 0x46, 0x4A, 0x52, 0x30, 0x4D,
+            0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x31};
+}
+
+// QR D0 x1, as CAP-fx3-serial-1c-*-G4-04-D: ENQ 00FF QR0D00000001.
+Bytes qrD0() {
+    return {0x05, 0x30, 0x30, 0x46, 0x46, 0x51, 0x52, 0x30, 0x44,
+            0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x31};
+}
+
+Bytes plus(Bytes b, const Bytes& tail) {
+    b.insert(b.end(), tail.begin(), tail.end());
+    return b;
+}
+
+// The one request must be answered with a PLC error `code` (the NAK the mock built, not data).
+void checkAnsweredNak(const MockPlc& plc, uint16_t code) {
+    REQUIRE(plc.requests().size() == 1);
+    const MockRequestRecord& rec = plc.requests().front();
+    CHECK(rec.answered);
+    CHECK(rec.answeredWith.category == mc::ErrorCategory::Plc);
+    CHECK(rec.answeredWith.code == mc::ErrorCode::PlcError);
+    CHECK(rec.answeredWith.plcCode == code);
+}
+
+} // namespace
+
+TEST_CASE("MCK-15 FX3 1C format 1 without sum: JR is answered NAK 03, as "
+          "CAP-fx3-serial-1c-f1-nosum-G4-04-M") {
+    MockPlc plc(fx3Config(mc::SerialFormat::Format1, false));
+    feed(plc, jrM0());
+    CHECK(drain(plc) == Bytes{0x15, 0x30, 0x30, 0x46, 0x46, 0x30, 0x33});
+    checkAnsweredNak(plc, 0x03);
+}
+
+TEST_CASE("MCK-15 FX3 1C format 1 with sum: JR (correct sum 86) is answered NAK 02, as "
+          "CAP-fx3-serial-1c-f1-sum-G4-04-M") {
+    MockPlc plc(fx3Config(mc::SerialFormat::Format1, true));
+    feed(plc, plus(jrM0(), {0x38, 0x36}));
+    CHECK(drain(plc) == Bytes{0x15, 0x30, 0x30, 0x46, 0x46, 0x30, 0x32});
+    checkAnsweredNak(plc, 0x02);
+}
+
+TEST_CASE("MCK-15 FX3 1C format 4: JR is answered NAK 03 followed by CR LF, as "
+          "CAP-fx3-serial-1c-f4-G4-04-M") {
+    // The captured f4 profile has sumCheck on (the request carries the sum 86) and the PLC still
+    // answers 03, not 02: the code does not follow sumCheck in format 4.
+    MockPlc plc(fx3Config(mc::SerialFormat::Format4, true));
+    feed(plc, plus(jrM0(), {0x38, 0x36, 0x0D, 0x0A}));
+    CHECK(drain(plc) == Bytes{0x15, 0x30, 0x30, 0x46, 0x46, 0x30, 0x33, 0x0D, 0x0A});
+    checkAnsweredNak(plc, 0x03);
+}
+
+TEST_CASE("MCK-15 FX3 1C format 3 without sum: JR is answered NN 03 (STX 00FF NN03 ETX)") {
+    MockPlc plc(fx3Config(mc::SerialFormat::Format3, false));
+    Bytes req = jrM0();
+    req.front() = 0x02;  // STX instead of ENQ
+    req.push_back(0x03); // ETX
+    feed(plc, req);
+    CHECK(drain(plc) == Bytes{0x02, 0x30, 0x30, 0x46, 0x46, 0x4E, 0x4E, 0x30, 0x33, 0x03});
+    checkAnsweredNak(plc, 0x03);
+}
+
+TEST_CASE("MCK-15 FX3 1C: JR with a wrong sum is answered with sumError1c before any rule on JR") {
+    // The request of ...-f1-sum-G4-04-M with the sum characters 00 instead of 86; sumError1c is 06.
+    MockPlc plc(fx3Config(mc::SerialFormat::Format1, true));
+    feed(plc, plus(jrM0(), {0x30, 0x30}));
+    CHECK(drain(plc) == Bytes{0x15, 0x30, 0x30, 0x46, 0x46, 0x30, 0x36});
+    checkAnsweredNak(plc, 0x06);
+
+    mc::MockOptions opt;
+    opt.sumError1c = 0x07;
+    MockPlc custom(fx3Config(mc::SerialFormat::Format1, true), opt);
+    feed(custom, plus(jrM0(), {0x30, 0x30}));
+    CHECK(drain(custom) == Bytes{0x15, 0x30, 0x30, 0x46, 0x46, 0x30, 0x37});
+}
+
+TEST_CASE("MCK-15 FX3 1C: QR is executed as before (control, CAP-fx3-serial-1c-*-G4-04-D)") {
+    {
+        MockPlc plc(fx3Config(mc::SerialFormat::Format1, false));
+        feed(plc, qrD0());
+        CHECK(drain(plc) == Bytes{0x02, 0x30, 0x30, 0x46, 0x46, 0x30, 0x30, 0x30, 0x30, 0x03});
+        REQUIRE(plc.requests().size() == 1);
+        CHECK(plc.requests()[0].answeredWith.ok());
+        CHECK(plc.requests()[0].op == Op::ReadWords);
+    }
+    {
+        MockPlc plc(fx3Config(mc::SerialFormat::Format1, true));
+        feed(plc, plus(qrD0(), {0x38, 0x34}));
+        CHECK(drain(plc) ==
+              Bytes{0x02, 0x30, 0x30, 0x46, 0x46, 0x30, 0x30, 0x30, 0x30, 0x03, 0x41, 0x46});
+        CHECK(plc.requests().back().answeredWith.ok());
+    }
+    {
+        MockPlc plc(fx3Config(mc::SerialFormat::Format4, true));
+        feed(plc, plus(qrD0(), {0x38, 0x34, 0x0D, 0x0A}));
+        CHECK(drain(plc) == Bytes{0x02, 0x30, 0x30, 0x46, 0x46, 0x30, 0x30, 0x30, 0x30, 0x03, 0x41,
+                                  0x46, 0x0D, 0x0A});
+        CHECK(plc.requests().back().answeredWith.ok());
+    }
+}
+
+TEST_CASE("MCK-15 JR is executed when the target family is not A or the X/Y notation is not octal "
+          "(control)") {
+    // M0 = 1; the answer is the one character '1', format 1 without sum: STX 00FF 1 ETX.
+    const Bytes data = {0x02, 0x30, 0x30, 0x46, 0x46, 0x31, 0x03};
+    SUBCASE("target family IqR_Q_L, octal X/Y") {
+        FrameConfig cfg = fx3Config(mc::SerialFormat::Format1, false);
+        cfg.targetFamily = mc::TargetFamily::IqR_Q_L;
+        MockPlc plc(cfg);
+        plc.setBits(Device{DeviceType::M, 0}, {true});
+        feed(plc, jrM0());
+        CHECK(drain(plc) == data);
+        REQUIRE(plc.requests().size() == 1);
+        CHECK(plc.requests()[0].answeredWith.ok());
+        CHECK(plc.requests()[0].op == Op::ReadBits);
+    }
+    SUBCASE("target family QnA, octal X/Y") {
+        FrameConfig cfg = fx3Config(mc::SerialFormat::Format1, false);
+        cfg.targetFamily = mc::TargetFamily::QnA;
+        MockPlc plc(cfg);
+        plc.setBits(Device{DeviceType::M, 0}, {true});
+        feed(plc, jrM0());
+        CHECK(drain(plc) == data);
+    }
+    SUBCASE("target family A, hexadecimal X/Y notation (xyNotation Hex)") {
+        FrameConfig cfg = fx3Config(mc::SerialFormat::Format1, false);
+        cfg.xyNotation = mc::XyNumbering::Hex;
+        MockPlc plc(cfg);
+        plc.setBits(Device{DeviceType::M, 0}, {true});
+        feed(plc, jrM0());
+        CHECK(drain(plc) == data);
+        REQUIRE(plc.requests().size() == 1);
+        CHECK(plc.requests()[0].answeredWith.ok());
+    }
+    SUBCASE("default 1C configuration (family IqR_Q_L, hexadecimal X/Y), format 1 with sum") {
+        MockPlc plc(FrameConfig::frame1C());
+        plc.setBits(Device{DeviceType::M, 0}, {true});
+        feed(plc, plus(jrM0(), {0x38, 0x36}));
+        // data '1': STX 00FF 1 ETX, sum = 30+30+46+46+31+03 = 0x120 -> low byte 20.
+        CHECK(drain(plc) == Bytes{0x02, 0x30, 0x30, 0x46, 0x46, 0x31, 0x03, 0x32, 0x30});
+        CHECK(plc.requests().back().answeredWith.ok());
+    }
+}

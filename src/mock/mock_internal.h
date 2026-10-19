@@ -85,6 +85,7 @@ struct SerialRequest : Access {
     uint8_t block{0};
     PlcSeries series{PlcSeries::QL}; ///< 3C: from the subcommand received; 1C: always QL.
     bool sumValid{true};             ///< false when a SUM was expected and does not match.
+    bool bitReadAna{false};          ///< 1C: the command letters are JR (AnA/AnU bit read).
 };
 
 struct SerialDecodeResult {

@@ -137,6 +137,9 @@ using MockStreamId = uint32_t;
  *    fields); 0403 and 1402 are framed and answered with MockOptions::unsupportedQna. 1C: BR, WR,
  *    BW, WW (ACPU) and JR, QR, JW, QW (AnA/AnU) are executed, the message wait character is
  *    accepted and ignored; BT, WT, JT, QT are framed and answered with MockOptions::unsupported1c.
+ *    With FrameConfig::targetFamily A and FrameConfig::xyNotation Octal (an FX3 computer link) JR
+ *    is not executed: it is answered NAK 02 in format 1 with sumCheck and NAK 03 in every other
+ *    case (NN in format 3), as the FX3 does; QR, JW and QW are executed.
  *  - EOT (format 4: EOT CR LF) at any point drops the partial request and is counted by
  *    eotCount(), also while muted. It is not answered.
  *  - A request whose station number differs from FrameConfig::stationNo is added to requests()
