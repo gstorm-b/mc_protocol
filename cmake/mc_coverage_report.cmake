@@ -2,7 +2,7 @@
 # MC_OBJECT_BASE_DIR (originally always src/core/model; T-019 reuses the same script for
 # src/core/protocol too, as a second cmake target -- see tests/CMakeLists.txt's
 # mc_coverage_report_protocol) and reports per-file and total line coverage, failing if the
-# total is below MC_MIN_COVERAGE. No Python on this machine (see build-env.md), hence gcov +
+# total is below MC_MIN_COVERAGE. Python is not required to build or test, hence gcov +
 # this script instead of gcovr.
 #
 # Requires .gcda data to already exist next to the .gcno/.obj files under MC_OBJECT_BASE_DIR —
@@ -28,8 +28,7 @@ endif()
 if(NOT MC_GCOV_EXECUTABLE OR NOT EXISTS "${MC_GCOV_EXECUTABLE}")
     message(FATAL_ERROR "mc_coverage_report: MC_GCOV_EXECUTABLE not found "
                          "('${MC_GCOV_EXECUTABLE}'); this script needs GCC's gcov (a Clang build "
-                         "would need llvm-cov instead, not implemented here — see Dev notes, "
-                         "T-012).")
+                         "would need llvm-cov instead, not implemented here).")
 endif()
 if(NOT DEFINED MC_MIN_COVERAGE)
     set(MC_MIN_COVERAGE 95)

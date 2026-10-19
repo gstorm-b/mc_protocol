@@ -1,6 +1,6 @@
 // tst_serial.cpp -- SerialTransport and McDevice over a serial port. QDV-14 (3C F4 and 1C F1, a
 // round and a write each, over a virtual COM pair) needs a pair of ports wired to each other:
-// the tests that need one QSKIP unless MC_TEST_SERIAL_PAIR names it, e.g. "COM50,COM51" (the first
+// the tests that need one QSKIP unless MC_TEST_SERIAL_PAIR names it, e.g. "COM54,COM55" (the first
 // port is the one McDevice or the transport opens, the second one belongs to the test peer).
 // The SER-nn tests without a pair prove the open/close contract of the transport on a port that
 // does not exist. No positive outcome is gated on a fixed sleep: tests wait on state with QTRY_*
@@ -26,7 +26,7 @@ namespace {
 const QString kMissingPort = QStringLiteral("COM_MC_TEST_MISSING");
 
 const char* const kNoPair =
-    "MC_TEST_SERIAL_PAIR is not set (e.g. \"COM50,COM51\"): no virtual COM pair";
+    "MC_TEST_SERIAL_PAIR is not set (e.g. \"COM54,COM55\"): no virtual COM pair";
 
 mc::SerialSettings lineFor(const QString& portName) {
     mc::SerialSettings line; // the defaults of the old device: 9600 7E1, no flow control

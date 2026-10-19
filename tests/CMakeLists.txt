@@ -49,8 +49,8 @@ mc_apply_coverage(mc_core_model_tests)
 # mc_coverage_report (T-012): runs cmake/mc_coverage_report.cmake over mc_core's own object
 # files under src/core/model once MC_COVERAGE has produced .gcda data (i.e. after `ctest` has
 # actually run mc_core_model_tests). Only defined under MC_COVERAGE=ON with GCC (Clang would
-# need llvm-cov's gcov-compatible mode instead; not implemented, since this machine's only
-# GCC/Clang compiler is MinGW GCC 13.1 — see build-env.md).
+# need llvm-cov's gcov-compatible mode instead; not implemented, since the project's only
+# supported GCC toolchain is MinGW GCC 13.1).
 if(MC_COVERAGE AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     get_filename_component(_mc_compiler_dir "${CMAKE_CXX_COMPILER}" DIRECTORY)
     find_program(MC_GCOV_EXECUTABLE NAMES gcov HINTS "${_mc_compiler_dir}")

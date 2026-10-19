@@ -2,7 +2,7 @@
 // front of mc::MockPlc.
 //
 //   virtual_plc --frame 3E --code Binary --port 5000 --set D100=1234 --wiggle D105
-//   virtual_plc --frame 3C --format 4 --serial COM50 --set D100=1234 --wiggle D105
+//   virtual_plc --frame 3C --format 4 --serial COM55 --set D100=1234 --wiggle D105
 //   virtual_plc --frame 1C --xy octal --xy-ascii octal --set X10=1   (an FX3 computer link)
 //
 // What it does:
@@ -327,7 +327,7 @@ int main(int argc, char** argv) {
     }
     line.baudRate = baud;
     if (onComPort && line.portName.isEmpty()) {
-        std::fprintf(stderr, "virtual_plc: --serial needs a port name, e.g. COM50.\n");
+        std::fprintf(stderr, "virtual_plc: --serial needs a port name, e.g. COM55.\n");
         return 2;
     }
 

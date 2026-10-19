@@ -1,6 +1,7 @@
 // Session scheduling + the receive path / value-publishing contract (spec SPEC-core-session.md):
-// SES-01, 02..08, 23, 26. SES-09..27 (ad-hoc, faults, dynamic subscriptions, heartbeat) arrive
-// with the later Phase 3 tasks that touch this same file again (todo.md T21..T23).
+// SES-01, 02..08, 22 (dynamic subscriptions), 23, 26. The other SES tests (ad-hoc requests,
+// faults, heartbeat) live in test_session_adhoc.cpp, test_session_fault.cpp and
+// test_session_heartbeat.cpp.
 //
 // SES-02..05 are one test (see below): the spec's own "Publishing values" section walks through
 // exactly this scenario (M0x128, D100x64, D2000x64, third chunk NAKs in round 1) as a worked

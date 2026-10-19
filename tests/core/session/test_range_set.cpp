@@ -2,11 +2,9 @@
 //
 // PLN-10 ("Re-plan carries value and state for surviving points; new points NoValue; dropped
 // points NotSubscribed") exercises PointState::NoValue/NotSubscribed and value carry-over, which
-// is ValueStore::rebuild()'s own contract (value_store.h, T-021) -- RangeSet/ReadPlan (this
-// task's own files) have no notion of a point's "value" at all. Flagged to the leader in this
-// task's Dev notes; the actual PLN-10 test case is added in T-021's test_value_store.cpp against
-// ValueStore::rebuild(), and both are verified together by the phase's `ctest -L core_session`
-// (rules.md, phase-batched verification).
+// is ValueStore::rebuild()'s own contract (value_store.h) -- RangeSet/ReadPlan have no notion of
+// a point's "value" at all. The actual PLN-10 test case lives in test_value_store.cpp against
+// ValueStore::rebuild(), and both are verified together by `ctest -L core_session`.
 #include "doctest/doctest.h"
 
 #include "mc/core/poll_plan.h"
