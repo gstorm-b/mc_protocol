@@ -10,8 +10,5 @@ G4-02-W F-010  # supports ignored by the mock
 G4-02-TC F-010 # supports ignored by the mock
 G4-02-CC F-010 # supports ignored by the mock
 G5-02 F-010    # special range / supports ignored by the mock
-GV-01 F-015    # RPL-05 read-back check
-GV-03 F-015    # RPL-05 read-back check
-G2-01 F-015    # RPL-05 read-back check
 G3-05 F-015    # RPL-05 read-back check (then-write without read-back)
 G7-03 F-008    # error code differs

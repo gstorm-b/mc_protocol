@@ -1,6 +1,5 @@
 # step id, FINDINGS id (docs/hil/FINDINGS.md); the replay test reports these as known-divergence
 G7-01+2 F-017  # EOT answered by NAK recorded as ok
-G8-Q2-M F-018  # RPL-02 ignores the step override
 G4-02-STS F-010 # supports ignored by the mock
 G4-02-STC F-010 # supports ignored by the mock
 G4-02-STN F-010 # supports ignored by the mock
@@ -13,8 +12,3 @@ G7-03 F-008    # error code differs
 G9-01-F2 F-009 # route / probes not modelled by the mock
 G9-05 F-009    # route / probes not modelled by the mock
 G9-05-M F-009  # route / probes not modelled by the mock
-GV-01 F-015    # RPL-05 read-back check
-GV-03 F-015    # RPL-05 read-back check
-G2-01 F-015    # RPL-05 read-back check
-GV-02 F-016    # RPL-05 golden compare ignores the profile frame fields
-GV-03 F-016    # RPL-05 golden compare ignores the profile frame fields

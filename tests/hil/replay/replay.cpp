@@ -95,6 +95,17 @@ E needEnum(const std::map<std::string, std::string>& meta, const std::string& ke
     bad(file, "key '" + key + "' has an unknown value '" + v + "'");
 }
 
+// FrameConfig keys of run.meta that a capture written before they existed does not carry.
+constexpr const char* kMaxReadWordsKey = "frame.maxReadWords";
+constexpr const char* kMaxWriteWordsKey = "frame.maxWriteWords";
+constexpr const char* kMaxReadBitsKey = "frame.maxReadBits";
+constexpr const char* kMaxWriteBitsKey = "frame.maxWriteBits";
+constexpr const char* kXyNotationKey = "frame.xyNotation";
+constexpr const char* kXyAsciiDigitsKey = "frame.xyAsciiDigits";
+constexpr const char* kOptionalFrameKeys[] = {kMaxReadWordsKey, kMaxWriteWordsKey,
+                                              kMaxReadBitsKey,  kMaxWriteBitsKey,
+                                              kXyNotationKey,   kXyAsciiDigitsKey};
+
 FrameConfig frameFromMeta(const std::map<std::string, std::string>& m, const fs::path& file) {
     FrameConfig f;
     f.frame = needEnum<FrameType>(m, "frame.frame", file,
@@ -140,10 +151,10 @@ FrameConfig frameFromMeta(const std::map<std::string, std::string>& m, const fs:
         return m.find(key) == m.end() ? uint16_t{0}
                                       : static_cast<uint16_t>(needNumber(m, key, file));
     };
-    f.maxReadWords = cap("frame.maxReadWords");
-    f.maxWriteWords = cap("frame.maxWriteWords");
-    f.maxReadBits = cap("frame.maxReadBits");
-    f.maxWriteBits = cap("frame.maxWriteBits");
+    f.maxReadWords = cap(kMaxReadWordsKey);
+    f.maxWriteWords = cap(kMaxWriteWordsKey);
+    f.maxReadBits = cap(kMaxReadBitsKey);
+    f.maxWriteBits = cap(kMaxWriteBitsKey);
     f.timeoutMs = needNumber(m, "frame.timeoutMs", file);
     f.readRetries = static_cast<uint8_t>(needNumber(m, "frame.readRetries", file));
     // X/Y numbering: a capture written before the keys existed is hex.
@@ -154,8 +165,8 @@ FrameConfig frameFromMeta(const std::map<std::string, std::string>& m, const fs:
         return needEnum<XyNumbering>(m, key, file,
                                      {{"Hex", XyNumbering::Hex}, {"Octal", XyNumbering::Octal}});
     };
-    f.xyNotation = xy("frame.xyNotation");
-    f.xyAsciiDigits = xy("frame.xyAsciiDigits");
+    f.xyNotation = xy(kXyNotationKey);
+    f.xyAsciiDigits = xy(kXyAsciiDigitsKey);
     return f;
 }
 
@@ -201,6 +212,52 @@ std::string baseStep(std::string id) {
         id.erase(dot);
     }
     return id;
+}
+
+bool isOptionalFrameKey(const std::string& key) {
+    for (const char* k : kOptionalFrameKeys) {
+        if (key == k) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/// The profile's FrameConfig with the `override:` text of a step applied ("key=value ...", keys as
+/// in the profile's `frame.<key>`; a value "+N" / "-N" is relative to the profile's number).
+/// Reads the run.meta values through frameFromMeta, so the key and enum tables are the ones the
+/// profile itself is read with. Throws std::runtime_error for an unknown key or a bad value.
+FrameConfig overriddenFrame(const Capture& c, const std::string& text) {
+    std::map<std::string, std::string> m = c.meta;
+    const fs::path file = c.dir / "run.meta";
+    for (const std::string& token : words(text)) {
+        const size_t eq = token.find('=');
+        if (eq == std::string::npos || eq == 0) {
+            bad(file, "override '" + token + "' is not <key>=<value>");
+        }
+        const std::string key = "frame." + token.substr(0, eq);
+        std::string value = token.substr(eq + 1);
+        if (m.find(key) == m.end() && !isOptionalFrameKey(key)) {
+            bad(file, "override key '" + token.substr(0, eq) + "' is not a FrameConfig key");
+        }
+        const bool relative = value.size() > 1 && (value[0] == '+' || value[0] == '-');
+        if (relative) {
+            const auto delta = number(value.substr(1), 10);
+            const auto it = m.find(key);
+            const auto base = it == m.end() ? std::nullopt : number(it->second, 10);
+            if (!delta || !base) {
+                bad(file, "override '" + token + "': a relative value needs a numeric key");
+            }
+            const int64_t sum = static_cast<int64_t>(*base) +
+                                (value[0] == '+' ? int64_t{*delta} : -int64_t{*delta});
+            if (sum < 0) {
+                bad(file, "override '" + token + "' gives a negative number");
+            }
+            value = std::to_string(sum);
+        }
+        m[key] = value;
+    }
+    return frameFromMeta(m, file);
 }
 
 } // namespace
@@ -367,6 +424,26 @@ namespace {
 void fail(Report& r, const char* check, const Capture& c, const std::string& step,
           const std::string& message) {
     r.failures.push_back(Failure{check, c.profile, step, message});
+}
+
+/// The FrameConfig the bytes of @p rec were produced under: the profile's, or the profile's with
+/// the step's override applied. An override the replay cannot apply is reported as a failure of
+/// @p check and gives false.
+bool recordFrame(const Capture& c, const Record& rec, const char* check, Report& r,
+                 FrameConfig& out) {
+    out = c.frame;
+    if (rec.overrideText.empty()) {
+        return true;
+    }
+    try {
+        out = overriddenFrame(c, rec.overrideText);
+    } catch (const std::exception& e) {
+        ++r.checks;
+        fail(r, check, c, rec.id,
+             std::string("the step's override cannot be applied: ") + e.what());
+        return false;
+    }
+    return true;
 }
 
 std::string errorCodeName(ErrorCode code) {
@@ -579,7 +656,6 @@ void checkReencode(const Capture& c, Report& r) {
 // ---- RPL-02 ---------------------------------------------------------------------------------
 
 void checkParse(const Capture& c, Report& r) {
-    const McProtocol proto(c.frame);
     for (const Record& rec : c.records) {
         const bool met = rec.verdict.empty() || rec.verdict == "passed";
         if (!met) {
@@ -592,7 +668,12 @@ void checkParse(const Capture& c, Report& r) {
         if (!rec.hasResponse || rec.partial || rec.op == "Raw") {
             continue;
         }
-        const auto req = metaRequest(rec, c.frame.xyNotation);
+        FrameConfig frame;
+        if (!recordFrame(c, rec, "RPL-02", r, frame)) {
+            continue;
+        }
+        const McProtocol proto(frame);
+        const auto req = metaRequest(rec, frame.xyNotation);
         if (!req) {
             fail(r, "RPL-02", c, rec.id,
                  "the metadata (op '" + rec.op + "', device '" + rec.device +
@@ -623,7 +704,7 @@ void checkParse(const Capture& c, Report& r) {
             if (values && met) { // a step that missed its expectation carries values that differ by
                                  // definition
                 std::string why;
-                const auto payload = payloadOf(c.frame, *req, rec.response, &why);
+                const auto payload = payloadOf(frame, *req, rec.response, &why);
                 if (!payload) {
                     fail(r, "RPL-02", c, rec.id, why);
                     continue;
@@ -759,11 +840,15 @@ void checkMock(const Capture& c, Report& r) {
         }
     }
 
-    const McProtocol proto(c.frame);
     std::unique_ptr<MockPlc> mock = makeMock(c);
     std::set<Point> owned;
     for (const Record& rec : c.records) {
-        const std::vector<Decoded> dec = decode(c.frame, rec.request);
+        // The bytes of a step that ran with an override are read with that override (the mock
+        // itself speaks the profile's config and echoes what the request carries).
+        FrameConfig frame;
+        recordFrame(c, rec, "RPL-03", r, frame);
+        const McProtocol proto(frame);
+        const std::vector<Decoded> dec = decode(frame, rec.request);
         if (rec.hasResponse && !rec.partial) {
             size_t pos = 0;
             for (const Decoded& d : dec) {
@@ -847,104 +932,158 @@ std::vector<std::string> mirrorIds(const std::string& mirrors) {
     return ids;
 }
 
-} // namespace
-
-void checkSanity(const Capture& c, const Env& env, Report& r) {
-    // (a) every write is followed by a read-back of the same points that matched
-    for (size_t i = 0; i < c.records.size(); ++i) {
-        const Record& w = c.records[i];
-        if (w.via != "api" || w.op.rfind("Write", 0) != 0 || !startsWith(w.outcome, "ok")) {
-            continue;
+/// The value of each point a decoded write sets: a word device one entry per word, a bit device
+/// one entry per bit.
+std::map<Point, uint16_t> writtenPoints(const Decoded& wd) {
+    std::map<Point, uint16_t> written;
+    const int type = static_cast<int>(wd.head.type);
+    if (isBitOp(wd.op)) {
+        for (uint32_t k = 0; k < wd.count; ++k) {
+            written[Point{type, wd.head.number + k}] = wd.data[k];
         }
-        ++r.checks;
-        const std::vector<Decoded> dec = decode(c.frame, w.request);
-        if (dec.empty() || !isWriteOp(dec.front().op)) {
-            fail(r, "RPL-05", c, w.id, "the captured write is not a frame the mock can decode");
-            continue;
-        }
-        const Decoded& wd = dec.front();
-        // point -> written value (words: the word; bit devices: one entry per bit)
-        std::map<Point, uint16_t> written;
-        const bool bitDev = isBitDevice(wd.head.type);
-        if (isBitOp(wd.op)) {
-            for (uint32_t k = 0; k < wd.count; ++k) {
-                written[Point{static_cast<int>(wd.head.type), wd.head.number + k}] = wd.data[k];
-            }
+        return written;
+    }
+    const bool bitDev = isBitDevice(wd.head.type);
+    for (uint32_t k = 0; k < wd.count; ++k) {
+        const uint16_t word = static_cast<uint16_t>(wd.data[2 * k] | (wd.data[2 * k + 1] << 8));
+        if (!bitDev) {
+            written[Point{type, wd.head.number + k}] = word;
         } else {
-            for (uint32_t k = 0; k < wd.count; ++k) {
-                const uint16_t word =
-                    static_cast<uint16_t>(wd.data[2 * k] | (wd.data[2 * k + 1] << 8));
-                if (!bitDev) {
-                    written[Point{static_cast<int>(wd.head.type), wd.head.number + k}] = word;
-                } else {
-                    for (uint32_t b = 0; b < 16; ++b) {
-                        written[Point{static_cast<int>(wd.head.type),
-                                      wd.head.number + 16 * k + b}] = (word >> b) & 1u;
-                    }
-                }
-            }
-        }
-        std::map<Point, uint16_t> seen;
-        for (size_t j = i + 1; j < c.records.size(); ++j) {
-            const Record& rd = c.records[j];
-            if (rd.step != w.step || rd.via != "api" || rd.op.rfind("Read", 0) != 0 ||
-                !rd.hasResponse || !startsWith(rd.outcome, "ok")) {
-                continue;
-            }
-            const std::vector<Decoded> rdec = decode(c.frame, rd.request);
-            if (rdec.empty()) {
-                continue;
-            }
-            const auto payload = payloadOf(c.frame, toRequest(rdec.front()), rd.response, nullptr);
-            if (!payload) {
-                continue;
-            }
-            const Decoded& d = rdec.front();
-            if (d.op == Op::ReadBits) {
-                for (uint32_t k = 0; k < d.count && k < payload->size(); ++k) {
-                    seen[Point{static_cast<int>(d.head.type), d.head.number + k}] = (*payload)[k];
-                }
-            } else {
-                for (uint32_t k = 0; k < d.count && 2 * k + 1 < payload->size(); ++k) {
-                    const uint16_t word =
-                        static_cast<uint16_t>((*payload)[2 * k] | ((*payload)[2 * k + 1] << 8));
-                    if (!isBitDevice(d.head.type)) {
-                        seen[Point{static_cast<int>(d.head.type), d.head.number + k}] = word;
-                    } else {
-                        for (uint32_t b = 0; b < 16; ++b) {
-                            seen[Point{static_cast<int>(d.head.type), d.head.number + 16 * k + b}] =
-                                (word >> b) & 1u;
-                        }
-                    }
-                }
-            }
-        }
-        for (const auto& pv : written) {
-            const auto it = seen.find(pv.first);
-            if (it == seen.end()) {
-                fail(r, "RPL-05", c, w.id,
-                     "the write of " + w.device + " x" + std::to_string(w.count) +
-                         " has no read-back of " +
-                         deviceText(
-                             Device{static_cast<DeviceType>(pv.first.first), pv.first.second},
-                             c.frame.xyNotation) +
-                         " (the plan needs readBack)");
-                break;
-            }
-            if (it->second != pv.second) {
-                fail(r, "RPL-05", c, w.id,
-                     "the read-back of " +
-                         deviceText(
-                             Device{static_cast<DeviceType>(pv.first.first), pv.first.second},
-                             c.frame.xyNotation) +
-                         " is " + std::to_string(it->second) + " but " + std::to_string(pv.second) +
-                         " was written");
-                break;
+            for (uint32_t b = 0; b < 16; ++b) {
+                written[Point{type, wd.head.number + 16 * k + b}] = (word >> b) & 1u;
             }
         }
     }
+    return written;
+}
 
-    // (b) GV steps equal the Appendix A vector they mirror
+/// The value of each point the normalized @p payload of the read @p d returns (same layout as
+/// writtenPoints).
+std::map<Point, uint16_t> readPoints(const Decoded& d, const std::vector<uint8_t>& payload) {
+    std::map<Point, uint16_t> seen;
+    const int type = static_cast<int>(d.head.type);
+    if (d.op == Op::ReadBits) {
+        for (uint32_t k = 0; k < d.count && k < payload.size(); ++k) {
+            seen[Point{type, d.head.number + k}] = payload[k];
+        }
+        return seen;
+    }
+    for (uint32_t k = 0; k < d.count && 2 * k + 1 < payload.size(); ++k) {
+        const uint16_t word = static_cast<uint16_t>(payload[2 * k] | (payload[2 * k + 1] << 8));
+        if (!isBitDevice(d.head.type)) {
+            seen[Point{type, d.head.number + k}] = word;
+        } else {
+            for (uint32_t b = 0; b < 16; ++b) {
+                seen[Point{type, d.head.number + 16 * k + b}] = (word >> b) & 1u;
+            }
+        }
+    }
+    return seen;
+}
+
+/// A written value and where it came from, kept per point until the point is written again.
+struct Pending {
+    uint16_t value{0};
+    size_t write{0}; ///< Index of the write record (in the order of the successful api writes).
+    bool read{false};
+};
+
+/// Drops every pending point; the ones nobody read are remembered in @p firstUnread (per write
+/// the first of them) as writes without a read-back.
+void forgetPending(std::map<Point, Pending>& pending, std::map<size_t, Point>& firstUnread) {
+    for (const auto& pp : pending) {
+        if (!pp.second.read) {
+            firstUnread.emplace(pp.second.write, pp.first);
+        }
+    }
+    pending.clear();
+}
+
+std::string pointText(const Capture& c, const Point& p) {
+    return deviceText(Device{static_cast<DeviceType>(p.first), p.second}, c.frame.xyNotation);
+}
+
+// RPL-05 (a): every write is read back: walk the records in capture order and keep, per point, the
+// value of the latest successful api write. A successful api read that returns a point with a
+// pending value must return that value (a mismatch fails the write's step); a point counts as
+// read back once any later read returned it, and a point written again before any read needs
+// no read-back. A point still unread at the end has none. After a link recovery on a tcp
+// transport the memory is not assumed (RPL-03 does the same): the points still unread then
+// stay unread, the others are no longer compared.
+void checkReadBack(const Capture& c, Report& r) {
+    std::vector<const Record*> writes;
+    std::vector<bool> failed;
+    std::map<Point, Pending> pending;
+    std::map<size_t, Point> firstUnread; // write index -> its first point nobody read
+    bool memoryLost = false;             // a link recovery followed the previous record
+    for (const Record& rec : c.records) {
+        if (memoryLost) {
+            forgetPending(pending, firstUnread);
+        }
+        memoryLost = c.transport == "tcp" &&
+                     std::any_of(c.recoveries.begin(), c.recoveries.end(),
+                                 [&](const auto& rcv) { return rcv.first == rec.id; });
+        if (rec.via != "api" || !startsWith(rec.outcome, "ok")) {
+            continue;
+        }
+        if (rec.op.rfind("Write", 0) == 0) {
+            ++r.checks;
+            const std::vector<Decoded> dec = decode(c.frame, rec.request);
+            if (dec.empty() || !isWriteOp(dec.front().op)) {
+                fail(r, "RPL-05", c, rec.id,
+                     "the captured write is not a frame the mock can decode");
+                continue;
+            }
+            writes.push_back(&rec);
+            failed.push_back(false);
+            for (const auto& pv : writtenPoints(dec.front())) {
+                pending[pv.first] = Pending{pv.second, writes.size() - 1, false};
+            }
+        } else if (rec.op.rfind("Read", 0) == 0 && rec.hasResponse) {
+            const std::vector<Decoded> dec = decode(c.frame, rec.request);
+            if (dec.empty()) {
+                continue;
+            }
+            const auto payload = payloadOf(c.frame, toRequest(dec.front()), rec.response, nullptr);
+            if (!payload) {
+                continue;
+            }
+            for (const auto& sv : readPoints(dec.front(), *payload)) {
+                const auto it = pending.find(sv.first);
+                if (it == pending.end()) {
+                    continue;
+                }
+                it->second.read = true;
+                if (it->second.value != sv.second && !failed[it->second.write]) {
+                    failed[it->second.write] = true;
+                    fail(r, "RPL-05", c, writes[it->second.write]->id,
+                         "the read-back of " + pointText(c, sv.first) + " is " +
+                             std::to_string(sv.second) + " but " +
+                             std::to_string(it->second.value) + " was written");
+                }
+            }
+        }
+    }
+    forgetPending(pending, firstUnread);
+    for (const auto& u : firstUnread) {
+        if (!failed[u.first]) {
+            const Record& w = *writes[u.first];
+            fail(r, "RPL-05", c, w.id,
+                 "the write of " + w.device + " x" + std::to_string(w.count) +
+                     " has no read-back of " + pointText(c, u.second) +
+                     " (the plan needs readBack)");
+        }
+    }
+}
+
+// RPL-05 (b): GV steps equal the Appendix A vector they mirror. The vectors carry the sum check and
+// block number 00: a profile with another sum check or block number is compared through the
+// vector re-encoded for the profile (request) and by decoded content (response).
+void checkGolden(const Capture& c, const Env& env, Report& r) {
+    FrameConfig vectorCfg = c.frame;
+    vectorCfg.sumCheck = true;
+    vectorCfg.blockNo = 0;
+    const bool vectorBytes = c.frame.sumCheck && c.frame.blockNo == 0;
     std::map<std::string, bool> gvMatched; // step -> some record matched a mirrored vector
     std::vector<mc::test::Vector> golden;
     bool loaded = false;
@@ -989,10 +1128,30 @@ void checkSanity(const Capture& c, const Env& env, Report& r) {
         }
         gvMatched[rec.step] = true;
         ++r.checks;
-        if (reqVec->bytes != rec.request) {
+        std::vector<uint8_t> expected = reqVec->bytes;
+        if (!vectorBytes) {
+            const std::vector<Decoded> vdec = decode(vectorCfg, reqVec->bytes);
+            if (vdec.empty()) {
+                fail(r, "RPL-05", c, rec.id,
+                     "Appendix A vector " + reqVec->id +
+                         " does not decode with its own sum check "
+                         "and block number");
+                continue;
+            }
+            const Expected<ByteBuf> encoded = McProtocol(c.frame).encode(toRequest(vdec.front()));
+            if (!encoded) {
+                fail(r, "RPL-05", c, rec.id,
+                     "Appendix A vector " + reqVec->id + " cannot be encoded for the profile: " +
+                         errorCodeName(encoded.error().code));
+                continue;
+            }
+            expected = encoded.value();
+        }
+        if (expected != rec.request) {
             fail(r, "RPL-05", c, rec.id,
-                 "the request differs from Appendix A vector " + reqVec->id + ", " +
-                     describeDifference(reqVec->bytes, rec.request, "capture"));
+                 "the request differs from Appendix A vector " + reqVec->id +
+                     (vectorBytes ? "" : " encoded for the profile") + ", " +
+                     describeDifference(expected, rec.request, "capture"));
             continue;
         }
         if (!rec.hasResponse) {
@@ -1006,11 +1165,17 @@ void checkSanity(const Capture& c, const Env& env, Report& r) {
                 if (!req) {
                     break;
                 }
-                const auto a = payloadOf(c.frame, *req, v.bytes, nullptr);
+                const auto a = payloadOf(vectorCfg, *req, v.bytes, nullptr);
                 const auto b = payloadOf(c.frame, *req, rec.response, nullptr);
-                if (a && b && *a == *b) {
+                if (!vectorBytes && a && !b) {
                     ++r.checks;
-                    if (v.bytes != rec.response) {
+                    fail(r, "RPL-05", c, rec.id + "-R",
+                         "Appendix A vector " + v.id +
+                             " answers ok but the captured response "
+                             "does not parse ok");
+                } else if (a && b && *a == *b) {
+                    ++r.checks;
+                    if (vectorBytes && v.bytes != rec.response) {
                         fail(r, "RPL-05", c, rec.id + "-R",
                              "the response carries the vector's data but its bytes differ from "
                              "Appendix A vector " +
@@ -1028,6 +1193,13 @@ void checkSanity(const Capture& c, const Env& env, Report& r) {
                  "the step names Appendix A vectors but none of its records matches one of them");
         }
     }
+}
+
+} // namespace
+
+void checkSanity(const Capture& c, const Env& env, Report& r) {
+    checkReadBack(c, r);
+    checkGolden(c, env, r);
 }
 
 // ---- RPL-06 ---------------------------------------------------------------------------------

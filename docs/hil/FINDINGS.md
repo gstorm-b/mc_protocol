@@ -160,15 +160,17 @@ One entry per observed difference or confirmed behaviour. Ids are never reused.
 - **Profile / step:** every profile / GV-01, GV-03, G2-01; the three `fx3-serial-1c-*` profiles / also G3-05 (G3-05.2); `q03ude-c24-3c-f3` / G8-Q1.
 - **Spec says:** RPL-05 (a): "every `write` step is followed by a read-back that matched".
 - **Checker does:** `tests/hil/replay/replay.cpp` `checkSanity` (a) accepts only reads of the same base step (`rd.step != w.step` skips) and keeps the last value read. `GV-01` (write D100 x3) and `GV-03` (write M100 x8) are read back by the next steps `GV-02` / `GV-04.2`, so the same-step search finds nothing ("the write of D100 x3 has no read-back ... (the plan needs readBack)"). `G2-01` writes 1, reads, writes 0, reads: the checker compares the first write (1) with the last read (0): "the read-back of M100 is 0 but 1 was written". `G8-Q1` writes without a read in the step. `G3-05` (`fx3-serial-1c-*`, a bit device accessed as words) reads M112 x32 and then writes M112 x10 in a `then` step with no read-back: "the write of M112 x10 has no read-back of M112 (the plan needs readBack)". The PLCs read back correctly (`CAP-q03ude-eth-3e-bin-G2-01.2-R` bit 1, `G2-01.4-R` bit 0).
-- **Status:** open
-- **Decision (owner, date):** open.
+- **Checker now:** the read-back follows the capture order: per point the latest successful write is kept, every later read of the point must return it (a mismatch fails the write's step), and a point written again before any read needs no read-back. `GV-01`, `GV-03` and `G2-01` pass in every profile. `G3-05.2` (`fx3-serial-1c-*`) and `G8-Q1` (`q03ude-c24-3c-f3`) write points that no later read of the capture returns, so they are still reported and stay tagged.
+- **Status:** decided
+- **Decision (owner, 2026-10-20):** fix the checker to follow the chain of writes and reads. The `GV-01`, `GV-03` and `G2-01` tags are removed; the `G3-05` and `G8-Q1` tags stay because their writes have no read-back in the capture.
 
 ### F-016 - Tool: RPL-05 compares the request with the Appendix A vector even when the profile differs
 - **Profile / step:** `q03ude-c24-3c-f1-nosum` / GV-02, GV-03; `q03ude-c24-3c-f2` / GV-02, GV-03; `fx3-serial-1c-f1-nosum` / GV-01, GV-02, GV-03, GV-04. Capture ids: `CAP-q03ude-c24-3c-f1-nosum-GV-02`, `CAP-q03ude-c24-3c-f2-GV-02`, `CAP-fx3-serial-1c-f1-nosum-GV-02`.
 - **Spec says:** RPL-05 (b): "every GV step's bytes equal the Appendix A vector it mirrors (request always; response when the route and values are the defaults)".
 - **Checker does:** the vectors `V-3C1-01/03` carry a sum check and `V-3C2-01/03` the block number `00`. The profile `f1-nosum` has no sum (the capture request is 31 bytes against the vector's 33 for GV-02, 39 against 41 for GV-03) and `f2` uses block `5A` (byte 1 `35` against `30`). The request differs from the vector for a documented reason, and the check reports it. The 1C vectors `V-1C1-01/03/05/06` carry a sum check too: in `fx3-serial-1c-f1-nosum` GV-01 is 27 bytes against 29, GV-02 15 against 17, GV-03 23 against 25 and GV-04.2 15 against 17. `f1-sum`, the 3E profiles, `fx3-serial-1c-f1-sum`, `fx3-serial-1c-f4` and `fx5u-rs485-3c-f1-sum` equal the vectors.
-- **Status:** open
-- **Decision (owner, date):** open. The check would skip or adapt for `sumCheck=false` and `blockNo != 0`.
+- **Checker now:** when the profile's `sumCheck` and `blockNo` equal the vector's (sum check on, block `00`) the bytes are compared as before. Otherwise the request is compared with the vector re-encoded with the profile's `FrameConfig`, and the response by its decoded content (parse outcome and payload values) instead of by bytes. A changed command or device byte still fails. The `GV` tags of these profiles are gone.
+- **Status:** decided
+- **Decision (owner, 2026-10-20):** normalize the vector for the profile, then compare. The `F-016` tags are removed.
 
 ### F-017 - Tool: the EOT step outcome is recorded `ok` while the PLC answered a NAK
 - **Profile / step:** the five `q03ude-c24-3c-*` profiles / G7-01+2.
@@ -179,17 +181,19 @@ One entry per observed difference or confirmed behaviour. Ids are never reused.
 
 ### F-018 - Tool: RPL-02 parses a mutated step with the profile's FrameConfig, not the step's override
 - **Profile / step:** `q03ude-c24-3c-f2` / G8-Q2-M. Capture id: `CAP-q03ude-c24-3c-f2-G8-Q2-M`.
-- **Spec says:** RPL-01 skips steps that "ran with another FrameConfig"; RPL-02 should parse the response with the same config.
-- **Checker does:** `G8-Q2-M` ran with `override: blockNo=91` (0x5B) and the PLC echoed `5B` (F-005). RPL-02 parses it with the profile's block `5A` and reports "recorded outcome ok, the parser says failed with FrameMismatch".
-- **Status:** open
-- **Decision (owner, date):** open.
+- **Spec says:** RPL-02: "A step that ran with a frame override is parsed with the profile's `FrameConfig` with that override applied."
+- **Checker does:** `G8-Q2-M` ran with `override: blockNo=91` (0x5B) and the PLC echoed `5B` (F-005). RPL-02 parsed it with the profile's block `5A` and reported "recorded outcome ok, the parser says failed with FrameMismatch".
+- **Checker now:** a record with `override:` is parsed (and its seeding for the mock read) with a copy of the profile's `FrameConfig` with the override applied; a relative value such as `stationNo=+1` adds to the profile's number, and an override key the replay does not know is a failure. RPL-01 still skips such steps. `G8-Q2-M` passes.
+- **Status:** decided
+- **Decision (owner, 2026-10-20):** parse with the profile's config plus the step's override. The `G8-Q2-M` tag is removed.
 
 ### F-019 - Tool: RPL-04 session replay differs by 3 ms on one poll round
 - **Profile / step:** `q03ude-c24-3c-f3` / G7-06. Capture id: the poll step `G7-06` in `session.vec` of `q03ude-c24-3c-f3`.
 - **Spec says:** RPL-04: the replayed events match the recorded ones.
 - **Checker does:** "event #9456: cycleDone round 3152: duration 41 ms captured, 38 ms replayed". The captured chunk times are in nanoseconds; the capture records 41 ms, the fake-clock replay 38 ms. A 1 ms rounding was the first guess, but the difference is 3 ms, so the cause is not established. All other rounds of this and the other poll steps match.
-- **Status:** open
-- **Decision (owner, date):** open.
+- **Checker now:** a poll round's duration may differ from the recorded one by up to 5 ms (the stamps and the Session clock are rounded from different origins); 6 ms and more still fails. The 3 ms round passes.
+- **Status:** decided
+- **Decision (owner, 2026-10-20):** allow a tolerance of 5 ms. The `G7-06` tag is removed.
 
 ### F-020 - Tool: RPL-03 does not model the PLC dropping an incomplete frame; after F-001 the mock swallows the following requests
 - **Profile / step:** `fx3-eth-1e-ascii` / G1-01, G2-02, G2-06, G2-08, G3-01, G3-02, G4-01-D, -R, -M, -X, -Y, -TS, -TN, -CS, -CN of the 2026-10-14 capture (steps that failed only since T-087). No step of the current capture is tagged.

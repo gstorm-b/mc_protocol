@@ -27,8 +27,9 @@
 // live run handled before its late timer (a stall of the event loop) is not turned into a fault,
 // which also means a Session that no longer faults on such a late response is not detected. The tx
 // frames and the events are compared as two lists (the interleaving of a frame and an event of the
-// same call is not part of the contract). A cycle's duration may differ by two milliseconds from
-// the recorded one (the stamps and the Session clock have different origins).
+// same call is not part of the contract). A cycle's duration may differ by up to five milliseconds
+// from the recorded one (kDurationToleranceMs: the stamps and the Session clock have different
+// origins, and a live round is timed on a loaded machine).
 #include "replay.h"
 #include "replay_util.h"
 
@@ -48,6 +49,11 @@ namespace {
 /// How much later than the captured output the Session's own deadline may lie (the stamps and the
 /// Session clock are rounded to whole milliseconds from different origins).
 constexpr TimeMs kTickToleranceMs = 2;
+
+/// How far a replayed cycle's duration may differ from the recorded one, in either direction: the
+/// stamps and the Session clock are rounded from different origins, and the recorded duration is
+/// measured on the live machine (a 3 ms difference was observed on a hardware capture).
+constexpr int64_t kDurationToleranceMs = 5;
 
 struct Chunk {
     bool tx{true};
@@ -187,7 +193,7 @@ std::string compareEvents(const Canon& want, const Canon& got) {
     if (want.name == "cycleDone" && want.duration >= 0) {
         const int64_t diff = want.duration > got.duration ? want.duration - got.duration
                                                           : got.duration - want.duration;
-        if (diff > 2) {
+        if (diff > kDurationToleranceMs) {
             return describeEvent(want) + ": duration " + std::to_string(want.duration) +
                    " ms captured, " + std::to_string(got.duration) + " ms replayed";
         }

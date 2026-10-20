@@ -12,6 +12,3 @@ G9-01-B F-009  # route / probes not modelled by the mock
 G9-05 F-009    # route / probes not modelled by the mock
 G9-05-M F-009  # route / probes not modelled by the mock
 G9-06 F-009    # route / probes not modelled by the mock
-GV-01 F-015    # RPL-05 read-back check
-GV-03 F-015    # RPL-05 read-back check
-G2-01 F-015    # RPL-05 read-back check

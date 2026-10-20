@@ -17,6 +17,3 @@ G4-03 F-012    # LinkDown after a peer close
 G5-01 F-012    # LinkDown after a peer close
 G8-Q3 F-012    # LinkDown after a peer close
 G7-02-A F-011  # unknown subheader answered FF 50
-GV-01 F-015    # RPL-05 read-back check
-GV-03 F-015    # RPL-05 read-back check
-G2-01 F-015    # RPL-05 read-back check

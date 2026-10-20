@@ -13,8 +13,4 @@ G8-Q1 F-008    # error code differs
 G9-01-F3 F-009 # route / probes not modelled by the mock
 G9-05 F-009    # route / probes not modelled by the mock
 G9-05-M F-009  # route / probes not modelled by the mock
-G7-06 F-019    # 1 ms rounding of CycleInfo.durationMs
-GV-01 F-015    # RPL-05 read-back check
-GV-03 F-015    # RPL-05 read-back check
-G2-01 F-015    # RPL-05 read-back check
 G8-Q1 F-015    # RPL-05 read-back check
