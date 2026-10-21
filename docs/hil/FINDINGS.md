@@ -109,8 +109,9 @@ One entry per observed difference or confirmed behaviour. Ids are never reused.
 - **Profile / step:** every Q03UDE and FX5U profile / G5-02, G5-03, G5-04; `fx3-eth-1e-*` / G5-04; the four `q03ude-c24-3c-*` profiles with a sum, `fx5u-rs485-3c-f1-sum`, `fx3-serial-1c-f1-sum` and `fx3-serial-1c-f4` / G7-03; `q03ude-c24-3c-f3` / G8-Q1 (G8-Q1.2).
 - **Spec says:** RPL-03: the mock answers exactly like the PLC.
 - **PLC does / mock does:** out-of-range device numbers: the Q03UDE over 3E and 3C answers `4031` (`CAP-q03ude-eth-3e-bin-G5-02`, D12288; `G5-03`, D12287 x2; `G5-04`, M8192), the mock `C051`; the FX5U answers `C056` (`CAP-fx5u-eth-3e-bin-G5-02/03/04`), the mock `C051`; the FX3 answers end code `58H` for M7680 (`CAP-fx3-eth-1e-bin-G5-04`), the mock `5BH`. A 3C request with altered sum characters (`G7-03`) is answered `NAK 7F24` by the C24; the mock sends another code (first difference at byte 12 of the NAK: captured `46`, mock `31`). The FX5U RS-485 gives `7143` for the out-of-range numbers (`CAP-fx5u-rs485-3c-f1-sum-G5-02`, `G5-03`, `G5-04`; first difference at byte 11: captured `37`, mock `43`) and `7F24` for the altered sum (`G7-03`, the same byte-12 difference as the C24). The FX3 over 1C answers the altered sum with `NAK 02` (`CAP-fx3-serial-1c-f1-sum-G7-03-R`: `15 30 30 46 46 30 32`), the mock with `06` (first difference at byte 6: captured `32`, mock `36`); the same in `fx3-serial-1c-f4`. The FX3 over 1C answers M7680 with `NAK 06` (`G5-04`), as the mock does.
-- **Status:** open
-- **Decision (owner, date):** open. A mock fix would add per-target error codes.
+- **Mock now:** with `MockOptions::target` set, the mock answers the captured codes: `QCpu` 4031 (3E and 3C, out of range) and 7F24 (3C, altered sum); `Fx5` C056 (3E) and 7143 (3C) for out-of-range numbers and 7F24 (3C) for an altered sum; `Fx3` end code `58H` without an abnormal code (1E, out of range) and `NAK 02` for an altered sum over 1C (formats 1 and 4). The FX3 over 1C keeps `NAK 06` for M7680, as before. The default target `Generic` keeps the `MockOptions` codes (`C051`, `5BH` + `10H`, `7151`, `06`). `makeMock` in the replay maps `plc` Q03UDECPU to `QCpu`, FX5U-... to `Fx5`, FX3U-... to `Fx3`, anything else to `Generic`.
+- **Status:** decided
+- **Decision (owner, 2026-10-21):** the mock answers the code of the PLC it imitates. `MockOptions::target` (`Generic`, `QCpu`, `Fx5`, `Fx3`) chooses the code table; the replay sets it from `run.meta` `plc`. The `F-008` tags are removed.
 
 ### F-009 - Mock fidelity: other-station route, iQ-R subcommand, random read and chained frames on the Q03UDE
 - **Profile / step:** `q03ude-eth-3e-bin`, `q03ude-eth-3e-ascii` / G8-Q5, G9-01, G9-05, G9-05-M, G9-06; `q03ude-c24-3c-f1-sum` / G9-01; `-f2`, `-f3`, `-f4` / G9-01; all five `q03ude-c24-3c-*` / G9-05, G9-05-M; `fx5u-rs485-3c-f1-sum` / G9-01-F1, G9-05, G9-05-M.
@@ -120,8 +121,8 @@ One entry per observed difference or confirmed behaviour. Ids are never reused.
   - iQ-R subcommand `0002` / `0003` on a Q (G9-05, G9-05-M): over 3E the PLC answers `plcError C059` with info `.../0401/0002` and `.../0401/0003`, the mock `ok`; over 3C the C24 answers `NAK 7F22`, the mock a data frame; the FX5U RS-485 answers `NAK 7E40` (`CAP-fx5u-rs485-3c-f1-sum-G9-05-R`, `G9-05-M-R`), the mock a data frame.
   - Random read 0403 (G9-01): the Q03UDE over 3E answers 21 bytes (`q03ude-eth-3e-bin-G9-01-B-R`, length field `0C 00`), the mock 20 (length `0B`). Over 3C F2 / F3 / F4 the C24 answers with data (36 / 38 / 36 bytes), the mock with a NAK; over 3C F1 with sum the C24 does not answer (`timeout`) and the mock sends a NAK. The FX5U RS-485 (3C F1 with sum) answers the random read with data (34 bytes, `CAP-fx5u-rs485-3c-f1-sum-G9-01-F1-R`), the mock with a NAK (15 bytes).
   - Two requests in one segment (G9-06): the PLC answers once (13 bytes), the mock twice (26).
-- **Status:** open
-- **Decision (owner, date):** open.
+- **Status:** decided - keep
+- **Decision (owner, 2026-10-21):** keep. The mock does not model the other-station route, the iQ-R subcommand on a Q-series CPU, the random read or chained frames (mock 1.0 limit: X, Y, M, D); the tags stay.
 
 ### F-010 - Mock fidelity: `MockPlc` ignores the profile's `supports` list and special device ranges
 - **Profile / step:** `q03ude-*` (3E and 3C) / G4-02-STS, -STC, -STN, -R, -ZR; `fx5u-eth-3e-*` / G4-02-V, -DX, -DY, -ZR; `fx3-eth-1e-*` and the three `fx3-serial-1c-*` profiles / G4-02-F, -B, -W, -TC, -CC (the 1C profiles also G4-02-L) and G0-02, G1-09, G2-10, G3-04, G5-02; `fx5u-rs485-3c-f1-sum` / G4-02-V, -DX, -DY, -ZR.
@@ -129,15 +130,16 @@ One entry per observed difference or confirmed behaviour. Ids are never reused.
 - **PLC does / mock does:**
   - Types outside `supports`: the Q03UDE answers `4031` (3E `plcError 4031`, 3C NAK 4031; `CAP-q03ude-eth-3e-bin-G4-02-R`, `-ZR`, `-STS`, `-STC`, `-STN`), the FX5U `C05C` (V, ZR; DX, DY in the Binary profile) or `C050` (DX, DY in the ASCII profile), the FX3 end code `56H` over 1E (`CAP-fx3-eth-1e-bin-G4-02-F`, `-B`, `-W`, `-TC`, `-CC`) and `NAK 06` over 1C (`CAP-fx3-serial-1c-f1-sum-G4-02-L-R`, `-F`, `-B`, `-W`, `-TC`, `-CC`), the FX5U RS-485 `NAK 7E43` (V, ZR) or `NAK 7F21` (DX, DY). The mock answers `ok` with data.
   - FX3 special range (`D=7999` in `device_end`, special from D8000 / M8000): the PLC answers `ok` for `D8010` (G0-02), `D8000` x4 (G1-09), `M8000` x16 (G2-10), `M8000` as word (G3-04) and `D8000` (G5-02, the plan expects `ok`); the mock answers `5BH` because those numbers lie beyond `deviceEnd`. Over 1C the three serial profiles show the same: the PLC answers with data (`CAP-fx3-serial-1c-f1-nosum-G0-02-R`: `02 30 30 46 46 30 30 30 35 03`), the mock with a NAK.
-- **Status:** open
-- **Decision (owner, date):** open. The mock would have to honour `supports` and `specialFrom` of the profile.
+- **Mock now:** `MockPlc::setTypeSupported()` refuses a device type with the type-not-supported code of the mock's target (`QCpu` 4031, `Fx5` C05C / C050 over 3E and 7E43 / 7F21 over 3C, `Fx3` end code `56H` over 1E and `NAK 06` over 1C; `Generic` C059). The profile's `supports` lists only the types the capture plan tests, and the Q03UDE and the FX5U also answer other types with data (e.g. `CAP-q03ude-eth-3e-bin-G4-02-V-R`, `CAP-fx5u-eth-3e-bin-G4-02-Z-R`), so the replay refuses, for `plc` Q03UDECPU, exactly the types its captures show refused (STS, STC, STN, R, ZR) and, for FX5U-..., V, DX, DY and ZR. For `plc` FX3U-... (and any other `plc`) the replay refuses every type outside `supports`, and nothing when the key is missing or empty. For FX3U-... it also sets the special range `[8000, 8512)` for the type of `special_word` (D) and of `special_bit` (M) with `MockPlc::setSpecialRange()`, because their number lies beyond `device_end`: the mock then answers `ok` for D8010, D8000 x4, M8000 x16, M8000 as a word and D8000, and still refuses a request that leaves both ranges (`58H`). The FX3 manuals give D8000 to D8511 and M8000 to M8511 (`fx3-enet.txt:4744`, `fx3-enet.txt:4771`, `fx3-dc.txt:17139`, `fx3-dc.txt:17241`).
+- **Status:** decided
+- **Decision (owner, 2026-10-21):** the mock honours both: `MockPlc::setTypeSupported()` for the types the PLC refuses (the replay takes them from `supports` for the FX3 and from the captured refusals for the Q03UDE and the FX5U) and `MockPlc::setSpecialRange()` for the FX3 special devices. The special range ends at 8511 (D8000 to D8511, M8000 to M8511, as the manual says). The `F-010` tags are removed.
 
 ### F-011 - Mock fidelity: the FX3U-ENET-ADP answers an unknown subheader with `FF 50`
 - **Profile / step:** `fx3-eth-1e-bin` / G7-02-B, `fx3-eth-1e-ascii` / G7-02-A.
 - **Spec says:** (no rule; the mock stays silent for a frame it does not decode.)
 - **PLC does:** a request with the subheader changed to `7F` gets a two-byte answer `FF 50` (Binary, `CAP-fx3-eth-1e-bin-G7-02-B-R`) or `46 46 35 30` = "FF50" (ASCII, `CAP-fx3-eth-1e-ascii-G7-02-A-R`); the library reports `protocolError FrameMismatch`. The mock sends nothing.
-- **Status:** open
-- **Decision (owner, date):** open.
+- **Status:** decided - keep
+- **Decision (owner, 2026-10-21):** keep. The mock stays silent for a frame it does not decode (PLC behaviour of the FX3U-ENET-ADP, recorded here); the tags stay.
 
 ### F-012 - Tool: the next step is sent before the link is up again after a peer close
 - **Profile / step:** `fx3-eth-1e-ascii` / G4-03, G5-01, G8-Q3 (G8-Q3.2); `fx3-eth-1e-bin` / G4-03, G5-01, G7-01.2, G8-Q4.2; `fx5u-eth-3e-bin` / G8-Q4.2, G8-Q5; `fx5u-eth-3e-ascii` / G8-Q5.
@@ -151,8 +153,8 @@ One entry per observed difference or confirmed behaviour. Ids are never reused.
 - **Spec says:** (nothing; the mock never closes a connection on a request it understands.)
 - **PLC does:** after these requests the PLC sends no response and closes the connection: outcome `peerClosed` (`waited_ms` 2.0 to 10.6) and a `PeerClosed` recovery in `run.meta`. `PeerClosed` recoveries: 9 of 11 in `fx5u-eth-3e-bin`, 6 of 8 in `fx5u-eth-3e-ascii`, 7 of 9 in `fx3-eth-1e-bin`, 5 of 6 in `fx3-eth-1e-ascii` (2026-10-15 re-captures), none in the Q03UDE profiles (they answer the same probes with an error, F-009) and none in the serial profiles (no connection to close). The FX3U-ENET-ADP manual lists closes on the existence-confirmation timeout, on RST / close, and when the external device does not acknowledge (`fx3-enet.txt:3474-3528`); a close after a rejected request is not listed in the dumps, so the cause is not stated.
 - **Replay effect:** RPL-03 differs where the mock answers (G8-Q4, G9-* on the FX5U).
-- **Status:** open
-- **Decision (owner, date):** open.
+- **Status:** decided - keep
+- **Decision (owner, 2026-10-21):** keep. The mock never closes a connection on a request it understands (PLC behaviour of the FX3U-ENET-ADP and the FX5U, recorded here); the tags stay.
 
 ### F-014 - withdrawn 2026-10-14 (owner): not recorded. The id is not reused.
 
@@ -207,8 +209,8 @@ One entry per observed difference or confirmed behaviour. Ids are never reused.
 - **Profile / step:** all `q03ude-*` profiles (scratch in `run.meta`).
 - **Spec says:** the first Q03UDE profile draft listed `Y0-Y7` as scratch.
 - **PLC does:** the module's own I/O occupies Y0-Y7 on this bench (decided 2026-10-12), so the captures of 2026-10-13/14 declare `scratch: ... Y10-Y17`. Earlier captures were not imported. No step is tagged.
-- **Status:** open (information only; the owner may close it)
-- **Decision (owner, date):** open.
+- **Status:** decided
+- **Decision (owner, 2026-10-21):** closed. The `Y10-Y17` captures stand in for `Y0-Y7`; no re-capture.
 
 ### F-022 - Mock fidelity: the FX3 rejects the AnA bit-read command over 1C
 - **Profile / step:** `fx3-serial-1c-f1-nosum`, `fx3-serial-1c-f1-sum`, `fx3-serial-1c-f4` / G4-04-M, -S, -X, -Y, -TS, -CS. Capture ids: `CAP-fx3-serial-1c-f1-nosum-G4-04-M`, `CAP-fx3-serial-1c-f1-sum-G4-04-M`, `CAP-fx3-serial-1c-f4-G4-04-M`.
@@ -228,12 +230,12 @@ One entry per observed difference or confirmed behaviour. Ids are never reused.
 - **Profile / step:** `fx5u-rs485-3c-f1-sum` / G7-01 (G7-01+2). Capture id: `CAP-fx5u-rs485-3c-f1-sum-G7-01`.
 - **Spec says:** G7-01 sends a request truncated by one character, then EOT, then a normal request; `expect: record`. RPL-03: the mock answers like the PLC.
 - **PLC does / mock does:** the truncated request (`05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 31 30`, the sum is one character) is answered after about 13 ms (`ttfb_ms: 13.438`, `rx_ms: 16.034`) with `15 46 39 30 30 30 30 46 46 30 30 37 46 34 30` = NAK `7F40` (`CAP-fx5u-rs485-3c-f1-sum-G7-01-R`, recorded `plcError 7F40`). FX5 serial manual, 3C/4C error codes: "7F40H Timeout error: a timeout occurred because the received message was insufficient" (`fx5-serial.txt:5371-5372`). The following EOT (`G7-01+2`) gets no answer (31.337 ms); the normal request after it is answered. The Q03UDE over 3C (`CAP-q03ude-c24-3c-f1-sum-G7-01`: `timeout` after 3000.932 ms) and the FX3 over 1C (G7-01 `timeout` after 3001.485 / 3001.964 / 3001.619 ms in `fx3-serial-1c-f1-nosum` / `-f1-sum` / `-f4`; the EOT step G7-01+2 is `noResponse`) send nothing. The mock has no clock and answers nothing to an incomplete frame (RPL-03: captured 15 bytes, mock 0).
-- **Status:** open
-- **Decision (owner, date):** open.
+- **Status:** decided - keep
+- **Decision (owner, 2026-10-21):** keep. The mock has no clock and answers nothing to an incomplete frame (PLC behaviour of the FX5U RS-485, recorded here); the tag stays.
 
 ## PLC error codes seen
 
-Built from every `plcError` outcome of the 15 imported runs (sec. 10.1 Q6). The reference spec returns the raw code and holds no meaning table, so no code below is already known to it. Meanings are quoted from the manual dumps with a line reference; "meaning not found in the manuals" means the dumps give none (the Q03UDE / QJ71C24N manuals are not among them). The library does not interpret codes.
+Built from every `plcError` outcome of the 15 imported runs (sec. 10.1 Q6). The reference spec returns the raw code and holds no meaning table, so no code below is already known to it. Meanings are quoted from the manual dumps with a line reference; "meaning not found in the manuals" means the dumps give none (the Q03UDE / QJ71C24N manuals are not among them). The library does not interpret codes. The mock answers the codes of an out-of-range device, an unsupported device type and an altered sum (`4031`, `C056`, `C05C`, `C050`, `7143`, `7E43`, `7F21`, `7F24`, `0058`, `0056` and `0002` over 1C) when its `MockOptions::target` is the PLC that gave them (`QCpu`, `Fx5`, `Fx3`); with the default target it keeps its own test codes.
 
 | Code | Frame / module | Step and request that caused it | Meaning (from manual) |
 |---|---|---|---|

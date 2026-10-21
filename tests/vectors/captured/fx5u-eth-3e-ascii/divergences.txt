@@ -1,13 +1,6 @@
 # step id, FINDINGS id (docs/hil/FINDINGS.md); the replay test reports these as known-divergence
 G1-03 F-002    # FX5 3E ASCII limits
 G1-04 F-002    # FX5 3E ASCII limits
-G4-02-V F-010  # supports ignored by the mock
-G4-02-DX F-010 # supports ignored by the mock
-G4-02-DY F-010 # supports ignored by the mock
-G4-02-ZR F-010 # supports ignored by the mock
-G5-02 F-008    # error code differs
-G5-03 F-008    # error code differs
-G5-04 F-008    # error code differs
 G8-Q5 F-012    # LinkDown after a peer close
 G9-01-A F-013  # PLC closes the connection
 G9-05 F-013    # PLC closes the connection

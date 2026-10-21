@@ -73,11 +73,33 @@ void MemoryImage::setLimit(DeviceType t, uint32_t limit) {
     }
 }
 
+void MemoryImage::setSpecialRange(DeviceType t, uint32_t from, uint32_t limit) noexcept {
+    if (indexOf(t) < m_specialFrom.size()) {
+        const bool empty = from >= limit;
+        m_specialFrom[indexOf(t)] = empty ? 0 : from;
+        m_specialLimit[indexOf(t)] = empty ? 0 : limit;
+    }
+}
+
 bool MemoryImage::outOfRange(DeviceType t, uint64_t first, uint64_t pointCount) const {
     if (pointCount == 0 || indexOf(t) >= m_limit.size()) {
         return false;
     }
-    return first + pointCount > m_limit[indexOf(t)];
+    const uint64_t end = first + pointCount;
+    if (end <= m_limit[indexOf(t)]) {
+        return false;
+    }
+    return first < m_specialFrom[indexOf(t)] || end > m_specialLimit[indexOf(t)];
+}
+
+void MemoryImage::setSupported(DeviceType t, bool supported) noexcept {
+    if (indexOf(t) < m_unsupported.size()) {
+        m_unsupported[indexOf(t)] = !supported;
+    }
+}
+
+bool MemoryImage::supported(DeviceType t) const noexcept {
+    return indexOf(t) >= m_unsupported.size() || !m_unsupported[indexOf(t)];
 }
 
 } // namespace mc::detail::mock

@@ -1551,3 +1551,454 @@ TEST_CASE("RPL-04 tolerance: a cycle duration 10 ms off still fails") {
     REQUIRE_MESSAGE(hasFailure(r, "RPL-04", "E-12"), dump(r));
     CHECK_MESSAGE(failuresOf(r, "RPL-04").find("duration") != std::string::npos, dump(r));
 }
+
+// ---- RPL-03 target: run.meta `plc`, `supports`, `special_word` / `special_bit` -> the mock
+// -------
+//
+// The replay builds its MockPlc from run.meta: `plc` chooses the MockTarget (Q03UDECPU -> QCpu,
+// FX5U-... -> Fx5, FX3U-... -> Fx3, anything else or no key -> Generic); for Generic and FX3U every
+// device type outside `supports` (when the key is there) is switched off with setTypeSupported
+// (Q03UDECPU and FX5U-... refuse the types their captures show refused), and on an FX3 the
+// special range named by `special_word` / `special_bit` (D8000 / M8000, beyond device_end) exists
+// up to number 8511. A recovered link builds a fresh mock the same way. The captures below are
+// small folders written in the build tree; every request and response is a record of a hardware
+// capture (ids CAP-q03ude-eth-3e-bin-..., CAP-fx5u-eth-3e-bin-..., CAP-fx3-eth-1e-bin-...), the
+// bytes the PLC sent.
+
+namespace {
+
+struct TargetStep {
+    const char* id;
+    const char* op;
+    const char* device;
+    int count;
+    const char* outcome; // "ok" or "plcError <code>"
+    const char* request;
+    const char* response;
+};
+
+struct TargetMeta {
+    const char* plc;      // nullptr: the key is absent
+    const char* supports; // nullptr: the key is absent
+    const char* deviceEnd;
+    const char* specialWord; // nullptr: the key is absent
+    const char* specialBit;
+    bool oneE; // 1E Binary (FX3U-ENET-ADP); else 3E Binary
+};
+
+std::string targetRunMeta(const std::string& name, const TargetMeta& m) {
+    std::ostringstream t;
+    t << "format: hil-capture-1\n"
+      << "profile: " << name << "\n";
+    if (m.plc != nullptr) {
+        t << "plc: " << m.plc << "\n";
+    }
+    t << "transport: tcp\n"
+      << "device_end: " << m.deviceEnd << "\n";
+    if (m.supports != nullptr) {
+        t << "supports: " << m.supports << "\n";
+    }
+    if (m.specialBit != nullptr) {
+        t << "special_bit: " << m.specialBit << "\n";
+    }
+    if (m.specialWord != nullptr) {
+        t << "special_word: " << m.specialWord << "\n";
+    }
+    t << "frame.aSeriesTarget: false\n"
+      << "frame.blockNo: 0\n"
+      << "frame.checkBlockNo: true\n"
+      << "frame.checkRoute: false\n"
+      << "frame.code: Binary\n"
+      << "frame.commandSet: ACPU\n"
+      << "frame.e1AliasLS: false\n"
+      << "frame.f3ShortResponseHasSum: false\n"
+      << "frame.format: Format1\n"
+      << "frame.frame: " << (m.oneE ? "1E" : "3E") << "\n"
+      << "frame.highPerformanceQcpu: false\n"
+      << "frame.io: 1023\n"
+      << "frame.messageWait: 0\n"
+      << "frame.monitoringTimer: " << (m.oneE ? 10 : 16) << "\n"
+      << "frame.network: 0\n"
+      << "frame.pc: 255\n"
+      << "frame.readRetries: 0\n"
+      << "frame.selfStation: 0\n"
+      << "frame.sendEotOnError: true\n"
+      << "frame.serialStart: 0\n"
+      << "frame.series: QL\n"
+      << "frame.splitWrites: false\n"
+      << "frame.station: 0\n"
+      << "frame.stationNo: 0\n"
+      << "frame.sumCheck: true\n"
+      << "frame.targetFamily: " << (m.oneE ? "A" : "IqR_Q_L") << "\n"
+      << "frame.timeoutMs: 0\n"
+      << "frame.xyAsciiDigits: Hex\n"
+      << "frame.xyNotation: " << (m.oneE ? "Octal" : "Hex") << "\n"
+      << "session.adHocArenaBytes: 65536\n"
+      << "session.adHocCapacity: 64\n"
+      << "session.bitsAsWords: true\n"
+      << "session.cycleIntervalMs: 100\n"
+      << "session.cycleMode: FixedRate\n"
+      << "session.firstResponseTimeoutMs: 0\n"
+      << "session.heartbeat.device: M2000\n"
+      << "session.heartbeat.enabled: false\n"
+      << "session.maxAdHocBurst: 4\n"
+      << "session.maxConsecutiveLinkErrors: 3\n"
+      << "session.maxGap: auto\n"
+      << "session.serialFlushMs: 50\n"
+      << "session.serialInterCharMs: 100\n";
+    return t.str();
+}
+
+// A capture folder under the build tree: run.meta, steps.vec and an empty session.vec.
+// `recoveryAfter` names the steps after which the link was re-established.
+fs::path targetCapture(const std::string& name, const TargetMeta& m,
+                       const std::vector<TargetStep>& steps,
+                       const std::vector<std::string>& recoveryAfter = {}) {
+    const fs::path dir = scratchDir() / "rpl03_target" / name;
+    fs::remove_all(dir);
+    fs::create_directories(dir);
+    std::string meta = targetRunMeta(name, m);
+    int n = 0;
+    for (const std::string& after : recoveryAfter) {
+        meta += "recovery." + std::to_string(++n) + ": after " + after +
+                ": PeerClosed (Disconnected); reconnected in 2 ms\n";
+    }
+    spit(dir / "run.meta", meta);
+    std::string text;
+    for (const TargetStep& s : steps) {
+        const std::string id = std::string("CAP-") + name + "-" + s.id;
+        const bool ok = std::string(s.outcome) == "ok";
+        text += "# id: " + id + "\n";
+        text += std::string("# source: plc  profile: ") + name + "  step: " + s.id + "\n";
+        text += std::string("# frame: ") + (m.oneE ? "1E" : "3E") + "  code: Binary  op: " + s.op +
+                "  device: " + s.device + "  count: " + std::to_string(s.count) + "  via: api\n";
+        text += "# kind: request\n";
+        text += std::string(s.request) + "\n\n";
+        text += "# id: " + id + "-R\n";
+        text += "# kind: response  of: " + id + "\n";
+        text += std::string("# outcome: ") + s.outcome + "  expect: " + (ok ? "ok" : "plcError") +
+                "  verdict: passed\n";
+        text += std::string(s.response) + "\n\n";
+    }
+    spit(dir / "steps.vec", text);
+    spit(dir / "session.vec", "");
+    return dir;
+}
+
+// The same record again under another step id (a vec id must be unique in a steps.vec).
+TargetStep again(TargetStep s, const char* id) {
+    s.id = id;
+    return s;
+}
+
+Report mockCheckOf(const fs::path& dir) {
+    Report r;
+    checkMock(loadCapture(dir), r);
+    return r;
+}
+
+// The captured records used below.
+const TargetStep kQ3G502{"G5-02",
+                         "ReadWords",
+                         "D12288",
+                         1,
+                         "plcError 4031",
+                         "50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 00 30 00 A8 01 00",
+                         "D0 00 00 FF FF 03 00 0B 00 31 40 00 FF FF 03 00 01 04 00 00"};
+const TargetStep kQ3G402R{"G4-02-R",
+                          "ReadWords",
+                          "R0",
+                          1,
+                          "plcError 4031",
+                          "50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 00 00 00 AF 01 00",
+                          "D0 00 00 FF FF 03 00 0B 00 31 40 00 FF FF 03 00 01 04 00 00"};
+const TargetStep kF5G502{"G5-02",
+                         "ReadWords",
+                         "D8000",
+                         1,
+                         "plcError C056",
+                         "50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 40 1F 00 A8 01 00",
+                         "D0 00 00 FF FF 03 00 0B 00 56 C0 00 FF FF 03 00 01 04 00 00"};
+const TargetStep kF5G402V{"G4-02-V",
+                          "ReadBits",
+                          "V0",
+                          1,
+                          "plcError C05C",
+                          "50 00 00 FF FF 03 00 0C 00 10 00 01 04 01 00 00 00 00 94 01 00",
+                          "D0 00 00 FF FF 03 00 0B 00 5C C0 00 FF FF 03 00 01 04 01 00"};
+const TargetStep kF5G402DX{"G4-02-DX",
+                           "ReadBits",
+                           "DX0",
+                           1,
+                           "plcError C05C",
+                           "50 00 00 FF FF 03 00 0C 00 10 00 01 04 01 00 00 00 00 A2 01 00",
+                           "D0 00 00 FF FF 03 00 0B 00 5C C0 00 FF FF 03 00 01 04 01 00"};
+const TargetStep kF3G504{"G5-04", "ReadBits",      "M7680",
+                         1,       "plcError 0058", "00 FF 0A 00 00 1E 00 00 20 4D 01 00",
+                         "80 58"};
+const TargetStep kF3G402F{"G4-02-F", "ReadBits",      "F0",
+                          1,         "plcError 0056", "00 FF 0A 00 00 00 00 00 20 46 01 00",
+                          "80 56"};
+const TargetStep kF3G002{
+    "G0-02", "ReadWords", "D8010", 1, "ok", "01 FF 0A 00 4A 1F 00 00 20 44 01 00", "81 00 05 00"};
+const TargetStep kF3G109{"G1-09",
+                         "ReadWords",
+                         "D8000",
+                         4,
+                         "ok",
+                         "01 FF 0A 00 40 1F 00 00 20 44 04 00",
+                         "81 00 C8 00 77 66 08 00 10 00"};
+const TargetStep kF3G210{"G2-10",
+                         "ReadBits",
+                         "M8000",
+                         16,
+                         "ok",
+                         "00 FF 0A 00 40 1F 00 00 20 4D 10 00",
+                         "80 00 10 01 00 00 00 00 10 00"};
+const TargetStep kF3G304{
+    "G3-04", "ReadWords", "M8000", 1, "ok", "01 FF 0A 00 40 1F 00 00 20 4D 01 00", "81 00 09 08"};
+const TargetStep kF3G502{
+    "G5-02", "ReadWords", "D8000", 1, "ok", "01 FF 0A 00 40 1F 00 00 20 44 01 00", "81 00 C8 00"};
+
+const TargetMeta kQ3Meta{
+    "Q03UDECPU", "D W M L F B X Y TS TC TN CS CC CN SM SD", "M=8191 D=12287 W=1FFF", "SD0", "SM0",
+    false};
+const TargetMeta kF5Meta{"FX5U-32M",
+                         "D W R M L F B X Y TS TC TN CS CC CN SM SD",
+                         "M=7679 D=7999 R=32767 V=2047",
+                         "SD0",
+                         "SM0",
+                         false};
+const TargetMeta kF3Meta{"FX3U-32M",
+                         "D R M S X Y TS TN CS CN",
+                         "X=377 Y=377 M=7679 D=7999 TS=511 TN=511 CS=255 CN=255 S=4095 R=32767",
+                         "D8000",
+                         "M8000",
+                         true};
+
+} // namespace
+
+TEST_CASE("RPL-03 target: plc Q03UDECPU replays with the QCpu codes (4031 beyond device_end and "
+          "for a type outside supports)") {
+    const fs::path dir = targetCapture("t096_q3", kQ3Meta, {kQ3G502, kQ3G402R});
+    const Report r = mockCheckOf(dir);
+    CHECK_MESSAGE(r.failures.empty(), dump(r));
+    CHECK(r.checks == 2);
+}
+
+TEST_CASE("RPL-03 target: plc FX5U-32M replays with the Fx5 codes (C056 beyond device_end, C05C "
+          "for V and DX outside supports)") {
+    const fs::path dir = targetCapture("t096_f5", kF5Meta, {kF5G502, kF5G402V, kF5G402DX});
+    const Report r = mockCheckOf(dir);
+    CHECK_MESSAGE(r.failures.empty(), dump(r));
+    CHECK(r.checks == 3);
+}
+
+TEST_CASE("RPL-03 target: plc FX3U-32M replays with the Fx3 codes and the special range "
+          "D8000.. / M8000.. of special_word and special_bit") {
+    const fs::path dir = targetCapture(
+        "t096_f3", kF3Meta, {kF3G002, kF3G109, kF3G210, kF3G304, kF3G502, kF3G504, kF3G402F});
+    const Report r = mockCheckOf(dir);
+    CHECK_MESSAGE(r.failures.empty(), dump(r));
+    CHECK(r.checks == 7);
+}
+
+TEST_CASE("RPL-03 target: the special range is the FX3's; another plc with the same keys has "
+          "none, and its D8000 is out of range") {
+    // Generic (plc not an FX3U): the 3E Binary request for D8000 is C051 with device_end D=7999.
+    const TargetStep d8000Generic{"G5-02",
+                                  "ReadWords",
+                                  "D8000",
+                                  1,
+                                  "plcError C051",
+                                  "50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 40 1F 00 A8 01 00",
+                                  "D0 00 00 FF FF 03 00 0B 00 51 C0 00 FF FF 03 00 01 04 00 00"};
+    TargetMeta meta = kF5Meta;
+    meta.plc = "virtual_plc";
+    meta.supports = nullptr;
+    meta.specialWord = "D8000";
+    meta.specialBit = "M8000";
+    const Report r = mockCheckOf(targetCapture("t096_nospecial", meta, {d8000Generic}));
+    CHECK_MESSAGE(r.failures.empty(), dump(r));
+    CHECK(r.checks == 1);
+}
+
+TEST_CASE("RPL-03 target: a missing or unknown plc is Generic (C051 beyond device_end, C059 for a "
+          "type outside supports)") {
+    const TargetStep rangeGeneric{"G5-02",
+                                  "ReadWords",
+                                  "D12288",
+                                  1,
+                                  "plcError C051",
+                                  "50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 00 30 00 A8 01 00",
+                                  "D0 00 00 FF FF 03 00 0B 00 51 C0 00 FF FF 03 00 01 04 00 00"};
+    const TargetStep typeGeneric{"G4-02-R",
+                                 "ReadWords",
+                                 "R0",
+                                 1,
+                                 "plcError C059",
+                                 "50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 00 00 00 AF 01 00",
+                                 "D0 00 00 FF FF 03 00 0B 00 59 C0 00 FF FF 03 00 01 04 00 00"};
+    const char* const unknown[] = {nullptr, "virtual_plc", "virtual_plc (FX numbering)", "A2USCPU",
+                                   "MockPlc"};
+    int n = 0;
+    for (const char* plc : unknown) {
+        TargetMeta meta = kQ3Meta;
+        meta.plc = plc;
+        const std::string label = plc == nullptr ? "(none)" : plc;
+        const Report r = mockCheckOf(
+            targetCapture("t096_generic" + std::to_string(++n), meta, {rangeGeneric, typeGeneric}));
+        CHECK_MESSAGE(r.failures.empty(), "plc " << label << dump(r));
+        CHECK_MESSAGE(r.checks == 2, "plc " << label);
+    }
+}
+
+TEST_CASE("RPL-03 target negative: the captured Q03UDE codes fail under a plc that is not a "
+          "Q03UDECPU") {
+    TargetMeta meta = kQ3Meta;
+    meta.plc = "virtual_plc";
+    const Report r = mockCheckOf(targetCapture("t096_q3_as_generic", meta, {kQ3G502, kQ3G402R}));
+    CHECK_MESSAGE(hasFailure(r, "RPL-03", "G5-02"), dump(r));
+    CHECK_MESSAGE(hasFailure(r, "RPL-03", "G4-02-R"), dump(r));
+}
+
+TEST_CASE("RPL-03 target: supports applies to Generic and FX3U, and no supports key means every "
+          "type is supported") {
+    // The R0 read of the Q03UDE capture, answered with data (R is in supports, nothing is switched
+    // off): the mock reads 0 from unwritten memory.
+    const TargetStep readsR{"G1-01",
+                            "ReadWords",
+                            "R0",
+                            1,
+                            "ok",
+                            "50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 00 00 00 AF 01 00",
+                            "D0 00 00 FF FF 03 00 04 00 00 00 00 00"};
+    TargetMeta noSupports = kQ3Meta;
+    noSupports.plc = "virtual_plc";
+    noSupports.supports = nullptr;
+    const Report all = mockCheckOf(targetCapture("t096_nosupports", noSupports, {readsR}));
+    CHECK_MESSAGE(all.failures.empty(), dump(all));
+
+    TargetMeta withR = kQ3Meta;
+    withR.plc = "virtual_plc";
+    withR.supports = "D W R M";
+    const Report listed = mockCheckOf(targetCapture("t096_supportsr", withR, {readsR}));
+    CHECK_MESSAGE(listed.failures.empty(), dump(listed));
+
+    // R outside supports and the plc not known: the Generic unsupported-type code.
+    const TargetStep noR{"G1-01",
+                         "ReadWords",
+                         "R0",
+                         1,
+                         "plcError C059",
+                         "50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 00 00 00 AF 01 00",
+                         "D0 00 00 FF FF 03 00 0B 00 59 C0 00 FF FF 03 00 01 04 00 00"};
+    TargetMeta withoutR = kQ3Meta;
+    withoutR.plc = "virtual_plc";
+    withoutR.supports = "D W M";
+    const Report off = mockCheckOf(targetCapture("t096_supportsnor", withoutR, {noR}));
+    CHECK_MESSAGE(off.failures.empty(), dump(off));
+}
+
+TEST_CASE("RPL-03 target: a link recovery rebuilds the mock with the same target, supports and "
+          "special range") {
+    // FX3U: after the recovery the mock is new (memory lost), yet it still answers 58H, 56H and the
+    // special range D8010.
+    const fs::path f3 = targetCapture("t096_f3_recovery", kF3Meta,
+                                      {kF3G109, kF3G504, kF3G402F, kF3G002}, {"G1-09"});
+    const Report r3 = mockCheckOf(f3);
+    CHECK_MESSAGE(r3.failures.empty(), dump(r3));
+    CHECK(r3.checks == 4);
+
+    // FX5U: C056 and C05C after the recovery.
+    const fs::path f5 =
+        targetCapture("t096_f5_recovery", kF5Meta,
+                      {kF5G502, kF5G402V, kF5G402DX, again(kF5G502, "G5-02.2")}, {"G5-02"});
+    const Report r5 = mockCheckOf(f5);
+    CHECK_MESSAGE(r5.failures.empty(), dump(r5));
+    CHECK(r5.checks == 4);
+
+    // Q03UDE: 4031 after the recovery.
+    const fs::path q3 = targetCapture("t096_q3_recovery", kQ3Meta,
+                                      {kQ3G502, kQ3G402R, again(kQ3G502, "G5-02.2")}, {"G4-02-R"});
+    const Report rq = mockCheckOf(q3);
+    CHECK_MESSAGE(rq.failures.empty(), dump(rq));
+    CHECK(rq.checks == 3);
+}
+
+// ---- RPL-03 target: Q03UDECPU and FX5U refuse only the captured types ----------------------
+
+namespace {
+
+// Captured G4-02 steps of types outside the profile's `supports` that the PLC answered with data
+// (CAP-q03ude-eth-3e-bin-G4-02-V-R and CAP-fx5u-eth-3e-bin-G4-02-Z-R).
+const TargetStep kQ3G402VOk{"G4-02-V",
+                            "ReadBits",
+                            "V0",
+                            1,
+                            "ok",
+                            "50 00 00 FF FF 03 00 0C 00 10 00 01 04 01 00 00 00 00 94 01 00",
+                            "D0 00 00 FF FF 03 00 03 00 00 00 00"};
+const TargetStep kF5G402ZOk{"G4-02-Z",
+                            "ReadWords",
+                            "Z0",
+                            1,
+                            "ok",
+                            "50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 00 00 00 CC 01 00",
+                            "D0 00 00 FF FF 03 00 04 00 00 00 00 00"};
+
+} // namespace
+
+TEST_CASE("RPL-03 target: a Q03UDECPU keeps a type outside supports that its capture did not "
+          "refuse (V) executed, and refuses R") {
+    const Report r = mockCheckOf(
+        targetCapture("t096_q3_refused_table", kQ3Meta, {kQ3G402VOk, kQ3G402R, kQ3G502}));
+    CHECK_MESSAGE(r.failures.empty(), dump(r));
+    CHECK(r.checks == 3);
+}
+
+TEST_CASE("RPL-03 target: an FX5U keeps a type outside supports that its capture did not refuse "
+          "(Z) executed, and refuses V") {
+    const Report r = mockCheckOf(
+        targetCapture("t096_f5_refused_table", kF5Meta, {kF5G402ZOk, kF5G402V, kF5G502}));
+    CHECK_MESSAGE(r.failures.empty(), dump(r));
+    CHECK(r.checks == 3);
+}
+
+TEST_CASE("RPL-03 target: an empty supports value disables nothing") {
+    // The R0 read answered with data; the capture lists no type, as a workbench export does.
+    const TargetStep readsR{"G1-01",
+                            "ReadWords",
+                            "R0",
+                            1,
+                            "ok",
+                            "50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 00 00 00 AF 01 00",
+                            "D0 00 00 FF FF 03 00 04 00 00 00 00 00"};
+    TargetMeta meta = kQ3Meta;
+    meta.plc = "virtual_plc";
+    meta.supports = "";
+    const Report r = mockCheckOf(targetCapture("t096_emptysupports", meta, {readsR}));
+    CHECK_MESSAGE(r.failures.empty(), dump(r));
+    CHECK(r.checks == 1);
+}
+
+// The replay pins the upper end of the FX3 special range (D8000-D8511 and M8000-M8511 per the FX3
+// manual). The step records are synthetic, shaped like the captured 1E Binary records of
+// fx3-eth-1e-bin (G1-09 and G2-10 for the frames, G5-04 for 58H).
+TEST_CASE("RPL-03 target: the FX3 special range of the replay ends with number 8511") {
+    const TargetStep d8511{
+        "G9-01",      "ReadWords", "D8511", 1, "ok", "01 FF 0A 00 3F 21 00 00 20 44 01 00",
+        "81 00 00 00"};
+    const TargetStep d8512{"G9-02", "ReadWords",     "D8512",
+                           1,       "plcError 0058", "01 FF 0A 00 40 21 00 00 20 44 01 00",
+                           "81 58"};
+    const TargetStep m8511{
+        "G9-03", "ReadBits", "M8511", 1, "ok", "00 FF 0A 00 3F 21 00 00 20 4D 01 00", "80 00 00"};
+    const TargetStep m8512{"G9-04", "ReadBits",      "M8512",
+                           1,       "plcError 0058", "00 FF 0A 00 40 21 00 00 20 4D 01 00",
+                           "80 58"};
+    const Report r =
+        mockCheckOf(targetCapture("t096_f3_special_end", kF3Meta, {d8511, d8512, m8511, m8512}));
+    CHECK_MESSAGE(r.failures.empty(), dump(r));
+    CHECK(r.checks == 4);
+}

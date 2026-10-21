@@ -32,9 +32,20 @@ public:
     /// Points of type `t` with number >= `limit` do not exist.
     void setLimit(DeviceType t, uint32_t limit);
 
-    /// Whether any point of [first, first + pointCount) does not exist (its number reaches the
-    /// limit of `t`). An empty range is never out of range.
+    /// Points [from, limit) of type `t` exist in addition to those below the limit set by
+    /// setLimit(); `from >= limit` removes the range.
+    void setSpecialRange(DeviceType t, uint32_t from, uint32_t limit) noexcept;
+
+    /// Whether any point of [first, first + pointCount) does not exist: the range is not wholly
+    /// below the limit of `t` nor wholly inside its special range. An empty range is never out of
+    /// range.
     bool outOfRange(DeviceType t, uint64_t first, uint64_t pointCount) const;
+
+    /// Switches type `t` on or off (all are supported until switched off).
+    void setSupported(DeviceType t, bool supported) noexcept;
+
+    /// Whether type `t` is supported.
+    bool supported(DeviceType t) const noexcept;
 
 private:
     using Pages = std::unordered_map<uint32_t, std::vector<uint16_t>>;
@@ -44,6 +55,10 @@ private:
 
     std::array<Pages, static_cast<size_t>(DeviceType::Count)> m_pages;
     std::array<uint64_t, static_cast<size_t>(DeviceType::Count)> m_limit = makeLimits();
+    // The special range [from, limit) of each type; empty (0, 0) when none.
+    std::array<uint64_t, static_cast<size_t>(DeviceType::Count)> m_specialFrom{};
+    std::array<uint64_t, static_cast<size_t>(DeviceType::Count)> m_specialLimit{};
+    std::array<bool, static_cast<size_t>(DeviceType::Count)> m_unsupported{}; // true = refused
 
     static std::array<uint64_t, static_cast<size_t>(DeviceType::Count)> makeLimits() {
         std::array<uint64_t, static_cast<size_t>(DeviceType::Count)> a{};

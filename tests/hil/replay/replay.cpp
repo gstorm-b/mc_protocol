@@ -782,10 +782,92 @@ void forEachPoint(const Decoded& d, const std::function<void(const Point&)>& fn)
     }
 }
 
+// First number after the FX3U special devices D8000-D8511 and M8000-M8511 (the device range tables
+// of the FX Series User's Manual, Data Communication Edition, and of the FX3U-ENET-ADP manual).
+constexpr uint32_t kFx3SpecialLimit = 8512;
+
+// The types the captured PLCs refused (the G4-02 steps: a read of the type answers a PLC error,
+// every other type outside `supports` answers data). Q03UDECPU: 4031 for STS, STC, STN, R, ZR
+// (CAP-q03ude-eth-3e-bin-G4-02-STS, -STC, -STN, -R, -ZR and the same steps of the other six Q03UDE
+// profiles). FX5U: C05C / C050 / 7E43 / 7F21 for V, DX, DY, ZR (CAP-fx5u-eth-3e-bin-G4-02-V, -DX,
+// -DY, -ZR, CAP-fx5u-rs485-3c-f1-sum-G4-02-V, ...).
+const std::vector<DeviceType> kQCpuRefusedTypes{DeviceType::STS, DeviceType::STC, DeviceType::STN,
+                                                DeviceType::R, DeviceType::ZR};
+const std::vector<DeviceType> kFx5RefusedTypes{DeviceType::V, DeviceType::DX, DeviceType::DY,
+                                               DeviceType::ZR};
+
+/// The mock target of run.meta `plc`: Q03UDECPU, FX5U-... and FX3U-... are the captured PLCs;
+/// anything else (a missing key, virtual_plc, ...) keeps the MockOptions codes.
+MockTarget targetOfPlc(const std::map<std::string, std::string>& meta) {
+    const auto it = meta.find("plc");
+    if (it == meta.end()) {
+        return MockTarget::Generic;
+    }
+    if (it->second == "Q03UDECPU") {
+        return MockTarget::QCpu;
+    }
+    if (startsWith(it->second, "FX5U-")) {
+        return MockTarget::Fx5;
+    }
+    if (startsWith(it->second, "FX3U-")) {
+        return MockTarget::Fx3;
+    }
+    return MockTarget::Generic;
+}
+
 std::unique_ptr<MockPlc> makeMock(const Capture& c) {
-    auto m = std::make_unique<MockPlc>(c.frame);
+    MockOptions options;
+    options.target = targetOfPlc(c.meta);
+    auto m = std::make_unique<MockPlc>(c.frame, options);
     for (const auto& end : c.deviceEnd) {
         m->setDeviceLimit(end.first, end.second + 1);
+    }
+
+    // Device types the PLC refuses. Q03UDECPU and FX5U: the types their captures show refused
+    // (their `supports` lists only the types the capture plan tests, and both PLCs answer other
+    // types); FX3U and every other plc: the types outside `supports`, when the capture lists any (a
+    // missing or empty list, as a capture exported by the workbench carries, refuses nothing).
+    if (options.target == MockTarget::QCpu || options.target == MockTarget::Fx5) {
+        const std::vector<DeviceType>& refused =
+            options.target == MockTarget::QCpu ? kQCpuRefusedTypes : kFx5RefusedTypes;
+        for (const DeviceType t : refused) {
+            m->setTypeSupported(t, false);
+        }
+    } else {
+        const auto supports = c.meta.find("supports");
+        if (supports != c.meta.end() && !words(supports->second).empty()) {
+            std::set<DeviceType> listed;
+            for (const std::string& symbol : words(supports->second)) {
+                if (const auto type = typeBySymbol(symbol)) {
+                    listed.insert(*type);
+                }
+            }
+            for (int t = 0; t < static_cast<int>(DeviceType::Count); ++t) {
+                if (listed.count(static_cast<DeviceType>(t)) == 0) {
+                    m->setTypeSupported(static_cast<DeviceType>(t), false);
+                }
+            }
+        }
+    }
+
+    // The FX3U special devices lie beyond device_end (D8000, M8000): they exist up to 8511.
+    if (options.target == MockTarget::Fx3) {
+        for (const char* key : {"special_word", "special_bit"}) {
+            const auto it = c.meta.find(key);
+            if (it == c.meta.end()) {
+                continue;
+            }
+            const Expected<Device> parsed = parseDevice(it->second, c.frame.xyNotation);
+            if (!parsed) {
+                continue;
+            }
+            const Device special = parsed.value();
+            for (const auto& end : c.deviceEnd) {
+                if (end.first == special.type && special.number > end.second) {
+                    m->setSpecialRange(special.type, special.number, kFx3SpecialLimit);
+                }
+            }
+        }
     }
     return m;
 }

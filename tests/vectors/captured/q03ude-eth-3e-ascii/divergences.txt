@@ -1,12 +1,4 @@
 # step id, FINDINGS id (docs/hil/FINDINGS.md); the replay test reports these as known-divergence
-G4-02-STS F-010 # supports ignored by the mock
-G4-02-STC F-010 # supports ignored by the mock
-G4-02-STN F-010 # supports ignored by the mock
-G4-02-R F-010  # supports ignored by the mock
-G4-02-ZR F-010 # supports ignored by the mock
-G5-02 F-008    # error code differs
-G5-03 F-008    # error code differs
-G5-04 F-008    # error code differs
 G8-Q5 F-009    # route / probes not modelled by the mock
 G9-01-A F-009  # route / probes not modelled by the mock
 G9-05 F-009    # route / probes not modelled by the mock

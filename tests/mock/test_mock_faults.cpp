@@ -2,7 +2,8 @@
 // 1E, Binary and ASCII, and on 3C and 1C in formats 1 to 4, asserted byte for byte against a clean
 // response; plus clearFaults() and the serial parts of MCK-12. The expected bytes are derived here
 // from the documented rule of each mode (mc/mock/mock_plc.h) applied to a clean response, never by
-// calling the mock a second time for the damage itself.
+// calling the mock a second time for the damage itself. MCK-16 (the error codes of a MockTarget)
+// takes its bytes from the hardware captures instead.
 #include "doctest/doctest.h"
 
 #include "common/vectors.h"
@@ -30,7 +31,10 @@ using mc::FrameConfig;
 using mc::FrameType;
 using mc::MockOptions;
 using mc::MockPlc;
+using mc::MockTarget;
 using mc::SerialFormat;
+using mc::TargetFamily;
+using mc::XyNumbering;
 using mc::test::loadVectors;
 using mc::test::Vector;
 
@@ -975,4 +979,772 @@ TEST_CASE("MCK-11 3C and 1C: a failRange fault is answered with NAK, QNAK or NN,
         CHECK(got[0] == sf::response(w.cfg, sf::Kind::Nak, threeC ? "7151" : "51"));
         CHECK(plc.requests()[0].answeredWith.plcCode == (threeC ? 0x7151 : 0x51));
     }
+}
+
+// ---- MCK-16: the error codes of a MockTarget (SPEC-mock-plc "Targets") -------------------------
+//
+// Every request and every expected response in kCells is a record of a hardware capture
+// (tests/vectors/captured/<profile>/steps.vec, ids CAP-<profile>-<step> and ...-R): the bytes are
+// what the PLC sent, never what the mock sends. A cell is set up the way a replay of the profile
+// sets the mock up: setDeviceLimit for an out-of-range step, setTypeSupported(type, false) for a
+// step whose device type is outside the profile's `supports`, nothing for a wrong-sum step.
+
+namespace {
+
+enum class Prof {
+    Q3eBin, // Q03UDECPU built-in Ethernet, 3E Binary
+    Q3eAsc, // 3E ASCII
+    F5eBin, // FX5U built-in Ethernet, 3E Binary
+    F5eAsc, // 3E ASCII
+    Q3cF1,  // Q03UDECPU + QJ71C24N, 3C format 1 with SUM
+    Q3cF1n, // format 1 without SUM
+    Q3cF2,  // format 2 (block number 5AH)
+    Q3cF3,  // format 3
+    Q3cF4,  // format 4
+    F5c,    // FX5U RS-485, 3C format 1 with SUM
+    F3eBin, // FX3U + FX3U-ENET-ADP, 1E Binary
+    F3eAsc, // 1E ASCII
+    F3cF1,  // FX3U computer link, 1C format 1 with SUM
+    F3cF1n, // 1C format 1 without SUM
+    F3cF4   // 1C format 4
+};
+
+enum class CellKind {
+    Range, // a device beyond the profile's device_end
+    Type,  // a device type outside the profile's `supports`
+    Sum    // a request whose SUM characters were altered (G7-03)
+};
+
+struct Cell {
+    const char* id;
+    Prof prof;
+    MockTarget target;
+    CellKind kind;
+    DeviceType type; // the request's head device type
+    uint32_t limit;  // Range: the first device number that does not exist
+    const char* request;
+    const char* response;
+};
+
+Bytes hexBytes(const char* text) {
+    Bytes out;
+    unsigned value = 0;
+    int digits = 0;
+    for (const char* p = text; *p != '\0'; ++p) {
+        const char ch = *p;
+        if (ch == ' ') {
+            continue;
+        }
+        const unsigned nibble =
+            ch >= 'A' ? static_cast<unsigned>(ch - 'A' + 10) : static_cast<unsigned>(ch - '0');
+        value = (value << 4) | nibble;
+        if (++digits == 2) {
+            out.push_back(static_cast<uint8_t>(value));
+            value = 0;
+            digits = 0;
+        }
+    }
+    return out;
+}
+
+std::string hexText(const Bytes& b) {
+    std::string t;
+    char two[4];
+    for (uint8_t v : b) {
+        std::snprintf(two, sizeof(two), "%02X ", v);
+        t += two;
+    }
+    return t;
+}
+
+FrameConfig profileConfig(Prof p) {
+    FrameConfig cfg;
+    switch (p) {
+    case Prof::Q3eBin:
+        return FrameConfig::frame3E(DataCode::Binary);
+    case Prof::Q3eAsc:
+        return FrameConfig::frame3E(DataCode::Ascii);
+    case Prof::F5eBin:
+    case Prof::F5eAsc:
+        cfg = FrameConfig::frame3E(p == Prof::F5eBin ? DataCode::Binary : DataCode::Ascii);
+        cfg.xyNotation = XyNumbering::Octal;
+        return cfg;
+    case Prof::Q3cF1:
+    case Prof::Q3cF1n:
+    case Prof::F5c:
+        cfg = FrameConfig::frame3C(SerialFormat::Format1);
+        cfg.sumCheck = p != Prof::Q3cF1n;
+        if (p == Prof::F5c) {
+            cfg.xyNotation = XyNumbering::Octal;
+        }
+        return cfg;
+    case Prof::Q3cF2:
+        cfg = FrameConfig::frame3C(SerialFormat::Format2);
+        cfg.blockNo = 90;
+        return cfg;
+    case Prof::Q3cF3:
+        return FrameConfig::frame3C(SerialFormat::Format3);
+    case Prof::Q3cF4:
+        return FrameConfig::frame3C(SerialFormat::Format4);
+    case Prof::F3eBin:
+    case Prof::F3eAsc:
+        cfg = FrameConfig::frame1E(p == Prof::F3eBin ? DataCode::Binary : DataCode::Ascii);
+        cfg.targetFamily = TargetFamily::A;
+        cfg.xyNotation = XyNumbering::Octal;
+        return cfg;
+    case Prof::F3cF1:
+    case Prof::F3cF1n:
+    case Prof::F3cF4:
+        cfg =
+            FrameConfig::frame1C(p == Prof::F3cF4 ? SerialFormat::Format4 : SerialFormat::Format1);
+        cfg.sumCheck = p != Prof::F3cF1n;
+        cfg.targetFamily = TargetFamily::A;
+        cfg.xyNotation = XyNumbering::Octal;
+        cfg.xyAsciiDigits = XyNumbering::Octal;
+        return cfg;
+    }
+    return cfg;
+}
+
+bool isEthernetProf(Prof p) { return p <= Prof::F5eAsc; }
+bool isThreeCProf(Prof p) { return p >= Prof::Q3cF1 && p <= Prof::F5c; }
+bool isOneEProf(Prof p) { return p == Prof::F3eBin || p == Prof::F3eAsc; }
+bool isOneCProf(Prof p) { return p >= Prof::F3cF1; }
+
+// The mock set up for a cell and fed its request; returns the one response.
+Bytes answerOfCell(const Cell& c, MockTarget target) {
+    MockOptions opt;
+    opt.target = target;
+    MockPlc plc(profileConfig(c.prof), opt);
+    if (c.kind == CellKind::Range) {
+        plc.setDeviceLimit(c.type, c.limit);
+    } else if (c.kind == CellKind::Type) {
+        plc.setTypeSupported(c.type, false);
+    }
+    feed(plc, hexBytes(c.request));
+    std::vector<Bytes> all = drainAll(plc);
+    INFO(c.id);
+    REQUIRE(all.size() == 1);
+    return all[0];
+}
+
+const Cell kCells[] = {
+    {"q03ude-eth-3e-bin-G5-02", Prof::Q3eBin, MockTarget::QCpu, CellKind::Range, DeviceType::D,
+     12288, "50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 00 30 00 A8 01 00",
+     "D0 00 00 FF FF 03 00 0B 00 31 40 00 FF FF 03 00 01 04 00 00"},
+    {"q03ude-eth-3e-bin-G5-03", Prof::Q3eBin, MockTarget::QCpu, CellKind::Range, DeviceType::D,
+     12288, "50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 FF 2F 00 A8 02 00",
+     "D0 00 00 FF FF 03 00 0B 00 31 40 00 FF FF 03 00 01 04 00 00"},
+    {"q03ude-eth-3e-bin-G5-04", Prof::Q3eBin, MockTarget::QCpu, CellKind::Range, DeviceType::M,
+     8192, "50 00 00 FF FF 03 00 0C 00 10 00 01 04 01 00 00 20 00 90 01 00",
+     "D0 00 00 FF FF 03 00 0B 00 31 40 00 FF FF 03 00 01 04 01 00"},
+    {"q03ude-eth-3e-bin-G4-02-STS", Prof::Q3eBin, MockTarget::QCpu, CellKind::Type, DeviceType::STS,
+     0, "50 00 00 FF FF 03 00 0C 00 10 00 01 04 01 00 00 00 00 C7 01 00",
+     "D0 00 00 FF FF 03 00 0B 00 31 40 00 FF FF 03 00 01 04 01 00"},
+    {"q03ude-eth-3e-bin-G4-02-STN", Prof::Q3eBin, MockTarget::QCpu, CellKind::Type, DeviceType::STN,
+     0, "50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 00 00 00 C8 01 00",
+     "D0 00 00 FF FF 03 00 0B 00 31 40 00 FF FF 03 00 01 04 00 00"},
+    {"q03ude-eth-3e-bin-G4-02-R", Prof::Q3eBin, MockTarget::QCpu, CellKind::Type, DeviceType::R, 0,
+     "50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 00 00 00 AF 01 00",
+     "D0 00 00 FF FF 03 00 0B 00 31 40 00 FF FF 03 00 01 04 00 00"},
+    {"q03ude-eth-3e-bin-G4-02-ZR", Prof::Q3eBin, MockTarget::QCpu, CellKind::Type, DeviceType::ZR,
+     0, "50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 00 00 00 B0 01 00",
+     "D0 00 00 FF FF 03 00 0B 00 31 40 00 FF FF 03 00 01 04 00 00"},
+    {"q03ude-eth-3e-ascii-G5-02", Prof::Q3eAsc, MockTarget::QCpu, CellKind::Range, DeviceType::D,
+     12288,
+     "35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 "
+     "2A 30 31 32 32 38 38 30 30 30 31",
+     "44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 36 34 30 33 31 30 30 46 46 30 33 46 46 30 "
+     "30 30 34 30 31 30 30 30 30"},
+    {"q03ude-eth-3e-ascii-G5-03", Prof::Q3eAsc, MockTarget::QCpu, CellKind::Range, DeviceType::D,
+     12288,
+     "35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 "
+     "2A 30 31 32 32 38 37 30 30 30 32",
+     "44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 36 34 30 33 31 30 30 46 46 30 33 46 46 30 "
+     "30 30 34 30 31 30 30 30 30"},
+    {"q03ude-eth-3e-ascii-G5-04", Prof::Q3eAsc, MockTarget::QCpu, CellKind::Range, DeviceType::M,
+     8192,
+     "35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 31 4D "
+     "2A 30 30 38 31 39 32 30 30 30 31",
+     "44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 36 34 30 33 31 30 30 46 46 30 33 46 46 30 "
+     "30 30 34 30 31 30 30 30 31"},
+    {"q03ude-eth-3e-ascii-G4-02-STS", Prof::Q3eAsc, MockTarget::QCpu, CellKind::Type,
+     DeviceType::STS, 0,
+     "35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 31 53 "
+     "53 30 30 30 30 30 30 30 30 30 31",
+     "44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 36 34 30 33 31 30 30 46 46 30 33 46 46 30 "
+     "30 30 34 30 31 30 30 30 31"},
+    {"q03ude-eth-3e-ascii-G4-02-STN", Prof::Q3eAsc, MockTarget::QCpu, CellKind::Type,
+     DeviceType::STN, 0,
+     "35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 53 "
+     "4E 30 30 30 30 30 30 30 30 30 31",
+     "44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 36 34 30 33 31 30 30 46 46 30 33 46 46 30 "
+     "30 30 34 30 31 30 30 30 30"},
+    {"q03ude-eth-3e-ascii-G4-02-R", Prof::Q3eAsc, MockTarget::QCpu, CellKind::Type, DeviceType::R,
+     0,
+     "35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 52 "
+     "2A 30 30 30 30 30 30 30 30 30 31",
+     "44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 36 34 30 33 31 30 30 46 46 30 33 46 46 30 "
+     "30 30 34 30 31 30 30 30 30"},
+    {"q03ude-eth-3e-ascii-G4-02-ZR", Prof::Q3eAsc, MockTarget::QCpu, CellKind::Type, DeviceType::ZR,
+     0,
+     "35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 5A "
+     "52 30 30 30 30 30 30 30 30 30 31",
+     "44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 36 34 30 33 31 30 30 46 46 30 33 46 46 30 "
+     "30 30 34 30 31 30 30 30 30"},
+    {"fx5u-eth-3e-bin-G5-02", Prof::F5eBin, MockTarget::Fx5, CellKind::Range, DeviceType::D, 8000,
+     "50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 40 1F 00 A8 01 00",
+     "D0 00 00 FF FF 03 00 0B 00 56 C0 00 FF FF 03 00 01 04 00 00"},
+    {"fx5u-eth-3e-bin-G5-03", Prof::F5eBin, MockTarget::Fx5, CellKind::Range, DeviceType::D, 8000,
+     "50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 3F 1F 00 A8 02 00",
+     "D0 00 00 FF FF 03 00 0B 00 56 C0 00 FF FF 03 00 01 04 00 00"},
+    {"fx5u-eth-3e-bin-G5-04", Prof::F5eBin, MockTarget::Fx5, CellKind::Range, DeviceType::M, 7680,
+     "50 00 00 FF FF 03 00 0C 00 10 00 01 04 01 00 00 1E 00 90 01 00",
+     "D0 00 00 FF FF 03 00 0B 00 56 C0 00 FF FF 03 00 01 04 01 00"},
+    {"fx5u-eth-3e-bin-G4-02-V", Prof::F5eBin, MockTarget::Fx5, CellKind::Type, DeviceType::V, 0,
+     "50 00 00 FF FF 03 00 0C 00 10 00 01 04 01 00 00 00 00 94 01 00",
+     "D0 00 00 FF FF 03 00 0B 00 5C C0 00 FF FF 03 00 01 04 01 00"},
+    {"fx5u-eth-3e-bin-G4-02-DX", Prof::F5eBin, MockTarget::Fx5, CellKind::Type, DeviceType::DX, 0,
+     "50 00 00 FF FF 03 00 0C 00 10 00 01 04 01 00 00 00 00 A2 01 00",
+     "D0 00 00 FF FF 03 00 0B 00 5C C0 00 FF FF 03 00 01 04 01 00"},
+    {"fx5u-eth-3e-bin-G4-02-DY", Prof::F5eBin, MockTarget::Fx5, CellKind::Type, DeviceType::DY, 0,
+     "50 00 00 FF FF 03 00 0C 00 10 00 01 04 01 00 00 00 00 A3 01 00",
+     "D0 00 00 FF FF 03 00 0B 00 5C C0 00 FF FF 03 00 01 04 01 00"},
+    {"fx5u-eth-3e-bin-G4-02-ZR", Prof::F5eBin, MockTarget::Fx5, CellKind::Type, DeviceType::ZR, 0,
+     "50 00 00 FF FF 03 00 0C 00 10 00 01 04 00 00 00 00 00 B0 01 00",
+     "D0 00 00 FF FF 03 00 0B 00 5C C0 00 FF FF 03 00 01 04 00 00"},
+    {"fx5u-eth-3e-ascii-G5-02", Prof::F5eAsc, MockTarget::Fx5, CellKind::Range, DeviceType::D, 8000,
+     "35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 "
+     "2A 30 30 38 30 30 30 30 30 30 31",
+     "44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 36 43 30 35 36 30 30 46 46 30 33 46 46 30 "
+     "30 30 34 30 31 30 30 30 30"},
+    {"fx5u-eth-3e-ascii-G5-03", Prof::F5eAsc, MockTarget::Fx5, CellKind::Range, DeviceType::D, 8000,
+     "35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 44 "
+     "2A 30 30 37 39 39 39 30 30 30 32",
+     "44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 36 43 30 35 36 30 30 46 46 30 33 46 46 30 "
+     "30 30 34 30 31 30 30 30 30"},
+    {"fx5u-eth-3e-ascii-G5-04", Prof::F5eAsc, MockTarget::Fx5, CellKind::Range, DeviceType::M, 7680,
+     "35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 31 4D "
+     "2A 30 30 37 36 38 30 30 30 30 31",
+     "44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 36 43 30 35 36 30 30 46 46 30 33 46 46 30 "
+     "30 30 34 30 31 30 30 30 31"},
+    {"fx5u-eth-3e-ascii-G4-02-V", Prof::F5eAsc, MockTarget::Fx5, CellKind::Type, DeviceType::V, 0,
+     "35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 31 56 "
+     "2A 30 30 30 30 30 30 30 30 30 31",
+     "44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 36 43 30 35 43 30 30 46 46 30 33 46 46 30 "
+     "30 30 34 30 31 30 30 30 31"},
+    {"fx5u-eth-3e-ascii-G4-02-DX", Prof::F5eAsc, MockTarget::Fx5, CellKind::Type, DeviceType::DX, 0,
+     "35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 31 44 "
+     "58 30 30 30 30 30 30 30 30 30 31",
+     "44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 36 43 30 35 30 30 30 46 46 30 33 46 46 30 "
+     "30 30 34 30 31 30 30 30 31"},
+    {"fx5u-eth-3e-ascii-G4-02-DY", Prof::F5eAsc, MockTarget::Fx5, CellKind::Type, DeviceType::DY, 0,
+     "35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 31 44 "
+     "59 30 30 30 30 30 30 30 30 30 31",
+     "44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 36 43 30 35 30 30 30 46 46 30 33 46 46 30 "
+     "30 30 34 30 31 30 30 30 31"},
+    {"fx5u-eth-3e-ascii-G4-02-ZR", Prof::F5eAsc, MockTarget::Fx5, CellKind::Type, DeviceType::ZR, 0,
+     "35 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 38 30 30 31 30 30 34 30 31 30 30 30 30 5A "
+     "52 30 30 30 30 30 30 30 30 30 31",
+     "44 30 30 30 30 30 46 46 30 33 46 46 30 30 30 30 31 36 43 30 35 43 30 30 46 46 30 33 46 46 30 "
+     "30 30 34 30 31 30 30 30 30"},
+    {"q03ude-c24-3c-f1-sum-G5-02", Prof::Q3cF1, MockTarget::QCpu, CellKind::Range, DeviceType::D,
+     12288,
+     "05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 31 32 32 38 38 30 30 30 31 "
+     "31 34",
+     "15 46 39 30 30 30 30 46 46 30 30 34 30 33 31"},
+    {"q03ude-c24-3c-f1-sum-G5-03", Prof::Q3cF1, MockTarget::QCpu, CellKind::Range, DeviceType::D,
+     12288,
+     "05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 31 32 32 38 37 30 30 30 32 "
+     "31 34",
+     "15 46 39 30 30 30 30 46 46 30 30 34 30 33 31"},
+    {"q03ude-c24-3c-f1-sum-G5-04", Prof::Q3cF1, MockTarget::QCpu, CellKind::Range, DeviceType::M,
+     8192,
+     "05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 31 4D 2A 30 30 38 31 39 32 30 30 30 31 "
+     "31 44",
+     "15 46 39 30 30 30 30 46 46 30 30 34 30 33 31"},
+    {"q03ude-c24-3c-f1-sum-G4-02-STS", Prof::Q3cF1, MockTarget::QCpu, CellKind::Type,
+     DeviceType::STS, 0,
+     "05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 31 53 53 30 30 30 30 30 30 30 30 30 31 "
+     "33 38",
+     "15 46 39 30 30 30 30 46 46 30 30 34 30 33 31"},
+    {"q03ude-c24-3c-f1-sum-G4-02-R", Prof::Q3cF1, MockTarget::QCpu, CellKind::Type, DeviceType::R,
+     0,
+     "05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 52 2A 30 30 30 30 30 30 30 30 30 31 "
+     "30 44",
+     "15 46 39 30 30 30 30 46 46 30 30 34 30 33 31"},
+    {"q03ude-c24-3c-f1-sum-G4-02-ZR", Prof::Q3cF1, MockTarget::QCpu, CellKind::Type, DeviceType::ZR,
+     0,
+     "05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 5A 52 30 30 30 30 30 30 30 30 30 31 "
+     "33 44",
+     "15 46 39 30 30 30 30 46 46 30 30 34 30 33 31"},
+    {"q03ude-c24-3c-f1-sum-G7-03", Prof::Q3cF1, MockTarget::QCpu, CellKind::Sum, DeviceType::D, 0,
+     "05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 31 "
+     "30 31",
+     "15 46 39 30 30 30 30 46 46 30 30 37 46 32 34"},
+    {"q03ude-c24-3c-f1-nosum-G5-02", Prof::Q3cF1n, MockTarget::QCpu, CellKind::Range, DeviceType::D,
+     12288,
+     "05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 31 32 32 38 38 30 30 30 31",
+     "15 46 39 30 30 30 30 46 46 30 30 34 30 33 31"},
+    {"q03ude-c24-3c-f1-nosum-G5-03", Prof::Q3cF1n, MockTarget::QCpu, CellKind::Range, DeviceType::D,
+     12288,
+     "05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 31 32 32 38 37 30 30 30 32",
+     "15 46 39 30 30 30 30 46 46 30 30 34 30 33 31"},
+    {"q03ude-c24-3c-f1-nosum-G5-04", Prof::Q3cF1n, MockTarget::QCpu, CellKind::Range, DeviceType::M,
+     8192,
+     "05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 31 4D 2A 30 30 38 31 39 32 30 30 30 31",
+     "15 46 39 30 30 30 30 46 46 30 30 34 30 33 31"},
+    {"q03ude-c24-3c-f1-nosum-G4-02-STS", Prof::Q3cF1n, MockTarget::QCpu, CellKind::Type,
+     DeviceType::STS, 0,
+     "05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 31 53 53 30 30 30 30 30 30 30 30 30 31",
+     "15 46 39 30 30 30 30 46 46 30 30 34 30 33 31"},
+    {"q03ude-c24-3c-f1-nosum-G4-02-R", Prof::Q3cF1n, MockTarget::QCpu, CellKind::Type,
+     DeviceType::R, 0,
+     "05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 52 2A 30 30 30 30 30 30 30 30 30 31",
+     "15 46 39 30 30 30 30 46 46 30 30 34 30 33 31"},
+    {"q03ude-c24-3c-f1-nosum-G4-02-ZR", Prof::Q3cF1n, MockTarget::QCpu, CellKind::Type,
+     DeviceType::ZR, 0,
+     "05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 5A 52 30 30 30 30 30 30 30 30 30 31",
+     "15 46 39 30 30 30 30 46 46 30 30 34 30 33 31"},
+    {"q03ude-c24-3c-f2-G5-02", Prof::Q3cF2, MockTarget::QCpu, CellKind::Range, DeviceType::D, 12288,
+     "05 35 41 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 31 32 32 38 38 30 30 "
+     "30 31 38 41",
+     "15 35 41 46 39 30 30 30 30 46 46 30 30 34 30 33 31"},
+    {"q03ude-c24-3c-f2-G5-03", Prof::Q3cF2, MockTarget::QCpu, CellKind::Range, DeviceType::D, 12288,
+     "05 35 41 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 31 32 32 38 37 30 30 "
+     "30 32 38 41",
+     "15 35 41 46 39 30 30 30 30 46 46 30 30 34 30 33 31"},
+    {"q03ude-c24-3c-f2-G5-04", Prof::Q3cF2, MockTarget::QCpu, CellKind::Range, DeviceType::M, 8192,
+     "05 35 41 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 31 4D 2A 30 30 38 31 39 32 30 30 "
+     "30 31 39 33",
+     "15 35 41 46 39 30 30 30 30 46 46 30 30 34 30 33 31"},
+    {"q03ude-c24-3c-f2-G4-02-STS", Prof::Q3cF2, MockTarget::QCpu, CellKind::Type, DeviceType::STS,
+     0,
+     "05 35 41 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 31 53 53 30 30 30 30 30 30 30 30 "
+     "30 31 41 45",
+     "15 35 41 46 39 30 30 30 30 46 46 30 30 34 30 33 31"},
+    {"q03ude-c24-3c-f2-G4-02-R", Prof::Q3cF2, MockTarget::QCpu, CellKind::Type, DeviceType::R, 0,
+     "05 35 41 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 52 2A 30 30 30 30 30 30 30 30 "
+     "30 31 38 33",
+     "15 35 41 46 39 30 30 30 30 46 46 30 30 34 30 33 31"},
+    {"q03ude-c24-3c-f2-G4-02-ZR", Prof::Q3cF2, MockTarget::QCpu, CellKind::Type, DeviceType::ZR, 0,
+     "05 35 41 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 5A 52 30 30 30 30 30 30 30 30 "
+     "30 31 42 33",
+     "15 35 41 46 39 30 30 30 30 46 46 30 30 34 30 33 31"},
+    {"q03ude-c24-3c-f2-G7-03", Prof::Q3cF2, MockTarget::QCpu, CellKind::Sum, DeviceType::D, 0,
+     "05 35 41 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 "
+     "30 31 37 37",
+     "15 35 41 46 39 30 30 30 30 46 46 30 30 37 46 32 34"},
+    {"q03ude-c24-3c-f3-G5-02", Prof::Q3cF3, MockTarget::QCpu, CellKind::Range, DeviceType::D, 12288,
+     "02 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 31 32 32 38 38 30 30 30 31 "
+     "03 31 37",
+     "02 46 39 30 30 30 30 46 46 30 30 51 4E 41 4B 34 30 33 31 03"},
+    {"q03ude-c24-3c-f3-G5-03", Prof::Q3cF3, MockTarget::QCpu, CellKind::Range, DeviceType::D, 12288,
+     "02 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 31 32 32 38 37 30 30 30 32 "
+     "03 31 37",
+     "02 46 39 30 30 30 30 46 46 30 30 51 4E 41 4B 34 30 33 31 03"},
+    {"q03ude-c24-3c-f3-G5-04", Prof::Q3cF3, MockTarget::QCpu, CellKind::Range, DeviceType::M, 8192,
+     "02 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 31 4D 2A 30 30 38 31 39 32 30 30 30 31 "
+     "03 32 30",
+     "02 46 39 30 30 30 30 46 46 30 30 51 4E 41 4B 34 30 33 31 03"},
+    {"q03ude-c24-3c-f3-G4-02-STS", Prof::Q3cF3, MockTarget::QCpu, CellKind::Type, DeviceType::STS,
+     0,
+     "02 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 31 53 53 30 30 30 30 30 30 30 30 30 31 "
+     "03 33 42",
+     "02 46 39 30 30 30 30 46 46 30 30 51 4E 41 4B 34 30 33 31 03"},
+    {"q03ude-c24-3c-f3-G4-02-R", Prof::Q3cF3, MockTarget::QCpu, CellKind::Type, DeviceType::R, 0,
+     "02 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 52 2A 30 30 30 30 30 30 30 30 30 31 "
+     "03 31 30",
+     "02 46 39 30 30 30 30 46 46 30 30 51 4E 41 4B 34 30 33 31 03"},
+    {"q03ude-c24-3c-f3-G4-02-ZR", Prof::Q3cF3, MockTarget::QCpu, CellKind::Type, DeviceType::ZR, 0,
+     "02 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 5A 52 30 30 30 30 30 30 30 30 30 31 "
+     "03 34 30",
+     "02 46 39 30 30 30 30 46 46 30 30 51 4E 41 4B 34 30 33 31 03"},
+    {"q03ude-c24-3c-f3-G7-03", Prof::Q3cF3, MockTarget::QCpu, CellKind::Sum, DeviceType::D, 0,
+     "02 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 31 "
+     "03 30 34",
+     "02 46 39 30 30 30 30 46 46 30 30 51 4E 41 4B 37 46 32 34 03"},
+    {"q03ude-c24-3c-f4-G5-02", Prof::Q3cF4, MockTarget::QCpu, CellKind::Range, DeviceType::D, 12288,
+     "05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 31 32 32 38 38 30 30 30 31 "
+     "31 34 0D 0A",
+     "15 46 39 30 30 30 30 46 46 30 30 34 30 33 31 0D 0A"},
+    {"q03ude-c24-3c-f4-G5-03", Prof::Q3cF4, MockTarget::QCpu, CellKind::Range, DeviceType::D, 12288,
+     "05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 31 32 32 38 37 30 30 30 32 "
+     "31 34 0D 0A",
+     "15 46 39 30 30 30 30 46 46 30 30 34 30 33 31 0D 0A"},
+    {"q03ude-c24-3c-f4-G5-04", Prof::Q3cF4, MockTarget::QCpu, CellKind::Range, DeviceType::M, 8192,
+     "05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 31 4D 2A 30 30 38 31 39 32 30 30 30 31 "
+     "31 44 0D 0A",
+     "15 46 39 30 30 30 30 46 46 30 30 34 30 33 31 0D 0A"},
+    {"q03ude-c24-3c-f4-G4-02-STS", Prof::Q3cF4, MockTarget::QCpu, CellKind::Type, DeviceType::STS,
+     0,
+     "05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 31 53 53 30 30 30 30 30 30 30 30 30 31 "
+     "33 38 0D 0A",
+     "15 46 39 30 30 30 30 46 46 30 30 34 30 33 31 0D 0A"},
+    {"q03ude-c24-3c-f4-G4-02-R", Prof::Q3cF4, MockTarget::QCpu, CellKind::Type, DeviceType::R, 0,
+     "05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 52 2A 30 30 30 30 30 30 30 30 30 31 "
+     "30 44 0D 0A",
+     "15 46 39 30 30 30 30 46 46 30 30 34 30 33 31 0D 0A"},
+    {"q03ude-c24-3c-f4-G4-02-ZR", Prof::Q3cF4, MockTarget::QCpu, CellKind::Type, DeviceType::ZR, 0,
+     "05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 5A 52 30 30 30 30 30 30 30 30 30 31 "
+     "33 44 0D 0A",
+     "15 46 39 30 30 30 30 46 46 30 30 34 30 33 31 0D 0A"},
+    {"q03ude-c24-3c-f4-G7-03", Prof::Q3cF4, MockTarget::QCpu, CellKind::Sum, DeviceType::D, 0,
+     "05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 31 "
+     "30 31 0D 0A",
+     "15 46 39 30 30 30 30 46 46 30 30 37 46 32 34 0D 0A"},
+    {"fx5u-rs485-3c-f1-sum-G5-02", Prof::F5c, MockTarget::Fx5, CellKind::Range, DeviceType::D, 8000,
+     "05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 38 30 30 30 30 30 30 31 "
+     "30 37",
+     "15 46 39 30 30 30 30 46 46 30 30 37 31 34 33"},
+    {"fx5u-rs485-3c-f1-sum-G5-03", Prof::F5c, MockTarget::Fx5, CellKind::Range, DeviceType::D, 8000,
+     "05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 37 39 39 39 30 30 30 32 "
+     "32 32",
+     "15 46 39 30 30 30 30 46 46 30 30 37 31 34 33"},
+    {"fx5u-rs485-3c-f1-sum-G5-04", Prof::F5c, MockTarget::Fx5, CellKind::Range, DeviceType::M, 7680,
+     "05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 31 4D 2A 30 30 37 36 38 30 30 30 30 31 "
+     "31 45",
+     "15 46 39 30 30 30 30 46 46 30 30 37 31 34 33"},
+    {"fx5u-rs485-3c-f1-sum-G4-02-V", Prof::F5c, MockTarget::Fx5, CellKind::Type, DeviceType::V, 0,
+     "05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 31 56 2A 30 30 30 30 30 30 30 30 30 31 "
+     "31 32",
+     "15 46 39 30 30 30 30 46 46 30 30 37 45 34 33"},
+    {"fx5u-rs485-3c-f1-sum-G4-02-DX", Prof::F5c, MockTarget::Fx5, CellKind::Type, DeviceType::DX, 0,
+     "05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 31 44 58 30 30 30 30 30 30 30 30 30 31 "
+     "32 45",
+     "15 46 39 30 30 30 30 46 46 30 30 37 46 32 31"},
+    {"fx5u-rs485-3c-f1-sum-G4-02-DY", Prof::F5c, MockTarget::Fx5, CellKind::Type, DeviceType::DY, 0,
+     "05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 31 44 59 30 30 30 30 30 30 30 30 30 31 "
+     "32 46",
+     "15 46 39 30 30 30 30 46 46 30 30 37 46 32 31"},
+    {"fx5u-rs485-3c-f1-sum-G4-02-ZR", Prof::F5c, MockTarget::Fx5, CellKind::Type, DeviceType::ZR, 0,
+     "05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 5A 52 30 30 30 30 30 30 30 30 30 31 "
+     "33 44",
+     "15 46 39 30 30 30 30 46 46 30 30 37 45 34 33"},
+    {"fx5u-rs485-3c-f1-sum-G7-03", Prof::F5c, MockTarget::Fx5, CellKind::Sum, DeviceType::D, 0,
+     "05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 30 30 30 30 31 "
+     "30 31",
+     "15 46 39 30 30 30 30 46 46 30 30 37 46 32 34"},
+    {"fx3-eth-1e-bin-G5-04", Prof::F3eBin, MockTarget::Fx3, CellKind::Range, DeviceType::M, 7680,
+     "00 FF 0A 00 00 1E 00 00 20 4D 01 00", "80 58"},
+    {"fx3-eth-1e-bin-G4-02-F", Prof::F3eBin, MockTarget::Fx3, CellKind::Type, DeviceType::F, 0,
+     "00 FF 0A 00 00 00 00 00 20 46 01 00", "80 56"},
+    {"fx3-eth-1e-bin-G4-02-B", Prof::F3eBin, MockTarget::Fx3, CellKind::Type, DeviceType::B, 0,
+     "00 FF 0A 00 00 00 00 00 20 42 01 00", "80 56"},
+    {"fx3-eth-1e-bin-G4-02-W", Prof::F3eBin, MockTarget::Fx3, CellKind::Type, DeviceType::W, 0,
+     "01 FF 0A 00 00 00 00 00 20 57 01 00", "81 56"},
+    {"fx3-eth-1e-bin-G4-02-TC", Prof::F3eBin, MockTarget::Fx3, CellKind::Type, DeviceType::TC, 0,
+     "00 FF 0A 00 00 00 00 00 43 54 01 00", "80 56"},
+    {"fx3-eth-1e-bin-G4-02-CC", Prof::F3eBin, MockTarget::Fx3, CellKind::Type, DeviceType::CC, 0,
+     "00 FF 0A 00 00 00 00 00 43 43 01 00", "80 56"},
+    {"fx3-eth-1e-ascii-G5-04", Prof::F3eAsc, MockTarget::Fx3, CellKind::Range, DeviceType::M, 7680,
+     "30 30 46 46 30 30 30 41 34 44 32 30 30 30 30 30 31 45 30 30 30 31 30 30", "38 30 35 38"},
+    {"fx3-eth-1e-ascii-G4-02-F", Prof::F3eAsc, MockTarget::Fx3, CellKind::Type, DeviceType::F, 0,
+     "30 30 46 46 30 30 30 41 34 36 32 30 30 30 30 30 30 30 30 30 30 31 30 30", "38 30 35 36"},
+    {"fx3-eth-1e-ascii-G4-02-B", Prof::F3eAsc, MockTarget::Fx3, CellKind::Type, DeviceType::B, 0,
+     "30 30 46 46 30 30 30 41 34 32 32 30 30 30 30 30 30 30 30 30 30 31 30 30", "38 30 35 36"},
+    {"fx3-eth-1e-ascii-G4-02-W", Prof::F3eAsc, MockTarget::Fx3, CellKind::Type, DeviceType::W, 0,
+     "30 31 46 46 30 30 30 41 35 37 32 30 30 30 30 30 30 30 30 30 30 31 30 30", "38 31 35 36"},
+    {"fx3-eth-1e-ascii-G4-02-TC", Prof::F3eAsc, MockTarget::Fx3, CellKind::Type, DeviceType::TC, 0,
+     "30 30 46 46 30 30 30 41 35 34 34 33 30 30 30 30 30 30 30 30 30 31 30 30", "38 30 35 36"},
+    {"fx3-eth-1e-ascii-G4-02-CC", Prof::F3eAsc, MockTarget::Fx3, CellKind::Type, DeviceType::CC, 0,
+     "30 30 46 46 30 30 30 41 34 33 34 33 30 30 30 30 30 30 30 30 30 31 30 30", "38 30 35 36"},
+    {"fx3-serial-1c-f1-sum-G5-04", Prof::F3cF1, MockTarget::Fx3, CellKind::Range, DeviceType::M,
+     7680, "05 30 30 46 46 42 52 30 4D 37 36 38 30 30 31 33 33", "15 30 30 46 46 30 36"},
+    {"fx3-serial-1c-f1-sum-G4-02-L", Prof::F3cF1, MockTarget::Fx3, CellKind::Type, DeviceType::L, 0,
+     "05 30 30 46 46 42 52 30 4C 30 30 30 30 30 31 31 44", "15 30 30 46 46 30 36"},
+    {"fx3-serial-1c-f1-sum-G4-02-W", Prof::F3cF1, MockTarget::Fx3, CellKind::Type, DeviceType::W, 0,
+     "05 30 30 46 46 57 52 30 57 30 30 30 30 30 31 33 44", "15 30 30 46 46 30 36"},
+    {"fx3-serial-1c-f1-sum-G4-02-TC", Prof::F3cF1, MockTarget::Fx3, CellKind::Type, DeviceType::TC,
+     0, "05 30 30 46 46 42 52 30 54 43 30 30 30 30 31 33 38", "15 30 30 46 46 30 36"},
+    {"fx3-serial-1c-f1-sum-G7-03", Prof::F3cF1, MockTarget::Fx3, CellKind::Sum, DeviceType::D, 0,
+     "05 30 30 46 46 57 52 30 44 30 31 30 30 30 31 32 43", "15 30 30 46 46 30 32"},
+    {"fx3-serial-1c-f1-nosum-G5-04", Prof::F3cF1n, MockTarget::Fx3, CellKind::Range, DeviceType::M,
+     7680, "05 30 30 46 46 42 52 30 4D 37 36 38 30 30 31", "15 30 30 46 46 30 36"},
+    {"fx3-serial-1c-f1-nosum-G4-02-L", Prof::F3cF1n, MockTarget::Fx3, CellKind::Type, DeviceType::L,
+     0, "05 30 30 46 46 42 52 30 4C 30 30 30 30 30 31", "15 30 30 46 46 30 36"},
+    {"fx3-serial-1c-f1-nosum-G4-02-W", Prof::F3cF1n, MockTarget::Fx3, CellKind::Type, DeviceType::W,
+     0, "05 30 30 46 46 57 52 30 57 30 30 30 30 30 31", "15 30 30 46 46 30 36"},
+    {"fx3-serial-1c-f1-nosum-G4-02-TC", Prof::F3cF1n, MockTarget::Fx3, CellKind::Type,
+     DeviceType::TC, 0, "05 30 30 46 46 42 52 30 54 43 30 30 30 30 31", "15 30 30 46 46 30 36"},
+    {"fx3-serial-1c-f4-G5-04", Prof::F3cF4, MockTarget::Fx3, CellKind::Range, DeviceType::M, 7680,
+     "05 30 30 46 46 42 52 30 4D 37 36 38 30 30 31 33 33 0D 0A", "15 30 30 46 46 30 36 0D 0A"},
+    {"fx3-serial-1c-f4-G4-02-L", Prof::F3cF4, MockTarget::Fx3, CellKind::Type, DeviceType::L, 0,
+     "05 30 30 46 46 42 52 30 4C 30 30 30 30 30 31 31 44 0D 0A", "15 30 30 46 46 30 36 0D 0A"},
+    {"fx3-serial-1c-f4-G4-02-W", Prof::F3cF4, MockTarget::Fx3, CellKind::Type, DeviceType::W, 0,
+     "05 30 30 46 46 57 52 30 57 30 30 30 30 30 31 33 44 0D 0A", "15 30 30 46 46 30 36 0D 0A"},
+    {"fx3-serial-1c-f4-G4-02-TC", Prof::F3cF4, MockTarget::Fx3, CellKind::Type, DeviceType::TC, 0,
+     "05 30 30 46 46 42 52 30 54 43 30 30 30 30 31 33 38 0D 0A", "15 30 30 46 46 30 36 0D 0A"},
+    {"fx3-serial-1c-f4-G7-03", Prof::F3cF4, MockTarget::Fx3, CellKind::Sum, DeviceType::D, 0,
+     "05 30 30 46 46 57 52 30 44 30 31 30 30 30 31 32 43 0D 0A", "15 30 30 46 46 30 32 0D 0A"},
+};
+
+// Runs the cells of the profiles for which `pick` is true, each with its own target.
+template <typename Pick> void checkCells(Pick pick) {
+    size_t seen = 0;
+    for (const Cell& c : kCells) {
+        if (!pick(c.prof)) {
+            continue;
+        }
+        ++seen;
+        const Bytes want = hexBytes(c.response);
+        const Bytes got = answerOfCell(c, c.target);
+        INFO(c.id);
+        INFO("captured " << hexText(want) << "| mock " << hexText(got));
+        CHECK(got == want);
+    }
+    CHECK(seen > 0);
+}
+
+// The altered-SUM variant of a request of `cfg` (the last SUM character changed).
+Bytes withWrongSum(const FrameConfig& cfg, Bytes request) {
+    const size_t at = cfg.format == SerialFormat::Format4 ? request.size() - 3 : request.size() - 1;
+    request[at] = request[at] == '0' ? uint8_t{'1'} : uint8_t{'0'};
+    return request;
+}
+
+} // namespace
+
+TEST_CASE("MCK-16 3E Binary and ASCII: QCpu and Fx5 answer the captured out-of-range and "
+          "type-not-supported codes") {
+    // QCpu: 4031 for both. Fx5: C056 out of range; C05C for V and ZR; DX and DY C05C in Binary and
+    // C050 in ASCII (CAP-q03ude-eth-3e-*, CAP-fx5u-eth-3e-*: G5-02, G5-03, G5-04, G4-02-x).
+    checkCells([](Prof p) { return isEthernetProf(p); });
+}
+
+TEST_CASE("MCK-16 3C formats 1 to 4: QCpu answers 4031 and 7F24, Fx5 answers 7143, 7E43, 7F21 and "
+          "7F24, as captured") {
+    checkCells([](Prof p) { return isThreeCProf(p); });
+}
+
+TEST_CASE("MCK-16 1E Binary and ASCII: Fx3 answers 58H and 56H without an abnormal code") {
+    checkCells([](Prof p) { return isOneEProf(p); });
+}
+
+TEST_CASE("MCK-16 1C formats 1 and 4: Fx3 answers 06 for range and type, and 02 for a wrong SUM") {
+    checkCells([](Prof p) { return isOneCProf(p); });
+}
+
+TEST_CASE("MCK-16 3C format 3: a target code keeps the short-response SUM rule of the config") {
+    // The captured QNAK 4031 has no SUM (f3ShortResponseHasSum false). With the flag on, the same
+    // answer carries a SUM, spelled out by the serial builder of this directory.
+    const Cell* cell = nullptr;
+    for (const Cell& c : kCells) {
+        if (c.prof == Prof::Q3cF3 && c.kind == CellKind::Range) {
+            cell = &c;
+            break;
+        }
+    }
+    REQUIRE(cell != nullptr);
+    CHECK(hexBytes(cell->response) ==
+          sf::response(profileConfig(Prof::Q3cF3), sf::Kind::Nak, "4031"));
+
+    FrameConfig cfg = profileConfig(Prof::Q3cF3);
+    cfg.f3ShortResponseHasSum = true;
+    MockOptions opt;
+    opt.target = MockTarget::QCpu;
+    MockPlc plc(cfg, opt);
+    plc.setDeviceLimit(cell->type, cell->limit);
+    feed(plc, hexBytes(cell->request));
+    const std::vector<Bytes> all = drainAll(plc);
+    REQUIRE(all.size() == 1);
+    CHECK(all[0] == sf::response(cfg, sf::Kind::Nak, "4031"));
+}
+
+TEST_CASE("MCK-16 Generic is the default target and answers the MockOptions codes as before") {
+    const MockOptions defaults;
+    CHECK(defaults.target == MockTarget::Generic);
+
+    const std::vector<Vector> bin3e = loadFile("3e_binary.vec");
+    const std::vector<Vector> asc3e = loadFile("3e_ascii.vec");
+    const std::vector<Vector> bin1e = loadFile("1e_binary.vec");
+    const std::vector<Vector> asc1e = loadFile("1e_ascii.vec");
+
+    for (bool explicitGeneric : {false, true}) {
+        INFO("explicit Generic: " << explicitGeneric);
+        MockOptions opt;
+        if (explicitGeneric) {
+            opt.target = MockTarget::Generic;
+        }
+        // V-3E-B-10 / V-3E-A-10 / V-1E-B-11 / V-1E-A-11: D100 x3 beyond a limit of 100.
+        {
+            MockPlc plc(FrameConfig::frame3E(DataCode::Binary), opt);
+            plc.setDeviceLimit(DeviceType::D, 100);
+            feed(plc, byId(bin3e, "V-3E-B-01").bytes);
+            const std::vector<Bytes> got = drainAll(plc);
+            REQUIRE(got.size() == 1);
+            CHECK(got[0] == byId(bin3e, "V-3E-B-10").bytes);
+        }
+        {
+            MockPlc plc(FrameConfig::frame3E(DataCode::Ascii), opt);
+            plc.setDeviceLimit(DeviceType::D, 100);
+            feed(plc, byId(asc3e, "V-3E-A-01").bytes);
+            const std::vector<Bytes> got = drainAll(plc);
+            REQUIRE(got.size() == 1);
+            CHECK(got[0] == byId(asc3e, "V-3E-A-10").bytes);
+        }
+        {
+            MockPlc plc(FrameConfig::frame1E(DataCode::Binary), opt);
+            plc.setDeviceLimit(DeviceType::D, 100);
+            feed(plc, byId(bin1e, "V-1E-B-01").bytes);
+            const std::vector<Bytes> got = drainAll(plc);
+            REQUIRE(got.size() == 1);
+            CHECK(got[0] == byId(bin1e, "V-1E-B-11").bytes);
+        }
+        {
+            MockPlc plc(FrameConfig::frame1E(DataCode::Ascii), opt);
+            plc.setDeviceLimit(DeviceType::D, 100);
+            feed(plc, byId(asc1e, "V-1E-A-01").bytes);
+            const std::vector<Bytes> got = drainAll(plc);
+            REQUIRE(got.size() == 1);
+            CHECK(got[0] == byId(asc1e, "V-1E-A-11").bytes);
+        }
+        // 3C and 1C format 1 with SUM: a wrong SUM is NAK 7151 (V-3C1-05) and NAK 06; a device
+        // beyond the limit is NAK C051 and NAK 06.
+        {
+            const FrameConfig cfg = FrameConfig::frame3C(SerialFormat::Format1);
+            MockPlc plc(cfg, opt);
+            plc.setDeviceLimit(DeviceType::D, 100);
+            feed(plc, withWrongSum(cfg, sf::request(cfg, sf::readD(cfg, 0, 3))));
+            feed(plc, sf::request(cfg, sf::readD(cfg, 100, 3)));
+            const std::vector<Bytes> got = drainAll(plc);
+            REQUIRE(got.size() == 2);
+            CHECK(got[0] == sf::response(cfg, sf::Kind::Nak, "7151"));
+            CHECK(got[1] == sf::response(cfg, sf::Kind::Nak, "C051"));
+        }
+        {
+            const FrameConfig cfg = FrameConfig::frame1C(SerialFormat::Format1);
+            MockPlc plc(cfg, opt);
+            plc.setDeviceLimit(DeviceType::D, 100);
+            feed(plc, withWrongSum(cfg, sf::request(cfg, sf::readD(cfg, 0, 3))));
+            feed(plc, sf::request(cfg, sf::readD(cfg, 100, 3)));
+            const std::vector<Bytes> got = drainAll(plc);
+            REQUIRE(got.size() == 2);
+            CHECK(got[0] == sf::response(cfg, sf::Kind::Nak, "06"));
+            CHECK(got[1] == sf::response(cfg, sf::Kind::Nak, "06"));
+        }
+    }
+}
+
+TEST_CASE("MCK-16 a target replaces only the codes of its table: the other cells keep the "
+          "Generic code") {
+    const std::vector<Vector> bin3e = loadFile("3e_binary.vec");
+    const std::vector<Vector> bin1e = loadFile("1e_binary.vec");
+
+    // 3E on Fx3: "as Generic" in both rows (C051 for a range, C059 for a type).
+    {
+        MockOptions opt;
+        opt.target = MockTarget::Fx3;
+        MockPlc plc(FrameConfig::frame3E(DataCode::Binary), opt);
+        plc.setDeviceLimit(DeviceType::D, 100);
+        plc.setTypeSupported(DeviceType::M, false);
+        feed(plc, byId(bin3e, "V-3E-B-01").bytes);
+        feed(plc, hexBytes("50 00 00 FF FF 03 00 0C 00 10 00 01 04 01 00 64 00 00 90 01 00"));
+        const std::vector<Bytes> got = drainAll(plc);
+        REQUIRE(got.size() == 2);
+        CHECK(got[0] == byId(bin3e, "V-3E-B-10").bytes);
+        CHECK(got[1] == hexBytes("D0 00 00 FF FF 03 00 0B 00 59 C0 00 FF FF 03 00 01 04 01 00"));
+    }
+    // 1E on QCpu and Fx5: "as Generic": 5BH with the abnormal code 10H, and 50H for a type.
+    for (MockTarget target : {MockTarget::QCpu, MockTarget::Fx5}) {
+        MockOptions opt;
+        opt.target = target;
+        MockPlc plc(FrameConfig::frame1E(DataCode::Binary), opt);
+        plc.setDeviceLimit(DeviceType::D, 100);
+        plc.setTypeSupported(DeviceType::M, false);
+        feed(plc, byId(bin1e, "V-1E-B-01").bytes);
+        feed(plc, hexBytes("00 FF 0A 00 64 00 00 00 20 4D 01 00")); // read M100, one bit
+        const std::vector<Bytes> got = drainAll(plc);
+        REQUIRE(got.size() == 2);
+        CHECK(got[0] == byId(bin1e, "V-1E-B-11").bytes);
+        CHECK(got[1] == hexBytes("80 50"));
+    }
+    // 1C on QCpu and Fx5: NAK 06 for a range, a type and a wrong SUM.
+    for (MockTarget target : {MockTarget::QCpu, MockTarget::Fx5}) {
+        MockOptions opt;
+        opt.target = target;
+        const FrameConfig cfg = FrameConfig::frame1C(SerialFormat::Format1);
+        MockPlc plc(cfg, opt);
+        plc.setDeviceLimit(DeviceType::D, 100);
+        plc.setTypeSupported(DeviceType::M, false);
+        feed(plc, sf::request(cfg, sf::readD(cfg, 100, 3)));
+        feed(plc, sf::request(cfg, sf::data1c("WR", '0', "M0000", 1)));
+        feed(plc, withWrongSum(cfg, sf::request(cfg, sf::readD(cfg, 0, 3))));
+        const std::vector<Bytes> got = drainAll(plc);
+        REQUIRE(got.size() == 3);
+        for (const Bytes& r : got) {
+            CHECK(r == sf::response(cfg, sf::Kind::Nak, "06"));
+        }
+    }
+}
+
+TEST_CASE("MCK-16 under a target: unsupported commands, failRange and the 1E abnormal option keep "
+          "their MockOptions meaning") {
+    const std::vector<Vector> bin3e = loadFile("3e_binary.vec");
+    // An unsupported command is in no target's table: unsupportedQna still answers it.
+    for (MockTarget target : {MockTarget::QCpu, MockTarget::Fx5}) {
+        MockOptions opt;
+        opt.target = target;
+        opt.unsupportedQna = 0xC0AA;
+        MockPlc plc(FrameConfig::frame3E(DataCode::Binary), opt);
+        feed(plc, byId(bin3e, "V-3E-B-13").bytes); // 0403
+        const std::vector<Bytes> got = drainAll(plc);
+        REQUIRE(got.size() == 1);
+        REQUIRE(got[0].size() == 20);
+        CHECK(got[0][9] == 0xAA);
+        CHECK(got[0][10] == 0xC0);
+    }
+    // failRange carries its own code, whatever the target says.
+    {
+        MockOptions opt;
+        opt.target = MockTarget::Fx5;
+        MockPlc plc(FrameConfig::frame3E(DataCode::Binary), opt);
+        plc.failRange(DeviceType::D, 100, 102, 0x1234);
+        feed(plc, byId(bin3e, "V-3E-B-01").bytes);
+        const std::vector<Bytes> got = drainAll(plc);
+        REQUIRE(got.size() == 1);
+        CHECK(got[0] == hexBytes("D0 00 00 FF FF 03 00 0B 00 34 12 00 FF FF 03 00 01 04 00 00"));
+    }
+    // Fx3 on 1E: end code 58H is not 5BH, so no abnormal byte is sent, whatever the option says.
+    {
+        MockOptions opt;
+        opt.target = MockTarget::Fx3;
+        opt.outOfRange1eAbnormal = 0x11;
+        MockPlc plc(FrameConfig::frame1E(DataCode::Binary), opt);
+        plc.setDeviceLimit(DeviceType::D, 100);
+        feed(plc, byId(loadFile("1e_binary.vec"), "V-1E-B-01").bytes);
+        const std::vector<Bytes> got = drainAll(plc);
+        REQUIRE(got.size() == 1);
+        CHECK(got[0] == hexBytes("81 58"));
+    }
+    // The codes of the table win over the Generic fields for the cells it lists.
+    {
+        MockOptions opt;
+        opt.target = MockTarget::Fx5;
+        opt.outOfRangeQna = 0xC0AA;
+        MockPlc plc(FrameConfig::frame3E(DataCode::Binary), opt);
+        plc.setDeviceLimit(DeviceType::D, 100);
+        feed(plc, byId(bin3e, "V-3E-B-01").bytes);
+        const std::vector<Bytes> got = drainAll(plc);
+        REQUIRE(got.size() == 1);
+        CHECK(got[0] == hexBytes("D0 00 00 FF FF 03 00 0B 00 56 C0 00 FF FF 03 00 01 04 00 00"));
+    }
+}
+
+TEST_CASE(
+    "MCK-16 Fx3 on 1C: the range and type codes stay the MockOptions fields, not a fixed 06") {
+    MockOptions opt;
+    opt.target = MockTarget::Fx3;
+    opt.outOfRange1c = 0x07;
+    opt.unsupported1c = 0x08;
+    const FrameConfig cfg = FrameConfig::frame1C(SerialFormat::Format1);
+    MockPlc plc(cfg, opt);
+    plc.setDeviceLimit(DeviceType::D, 100);
+    plc.setTypeSupported(DeviceType::M, false);
+    feed(plc, sf::request(cfg, sf::readD(cfg, 100, 3)));
+    feed(plc, sf::request(cfg, sf::data1c("WR", '0', "M0000", 1)));
+    const std::vector<Bytes> got = drainAll(plc);
+    REQUIRE(got.size() == 2);
+    CHECK(got[0] == sf::response(cfg, sf::Kind::Nak, "07"));
+    CHECK(got[1] == sf::response(cfg, sf::Kind::Nak, "08"));
 }

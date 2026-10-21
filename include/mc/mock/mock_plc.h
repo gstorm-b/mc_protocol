@@ -20,6 +20,32 @@
 namespace mc {
 
 /**
+ * @enum MockTarget
+ * @brief The PLC a MockPlc imitates when it refuses a request: it chooses the error codes of
+ * the device-range, device-type and SUM refusals.
+ *
+ * `Generic` answers with the code fields of MockOptions, as they are. Each other target replaces
+ * the codes it lists with the ones that PLC was captured answering, and leaves every other
+ * field of MockOptions in force (the table is in the mock-plc spec, section "Targets"):
+ *  - QCpu: 3E and 3C answer 4031H for a device beyond setDeviceLimit() and for a device type that
+ *    setTypeSupported() switched off; 3C answers 7F24H for a wrong SUM.
+ *  - Fx5: 3E answers C056H beyond the limit, C05CH for an unsupported type (DX and DY: C050H in
+ *    ASCII); 3C answers 7143H beyond the limit, 7E43H for an unsupported type (DX and DY: 7F21H)
+ *    and 7F24H for a wrong SUM.
+ *  - Fx3: 1E answers 58H beyond the limit (no abnormal code follows) and 56H for an unsupported
+ *    type; 1C answers 02H for a wrong SUM. Its 3E, 3C and the 1C range and type codes are those of
+ *    `Generic`.
+ *
+ * @see MockOptions::target
+ */
+enum class MockTarget : uint8_t {
+    Generic, ///< The MockOptions code fields.
+    QCpu,    ///< Q03UDECPU (built-in Ethernet, serial module).
+    Fx5,     ///< FX5U (built-in Ethernet, RS-485).
+    Fx3      ///< FX3U (ENET-ADP 1E, computer link 1C).
+};
+
+/**
  * @struct MockOptions
  * @brief Error codes the mock answers with when a test does not choose one, and an optional log
  * sink.
@@ -44,6 +70,7 @@ struct MockOptions {
                                      ///< `Trace` line per skipped serial byte, with the running
                                      ///< MockPlc::skippedBytes(). The sink must not call back
                                      ///< into the MockPlc that writes to it (see closeStream()).
+    MockTarget target{MockTarget::Generic}; ///< PLC imitated: codes of range, type, SUM refusals.
 };
 
 /**
@@ -317,6 +344,40 @@ public:
      * @param[in] limit First device number that does not exist.
      */
     void setDeviceLimit(DeviceType t, uint32_t limit);
+
+    /**
+     * @brief Switches a device type on or off.
+     *
+     * Every type is supported until switched off. A request whose first device is of an
+     * unsupported type is answered with the "type not supported" code of MockOptions::target
+     * (MockOptions::unsupportedQna, unsupported1e or unsupported1c for Generic), after the check
+     * that the command is executable and before failRange() faults and the device limits. It
+     * changes no memory.
+     *
+     * @param[in] t Device type to switch.
+     * @param[in] supported false to refuse the type, true to accept it again.
+     * @par Complexity
+     * O(1); no allocation.
+     */
+    void setTypeSupported(DeviceType t, bool supported) noexcept;
+
+    /**
+     * @brief Makes points of [@p from, @p limit) exist in addition to those below
+     * setDeviceLimit().
+     *
+     * For a PLC whose special devices lie beyond its general range (D8000 to D8511 of an FX3U with
+     * a general limit of 8000). A request must lie wholly in the general range or wholly in the
+     * special range: one that leaves both, or reaches from one into the other, gets the
+     * out-of-range code. A type has one special range: a new call replaces it, and
+     * @p from >= @p limit removes it. It has no effect on a type without a setDeviceLimit().
+     *
+     * @param[in] t Device type the range applies to.
+     * @param[in] from First device number of the special range.
+     * @param[in] limit First device number after the special range.
+     * @par Complexity
+     * O(1); no allocation.
+     */
+    void setSpecialRange(DeviceType t, uint32_t from, uint32_t limit) noexcept;
     /// @}
 
     /// @name Faults

@@ -158,23 +158,31 @@ struct Outcome {
     ByteBuf data;
 };
 
-/// Executes a QnA request on `memory`. Checks, in order: executable, bit op on a bit device,
-/// failRange faults, device limits, response size. A failed request changes no memory.
+/// Executes a QnA request on `memory`. Checks, in order: executable, supported device type, bit op
+/// on a bit device, failRange faults, device limits, response size. A failed request changes no
+/// memory. The range and type codes come from MockOptions::target (Generic: the option fields).
 Outcome executeQna(const QnaRequest& request, DataCode code, MemoryImage& memory,
                    const std::vector<Fault>& faults, const MockOptions& options);
 
 /// Executes a 1E request on `memory`, with the same checks as executeQna() except the response
 /// size (a 1E response has no length field). The error codes are MockOptions::unsupported1e and
-/// outOfRange1e (+ outOfRange1eAbnormal); a failRange() fault answers with its code's low byte.
+/// outOfRange1e (+ outOfRange1eAbnormal), replaced by the codes of MockOptions::target; a
+/// failRange() fault answers with its code's low byte.
 Outcome executeE1(const E1Request& request, MemoryImage& memory, const std::vector<Fault>& faults,
                   const MockOptions& options);
 
 /// Executes a 3C or 1C request (`frame` is F3C or F1C) on `memory`, with the same checks as
 /// executeQna() except the response size (a serial response has no length field). The error codes
-/// are MockOptions::unsupportedQna / outOfRangeQna for 3C and unsupported1c / outOfRange1c for 1C;
-/// a failRange() fault answers with its code, cut to its low byte on 1C.
+/// are MockOptions::unsupportedQna / outOfRangeQna for 3C and unsupported1c / outOfRange1c for 1C,
+/// replaced by the codes of MockOptions::target; a failRange() fault answers with its code, cut to
+/// its low byte on 1C.
 Outcome executeSerial(const SerialRequest& request, FrameType frame, MemoryImage& memory,
                       const std::vector<Fault>& faults, const MockOptions& options);
+
+/// The code of the NAK for a request with a wrong SUM: MockOptions::sumErrorQna (3C) or
+/// sumError1c (1C), replaced by the code of MockOptions::target where it has one. `frame` is F3C
+/// or F1C.
+uint16_t wrongSumCode(FrameType frame, const MockOptions& options);
 
 /// Builds the 3E response frame for `request` (spec §5.1): the request's route is echoed, and an
 /// error carries the error information (route, command, subcommand).

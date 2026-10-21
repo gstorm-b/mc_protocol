@@ -285,7 +285,7 @@ void MockPlc::Impl::handleSerial(const SerialRequest& request) {
     Outcome outcome;
     if (!request.sumValid) {
         outcome.ok = false;
-        outcome.plcCode = threeC ? opt.sumErrorQna : opt.sumError1c;
+        outcome.plcCode = detail::mock::wrongSumCode(cfg.frame, opt);
     } else if (!threeC && request.bitReadAna && cfg.targetFamily == TargetFamily::A &&
                cfg.xyNotation == XyNumbering::Octal) {
         // An FX3 computer link does not execute JR (the captures: 02 in format 1 with a SUM, 03 in
@@ -383,6 +383,14 @@ uint16_t MockPlc::word(Device d) const { return m_impl->memory.wordAt(d, 0); }
 bool MockPlc::bit(Device d) const { return m_impl->memory.bitAt(d, 0); }
 
 void MockPlc::setDeviceLimit(DeviceType t, uint32_t limit) { m_impl->memory.setLimit(t, limit); }
+
+void MockPlc::setTypeSupported(DeviceType t, bool supported) noexcept {
+    m_impl->memory.setSupported(t, supported);
+}
+
+void MockPlc::setSpecialRange(DeviceType t, uint32_t from, uint32_t limit) noexcept {
+    m_impl->memory.setSpecialRange(t, from, limit);
+}
 
 void MockPlc::failRange(DeviceType t, uint32_t first, uint32_t last, uint16_t code,
                         uint8_t abnormal) {

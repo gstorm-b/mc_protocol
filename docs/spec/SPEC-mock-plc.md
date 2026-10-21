@@ -68,6 +68,10 @@ tests/mock/
 ```cpp
 namespace mc {
 
+/// The PLC the mock imitates when it refuses a request: chooses the error codes of the device-range,
+/// device-type and SUM refusals (table in "Responses / Targets"). Generic = the MockOptions fields.
+enum class MockTarget : uint8_t { Generic, QCpu, Fx5, Fx3 };
+
 /// Error codes the mock answers with when a test does not choose one. These are TEST VALUES: where
 /// a golden vector carries an error code it is reused (C051H, 50H, 5BH + 10H, 7151H, 06H); C059H
 /// is an arbitrary choice. The library asserts nothing about their meaning (spec §7.2, §10 Q6).
@@ -81,6 +85,7 @@ struct MockOptions {
     uint8_t  outOfRange1e{0x5B};  uint8_t outOfRange1eAbnormal{0x10};   ///< as V-1E-B-11
     uint8_t  outOfRange1c{0x06};
     LogSink* log{nullptr};             ///< Optional log sink (category "mc.mock"); nullptr = no logging. Owner decision 2026-10-03.
+    MockTarget target{MockTarget::Generic}; ///< Chooses the codes of the "Targets" table; Generic keeps the fields above.
 };
 
 /// Ways to damage the next response(s), for protocol-error tests.
@@ -156,6 +161,16 @@ public:
     /// Points with number >= limit do not exist: any request touching one gets the
     /// out-of-range error of MockOptions. Default: no limit.
     void setDeviceLimit(DeviceType t, uint32_t limit);
+    /// Every type is supported until switched off. A request whose device type is not supported gets
+    /// the "type not supported" code of MockOptions::target (checked after the command, before the
+    /// failRange faults and the device limits). noexcept, no allocation.
+    void setTypeSupported(DeviceType t, bool supported) noexcept;
+    /// Points in [from, limit) exist in addition to those below setDeviceLimit() (the FX3U special
+    /// devices D8000..D8511 beyond a general limit of 8000). A request must lie wholly in one of the
+    /// two ranges; one that leaves both, or reaches from one into the other, is out of range. One
+    /// special range per type: a new call replaces it, from >= limit removes it. noexcept, no
+    /// allocation.
+    void setSpecialRange(DeviceType t, uint32_t from, uint32_t limit) noexcept;
 
     // ---- faults ------------------------------------------------------------------------
     /// Any request touching [first, last] of type t is answered with this PLC error
@@ -215,6 +230,31 @@ connection, with shared memory).
 
 Built from the spec §5 tables for the configured frame: 3E header + response data length + end code + data or error information; 1E subheader `cmd | 80H` + end code (+ abnormal code) + data, with the trailing dummy character on odd ASCII bit reads and a zero low nibble on odd binary bit reads; 3C/1C per format with `ACK`/`NAK`, `QACK`/`QNAK`, `GG`/`NN`, SUM when enabled, `CR LF` for F4, block number for F2. `f3ShortResponseHasSum` is honoured (spec Q1).
 
+### Targets
+
+`MockOptions::target` chooses the error codes of three refusals: a device beyond `setDeviceLimit()` (and outside
+`setSpecialRange()`), a device type switched off by `setTypeSupported()`, and a 3C / 1C request with a wrong SUM. The
+codes are those the bench PLCs answered (`docs/hil/FINDINGS.md`, F-008 and F-010). `Generic` (the default) answers with
+the `MockOptions` code fields, as before. A target replaces only the codes of its column; every other field of
+`MockOptions` still applies (unsupported commands keep `unsupportedQna`, `unsupported1e`, `unsupported1c` under every
+target; a `failRange()` fault keeps its own code) and a listed code wins over the matching field.
+
+| Case | `Generic` | `QCpu` | `Fx5` | `Fx3` |
+|---|---|---|---|---|
+| 3E out of range | `outOfRangeQna` (C051H) | 4031H | C056H | as Generic |
+| 3E type not supported | `unsupportedQna` (C059H) | 4031H | C05CH; DX, DY: C05CH in Binary, C050H in ASCII | as Generic |
+| 3C out of range | `outOfRangeQna` | 4031H | 7143H | as Generic |
+| 3C type not supported | `unsupportedQna` | 4031H | 7E43H; DX, DY: 7F21H | as Generic |
+| 3C wrong SUM | `sumErrorQna` (7151H) | 7F24H | 7F24H | as Generic |
+| 1E out of range | `outOfRange1e` + `outOfRange1eAbnormal` (5BH 10H) | as Generic | as Generic | 58H, no abnormal code |
+| 1E type not supported | `unsupported1e` (50H) | as Generic | as Generic | 56H |
+| 1C out of range / type not supported | `outOfRange1c` / `unsupported1c` (06) | as Generic | as Generic | as Generic |
+| 1C wrong SUM | `sumError1c` (06) | as Generic | as Generic | 02 |
+
+For an `Fx5` type that is not V, ZR, DX or DY and was never captured, the V / ZR code applies. The 3C codes hold in
+formats 1 to 4; a format 3 short response keeps the `f3ShortResponseHasSum` rule. The `Fx3` 1E answers carry no abnormal
+byte: the abnormal code follows end code 5BH only.
+
 ## Testing Strategy
 
 Two doctest binaries. `mc_mock_tests` (label `mock`) checks the mock against the golden vectors. `mc_integration_tests` (label `integration`) runs `Session` against the mock.
@@ -238,6 +278,9 @@ Two doctest binaries. `mc_mock_tests` (label `mock`) checks the mock against the
 | MCK-13 | Streams: two streams fed interleaved fragments (one byte each, alternating) decode both requests and answer each on its own stream, on every frame family; a stream closed mid-request leaves no trace for the next stream; stream 0 calls equal the stream-less calls; faults and the request log are shared (`stream` recorded); a closed or unknown id is ignored |
 | MCK-14 | 1E ASCII odd bit write: N = 1 and 5 with the dummy decode and change memory; the same frame without the dummy gets no response (incomplete); N = 8 unchanged (finding F-001) |
 | MCK-15 | FX3 1C (`targetFamily A`, `xyNotation Octal`): `JR` answered NAK `02` (format 1 with sum) / `03` (format 1 without sum, format 4 with sum, format 3), format 4 with `CR LF`; a `JR` with a wrong SUM still gets `sumError1c`; `QR` on the same config executed; `JR` with another target family or hexadecimal X/Y notation executed (finding F-022) |
+| MCK-16 | Target codes: every cell of the "Targets" table byte for byte as captured (3E Binary and ASCII, 3C formats 1 to 4, 1E Binary and ASCII, 1C formats 1 and 4, the 1E answers without an abnormal byte); `Generic` unchanged and the default; a target replaces only the codes it lists |
+| MCK-17 | `setTypeSupported`: an unsupported type gets the target's "type not supported" code before the range check, on every frame family; supported again, the request is executed; a write to an unsupported type changes no memory |
+| MCK-18 | `setSpecialRange`: a request inside the special range is executed; points between the limit and `from` are out of range; a request crossing from the general range into the special range is out of range; `from >= limit` removes the range; one range per type |
 | MCK-HYG | `src/mock/**` includes only the headers allowed by the independence rule |
 
 The vector loader is shared with `core-protocol` (see "Changes required in other specs").

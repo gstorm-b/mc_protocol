@@ -6,6 +6,13 @@ All notable changes to this project are documented in this file. The format foll
 
 ## [Unreleased]
 
+### Added
+
+- `MockOptions::target` (`MockTarget`: `Generic`, `QCpu`, `Fx5`, `Fx3`) chooses the error codes `MockPlc` answers for an
+  out-of-range device, an unsupported device type and a wrong SUM, as the bench PLCs do; `MockPlc::setTypeSupported()`
+  and `MockPlc::setSpecialRange()` switch device types off and add a special device range (FX3U D8000..D8511). The
+  default target `Generic` keeps every `MockOptions` code as before.
+
 ### Changed
 
 - `MockPlc` on a 1C frame with `targetFamily A` and `xyNotation Octal` (an FX3 computer link) no longer executes the

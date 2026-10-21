@@ -35,22 +35,43 @@ size_t endCodeSize(DataCode code) {
     return code == DataCode::Ascii ? AsciiCodec::u16Size() : BinaryCodec::u16Size();
 }
 
-// The error codes of one frame family (MockOptions) and the most response data one response can
-// carry.
+// Error codes of the captured PLCs (spec "Targets"), one named constant per code.
+constexpr uint16_t kQCpuRefused = 0x4031; // 3E and 3C: out of range and type not supported
+constexpr uint16_t kFx5OutOfRange3e = 0xC056;
+constexpr uint16_t kFx5Type3e = 0xC05C;            // any type but DX and DY; DX and DY in Binary
+constexpr uint16_t kFx5TypeDirectAscii3e = 0xC050; // DX and DY in ASCII
+constexpr uint16_t kFx5OutOfRange3c = 0x7143;
+constexpr uint16_t kFx5Type3c = 0x7E43;       // any type but DX and DY
+constexpr uint16_t kFx5TypeDirect3c = 0x7F21; // DX and DY
+constexpr uint16_t kWrongSum3c = 0x7F24;      // QCpu and Fx5
+constexpr uint16_t kFx3OutOfRange1e = 0x58;   // no abnormal code follows
+constexpr uint16_t kFx3Type1e = 0x56;
+constexpr uint16_t kFx3WrongSum1c = 0x02;
+
+// The error codes of one frame family (MockOptions, replaced by the codes of a MockTarget) and the
+// most response data one response can carry.
 struct Failures {
     uint16_t unsupported;
     uint16_t outOfRange;
     uint8_t outOfRangeAbnormal;
     bool truncateFaultCodeToByte; // 1E: the end code is a u8.
     size_t maxWireData;
+    uint16_t unsupportedType;       // a device type switched off by setTypeSupported()
+    uint16_t unsupportedTypeDirect; // the same for DX and DY
 };
 
-// Checks, in order: executable, bit op on a bit device, failRange faults, device limits, response
-// size. A failed request changes no memory.
+bool isDirectAccess(DeviceType t) { return t == DeviceType::DX || t == DeviceType::DY; }
+
+// Checks, in order: executable, supported device type, bit op on a bit device, failRange faults,
+// device limits, response size. A failed request changes no memory.
 Outcome execute(const Access& req, DataCode code, MemoryImage& memory,
                 const std::vector<Fault>& faults, const Failures& fail) {
     if (!req.executable) {
         return failure(fail.unsupported);
+    }
+    if (!memory.supported(req.head.type)) {
+        return failure(isDirectAccess(req.head.type) ? fail.unsupportedTypeDirect
+                                                     : fail.unsupportedType);
     }
 
     // A bit-unit command needs a bit device; word devices have no bit view (memory_image.h).
@@ -114,16 +135,34 @@ Outcome execute(const Access& req, DataCode code, MemoryImage& memory,
 Outcome executeQna(const QnaRequest& req, DataCode code, MemoryImage& memory,
                    const std::vector<Fault>& faults, const MockOptions& options) {
     // The 3E response length field is a u16 and counts the end code as well.
-    const Failures fail{options.unsupportedQna, options.outOfRangeQna, 0, false,
-                        size_t{0xFFFFu} - endCodeSize(code)};
+    Failures fail{options.unsupportedQna,
+                  options.outOfRangeQna,
+                  0,
+                  false,
+                  size_t{0xFFFFu} - endCodeSize(code),
+                  options.unsupportedQna,
+                  options.unsupportedQna};
+    if (options.target == MockTarget::QCpu) {
+        fail.outOfRange = fail.unsupportedType = fail.unsupportedTypeDirect = kQCpuRefused;
+    } else if (options.target == MockTarget::Fx5) {
+        fail.outOfRange = kFx5OutOfRange3e;
+        fail.unsupportedType = kFx5Type3e;
+        fail.unsupportedTypeDirect = code == DataCode::Ascii ? kFx5TypeDirectAscii3e : kFx5Type3e;
+    }
     return execute(req, code, memory, faults, fail);
 }
 
 Outcome executeE1(const E1Request& req, MemoryImage& memory, const std::vector<Fault>& faults,
                   const MockOptions& options) {
     // A 1E response has no length field; the wire code is irrelevant to the size check.
-    const Failures fail{options.unsupported1e, options.outOfRange1e, options.outOfRange1eAbnormal,
-                        true, SIZE_MAX};
+    Failures fail{
+        options.unsupported1e, options.outOfRange1e, options.outOfRange1eAbnormal, true, SIZE_MAX,
+        options.unsupported1e, options.unsupported1e};
+    if (options.target == MockTarget::Fx3) {
+        fail.outOfRange = kFx3OutOfRange1e;
+        fail.outOfRangeAbnormal = 0;
+        fail.unsupportedType = fail.unsupportedTypeDirect = kFx3Type1e;
+    }
     return execute(req, DataCode::Binary, memory, faults, fail);
 }
 
@@ -134,8 +173,24 @@ Outcome executeSerial(const SerialRequest& req, FrameType frame, MemoryImage& me
     const bool qna = frame == FrameType::F3C;
     const uint16_t unsupported = qna ? options.unsupportedQna : options.unsupported1c;
     const uint16_t outOfRange = qna ? options.outOfRangeQna : options.outOfRange1c;
-    const Failures fail{unsupported, outOfRange, 0, !qna, SIZE_MAX};
+    Failures fail{unsupported, outOfRange, 0, !qna, SIZE_MAX, unsupported, unsupported};
+    if (qna && options.target == MockTarget::QCpu) {
+        fail.outOfRange = fail.unsupportedType = fail.unsupportedTypeDirect = kQCpuRefused;
+    } else if (qna && options.target == MockTarget::Fx5) {
+        fail.outOfRange = kFx5OutOfRange3c;
+        fail.unsupportedType = kFx5Type3c;
+        fail.unsupportedTypeDirect = kFx5TypeDirect3c;
+    }
     return execute(req, DataCode::Ascii, memory, faults, fail);
+}
+
+uint16_t wrongSumCode(FrameType frame, const MockOptions& options) {
+    if (frame == FrameType::F3C) {
+        const bool captured =
+            options.target == MockTarget::QCpu || options.target == MockTarget::Fx5;
+        return captured ? kWrongSum3c : options.sumErrorQna;
+    }
+    return options.target == MockTarget::Fx3 ? kFx3WrongSum1c : uint16_t{options.sumError1c};
 }
 
 } // namespace mc::detail::mock
