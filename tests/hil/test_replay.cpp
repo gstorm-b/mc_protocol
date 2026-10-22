@@ -2002,3 +2002,91 @@ TEST_CASE("RPL-03 target: the FX3 special range of the replay ends with number 8
     CHECK_MESSAGE(r.failures.empty(), dump(r));
     CHECK(r.checks == 4);
 }
+
+// ---- RPL-02: the answer to a lone EOT (F-017) ----------------------------------------------------
+//
+// The tool used to record the EOT exchange of a `recover: eot` step as outcome `ok` whatever the
+// PLC answered. The five q03ude-c24-3c-* captures hold `ok` for the NAK (CAP-...-G7-01+2-R). A
+// recorded `ok` on a lone EOT request (04, 04 0D 0A) whose bytes parse to a PLC error is read as
+// that plcError; nothing wider.
+
+namespace {
+
+// 04 0D 0A answered with the f4 NAK of CAP-q03ude-c24-3c-f4-G7-01+2-R (error 7F23).
+const char* const kNakF4 = "15 46 39 30 30 30 30 46 46 30 30 37 46 32 33 0D 0A";
+
+/// One request record and its response record, shaped as the tool writes them.
+std::string pairBlock(const std::string& step, const std::string& requestHex,
+                      const std::string& outcome, const std::string& responseHex) {
+    const std::string id = "CAP-vplc-3c-f4-" + step;
+    return "# id: " + id + "\n# source: plc  profile: vplc-3c-f4  step: " + step +
+           "\n# frame: 3C  code: Ascii  format: 4  op: ReadWords  device: D100  count: 1  via: "
+           "mutate\n# kind: request\n" +
+           requestHex + "\n\n# id: " + id + "-R\n# kind: response  of: " + id +
+           "\n# outcome: " + outcome + "  verdict: passed\n" + responseHex + "\n";
+}
+
+fs::path scratchWithBlock(const std::string& name, const std::string& block) {
+    const fs::path dir = scratchCopy("vplc-3c-f4", name);
+    spit(dir / "steps.vec", slurp(dir / "steps.vec") + block);
+    return dir;
+}
+
+} // namespace
+
+TEST_CASE("RPL-02 a recorded ok on a lone EOT whose bytes are a PLC error is read as that error") {
+    const fs::path dir = scratchWithBlock("rpl02_eot", pairBlock("G7-01+2", "04 0D 0A", "ok", kNakF4));
+    const Report r = checkAll(loadCapture(dir), realEnv());
+    CHECK_MESSAGE(!hasFailure(r, "RPL-02", "G7-01+2"), dump(r));
+}
+
+TEST_CASE("RPL-02 the one-byte EOT of a format that sends 04 alone is a lone EOT too") {
+    const fs::path dir = scratchWithBlock("rpl02_eot1", pairBlock("G7-01+2", "04", "ok", kNakF4));
+    const Report r = checkAll(loadCapture(dir), realEnv());
+    CHECK_MESSAGE(!hasFailure(r, "RPL-02", "G7-01+2"), dump(r));
+}
+
+TEST_CASE("RPL-02 negative: a recorded ok on a lone EOT whose answer does not parse still fails") {
+    // The first byte of the NAK is damaged (15 -> 07): neither ok nor a PLC error.
+    const fs::path dir = scratchWithBlock("rpl02_eot_damaged",
+                                          pairBlock("G7-01+2", "04 0D 0A", "ok", kNakF4));
+    editByte(dir / "steps.vec", "CAP-vplc-3c-f4-G7-01+2-R", 0, "07");
+    const Report r = checkAll(loadCapture(dir), realEnv());
+    CHECK_MESSAGE(hasFailure(r, "RPL-02", "G7-01+2"), dump(r));
+}
+
+TEST_CASE("RPL-02 negative: a recorded ok on a lone EOT whose answer fails to parse as a PLC error "
+          "still fails") {
+    // A NAK frame whose error code is not hex digits: the parser fails with a protocol error, not
+    // a PLC error, so the rule does not apply.
+    const fs::path dir = scratchWithBlock(
+        "rpl02_eot_badcode",
+        pairBlock("G7-01+2", "04 0D 0A", "ok", "15 46 39 30 30 30 30 46 46 30 30 5A 5A 5A 5A 0D 0A"));
+    const Report r = checkAll(loadCapture(dir), realEnv());
+    CHECK_MESSAGE(hasFailure(r, "RPL-02", "G7-01+2"), dump(r));
+}
+
+TEST_CASE("RPL-02 negative: a recorded ok on a request that is not an EOT but parses to a PLC error "
+          "still fails") {
+    // The read of E-01 (05 F9 ...), recorded ok, answered with the NAK.
+    const fs::path dir = scratchWithBlock(
+        "rpl02_not_eot",
+        pairBlock("G7-09",
+                  "05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 30 "
+                  "30 30 30 30 31 30 30 0D 0A",
+                  "ok", kNakF4));
+    const Report r = checkAll(loadCapture(dir), realEnv());
+    CHECK_MESSAGE(hasFailure(r, "RPL-02", "G7-09"), dump(r));
+}
+
+TEST_CASE("RPL-02 negative: a frame that merely starts with an EOT byte is not a lone EOT") {
+    // 04 followed by a read request: not the exchange the rule is about.
+    const fs::path dir = scratchWithBlock(
+        "rpl02_eot_prefix",
+        pairBlock("G7-08",
+                  "04 05 46 39 30 30 30 30 46 46 30 30 30 34 30 31 30 30 30 30 44 2A 30 30 30 31 "
+                  "30 30 30 30 30 31 30 30 0D 0A",
+                  "ok", kNakF4));
+    const Report r = checkAll(loadCapture(dir), realEnv());
+    CHECK_MESSAGE(hasFailure(r, "RPL-02", "G7-08"), dump(r));
+}

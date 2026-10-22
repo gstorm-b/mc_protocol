@@ -63,11 +63,17 @@ ParseResult parseOptions(const QStringList& args) {
     const QCommandLineOption reconnect = valueOption(
         "reconnect-timeout", "Seconds a lost link is retried before the run is abandoned.",
         "SECONDS", QStringLiteral("15"));
+    const QCommandLineOption settle = valueOption(
+        "settle-ms",
+        "Milliseconds to wait after every connect or reconnect, and to see the link stay up, "
+        "before the next request (0..10000; default 500 for TCP to a host that is not "
+        "loopback, 0 for loopback and serial).",
+        "MS");
     const QCommandLineOption reportOut =
         valueOption("report-out", "File that --report writes (default docs/hil/BENCH.md).", "FILE",
                     QStringLiteral("docs/hil/BENCH.md"));
     parser.addOptions({help, profile, plan, dryRun, only, yes, reps, state, report, root, note,
-                       reconnect, reportOut});
+                       reconnect, settle, reportOut});
 
     if (!parser.parse(args)) {
         result.status = CommandLineStatus::Error;
@@ -110,6 +116,14 @@ ParseResult parseOptions(const QStringList& args) {
         result.status = CommandLineStatus::Error;
         result.text = QStringLiteral("--reconnect-timeout is a positive number of seconds");
         return result;
+    }
+    if (parser.isSet(settle)) {
+        o.settleMs = parser.value(settle).toInt(&ok);
+        if (!ok || o.settleMs < 0 || o.settleMs > 10000) {
+            result.status = CommandLineStatus::Error;
+            result.text = QStringLiteral("--settle-ms is a number of milliseconds, 0 to 10000");
+            return result;
+        }
     }
     o.plcState = parser.value(state).toUpper();
     if (o.plcState != QLatin1String("RUN") && o.plcState != QLatin1String("STOP")) {

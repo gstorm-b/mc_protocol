@@ -83,6 +83,9 @@ public:
     /// @brief Sets the repetitions of every bench step.
     /// @param[in] reps The number.
     void setBenchReps(int reps);
+    /// @brief Sets the wait after every connect or reconnect (`--settle-ms`).
+    /// @param[in] ms Milliseconds (0 to 10000); -1 is "auto", the tool's default by transport.
+    void setSettleMs(int ms);
     /// @brief Allows replacing an existing capture folder of the same profile id.
     /// @param[in] on The new state.
     void setOverwrite(bool on);
@@ -120,6 +123,9 @@ public:
     /// @brief The repetitions of every bench step.
     /// @return The number.
     int benchReps() const;
+    /// @brief The wait after every connect or reconnect.
+    /// @return Milliseconds; -1 = auto (the tool's default by transport), 0 = no settle.
+    int settleMs() const;
     /// @brief Whether an existing capture folder may be replaced.
     /// @return true when the box is ticked.
     bool overwrite() const;
@@ -158,6 +164,11 @@ public:
      * @return The token of the `runFinished` that answers; 0 when no check passed yet.
      */
     quint64 runWith(bool confirmed);
+
+    /// @brief The run request the widgets describe, as `runWith` sends it.
+    /// @param[in] confirmed The operator pressed Confirm in the dialog.
+    /// @return The request; its digest and inputs are those of the last check.
+    HilRunRequest runRequest(bool confirmed) const;
 
     /// @brief Asks the run to stop after the current step.
     void cancelRun();
@@ -273,6 +284,7 @@ private:
     QLineEdit* m_groups;
     QComboBox* m_state;
     QSpinBox* m_reps;
+    QSpinBox* m_settle;
     QLineEdit* m_output;
     QComboBox* m_source;
     QLineEdit* m_note;

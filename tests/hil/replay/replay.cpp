@@ -655,6 +655,17 @@ void checkReencode(const Capture& c, Report& r) {
 
 // ---- RPL-02 ---------------------------------------------------------------------------------
 
+namespace {
+
+/// Whether @p request is exactly an EOT: `04` or `04 0D 0A` (nothing else, not a frame that merely
+/// starts with 04).
+bool isLoneEot(const std::vector<uint8_t>& request) {
+    return request == std::vector<uint8_t>{0x04} ||
+           request == std::vector<uint8_t>{0x04, 0x0D, 0x0A};
+}
+
+} // namespace
+
 void checkParse(const Capture& c, Report& r) {
     for (const Record& rec : c.records) {
         const bool met = rec.verdict.empty() || rec.verdict == "passed";
@@ -685,6 +696,12 @@ void checkParse(const Capture& c, Report& r) {
         const ParseStatus st = p.feed(view(rec.response));
         const OutcomeText want = parseOutcome(rec.outcome);
         if (want.kind == "ok") {
+            if (st == ParseStatus::Failed && p.error().category == ErrorCategory::Plc &&
+                isLoneEot(rec.request)) {
+                // A capture written before the answer to the EOT of `recover: eot` was parsed
+                // records `ok` for it; the bytes are a PLC error, read as that plcError.
+                continue;
+            }
             if (st != ParseStatus::Done) {
                 fail(r, "RPL-02", c, rec.id,
                      std::string("recorded outcome ok, the parser says ") +

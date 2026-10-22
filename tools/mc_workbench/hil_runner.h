@@ -7,6 +7,7 @@
  */
 #pragma once
 
+#include "hil_capture/runner.h"
 #include "mc_workbench/hil_types.h"
 #include "mc_workbench/runner_base.h"
 
@@ -18,6 +19,15 @@
 #include <mutex>
 
 namespace mc::workbench {
+
+/**
+ * @brief The settings of a `mc::hil::Runner` for a run request: output root, PLC state, bench
+ * repetitions, reconnect budget, settle after connect and the operator note.
+ * @param[in] request    What to run.
+ * @param[in] outputRoot The absolute folder that receives `<profile id>/`.
+ * @return The runner settings (`settleAfterConnectMs` -1 = by transport).
+ */
+mc::hil::RunnerSettings runnerSettingsFor(const HilRunRequest& request, const QString& outputRoot);
 
 /**
  * @brief What the GUI thread may do to a run in progress without waiting for the runner thread.

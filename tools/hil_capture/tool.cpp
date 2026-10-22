@@ -95,6 +95,7 @@ ExitCode runTool(const Options& options, const ToolIo& io) {
     settings.operatorNote = options.note;
     settings.benchReps = options.benchReps;
     settings.reconnectBudgetMs = options.reconnectSeconds * 1000;
+    settings.settleAfterConnectMs = options.settleMs;
     Runner runner(*profile.profile, resolved, settings, io);
     const RunSummary summary = runner.run();
     if (!summary.error.isEmpty()) {

@@ -7,10 +7,12 @@
 #include "gui_test_support.h"
 
 #include "hil_capture/options.h"
+#include "hil_capture/runner.h"
 #include "hil_capture/tool.h"
 #include "mc_workbench/hil_confirm_dialog.h"
 #include "mc_workbench/hil_host.h"
 #include "mc_workbench/hil_prepare.h"
+#include "mc_workbench/hil_runner.h"
 #include "mc_workbench/hil_view.h"
 #include "mc_workbench/main_window.h"
 #include "mc_workbench/runner_base.h"
@@ -1083,6 +1085,47 @@ private slots:
         QVERIFY(window.hilView() != nullptr);
         QVERIFY(window.dockTitles().contains(QStringLiteral("HIL runner")));
         QVERIFY(window.dockWidget(QStringLiteral("HIL runner")) != nullptr);
+    }
+
+    // The "Settle after connect" field (ms; empty / auto = the tool's default by transport): the view
+    // shows it, it defaults to auto (-1), its value is in the run request, and the run request
+    // becomes the RunnerSettings of the run (settleAfterConnectMs, -1 = auto).
+    void GUI_07_theSettleAfterConnectFieldDefaultsToAutoAndReachesTheRunnerSettings() {
+        HilView view;
+        bool labelShown = false;
+        for (const QLabel* label : view.findChildren<QLabel*>()) {
+            labelShown = labelShown || label->text().contains(QStringLiteral("Settle after connect"));
+        }
+        QVERIFY2(labelShown, "no label 'Settle after connect' in the HIL view");
+        QCOMPARE(view.settleMs(), -1);
+        QCOMPARE(view.runRequest(false).settleMs, -1);
+        view.setSettleMs(750);
+        QCOMPARE(view.settleMs(), 750);
+        QCOMPARE(view.runRequest(false).settleMs, 750);
+        view.setSettleMs(0);
+        QCOMPARE(view.settleMs(), 0); // 0 is a value ("no settle"), not "auto"
+        QCOMPARE(view.runRequest(false).settleMs, 0);
+        view.setSettleMs(-1);
+        QCOMPARE(view.settleMs(), -1);
+        QCOMPARE(view.runRequest(false).settleMs, -1);
+
+        // The request becomes the RunnerSettings the run uses (the function hil_runner.cpp builds
+        // them with); the other fields keep their meaning.
+        HilRunRequest request;
+        QCOMPARE(request.settleMs, -1);
+        mc::hil::RunnerSettings settings = runnerSettingsFor(request, QStringLiteral("out"));
+        QCOMPARE(settings.settleAfterConnectMs, -1);
+        QCOMPARE(settings.reconnectBudgetMs, 15000);
+        request.settleMs = 750;
+        request.benchReps = 3;
+        request.reconnectSeconds = 4;
+        settings = runnerSettingsFor(request, QStringLiteral("out"));
+        QCOMPARE(settings.settleAfterConnectMs, 750);
+        QCOMPARE(settings.benchReps, 3);
+        QCOMPARE(settings.reconnectBudgetMs, 4000);
+        QCOMPARE(settings.outputRoot, QStringLiteral("out"));
+        request.settleMs = 0;
+        QCOMPARE(runnerSettingsFor(request, QStringLiteral("out")).settleAfterConnectMs, 0);
     }
 };
 

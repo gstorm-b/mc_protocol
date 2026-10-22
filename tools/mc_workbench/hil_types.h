@@ -65,6 +65,7 @@ struct HilRunRequest {
     QString note;                        ///< Operator note for `run.meta`.
     int benchReps{200};                  ///< `--bench-reps`.
     int reconnectSeconds{15};            ///< `--reconnect-timeout`.
+    int settleMs{-1};                    ///< `--settle-ms`: -1 = by transport, 0 = none.
     bool overwrite{false};               ///< Replace an existing capture folder of the same id.
 };
 

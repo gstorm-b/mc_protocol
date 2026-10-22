@@ -146,6 +146,8 @@ class PerConnectionPlc : public QObject {
     struct Connection {
         std::unique_ptr<MockPlc> plc;
         QByteArray bytes;
+        int requests{0}; ///< Chunks received on this connection (one per request in these tests).
+        bool refused{false}; ///< Accepted near a close of the fake: it will not answer, it closes.
     };
 
     explicit PerConnectionPlc(const FrameConfig& frame) : m_frame(frame) {
@@ -158,17 +160,59 @@ class PerConnectionPlc : public QObject {
     void setDelayMs(int ms) { m_delayMs = ms; }
     /// @brief While silent, a response that falls due is dropped (the cable is out). Thread safe.
     void setSilent(bool on) { m_silent = on; }
+    /// @brief The @p request-th chunk received on the @p connection-th accepted connection (both
+    /// counted from 1) is not answered: the fake closes that connection (FIN) instead.
+    void closeOnRequest(int connection, int request) {
+        m_closeConnection = connection;
+        m_closeRequest = request;
+    }
+    /// @brief A connection accepted less than @p windowMs after the fake last closed one is closed
+    /// @p afterMs after it was accepted, or at its first request, whichever comes first, and
+    /// never answers (a module that drops a link opened right after a close).
+    void refuseNearLastClose(int windowMs, int afterMs) {
+        m_refuseWindowMs = windowMs;
+        m_refuseAfterMs = afterMs;
+    }
+    /// @brief Every accepted connection is closed @p afterMs after it was accepted (a link that
+    /// never stays up).
+    void closeEveryConnection(int afterMs) { m_closeAllAfterMs = afterMs; }
+    /// @brief What the fake writes back to a lone EOT (`04` or `04 0D 0A`); empty: nothing, as the
+    /// MockPlc does.
+    void setEotReply(const QByteArray& reply) { m_eotReply = reply; }
     const std::vector<std::unique_ptr<Connection>>& connections() const { return m_connections; }
 
   private:
+    void closeSocket(QTcpSocket* socket) {
+        if (socket->state() != QAbstractSocket::ConnectedState) {
+            return;
+        }
+        m_sinceClose.restart();
+        m_closedOnce = true;
+        socket->disconnectFromHost();
+    }
+
     void accept() {
         while (QTcpSocket* socket = m_server.nextPendingConnection()) {
             m_connections.push_back(std::make_unique<Connection>());
             Connection* c = m_connections.back().get();
+            const int index = static_cast<int>(m_connections.size()); // 1-based
             c->plc = std::make_unique<MockPlc>(m_frame);
-            QObject::connect(socket, &QTcpSocket::readyRead, socket, [this, socket, c]() {
+            if (m_closeAllAfterMs >= 0) {
+                QTimer::singleShot(m_closeAllAfterMs, socket, [this, socket]() { closeSocket(socket); });
+            } else if (m_refuseWindowMs > 0 && m_closedOnce &&
+                       m_sinceClose.elapsed() < m_refuseWindowMs) {
+                c->refused = true;
+                QTimer::singleShot(m_refuseAfterMs, socket, [this, socket]() { closeSocket(socket); });
+            }
+            QObject::connect(socket, &QTcpSocket::readyRead, socket, [this, socket, c, index]() {
                 const QByteArray in = socket->readAll();
                 c->bytes += in;
+                ++c->requests;
+                if (c->refused ||
+                    (index == m_closeConnection && c->requests == m_closeRequest)) {
+                    closeSocket(socket); // no answer: the module drops the link
+                    return;
+                }
                 c->plc->bytesIn(ByteView{reinterpret_cast<const uint8_t*>(in.constData()),
                                          static_cast<size_t>(in.size())});
                 ByteView out;
@@ -181,6 +225,14 @@ class PerConnectionPlc : public QObject {
                         }
                     });
                 }
+                const bool eot = in == QByteArray::fromHex("04") || in == QByteArray::fromHex("040D0A");
+                if (eot && !m_eotReply.isEmpty()) {
+                    QTimer::singleShot(m_delayMs, socket, [this, socket]() {
+                        if (!m_silent) {
+                            socket->write(m_eotReply);
+                        }
+                    });
+                }
             });
         }
     }
@@ -188,6 +240,14 @@ class PerConnectionPlc : public QObject {
     FrameConfig m_frame;
     int m_delayMs{0};
     std::atomic<bool> m_silent{false};
+    int m_closeConnection{0};
+    int m_closeRequest{0};
+    int m_refuseWindowMs{0};
+    int m_refuseAfterMs{0};
+    int m_closeAllAfterMs{-1};
+    QByteArray m_eotReply;
+    QElapsedTimer m_sinceClose;
+    bool m_closedOnce{false};
     QTcpServer m_server;
     std::vector<std::unique_ptr<Connection>> m_connections;
 };
@@ -489,6 +549,95 @@ void checkCaptureSet(const QString& folder, const QString& profile, bool etherne
     QVERIFY(!metaText.contains(forbiddenA));
     QVERIFY(!metaText.contains(forbiddenB));
     QVERIFY(!metaText.contains(QStringLiteral("127.0.0.1")));
+}
+
+// ---- HIL-07 / HIL-08 helpers ---------------------------------------------------------------------
+
+// The module of F-012: it closes the first connection at its first request (a request it dislikes),
+// and it closes a link opened less than kRefuseWindowMs after one of its own closes, kRefuseAfterMs
+// after the connection was accepted.
+constexpr int kRefuseWindowMs = 150;
+constexpr int kRefuseAfterMs = 25;
+
+struct PlanRun {
+    ToolRun run;
+    QString folder; ///< The capture folder of the run.
+};
+
+// H-01 makes the fake close the link (no answer); its `then` read follows on the reconnected link;
+// H-02 is a plain read after that. @p settleMs is Options::settleMs (-1: the tool's default).
+PlanRun runSettlePlan(const QString& name, int settleMs, PerConnectionPlc& server) {
+    PlanRun result;
+    server.closeOnRequest(1, 1);
+    server.refuseNearLastClose(kRefuseWindowMs, kRefuseAfterMs);
+    const QString dir = scratchDir(name);
+    QFile planFile(dir + QStringLiteral("/plan.json"));
+    if (!planFile.open(QIODevice::WriteOnly)) {
+        return result;
+    }
+    planFile.write(R"JSON({"schema":1,"plan":{"id":"settle"},"steps":[
+        {"id":"H-01","kind":"read","device":"D@s","expect":"record",
+         "then":[{"kind":"read","device":"D@s","expect":"ok"}]},
+        {"id":"H-02","kind":"read","device":"D@s","expect":"ok"}
+    ]})JSON");
+    planFile.close();
+    Options options;
+    options.profilePath = writeProfile(dir, QStringLiteral("q03ude-eth-3e-bin"), name,
+                                       server.port(), QString(), 400);
+    options.planPath = dir + QStringLiteral("/plan.json");
+    options.outputRoot = dir + QStringLiteral("/captured");
+    options.yes = true;
+    options.settleMs = settleMs;
+    result.run = runToolWith(options);
+    result.folder = options.outputRoot + QLatin1Char('/') + name;
+    return result;
+}
+
+// A copy of the 3C Format 4 example profile whose transport is TCP to 127.0.0.1:@p port (a serial
+// device server): the in-process fake serves the 3C frames of a `recover: eot` step.
+QString writeProfile3cOverTcp(const QString& dir, const QString& newId, quint16 port,
+                              int timeoutMs) {
+    const QString path =
+        writeProfile(dir, QStringLiteral("q03ude-c24-3c-f4"), newId, port, QString(), timeoutMs);
+    QJsonObject root = readJsonFile(path);
+    QJsonObject device = root.value(QStringLiteral("device")).toObject();
+    QJsonObject transport = device.value(QStringLiteral("transport")).toObject();
+    transport.insert(QStringLiteral("kind"), QStringLiteral("Tcp"));
+    device.insert(QStringLiteral("transport"), transport);
+    root.insert(QStringLiteral("device"), device);
+    writeJsonFile(path, root);
+    return path;
+}
+
+// N-01: a truncated read (no answer, the C24 waits for the rest), then `recover: eot`, then a
+// normal read. The EOT exchange is "N-01+2". @p eotReply is what the fake answers to the EOT.
+PlanRun runEotPlan(const QString& name, const QByteArray& eotReply) {
+    PlanRun result;
+    const Profile q = loadExample(QStringLiteral("q03ude-c24-3c-f4"));
+    PerConnectionPlc server(q.device.frame);
+    server.setEotReply(eotReply);
+    if (!server.listen()) {
+        return result;
+    }
+    const QString dir = scratchDir(name);
+    QFile planFile(dir + QStringLiteral("/plan.json"));
+    if (!planFile.open(QIODevice::WriteOnly)) {
+        return result;
+    }
+    planFile.write(R"JSON({"schema":1,"plan":{"id":"eot"},"steps":[
+        {"id":"N-01","kind":"mutate","request":{"kind":"read","device":"D@s"},
+         "edits":[{"truncate":1}],"readOnly":true,"recover":"eot","expect":"record",
+         "then":[{"kind":"read","device":"D@s","expect":"ok"}]}
+    ]})JSON");
+    planFile.close();
+    Options options;
+    options.profilePath = writeProfile3cOverTcp(dir, name, server.port(), 400);
+    options.planPath = dir + QStringLiteral("/plan.json");
+    options.outputRoot = dir + QStringLiteral("/captured");
+    options.yes = true;
+    result.run = runToolWith(options, name + QLatin1Char('\n'));
+    result.folder = options.outputRoot + QLatin1Char('/') + name;
+    return result;
 }
 
 class HilRunTests : public QObject {
@@ -1484,6 +1633,433 @@ class HilRunTests : public QObject {
         QCOMPARE(p.exitCode(), static_cast<int>(ExitCode::BadInput));
         const QByteArray err = p.readAllStandardError();
         QVERIFY2(err.contains(name), err.toHex(' ').constData());
+    }
+
+    // ---- HIL-07: settle after every (re)connect (F-012) ---------------------------------------
+
+    void HIL_07_aSettledReconnectSurvivesAModuleThatClosesAFreshLink() {
+        const Watchdog dog(60, "the settled reconnect run");
+        const Profile q = loadExample(QStringLiteral("q03ude-eth-3e-bin"));
+        PerConnectionPlc server(q.device.frame);
+        QVERIFY(server.listen());
+        // Settle 300 ms: longer than the 25 ms the fake keeps a link it dislikes. The reconnect made
+        // right after the close is dropped during the settle, counts as a failed attempt and is
+        // repeated after the pause, when the fake has stopped refusing.
+        const PlanRun r = runSettlePlan(QStringLiteral("e2e-settle"), 300, server);
+        const ToolRun& run = r.run;
+        QVERIFY2(static_cast<int>(run.code) == static_cast<int>(ExitCode::Ok),
+                 qPrintable(run.out + run.err));
+        const Counts c = countsOf(run.out);
+        QVERIFY2(c.passed == 2 && c.failed == 0, qPrintable(run.out));
+        const std::vector<mc::test::Vector> steps = load(r.folder + QStringLiteral("/steps.vec"));
+        const QString p = QStringLiteral("CAP-e2e-settle-");
+        // The `then` read after the close is answered, and so is the step after it.
+        QCOMPARE(field(steps, p + QStringLiteral("H-01.2-R"), "outcome"), QStringLiteral("ok"));
+        QCOMPARE(field(steps, p + QStringLiteral("H-02-R"), "outcome"), QStringLiteral("ok"));
+        // Only H-01 itself (the request the fake dropped) is lost; no request after it died on a link
+        // the tool had just opened.
+        for (const mc::test::Vector& v : steps) {
+            if (v.id != toStd(p + QStringLiteral("H-01"))) {
+                QVERIFY2(QString::fromStdString(v.field("outcome")).contains(QStringLiteral("LinkDown")) ==
+                             false,
+                         v.id.c_str());
+            }
+        }
+        // The recoveries are on record, with the settle retries.
+        const QMap<QString, QString> meta = metaOf(r.folder + QStringLiteral("/run.meta"));
+        QVERIFY2(meta.value(QStringLiteral("recovery.1")).contains(QStringLiteral("after H-01")),
+                 qPrintable(readAll(r.folder + QStringLiteral("/run.meta"))));
+        bool settleRecorded = false;
+        for (auto it = meta.constBegin(); it != meta.constEnd(); ++it) {
+            settleRecorded = settleRecorded ||
+                             (it.key().startsWith(QStringLiteral("recovery.")) &&
+                              it.value().contains(QStringLiteral("settle"), Qt::CaseInsensitive));
+        }
+        QVERIFY2(settleRecorded, qPrintable(readAll(r.folder + QStringLiteral("/run.meta"))));
+        // At least the first link, the one dropped during the settle and the one that stayed.
+        QVERIFY2(server.connections().size() >= 3,
+                 qPrintable(QString::number(server.connections().size())));
+        QVERIFY(!server.connections().back()->bytes.isEmpty());
+    }
+
+    // Format 1 of the C24 sends the EOT alone (04) and answers it with a NAK frame without CR LF
+    // (the NAK of CAP-q03ude-c24-3c-f1-sum-G7-01+2-R, error 7F24).
+    void HIL_08_aFormat1NakAnsweringTheEotIsRecordedAsThePlcError() {
+        const Watchdog dog(60, "the format 1 EOT run");
+        QJsonObject proot = readJsonFile(exampleProfilePath(QStringLiteral("q03ude-c24-3c-f4")));
+        const auto withFormat1 = [](QJsonObject root) {
+            QJsonObject device = root.value(QStringLiteral("device")).toObject();
+            QJsonObject frame = device.value(QStringLiteral("frame")).toObject();
+            frame.insert(QStringLiteral("format"), QStringLiteral("Format1"));
+            device.insert(QStringLiteral("frame"), frame);
+            root.insert(QStringLiteral("device"), device);
+            return root;
+        };
+        const ProfileLoad format1 = loadProfile(withFormat1(proot));
+        QVERIFY(format1.ok());
+        PerConnectionPlc server(format1.profile->device.frame);
+        const QByteArray nak = QByteArray::fromHex("154639303030304646303037463234");
+        QCOMPARE(nak.size(), 15);
+        server.setEotReply(nak);
+        QVERIFY(server.listen());
+        const QString name = QStringLiteral("e2e-eotf1");
+        const QString dir = scratchDir(name);
+        QFile planFile(dir + QStringLiteral("/plan.json"));
+        QVERIFY(planFile.open(QIODevice::WriteOnly));
+        planFile.write(R"JSON({"schema":1,"plan":{"id":"eot"},"steps":[
+            {"id":"N-01","kind":"mutate","request":{"kind":"read","device":"D@s"},
+             "edits":[{"truncate":1}],"readOnly":true,"recover":"eot","expect":"record",
+             "then":[{"kind":"read","device":"D@s","expect":"ok"}]}
+        ]})JSON");
+        planFile.close();
+        const QString path = writeProfile3cOverTcp(dir, name, server.port(), 400);
+        writeJsonFile(path, withFormat1(readJsonFile(path)));
+        Options options;
+        options.profilePath = path;
+        options.planPath = dir + QStringLiteral("/plan.json");
+        options.outputRoot = dir + QStringLiteral("/captured");
+        options.yes = true;
+        const ToolRun run = runToolWith(options, name + QLatin1Char('\n'));
+        QVERIFY2(static_cast<int>(run.code) == static_cast<int>(ExitCode::Ok),
+                 qPrintable(run.out + run.err));
+        const std::vector<mc::test::Vector> steps =
+            load(options.outputRoot + QLatin1Char('/') + name + QStringLiteral("/steps.vec"));
+        const QString p = QStringLiteral("CAP-e2e-eotf1-");
+        const mc::test::Vector* eot = find(steps, p + QStringLiteral("N-01+2"));
+        QVERIFY(eot != nullptr);
+        QCOMPARE(eot->bytes.size(), size_t(1)); // the EOT alone, no CR LF
+        const QString outcome = field(steps, p + QStringLiteral("N-01+2-R"), "outcome");
+        QVERIFY2(outcome.startsWith(QStringLiteral("plcError 7F24")), qPrintable(outcome));
+        QCOMPARE(field(steps, p + QStringLiteral("N-01+2-R"), "verdict"), QStringLiteral("passed"));
+        QCOMPARE(field(steps, p + QStringLiteral("N-01.2-R"), "outcome"), QStringLiteral("ok"));
+    }
+
+    // Added by the GREEN-verify pass: a link the tool closes itself (a frame override changes the
+    // configuration, the runner disconnects and connects again) is not a recovery: run.meta keeps
+    // no `recovery.N` line for it, with the default settle and with a settle.
+    void HIL_07_aDeliberateDisconnectIsNotRecordedAsARecovery() {
+        const Watchdog dog(60, "the deliberate disconnect run");
+        const Profile q = loadExample(QStringLiteral("q03ude-eth-3e-bin"));
+        for (const int settleMs : {0, 50}) {
+            PerConnectionPlc server(q.device.frame);
+            QVERIFY(server.listen());
+            const QString name = QStringLiteral("e2e-deliberate%1").arg(settleMs);
+            const QString dir = scratchDir(name);
+            QFile planFile(dir + QStringLiteral("/plan.json"));
+            QVERIFY(planFile.open(QIODevice::WriteOnly));
+            planFile.write(R"JSON({"schema":1,"plan":{"id":"deliberate"},"steps":[
+                {"id":"D-01","kind":"read","device":"D@s","expect":"record"},
+                {"id":"D-02","kind":"read","device":"D@s","frameOverride":{"station":1},
+                 "expect":"record"},
+                {"id":"D-03","kind":"read","device":"D@s","expect":"record"}
+            ]})JSON");
+            planFile.close();
+            Options options;
+            options.profilePath = writeProfile(dir, QStringLiteral("q03ude-eth-3e-bin"), name,
+                                               server.port(), QString(), 400);
+            options.planPath = dir + QStringLiteral("/plan.json");
+            options.outputRoot = dir + QStringLiteral("/captured");
+            options.yes = true;
+            options.settleMs = settleMs;
+            const ToolRun run = runToolWith(options);
+            QVERIFY2(static_cast<int>(run.code) == static_cast<int>(ExitCode::Ok),
+                     qPrintable(run.out + run.err));
+            const QString folder = options.outputRoot + QLatin1Char('/') + name;
+            // The override really made the runner connect again.
+            QVERIFY2(server.connections().size() >= 3,
+                     qPrintable(QString::number(server.connections().size())));
+            const QMap<QString, QString> meta = metaOf(folder + QStringLiteral("/run.meta"));
+            for (auto it = meta.constBegin(); it != meta.constEnd(); ++it) {
+                QVERIFY2(!it.key().startsWith(QStringLiteral("recovery.")),
+                         qPrintable(it.key() + QLatin1Char('=') + it.value()));
+            }
+        }
+    }
+
+    // Pins F-012: without a settle the same plan sends the `then` read on the link the module is
+    // about to drop. (This one may already pass before the change; it must keep passing.)
+    void HIL_07_withoutASettleTheNextRequestDiesAsLinkDown() {
+        const Watchdog dog(60, "the unsettled reconnect run");
+        const Profile q = loadExample(QStringLiteral("q03ude-eth-3e-bin"));
+        PerConnectionPlc server(q.device.frame);
+        QVERIFY(server.listen());
+        const PlanRun r = runSettlePlan(QStringLiteral("e2e-nosettle"), 0, server);
+        const ToolRun& run = r.run;
+        QCOMPARE(static_cast<int>(run.code), static_cast<int>(ExitCode::RunFailures));
+        const std::vector<mc::test::Vector> steps = load(r.folder + QStringLiteral("/steps.vec"));
+        const QString p = QStringLiteral("CAP-e2e-nosettle-");
+        // No answer came back, so the outcome is on the request record.
+        QVERIFY(find(steps, p + QStringLiteral("H-01.2-R")) == nullptr);
+        QCOMPARE(field(steps, p + QStringLiteral("H-01.2"), "outcome"),
+                 QStringLiteral("transportError LinkDown"));
+    }
+
+    void HIL_07_aLinkThatNeverStaysUpAbortsTheRunAfterOneBudget() {
+        const Watchdog dog(60, "the never-up run");
+        const Profile q = loadExample(QStringLiteral("q03ude-eth-3e-bin"));
+        PerConnectionPlc server(q.device.frame);
+        server.closeEveryConnection(20);
+        QVERIFY(server.listen());
+        const QString dir = scratchDir(QStringLiteral("e2e-neverup"));
+        QFile planFile(dir + QStringLiteral("/plan.json"));
+        QVERIFY(planFile.open(QIODevice::WriteOnly));
+        planFile.write(R"JSON({"schema":1,"plan":{"id":"neverup"},"steps":[
+            {"id":"X-01","kind":"read","device":"D@s"},
+            {"id":"X-02","kind":"read","device":"D@s"},
+            {"id":"X-03","kind":"read","device":"D@s"}
+        ]})JSON");
+        planFile.close();
+        Options options;
+        options.profilePath = writeProfile(dir, QStringLiteral("q03ude-eth-3e-bin"),
+                                           QStringLiteral("e2e-neverup"), server.port(), QString(),
+                                           400);
+        options.planPath = dir + QStringLiteral("/plan.json");
+        options.outputRoot = dir + QStringLiteral("/captured");
+        options.yes = true;
+        options.settleMs = 200;
+        options.reconnectSeconds = 2;
+        QElapsedTimer timer;
+        timer.start();
+        const ToolRun run = runToolWith(options);
+        // One budget (2 s) is spent on the first step; the others are not even tried.
+        QVERIFY2(timer.elapsed() >= 1500 && timer.elapsed() < 8000,
+                 qPrintable(QString::number(timer.elapsed())));
+        QCOMPARE(static_cast<int>(run.code), static_cast<int>(ExitCode::RunFailures));
+        QCOMPARE(countsOf(run.out).failed, 3);
+        QVERIFY2(run.out.contains(QStringLiteral("aborted, the link could not be restored")),
+                 qPrintable(run.out));
+        // The tool kept trying inside the budget: a link that closes during the settle is retried.
+        QVERIFY2(server.connections().size() >= 2,
+                 qPrintable(QString::number(server.connections().size())));
+        QVERIFY(QFileInfo::exists(options.outputRoot + QStringLiteral("/e2e-neverup/run.meta")));
+    }
+
+    // The default is resolved from the profile: 0 on loopback and on a serial line, 500 ms for TCP to
+    // another host; an explicit value (0..10000) wins. The function is the one declaration the
+    // runner header must add: `int settleMsFor(const Profile& profile, int settleMs)`.
+    void HIL_07_theSettleDefaultFollowsTheTransportAndAnExplicitValueWins() {
+        QJsonObject root = readJsonFile(exampleProfilePath(QStringLiteral("q03ude-eth-3e-bin")));
+        const auto withHost = [&](const QString& host) {
+            QJsonObject r = root;
+            QJsonObject device = r.value(QStringLiteral("device")).toObject();
+            QJsonObject transport = device.value(QStringLiteral("transport")).toObject();
+            QJsonObject tcp = transport.value(QStringLiteral("tcp")).toObject();
+            tcp.insert(QStringLiteral("host"), host);
+            transport.insert(QStringLiteral("tcp"), tcp);
+            device.insert(QStringLiteral("transport"), transport);
+            r.insert(QStringLiteral("device"), device);
+            const ProfileLoad load = loadProfile(r);
+            return load.ok() ? *load.profile : Profile();
+        };
+        const Profile remote = withHost(QStringLiteral("192.0.2.10"));
+        QCOMPARE(static_cast<int>(remote.device.transport), static_cast<int>(TransportKind::Tcp));
+        QCOMPARE(settleMsFor(remote, -1), 500);
+        QCOMPARE(settleMsFor(withHost(QStringLiteral("127.0.0.1")), -1), 0);
+        QCOMPARE(settleMsFor(withHost(QStringLiteral("localhost")), -1), 0);
+        QCOMPARE(settleMsFor(withHost(QStringLiteral("::1")), -1), 0);
+        // A serial line: 0.
+        const Profile serial = loadExample(QStringLiteral("q03ude-c24-3c-f4"));
+        QCOMPARE(static_cast<int>(serial.device.transport),
+                 static_cast<int>(TransportKind::Serial));
+        QCOMPARE(settleMsFor(serial, -1), 0);
+        // An explicit value is used as given, whatever the transport.
+        QCOMPARE(settleMsFor(remote, 0), 0);
+        QCOMPARE(settleMsFor(remote, 1234), 1234);
+        QCOMPARE(settleMsFor(withHost(QStringLiteral("127.0.0.1")), 800), 800);
+        QCOMPARE(settleMsFor(serial, 10000), 10000);
+        // The settings struct defaults to "auto" and the options struct too.
+        QCOMPARE(RunnerSettings().settleAfterConnectMs, -1);
+        QCOMPARE(Options().settleMs, -1);
+    }
+
+    // ---- HIL-08: the answer to the EOT of a `recover: eot` step is on record (F-017) -----------
+
+    void HIL_08_aNakAnsweringTheEotIsRecordedAsThePlcErrorAndTheVerdictIsUnchanged() {
+        const Watchdog dog(60, "the EOT NAK run");
+        // The C24 answer of the capture (CAP-q03ude-c24-3c-f4-G7-01+2-R): NAK, F9, 0000, FF, 00,
+        // 7F23, CR LF.
+        const QByteArray nak = QByteArray::fromHex("1546393030303046463030374632330D0A");
+        QCOMPARE(nak.size(), 17);
+        const PlanRun r = runEotPlan(QStringLiteral("e2e-eotnak"), nak);
+        const ToolRun& run = r.run;
+        QVERIFY2(static_cast<int>(run.code) == static_cast<int>(ExitCode::Ok),
+                 qPrintable(run.out + run.err));
+        const Counts c = countsOf(run.out);
+        QVERIFY2(c.passed == 1 && c.failed == 0 && c.diverged == 0, qPrintable(run.out));
+        const std::vector<mc::test::Vector> steps = load(r.folder + QStringLiteral("/steps.vec"));
+        const QString p = QStringLiteral("CAP-e2e-eotnak-");
+        // The truncated request got no answer; the EOT exchange got the NAK.
+        QCOMPARE(field(steps, p + QStringLiteral("N-01"), "outcome"), QStringLiteral("timeout"));
+        const mc::test::Vector* eotResponse = find(steps, p + QStringLiteral("N-01+2-R"));
+        QVERIFY2(eotResponse != nullptr, "no response record for the EOT exchange");
+        QVERIFY2(field(steps, p + QStringLiteral("N-01+2-R"), "outcome")
+                     .startsWith(QStringLiteral("plcError 7F23")),
+                 qPrintable(field(steps, p + QStringLiteral("N-01+2-R"), "outcome")));
+        QCOMPARE(eotResponse->bytes.size(), size_t(17));
+        // expect: record -> the verdict is passed whatever the EOT answered.
+        QCOMPARE(field(steps, p + QStringLiteral("N-01+2-R"), "verdict"), QStringLiteral("passed"));
+        // The line is usable again: the `then` read is answered.
+        QCOMPARE(field(steps, p + QStringLiteral("N-01.2-R"), "outcome"), QStringLiteral("ok"));
+    }
+
+    // Silence after the EOT stays `noResponse` (this one may already pass before the change).
+    void HIL_08_noAnswerToTheEotIsRecordedAsNoResponse() {
+        const Watchdog dog(60, "the EOT silence run");
+        const PlanRun r = runEotPlan(QStringLiteral("e2e-eotsilent"), QByteArray());
+        const ToolRun& run = r.run;
+        QVERIFY2(static_cast<int>(run.code) == static_cast<int>(ExitCode::Ok),
+                 qPrintable(run.out + run.err));
+        QVERIFY2(countsOf(run.out).passed == 1 && countsOf(run.out).failed == 0,
+                 qPrintable(run.out));
+        const std::vector<mc::test::Vector> steps = load(r.folder + QStringLiteral("/steps.vec"));
+        const QString p = QStringLiteral("CAP-e2e-eotsilent-");
+        QCOMPARE(field(steps, p + QStringLiteral("N-01+2"), "outcome"),
+                 QStringLiteral("noResponse"));
+        QVERIFY(find(steps, p + QStringLiteral("N-01+2-R")) == nullptr);
+        QCOMPARE(field(steps, p + QStringLiteral("N-01.2-R"), "outcome"), QStringLiteral("ok"));
+    }
+
+    // The EOT the library sends on its own after a bad answer in an api operation is not the EOT of
+    // `recover: eot`: its record keeps the blanket `ok` of the recorder (pins the unchanged half).
+    void HIL_08_anEotSentByTheLibraryInAnApiOperationKeepsItsOkRecord() {
+        const Watchdog dog(60, "the api EOT run");
+        const Profile q = loadExample(QStringLiteral("q03ude-c24-3c-f4"));
+        const QByteArray nak = QByteArray::fromHex("1546393030303046463030374632330D0A");
+        QTcpServer server;
+        QVERIFY(server.listen(QHostAddress::LocalHost, 0));
+        std::vector<std::unique_ptr<MockPlc>> plcs;
+        QObject::connect(&server, &QTcpServer::newConnection, &server, [&]() {
+            while (QTcpSocket* socket = server.nextPendingConnection()) {
+                plcs.push_back(std::make_unique<MockPlc>(q.device.frame));
+                MockPlc* plc = plcs.back().get();
+                auto requests = std::make_shared<int>(0);
+                QObject::connect(socket, &QTcpSocket::readyRead, socket, [=]() {
+                    const QByteArray in = socket->readAll();
+                    if (in == QByteArray::fromHex("04") || in == QByteArray::fromHex("040D0A")) {
+                        socket->write(nak);
+                        return;
+                    }
+                    if (++*requests == 1) {
+                        socket->write(QByteArray("ZZ\r\n")); // not a frame: the library sends an EOT
+                        return;
+                    }
+                    plc->bytesIn(ByteView{reinterpret_cast<const uint8_t*>(in.constData()),
+                                          static_cast<size_t>(in.size())});
+                    ByteView out;
+                    while (plc->nextResponse(out)) {
+                        socket->write(QByteArray(reinterpret_cast<const char*>(out.data),
+                                                 static_cast<QByteArray::size_type>(out.size)));
+                    }
+                });
+            }
+        });
+        const QString name = QStringLiteral("e2e-apieot");
+        const QString dir = scratchDir(name);
+        QFile planFile(dir + QStringLiteral("/plan.json"));
+        QVERIFY(planFile.open(QIODevice::WriteOnly));
+        planFile.write(R"JSON({"schema":1,"plan":{"id":"apieot"},"steps":[
+            {"id":"A-01","kind":"read","device":"D@s","expect":"record"}
+        ]})JSON");
+        planFile.close();
+        Options options;
+        options.profilePath = writeProfile3cOverTcp(dir, name, server.serverPort(), 400);
+        options.planPath = dir + QStringLiteral("/plan.json");
+        options.outputRoot = dir + QStringLiteral("/captured");
+        options.yes = true;
+        const ToolRun run = runToolWith(options, name + QLatin1Char('\n'));
+        QVERIFY2(static_cast<int>(run.code) == static_cast<int>(ExitCode::Ok),
+                 qPrintable(run.out + run.err));
+        const std::vector<mc::test::Vector> steps =
+            load(options.outputRoot + QLatin1Char('/') + name + QStringLiteral("/steps.vec"));
+        // Every request record that is a lone EOT: its response record says `ok`, not the NAK's
+        // PLC error.
+        int eotAnswers = 0;
+        for (const mc::test::Vector& v : steps) {
+            if (v.bytes == std::vector<uint8_t>{0x04} ||
+                v.bytes == std::vector<uint8_t>{0x04, 0x0D, 0x0A}) {
+                const QString response = QString::fromStdString(v.id) + QStringLiteral("-R");
+                const mc::test::Vector* answer = find(steps, response);
+                if (answer != nullptr) {
+                    ++eotAnswers;
+                    QCOMPARE(QString::fromStdString(answer->field("outcome")), QStringLiteral("ok"));
+                }
+            }
+        }
+        QVERIFY2(eotAnswers >= 1, qPrintable(run.out));
+    }
+
+    // The recovery text carries the settle in force and how many links closed during it.
+    void HIL_07_theRecoveryRecordsTheNumberOfSettleRetries() {
+        const Watchdog dog(60, "the settle retries run");
+        const Profile q = loadExample(QStringLiteral("q03ude-eth-3e-bin"));
+        PerConnectionPlc server(q.device.frame);
+        QVERIFY(server.listen());
+        const PlanRun r = runSettlePlan(QStringLiteral("e2e-settleretries"), 300, server);
+        QVERIFY2(static_cast<int>(r.run.code) == static_cast<int>(ExitCode::Ok),
+                 qPrintable(r.run.out + r.run.err));
+        const QMap<QString, QString> meta = metaOf(r.folder + QStringLiteral("/run.meta"));
+        const QString recovery = meta.value(QStringLiteral("recovery.1"));
+        QVERIFY2(recovery.contains(QStringLiteral("settle 300 ms")), qPrintable(recovery));
+        QVERIFY2(recovery.contains(QStringLiteral("settle retries: 1")), qPrintable(recovery));
+    }
+
+    // The rounds a poll runs while its settle lasts are not the plan's rounds: "after 3" means after
+    // the third round that completes once the link has settled, and the poll then goes on for the
+    // rest of its rounds.
+    void HIL_07_aPollCountsItsActionRoundsFromTheFirstRoundAfterTheSettle() {
+        const Watchdog dog(60, "the settled poll run");
+        const Profile q = loadExample(QStringLiteral("q03ude-eth-3e-bin"));
+        PerConnectionPlc server(q.device.frame);
+        QVERIFY(server.listen());
+        const QString name = QStringLiteral("e2e-settlepoll");
+        const QString dir = scratchDir(name);
+        QFile planFile(dir + QStringLiteral("/plan.json"));
+        QVERIFY(planFile.open(QIODevice::WriteOnly));
+        planFile.write(R"JSON({"schema":1,"plan":{"id":"settlepoll"},"steps":[
+            {"id":"P-01","kind":"poll","rounds":6,"subscribe":[{"name":"d","device":"D@s","count":2}],
+             "actions":[{"after":3,"write":{"device":"D@s+1","values":[7]}}]}
+        ]})JSON");
+        planFile.close();
+        Options options;
+        options.profilePath =
+            writeProfile(dir, QStringLiteral("q03ude-eth-3e-bin"), name, server.port(), QString(), 400);
+        options.planPath = dir + QStringLiteral("/plan.json");
+        options.outputRoot = dir + QStringLiteral("/captured");
+        options.yes = true;
+        options.settleMs = 500; // loopback, but the settle is asked for
+        const ToolRun run = runToolWith(options, name + QLatin1Char('\n'));
+        QVERIFY2(static_cast<int>(run.code) == static_cast<int>(ExitCode::Ok),
+                 qPrintable(run.out + run.err));
+        const std::vector<mc::test::Vector> session =
+            load(options.outputRoot + QLatin1Char('/') + name + QStringLiteral("/session.vec"));
+        qint64 writeSeq = -1;
+        qint64 roundsBefore = 0;
+        qint64 roundsAfter = 0;
+        for (const mc::test::Vector& v : session) {
+            const qint64 seq = QString::fromStdString(v.field("seq")).toLongLong();
+            if (v.field("kind") == "input" && v.field("input") == "write") {
+                writeSeq = seq;
+            } else if (v.field("event") == "cycleDone") {
+                (writeSeq < 0 ? roundsBefore : roundsAfter) += 1;
+            }
+        }
+        QVERIFY2(writeSeq > 0, "the action was never made");
+        // Rounds ran during the 500 ms settle (20 ms interval) and are not counted: the write comes
+        // after at least 3 more rounds and the poll then runs the 3 that remain.
+        QVERIFY2(roundsBefore >= 3 + 5, qPrintable(QString::number(roundsBefore)));
+        QVERIFY2(roundsAfter >= 2, qPrintable(QString::number(roundsAfter)));
+    }
+
+    // One loopback rule for the runner (the settle default) and the workbench (mock or PLC).
+    void HIL_07_theLoopbackRuleIsSharedAndAcceptsTheSpellingsOfTheWorkbench() {
+        for (const char* host : {"127.0.0.1", "127.0.0.2", "127.5.5.5", "localhost", "LocalHost.",
+                                 "localhost.", "::1", "[::1]", " [::1] ", "::ffff:127.0.0.1"}) {
+            QVERIFY2(isLoopbackHost(QString::fromLatin1(host)), host);
+        }
+        for (const char* host : {"192.0.2.10", "192.168.1.10", "[::2]", "notlocalhost.",
+                                 "plc.example.org", "", "128.0.0.1"}) {
+            QVERIFY2(!isLoopbackHost(QString::fromLatin1(host)), host);
+        }
     }
 };
 

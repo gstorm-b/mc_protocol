@@ -88,6 +88,14 @@ HilView::HilView(QWidget* parent) : QWidget(parent) {
     m_reps = new QSpinBox;
     m_reps->setRange(1, 100000);
     m_reps->setValue(200);
+    m_settle = new QSpinBox;
+    m_settle->setRange(-1, 10000);
+    m_settle->setValue(-1);
+    m_settle->setSpecialValueText(QStringLiteral("auto"));
+    m_settle->setSuffix(QStringLiteral(" ms"));
+    m_settle->setToolTip(QStringLiteral(
+        "Wait after every connect or reconnect; the run goes on only if the link stayed up. "
+        "auto: 500 ms for TCP to a host that is not this computer, 0 for loopback and serial."));
     m_source = new QComboBox;
     m_source->addItem(QStringLiteral("Real PLC"), static_cast<int>(CaptureSource::RealPlc));
     m_source->addItem(QStringLiteral("Mock PLC"), static_cast<int>(CaptureSource::MockPlc));
@@ -98,6 +106,8 @@ HilView::HilView(QWidget* parent) : QWidget(parent) {
     options->addWidget(m_state);
     options->addWidget(new QLabel(QStringLiteral("Bench reps")));
     options->addWidget(m_reps);
+    options->addWidget(new QLabel(QStringLiteral("Settle after connect")));
+    options->addWidget(m_settle);
     options->addWidget(new QLabel(QStringLiteral("Talks to")));
     options->addWidget(m_source);
     options->addWidget(m_overwrite);
@@ -274,6 +284,7 @@ void HilView::setPlcState(const QString& state) { m_state->setCurrentText(state.
 void HilView::setOutputRoot(const QString& folder) { m_output->setText(folder); }
 void HilView::setNote(const QString& note) { m_note->setText(note); }
 void HilView::setBenchReps(int reps) { m_reps->setValue(reps); }
+void HilView::setSettleMs(int ms) { m_settle->setValue(ms); }
 void HilView::setOverwrite(bool on) { m_overwrite->setChecked(on); }
 void HilView::setCapturedRoot(const QString& path) { m_capturedRoot = path; }
 void HilView::setReplayProgram(const QString& path) { m_replayProgram->setText(path); }
@@ -296,6 +307,7 @@ QString HilView::groups() const { return m_groups->text().trimmed(); }
 QString HilView::plcState() const { return m_state->currentText(); }
 QString HilView::note() const { return m_note->text(); }
 int HilView::benchReps() const { return m_reps->value(); }
+int HilView::settleMs() const { return m_settle->value(); }
 bool HilView::overwrite() const { return m_overwrite->isChecked(); }
 QString HilView::profilePath() const { return m_profile->text().trimmed(); }
 QString HilView::planPath() const { return m_plan->text().trimmed(); }
@@ -375,11 +387,7 @@ quint64 HilView::requestRun() {
     return runWith(true);
 }
 
-quint64 HilView::runWith(bool confirmed) {
-    // A refused plan has no run button and no run call: the view never even asks the runner.
-    if (!m_hasCheck || !m_check.ok() || m_running || m_checking) {
-        return 0;
-    }
+HilRunRequest HilView::runRequest(bool confirmed) const {
     HilRunRequest request;
     request.input = m_checkedInput;
     request.expectedDigest = m_check.digest;
@@ -389,7 +397,17 @@ quint64 HilView::runWith(bool confirmed) {
     request.source = source();
     request.note = m_note->text().trimmed();
     request.benchReps = m_reps->value();
+    request.settleMs = m_settle->value();
     request.overwrite = m_overwrite->isChecked();
+    return request;
+}
+
+quint64 HilView::runWith(bool confirmed) {
+    // A refused plan has no run button and no run call: the view never even asks the runner.
+    if (!m_hasCheck || !m_check.ok() || m_running || m_checking) {
+        return 0;
+    }
+    const HilRunRequest request = runRequest(confirmed);
 
     m_running = true;
     m_prompt.clear();

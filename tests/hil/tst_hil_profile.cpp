@@ -1311,6 +1311,43 @@ class HilProfileTests : public QObject {
                               QStringLiteral("--bench-reps"), QStringLiteral("0")})
                     .status == CommandLineStatus::Error);
     }
+
+    // ---- HIL-07: --settle-ms ------------------------------------------------------------------
+
+    void HIL_07_helpListsTheSettleOption() {
+        const ParseResult p =
+            parseOptions({QStringLiteral("hil_capture"), QStringLiteral("--help")});
+        QVERIFY(p.status == CommandLineStatus::Help);
+        QVERIFY2(p.text.contains(QStringLiteral("--settle-ms")), qPrintable(p.text));
+    }
+
+    void HIL_07_settleMsParsesTheRangeZeroToTenThousandAndDefaultsToAuto() {
+        // Not given: -1, the tool picks 500 (TCP to another host) or 0 (loopback, serial).
+        ParseResult p = parseOptions({QStringLiteral("x"), QStringLiteral("--report")});
+        QVERIFY(p.status == CommandLineStatus::Run);
+        QCOMPARE(p.options.settleMs, -1);
+        for (const int value : {0, 500, 10000}) {
+            p = parseOptions({QStringLiteral("x"), QStringLiteral("--report"),
+                              QStringLiteral("--settle-ms"), QString::number(value)});
+            QVERIFY2(p.status == CommandLineStatus::Run, qPrintable(QString::number(value)));
+            QCOMPARE(p.options.settleMs, value);
+        }
+        // The same value next to the options a real run has.
+        p = parseOptions({QStringLiteral("x"), QStringLiteral("--profile"), QStringLiteral("a.json"),
+                          QStringLiteral("--plan"), QStringLiteral("b.json"),
+                          QStringLiteral("--settle-ms"), QStringLiteral("250"),
+                          QStringLiteral("--reconnect-timeout"), QStringLiteral("3")});
+        QVERIFY(p.status == CommandLineStatus::Run);
+        QCOMPARE(p.options.settleMs, 250);
+        QCOMPARE(p.options.reconnectSeconds, 3);
+        // Out of range or not a number: rejected with a message that names the option.
+        for (const char* bad : {"10001", "-1", "-500", "abc", "1.5", "5x", "99999999999"}) {
+            p = parseOptions({QStringLiteral("x"), QStringLiteral("--report"),
+                              QStringLiteral("--settle-ms=") + QLatin1String(bad)});
+            QVERIFY2(p.status == CommandLineStatus::Error, bad);
+            QVERIFY2(p.text.contains(QStringLiteral("--settle-ms")), bad);
+        }
+    }
 };
 
 } // namespace

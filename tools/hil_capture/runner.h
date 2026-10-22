@@ -17,6 +17,9 @@
  * - A link that is not Connected between steps (an `McDevice` `LinkFault`, a peer close) is
  *   reconnected with `connectToPlc()` for up to 15 s; the recovery is recorded in `run.meta` as
  *   `recovery.<n>` and the faulted step keeps its own outcome.
+ * - After every connect the runner waits the settle time (`settleMsFor`) and goes on only if the
+ *   link stayed up; a link that closes during the settle counts as a failed attempt and is
+ *   reconnected inside the same budget. The recovery text names the settle retries.
  *
  * Outcomes are counted per step: **passed** (matches the expectation), **failed** (the tool or the
  * link could not do the step: values differ, an unexpected timeout, link loss, a refused request),
@@ -58,7 +61,26 @@ struct RunnerSettings {
     int reconnectBudgetMs{15000}; ///< How long a lost link is retried (`--reconnect-timeout`).
     int pollSlackMs{
         10000}; ///< Added to a poll's budget of rounds x (interval + timeout); tests shorten it.
+    int settleAfterConnectMs{-1}; ///< Wait after every connect (`--settle-ms`); -1 = `settleMsFor`.
 };
+
+/**
+ * @brief Whether @p host names this computer: `localhost` (also `localhost.`), `127.0.0.0/8`,
+ * `::1` and `[::1]`. The workbench uses the same rule to tell a mock from a PLC.
+ * @param[in] host Host text of a TCP transport.
+ * @return true for a loopback address or name.
+ */
+bool isLoopbackHost(const QString& host);
+
+/**
+ * @brief The settle time after a connect: @p settleMs when it is not negative, else the default of
+ * the transport.
+ * @param[in] profile  The profile of the run (its transport and host).
+ * @param[in] settleMs The requested settle in ms, -1 for "by transport".
+ * @return @p settleMs if >= 0; otherwise 0 for a serial transport or TCP to a loopback host
+ * (127.0.0.0/8, `::1`, `localhost`), else 500.
+ */
+int settleMsFor(const Profile& profile, int settleMs);
 
 /// @brief The outcome counts of a run.
 struct RunSummary {

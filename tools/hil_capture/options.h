@@ -35,6 +35,7 @@ struct Options {
     QString reportOut{
         QStringLiteral("docs/hil/BENCH.md")}; ///< `--report-out`: where `--report` writes.
     int reconnectSeconds{15}; ///< `--reconnect-timeout`: how long a lost link is retried.
+    int settleMs{-1}; ///< `--settle-ms` (0..10000): wait after every connect; -1 = by transport.
 };
 
 /// @brief How parsing ended.

@@ -12,6 +12,16 @@ All notable changes to this project are documented in this file. The format foll
   out-of-range device, an unsupported device type and a wrong SUM, as the bench PLCs do; `MockPlc::setTypeSupported()`
   and `MockPlc::setSpecialRange()` switch device types off and add a special device range (FX3U D8000..D8511). The
   default target `Generic` keeps every `MockOptions` code as before.
+- `hil_capture --settle-ms <0..10000>` and the "Settle after connect" field of the `mc_workbench` HIL view: after every
+  connect or reconnect the runner waits the settle time and goes on only if the link stayed up (a link that closes
+  during the settle is reconnected inside `--reconnect-timeout`); default 500 ms for TCP to a host that is not
+  loopback, 0 for loopback and serial. `run.meta` `recovery.N` names the settle retries.
+
+### Fixed
+
+- `hil_capture` records the answer to the EOT of a `recover: eot` step (`plcError ...` for a NAK, `noResponse` for
+  none) instead of `ok`; the replay reads an `ok` recorded on a lone EOT whose bytes are a PLC error as that
+  `plcError`.
 
 ### Changed
 

@@ -24,6 +24,24 @@
 
 namespace mc::workbench {
 
+mc::hil::RunnerSettings runnerSettingsFor(const HilRunRequest& request, const QString& outputRoot) {
+    mc::hil::RunnerSettings settings;
+    settings.outputRoot = outputRoot;
+    settings.plcState = request.input.plcState.toUpper();
+    settings.benchReps = request.benchReps;
+    settings.reconnectBudgetMs = request.reconnectSeconds * 1000;
+    settings.settleAfterConnectMs = request.settleMs;
+    settings.operatorNote = request.note;
+    if (request.source != CaptureSource::RealPlc) {
+        settings.operatorNote =
+            QStringLiteral("MC Workbench HIL run against %1, not hardware%2")
+                .arg(request.source == CaptureSource::MockPlc ? QStringLiteral("a mock PLC")
+                                                               : QStringLiteral("virtual_plc"),
+                     request.note.isEmpty() ? QString() : QStringLiteral("; ") + request.note);
+    }
+    return settings;
+}
+
 void HilControl::reset() {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_cancel.store(false);
@@ -313,19 +331,7 @@ void HilRunner::run(quint64 token, const HilRunRequest& request) {
         }
     };
 
-    mc::hil::RunnerSettings settings;
-    settings.outputRoot = outputRoot;
-    settings.plcState = request.input.plcState.toUpper();
-    settings.benchReps = request.benchReps;
-    settings.reconnectBudgetMs = request.reconnectSeconds * 1000;
-    settings.operatorNote = request.note;
-    if (request.source != CaptureSource::RealPlc) {
-        settings.operatorNote =
-            QStringLiteral("MC Workbench HIL run against %1, not hardware%2")
-                .arg(request.source == CaptureSource::MockPlc ? QStringLiteral("a mock PLC")
-                                                               : QStringLiteral("virtual_plc"),
-                     request.note.isEmpty() ? QString() : QStringLiteral("; ") + request.note);
-    }
+    const mc::hil::RunnerSettings settings = runnerSettingsFor(request, outputRoot);
 
     const bool folderExisted = QFileInfo::exists(folder);
     m_running = true;

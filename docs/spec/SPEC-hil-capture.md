@@ -154,6 +154,7 @@ hil_capture --report          # rebuild docs/hil/BENCH.md from every bench.csv
 - The tool injects a **`RecordingTransport`** into `McDevice` (the public `Transport` interface allows it; nothing in the library changes). It wraps the real `TcpTransport` / `SerialTransport`, and stamps every written chunk and every received chunk with a monotonic time in nanoseconds (`QElapsedTimer::nsecsElapsed()`).
 - `mutate` and `raw` steps use the same `RecordingTransport` while `McDevice` is disconnected from it, so all frames share one clock and one recording.
 - On `LinkFault` the tool reconnects (`connectToPlc()`), records the recovery, and continues with the next step; a step that faulted is recorded with its outcome.
+- After every connect or reconnect the tool waits the settle time (`--settle-ms`, default: 500 ms for TCP to a host that is not loopback, 0 for loopback and serial) and goes on only if the link stayed up; a link that closes during the settle counts as a failed attempt and is reconnected inside `--reconnect-timeout`. Each reconnect is recorded as `recovery.N` in `run.meta` (reason, time to reconnect, settle retries). The rounds a `poll` step runs during the settle of its opening connect do not count: its `rounds` and the `after` of its actions count from the first round after that settle (a reconnect inside the poll settles too, and its rounds count).
 - End of run: a console summary (passed, failed, diverged, not supported, skipped) and the files below.
 
 ## Output
@@ -186,7 +187,8 @@ tests/vectors/captured/<profile-id>/
 D0 00 00 FF FF 03 00 08 00 00 00 95 19 02 12 30 11
 ```
 
-- `outcome`: `ok`, `plcError <code> [abnormal <code>] [info <route/cmd/sub>]`, `timeout`, `noResponse`, `protocolError <code>`, `notSent <error>`.
+- `outcome`: `ok`, `plcError <code> [abnormal <code>] [info <route/cmd/sub>]`, `timeout`, `noResponse`, `protocolError <code>`, `notSent <error>`, `peerClosed`, `transportError [<code>]`.
+- The answer to the EOT of a `recover: eot` step is parsed against the base request: `plcError ...` for a NAK, `noResponse` for none.
 - A timeout that received part of a frame records the bytes as `kind: response-partial`.
 - Re-running a profile **replaces** its folder; git history keeps the old captures, and a diff shows exactly what changed on the wire.
 
@@ -197,7 +199,7 @@ A doctest binary, label `replay`, std-only (links `mc::core` and `mc::mock`, nev
 | ID | Check |
 |---|---|
 | RPL-01 | Every captured `write`/`read` request is re-encoded from its metadata with the profile's `FrameConfig`: bytes equal the captured request. (A change means the encoder changed: fix it or re-capture on purpose.) |
-| RPL-02 | Every captured response parses with a parser for its request to the recorded `outcome` and values. A step that ran with a frame override is parsed with the profile's `FrameConfig` with that override applied; an override key the replay does not know is a failure. |
+| RPL-02 | Every captured response parses with a parser for its request to the recorded `outcome` and values. A step that ran with a frame override is parsed with the profile's `FrameConfig` with that override applied; an override key the replay does not know is a failure. A recorded `ok` on a lone EOT request (`04`, `04 0D 0A`) whose bytes parse to a PLC error is read as that `plcError` (captures written before the EOT outcome was parsed). |
 | RPL-03 | **Mock conformance.** Steps are replayed in order into an `MockPlc` with the profile's config and `deviceEnd` limits; memory the run did not write itself (inputs, special registers, timers) is seeded from the captured read values first. The mock's response bytes equal the captured response bytes. |
 | RPL-04 | **Session replay.** A `Session` with the profile's config and the poll step's subscriptions is fed the captured rx chunks at the captured times (fake clock). It emits exactly the captured tx frames in the same order, and its events (snapshots, changes, `CycleDone`) match the recorded ones; a poll round's duration may differ from the recorded one by up to 5 ms. |
 | RPL-05 | Capture sanity: every `write` is read back: a written value counts as read back by the next read of the same point in capture order, in any step, and every later read of the point must still return it until the point is written again; a point written again before any read needs no read-back; after a link recovery on a TCP transport the values written before it are no longer compared, and a write not read back before it has no read-back. Every `GV` step's bytes equal the Appendix A vector it mirrors (request always; response when the route and values are the defaults). When the profile's sum check or block number differs from the vector's, the request is compared with the vector re-encoded for the profile and the response by its decoded content. |
@@ -274,6 +276,8 @@ QtTest binary `mc_hil_tool_tests`, label `hil_tool`:
 | HIL-04 | End-to-end against `examples/virtual_plc` (loopback TCP) with a 3E Binary profile: a full capture set is written, and `mc_replay_tests` passes on it |
 | HIL-05 | Capture writer output is read back by `tests/common/vectors.h` with every metadata key intact |
 | HIL-06 | `--report` on a hand-made `bench.csv` produces the expected min / median / p95 / max |
+| HIL-07 | Settle after connect: a link closed during the settle is reconnected and the next request is answered (no `LinkDown`); settle 0 reproduces the closed link; a link that never stays up aborts after one `--reconnect-timeout` budget; a `poll` step counts its rounds and `after` actions from the first round after the settle of its opening connect; the default follows the transport (500 ms for TCP to a host that is not loopback, 0 for loopback and serial) and `--settle-ms` overrides it |
+| HIL-08 | EOT exchange outcome: the answer to the EOT of a `recover: eot` step is recorded `plcError ...` for a NAK and `noResponse` for silence; the verdict of `expect: record` is unchanged |
 
 ## Boundaries
 

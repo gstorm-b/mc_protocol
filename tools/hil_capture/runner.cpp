@@ -8,6 +8,7 @@
 #include <QDateTime>
 #include <QElapsedTimer>
 #include <QEventLoop>
+#include <QHostAddress>
 #include <QJsonDocument>
 #include <QProcess>
 #include <QSet>
@@ -120,10 +121,40 @@ uint16_t wordAt(const QByteArray& payload, int index) {
 
 } // namespace
 
+bool isLoopbackHost(const QString& host) {
+    QString text = host.trimmed();
+    // "[::1]" (the URL spelling of an IPv6 literal) and a fully qualified "localhost." name too.
+    if (text.size() > 2 && text.startsWith(QLatin1Char('[')) && text.endsWith(QLatin1Char(']'))) {
+        text = text.mid(1, text.size() - 2);
+    }
+    if (text.endsWith(QLatin1Char('.'))) {
+        text.chop(1);
+    }
+    if (text.compare(QLatin1String("localhost"), Qt::CaseInsensitive) == 0) {
+        return true;
+    }
+    QHostAddress address;
+    if (address.setAddress(text)) {
+        return address.isLoopback();
+    }
+    return false;
+}
+
+int settleMsFor(const Profile& profile, int settleMs) {
+    if (settleMs >= 0) {
+        return settleMs;
+    }
+    if (profile.device.transport != TransportKind::Tcp || isLoopbackHost(profile.device.tcp.host)) {
+        return 0;
+    }
+    return 500;
+}
+
 struct Runner::Impl {
     Impl(const Profile& p, const ResolveResult& r, RunnerSettings s, const ToolIo& i)
         : profile(p), resolved(r), settings(std::move(s)), io(i),
-          clock(std::make_shared<RecordingClock>()), writer(settings.outputRoot, p.id) {}
+          clock(std::make_shared<RecordingClock>()), writer(settings.outputRoot, p.id),
+          settleMs(settleMsFor(p, settings.settleAfterConnectMs)) {}
 
     const Profile& profile;
     const ResolveResult& resolved;
@@ -131,6 +162,7 @@ struct Runner::Impl {
     ToolIo io;
     std::shared_ptr<RecordingClock> clock;
     CaptureWriter writer;
+    const int settleMs; ///< Wait after every connect, resolved from the settings and the profile.
 
     std::unique_ptr<McDevice> device;
     RecordingTransport* rec{nullptr}; ///< Owned by `device`.
@@ -165,6 +197,9 @@ struct Runner::Impl {
     RunSummary summary;
     QMap<QString, QVector<uint16_t>> written;
     int recoveries{0};
+    int settleRetries{0}; ///< Links that closed during the settle in the last connectWithRetries().
+    QString lastOpId;     ///< Record id of the last operation run: a recovery is "after" it.
+    int pollSettleRounds{0}; ///< Rounds of the last poll that ran during its settle.
 
     // ---- small helpers ----------------------------------------------------------------------
 
@@ -344,10 +379,14 @@ struct Runner::Impl {
         return cfg;
     }
 
-    /// Connects, retrying a refused connection until @p budgetMs is used up.
+    /// Connects, retrying a refused connection until @p budgetMs is used up. After `Connected` the
+    /// runner waits the settle time and goes on only if the link is still up: a module that closes
+    /// a link opened right after a close does it within milliseconds, and a request sent on such a
+    /// link dies as `LinkDown`. A link that drops during the settle is a failed attempt.
     bool connectWithRetries(int budgetMs, QString* why) {
         QElapsedTimer timer;
         timer.start();
+        settleRetries = 0;
         const int openTimeout = (profile.device.transport == TransportKind::Tcp
                                      ? std::max(profile.device.tcp.connectTimeoutMs, 500) + 1500
                                      : 4000);
@@ -355,7 +394,11 @@ struct Runner::Impl {
             device->connectToPlc();
             waitUntil([this]() { return state != LinkState::Connecting; }, openTimeout);
             if (state == LinkState::Connected) {
-                return true;
+                if (settleMs <= 0 ||
+                    !waitUntil([this]() { return state != LinkState::Connected; }, settleMs)) {
+                    return true;
+                }
+                ++settleRetries;
             }
             if (timer.elapsed() + kReconnectPauseMs >= budgetMs) {
                 const QString text = linkWhy();
@@ -375,11 +418,47 @@ struct Runner::Impl {
         }
     }
 
+    /// Brings the link back for an operation about to send. A link that went down on its own (a
+    /// peer close, a fault) after an operation ran is a recovery and is recorded as such; a link
+    /// the tool closed itself (a configuration change) is just connected.
     bool ensureConnected(QString* why) {
         if (state == LinkState::Connected) {
             return true;
         }
+        if (reason != LinkReason::Requested && !lastOpId.isEmpty()) {
+            return reconnect(lastOpId, why);
+        }
         return connectWithRetries(settings.reconnectBudgetMs, why);
+    }
+
+    /// Reconnects and records `recovery.<n>` (reason, outcome, time, settle retries) as "after"
+    /// @p after.
+    bool reconnect(const QString& after, QString* failureOut) {
+        const QString why = linkWhy();
+        QElapsedTimer timer;
+        timer.start();
+        QString failure;
+        const bool back = connectWithRetries(settings.reconnectBudgetMs, &failure);
+        ++recoveries;
+        QString text = QStringLiteral("after %1: %2; %3 in %4 ms")
+                           .arg(after, why,
+                                back ? QStringLiteral("reconnected")
+                                     : QStringLiteral("NOT reconnected: ") + failure)
+                           .arg(timer.elapsed());
+        if (settleMs > 0) {
+            text += QStringLiteral("; settle %1 ms, settle retries: %2")
+                        .arg(settleMs)
+                        .arg(settleRetries);
+        }
+        meta.extra.push_back({QStringLiteral("recovery.%1").arg(recoveries), text});
+        say(QStringLiteral("      recovery after %1: %2 in %3 ms")
+                .arg(after,
+                     back ? QStringLiteral("reconnected") : QStringLiteral("could not reconnect"))
+                .arg(timer.elapsed()));
+        if (failureOut != nullptr && !back) {
+            *failureOut = failure;
+        }
+        return back;
     }
 
     /// The link is not Connected after a step: bring it back and record how.
@@ -387,22 +466,7 @@ struct Runner::Impl {
         if (state == LinkState::Connected) {
             return;
         }
-        const QString why = linkWhy();
-        QElapsedTimer timer;
-        timer.start();
-        QString failure;
-        const bool back = connectWithRetries(settings.reconnectBudgetMs, &failure);
-        ++recoveries;
-        meta.extra.push_back({QStringLiteral("recovery.%1").arg(recoveries),
-                              QStringLiteral("after %1: %2; %3 in %4 ms")
-                                  .arg(after, why,
-                                       back ? QStringLiteral("reconnected")
-                                            : QStringLiteral("NOT reconnected: ") + failure)
-                                  .arg(timer.elapsed())});
-        say(QStringLiteral("      recovery after %1: %2 in %3 ms")
-                .arg(after,
-                     back ? QStringLiteral("reconnected") : QStringLiteral("could not reconnect"))
-                .arg(timer.elapsed()));
+        reconnect(after, nullptr);
     }
 
     // ---- records ----------------------------------------------------------------------------
@@ -465,6 +529,10 @@ struct Runner::Impl {
             }
             // Outcome of this exchange: the parser of its own request judges the bytes.
             const bool eot = isEot(e.tx);
+            // The EOT of a `recover: eot` step is answered in the dialect of the request it cuts
+            // off (a C24 sends a NAK frame): the base request's parser judges it. An EOT written
+            // in any other operation keeps its blanket `ok` when something came back.
+            const bool eotOfRecovery = eot && op.via == Via::Mutate && op.recover == Recover::Eot;
             if (e.rx.isEmpty() && !eot &&
                 (obs.kind == Observed::Peer || obs.kind == Observed::LinkLost ||
                  obs.kind == Observed::NotSent)) {
@@ -477,7 +545,7 @@ struct Runner::Impl {
                                 : QStringLiteral("timeout");
                 r.waitedMs =
                     std::isnan(obs.waitedMs) ? msBetween(e.tTx, clock->nowNs()) : obs.waitedMs;
-            } else if (fm != nullptr && !eot) {
+            } else if (fm != nullptr && (!eot || eotOfRecovery)) {
                 Request pr;
                 pr.op = fm->op;
                 pr.head = fm->head;
@@ -891,9 +959,16 @@ struct Runner::Impl {
             }
         };
 
+        pollSettleRounds = 0;
         if (!connectWithRetries(settings.reconnectBudgetMs, &why)) {
             finish();
             return failWith(QStringLiteral("cannot connect: %1").arg(why));
+        }
+        if (settleMs > 0) {
+            // The session polls while the settle runs; the plan's rounds ("after N" included) count
+            // from the first round that completes after it.
+            pollSettleRounds = cycles;
+            cycles = 0;
         }
         const int interval = static_cast<int>(profile.device.session.cycleIntervalMs);
         // The time the operator keeps a prompt open is not the poll's: it does not count against
@@ -1049,6 +1124,12 @@ struct Runner::Impl {
                 if (e.name == QStringLiteral("cycleDone")) {
                     cycleEvents.push_back(&e);
                 }
+            }
+            const int skipped =
+                std::min<int>(pollSettleRounds, static_cast<int>(cycleEvents.size()));
+            if (skipped > 0) {
+                prevSeq = cycleEvents[skipped - 1]->seq; // rounds of the settle are not repetitions
+                cycleEvents.remove(0, skipped);
             }
             int points = 0;
             for (const ResolvedSub& sub : step.bench.poll.subs) {
@@ -1253,6 +1334,7 @@ struct Runner::Impl {
             QString what;
             if (step.kind == StepKind::Bench) {
                 const int reps = step.bench.reps >= 0 ? step.bench.reps : settings.benchReps;
+                lastOpId = step.id; // a link lost between repetitions is "after" this step
                 what = QStringLiteral("bench, %1 repetition(s) after %2 warm-up")
                            .arg(reps)
                            .arg(step.bench.warmup);
@@ -1286,6 +1368,7 @@ struct Runner::Impl {
                         }
                         const Verdict v =
                             op.via == Via::Api ? runApiOp(op, step, i) : runFrameOp(op);
+                        lastOpId = op.recordId;
                         if (static_cast<int>(v.category) > static_cast<int>(worst.category)) {
                             worst = v;
                             worst.note = QStringLiteral("%1: %2").arg(op.recordId, worst.note);

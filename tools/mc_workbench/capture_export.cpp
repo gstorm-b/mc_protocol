@@ -1,8 +1,9 @@
 #include "mc_workbench/capture_export.h"
 
+#include "hil_capture/runner.h"
+
 #include <QDir>
 #include <QFileInfo>
-#include <QHostAddress>
 #include <QRegularExpression>
 #include <QStringList>
 #include <QVector>
@@ -225,22 +226,7 @@ ExportDecision checkOutputTarget(const QString& outputRoot, CaptureSource source
 }
 
 bool isLoopbackHost(const QString& host) {
-    QString text = host.trimmed();
-    // "[::1]" (the URL spelling of an IPv6 literal) and a fully qualified "localhost." name too.
-    if (text.size() > 2 && text.startsWith(QLatin1Char('[')) && text.endsWith(QLatin1Char(']'))) {
-        text = text.mid(1, text.size() - 2);
-    }
-    if (text.endsWith(QLatin1Char('.'))) {
-        text.chop(1);
-    }
-    if (text.compare(QLatin1String("localhost"), Qt::CaseInsensitive) == 0) {
-        return true;
-    }
-    QHostAddress address;
-    if (address.setAddress(text)) {
-        return address.isLoopback();
-    }
-    return false;
+    return mc::hil::isLoopbackHost(host); // one rule for the runner's settle and the GUI
 }
 
 QString findCapturedRoot(const QString& startDir) {
